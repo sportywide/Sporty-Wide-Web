@@ -1,14 +1,15 @@
 const express = require('express');
 const next = require('next');
+const config = require('./config');
 
 const devProxy = {
 	'/api': {
-		target: 'http://localhost:5000',
+		target: config.get('server_url'),
 		changeOrigin: true,
 	},
 };
 
-const port = parseInt(process.env.PORT, 10) || 3000;
+const port = parseInt(config.get('port'), 10) || 3000;
 const env = process.env.NODE_ENV;
 const dev = env !== 'production';
 const app = next({
