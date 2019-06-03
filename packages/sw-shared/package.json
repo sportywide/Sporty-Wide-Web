@@ -1,8 +1,13 @@
 {
-    "name": "sportywide-shared",
-    "version": "1.0.0",
-    "description": "Shared package that contains typescript interfaces, shared utility code between packages and build config",
-    "scripts": {},
-    "keywords": [],
-    "license": "ISC"
+	"name": "sportywide-shared",
+	"version": "1.0.0",
+	"description": "Shared package that contains typescript interfaces, shared utility code between packages and build config",
+	"scripts": {},
+	"keywords": [],
+	"license": "ISC",
+	"dependencies": {
+		"dotenv": "8.0.0",
+		"nconf": "0.10.0",
+		"nconf-js": "1.0.0"
+	}
 }

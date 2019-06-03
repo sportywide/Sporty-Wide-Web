@@ -12,9 +12,18 @@ exports.externals = function externals(externals) {
 		});
 };
 
-exports.watch = function () {
+exports.watch = function() {
 	return (context, util) =>
 		util.merge({
 			watch: true,
+		});
+};
+
+exports.node = function() {
+	return (context, util) =>
+		util.merge({
+			node: {
+				__dirname: false,
+			},
 		});
 };

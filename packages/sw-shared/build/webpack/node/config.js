@@ -1,13 +1,14 @@
-const { target, externals, watch } = require('../plugins/core');
+const { target, externals, watch, node } = require('../plugins/core');
 const { babel } = require('../plugins/babel');
 const nodeExternals = require('webpack-node-externals');
 const path = require('path');
 const paths = require('../../paths');
 const fs = require('fs');
-
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const {
 	createConfig,
 	setEnv,
+	addPlugins,
 	entryPoint,
 	sourceMaps,
 	setMode,
@@ -41,7 +42,17 @@ module.exports = function makeConfig({ entries, output, alias }) {
 			filename: '[name].js',
 			path: output,
 		}),
+		addPlugins([
+			new CopyWebpackPlugin([
+				{
+					from: '*.js',
+					to: output,
+					context: path.resolve(path.dirname(output), 'src', 'config'),
+				},
+			]),
+		]),
 		sourceMaps(),
+		node(),
 	]);
 };
 

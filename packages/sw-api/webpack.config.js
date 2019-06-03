@@ -6,8 +6,8 @@ module.exports = makeConfig({
 	entries: path.resolve(paths.api.src, 'main'),
 	output: paths.api.dist,
 	alias: {
-		'@shared': 'sportywide-shared/src',	
-		'@schema': 'sportywide-schema/src',	
-		'@api': path.resolve(__dirname, 'src'),	
+		'@shared': 'sportywide-shared/src',
+		'@schema': 'sportywide-schema/src',
+		'@api': path.resolve(__dirname, 'src'),
 	},
 });
