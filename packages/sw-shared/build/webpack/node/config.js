@@ -50,6 +50,13 @@ module.exports = function makeConfig({ entries, output, alias }) {
 					context: path.resolve(path.dirname(output), 'src', 'config'),
 				},
 			]),
+			new CopyWebpackPlugin([
+				{
+					from: '.env*',
+					to: output,
+					context: path.resolve(path.dirname(output), 'src', 'config'),
+				},
+			]),
 		]),
 		sourceMaps(),
 		node(),
