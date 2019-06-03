@@ -45,7 +45,7 @@ module.exports = function makeConfig({ entries, output, alias }) {
 		addPlugins([
 			new CopyWebpackPlugin([
 				{
-					from: '*.js',
+					from: 'config*.js',
 					to: output,
 					context: path.resolve(path.dirname(output), 'src', 'config'),
 				},

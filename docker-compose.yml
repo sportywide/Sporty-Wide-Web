@@ -1,0 +1,31 @@
+version: '3'
+services:
+    web:
+        build:
+            context: .
+            dockerfile: ./packages/sw-web/Dockerfile
+        ports:
+            - 3000:3000
+        command: dev
+        volumes:
+            - sportywide-app-volume:/opt/app:nocopy
+            - /opt/app/packages/node_modules
+            - /opt/app/packages/sw-shared/node_modules
+            - /opt/app/packages/sw-web/node_modules
+    api:
+        build:
+            context: .
+            dockerfile: ./packages/sw-api/Dockerfile
+        ports:
+            - 5000:5000
+        command: dev
+        volumes:
+            - sportywide-app-volume:/opt/app:nocopy
+            - /opt/app/packages/node_modules
+            - /opt/app/packages/sw-shared/node_modules
+            - /opt/app/packages/sw-schema/node_modules
+            - /opt/app/packages/sw-api/node_modules
+
+volumes:
+    sportywide-app-volume:
+        external: true

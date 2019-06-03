@@ -1,0 +1,7 @@
+**/.git
+**/.DS_Store
+**/node_modules
+**/.docker-sync
+**/dist
+**/.next
+**/.idea
