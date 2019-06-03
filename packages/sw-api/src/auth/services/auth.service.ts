@@ -4,9 +4,9 @@ import { decode } from 'jsonwebtoken';
 
 @Injectable()
 export class AuthService {
-  constructor() {}
+	constructor() {}
 
-  getTokenPayload(token: string): ITokenPayload {
-    return decode(token) as ITokenPayload;
-  }
+	getTokenPayload(token: string): ITokenPayload {
+		return decode(token) as ITokenPayload;
+	}
 }
