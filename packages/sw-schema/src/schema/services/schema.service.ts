@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { IForm } from '@app/schema/models';
+import { IForm } from '@api/schema/models';
 
 @Injectable()
 export class SchemaService {

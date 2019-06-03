@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AuthService } from '@app/auth/services';
+import { AuthService } from '@api/auth/services';
 
 @Module({
   imports: [],

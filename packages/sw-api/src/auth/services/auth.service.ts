@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { ITokenPayload } from '@app/auth/models';
+import { ITokenPayload } from '@api/auth/models';
 import { decode } from 'jsonwebtoken';
 
 @Injectable()

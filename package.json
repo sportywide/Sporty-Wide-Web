@@ -1,0 +1,9 @@
+{
+  "name": "root",
+  "private": true,
+  "author": "Sporty Wide",
+  "description": "A Social network for Sports",
+  "devDependencies": {
+    "lerna": "^3.14.1"
+  }
+}
