@@ -1,0 +1,32 @@
+{
+    "name": "sportywide-web",
+    "version": "1.0.0",
+    "description": "",
+    "author": "",
+    "license": "MIT",
+    "scripts": {},
+    "dependencies": {
+        "next": "8.1.0",
+        "react": "16.8.6",
+        "react-dom": "16.8.6",
+        "rxjs": "6.3.3",
+        "sportywide-shared": "1.0.0"
+    },
+    "devDependencies": {
+        "next-plugin-custom-babel-config": "1.0.2"
+    },
+    "jest": {
+        "moduleFileExtensions": [
+            "js",
+            "json",
+            "ts"
+        ],
+        "rootDir": "src",
+        "testRegex": ".spec.ts$",
+        "transform": {
+            "^.+\\.(t|j)s$": "ts-jest"
+        },
+        "coverageDirectory": "../coverage",
+        "testEnvironment": "node"
+    }
+}

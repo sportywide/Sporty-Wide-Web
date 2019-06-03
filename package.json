@@ -4,6 +4,24 @@
   "author": "Sporty Wide",
   "description": "A Social network for Sports",
   "devDependencies": {
-    "lerna": "^3.14.1"
+    "lerna": "^3.14.1",
+    "link-parent-bin": "1.0.0",
+    "typescript": "3.5.1",
+    "webpack": "4.32.2",
+    "webpack-cli": "3.3.2",
+    "@babel/core": "7.4.5",
+    "@babel/plugin-proposal-class-properties": "7.4.4",
+    "@babel/plugin-proposal-decorators": "7.4.4",
+    "@babel/preset-env": "7.4.5",
+    "@babel/preset-typescript": "7.3.3",
+    "@webpack-blocks/babel": "2.0.0",
+    "@webpack-blocks/webpack": "2.0.0",
+    "babel-loader": "8.0.6",
+    "babel-plugin-transform-typescript-metadata": "0.2.2",
+    "npm-run-all": "4.1.5",
+    "webpack-node-externals": "1.7.2"
+  },
+  "scripts": {
+    "bootstrap": "lerna bootstrap && link-parent-bin"
   }
 }
