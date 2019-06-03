@@ -1,4 +1,4 @@
-exports.babel = function (options = {}) {
+exports.babel = function(options = {}) {
 	return (context, { merge }) =>
 		merge({
 			module: {
@@ -13,8 +13,8 @@ exports.babel = function (options = {}) {
 							exclude: /node_modules/,
 						},
 						context.match
-					)
-				]
-			}
-		})
+					),
+				],
+			},
+		});
 };

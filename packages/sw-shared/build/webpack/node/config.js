@@ -3,6 +3,7 @@ const { babel } = require('../plugins/babel');
 const nodeExternals = require('webpack-node-externals');
 const path = require('path');
 const paths = require('../../paths');
+const fs = require('fs');
 
 const {
 	createConfig,
@@ -23,21 +24,14 @@ module.exports = function makeConfig({ entries, output, alias }) {
 		setMode(isDev ? 'development' : 'production'),
 		entryPoint(entries),
 		target('node'),
-		externals([
-			nodeExternals({ modulesDir: paths.project.node_modules }),
-			nodeExternals({ modulesDir: paths.api.node_modules }),
-			nodeExternals({ modulesDir: paths.shared.node_modules }),
-			nodeExternals({ modulesDir: paths.schema.node_modules }),
-		]),
+		externals(getNodeModules()),
 		babel({
 			cwd: path.resolve(__dirname, 'babel'),
 		}),
 		resolve({
 			extensions: ['.ts', '.js', '.tsx', '.jsx', '.json'],
 			alias,
-			modules: [
-				"node_modules"
-			],
+			modules: ['node_modules'],
 		}),
 		setEnv({
 			NODE_ENV: process.env.NODE_ENV,
@@ -48,5 +42,24 @@ module.exports = function makeConfig({ entries, output, alias }) {
 			path: output,
 		}),
 		sourceMaps(),
-	])
+	]);
 };
+
+function getNodeModules() {
+	const projectRoot = paths.project.root;
+	const packageFolder = path.resolve(projectRoot, 'packages');
+	const excludeDirs = ['sw-web'];
+	const packageDirs = fs
+		.readdirSync(packageFolder)
+		.filter(dir => !excludeDirs.includes(dir) && fs.statSync(path.join(packageFolder, dir)).isDirectory())
+		.map(dir => path.resolve(packageFolder, dir));
+
+	return [
+		path.resolve(projectRoot, 'node_modules'),
+		...packageDirs.map(dir => path.resolve(dir, 'node_modules')),
+	].map(dir =>
+		nodeExternals({
+			modulesDir: dir,
+		})
+	);
+}

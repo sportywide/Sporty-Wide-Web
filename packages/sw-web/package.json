@@ -1,32 +1,40 @@
 {
-    "name": "sportywide-web",
-    "version": "1.0.0",
-    "description": "",
-    "author": "",
-    "license": "MIT",
-    "scripts": {},
-    "dependencies": {
-        "next": "8.1.0",
-        "react": "16.8.6",
-        "react-dom": "16.8.6",
-        "rxjs": "6.3.3",
-        "sportywide-shared": "1.0.0"
-    },
-    "devDependencies": {
-        "next-plugin-custom-babel-config": "1.0.2"
-    },
-    "jest": {
-        "moduleFileExtensions": [
-            "js",
-            "json",
-            "ts"
-        ],
-        "rootDir": "src",
-        "testRegex": ".spec.ts$",
-        "transform": {
-            "^.+\\.(t|j)s$": "ts-jest"
-        },
-        "coverageDirectory": "../coverage",
-        "testEnvironment": "node"
-    }
+	"name": "sportywide-web",
+	"version": "1.0.0",
+	"description": "",
+	"author": "",
+	"license": "MIT",
+	"scripts": {
+		"dev": "NODE_ENV=development node ./src/next-server.js",
+		"build": "next build",
+		"start": "NODE_ENV=production node ./src/next-server.js"
+	},
+	"dependencies": {
+		"cross-env": "5.2.0",
+		"express": "4.17.1",
+		"http-proxy-middleware": "0.19.1",
+		"next": "8.1.0",
+		"react": "16.8.6",
+		"react-dom": "16.8.6",
+		"rxjs": "6.3.3",
+		"sportywide-shared": "1.0.0"
+	},
+	"devDependencies": {
+		"@types/next": "8.0.5",
+		"next-plugin-custom-babel-config": "1.0.2"
+	},
+	"jest": {
+		"moduleFileExtensions": [
+			"js",
+			"json",
+			"ts"
+		],
+		"rootDir": "src",
+		"testRegex": ".spec.ts$",
+		"transform": {
+			"^.+\\.(t|j)s$": "ts-jest"
+		},
+		"coverageDirectory": "../coverage",
+		"testEnvironment": "node"
+	}
 }

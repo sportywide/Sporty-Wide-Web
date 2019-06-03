@@ -7,7 +7,7 @@ const paths = {
 			get src() {
 				return path.resolve(this.root, 'src');
 			},
-			get node_modules() {
+			get nodeModules() {
 				return path.resolve(this.root, 'node_modules');
 			},
 			get bin() {
@@ -18,10 +18,16 @@ const paths = {
 	get shared() {
 		return {
 			root: path.resolve(paths.project.root, 'packages', 'sw-shared'),
+			get build() {
+				return path.resolve(this.root, 'build');
+			},
+			get webpack() {
+				return path.resolve(this.root, 'build', 'webpack');
+			},
 			get src() {
 				return path.resolve(this.root, 'src');
 			},
-			get node_modules() {
+			get nodeModules() {
 				return path.resolve(this.root, 'node_modules');
 			},
 			get bin() {
@@ -35,7 +41,7 @@ const paths = {
 			get src() {
 				return path.resolve(this.root, 'src');
 			},
-			get node_modules() {
+			get nodeModules() {
 				return path.resolve(this.root, 'node_modules');
 			},
 			get bin() {
@@ -52,7 +58,7 @@ const paths = {
 			get dist() {
 				return path.resolve(this.root, 'dist');
 			},
-			get node_modules() {
+			get nodeModules() {
 				return path.resolve(this.root, 'node_modules');
 			},
 			get bin() {
@@ -63,7 +69,7 @@ const paths = {
 	get project() {
 		return {
 			root: path.resolve(__dirname, '..', '..', '..', '..'),
-			get node_modules() {
+			get nodeModules() {
 				return path.resolve(this.root, 'node_modules');
 			},
 			get bin() {

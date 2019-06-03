@@ -1,10 +1,7 @@
-module.exports = function (api) {
+module.exports = function(api) {
 	api.cache(true);
 
 	return {
-		'presets': [
-			'next/babel',
-			'@zeit/next-typescript/babel',
-		],
+		presets: ['next/babel', '@zeit/next-typescript/babel'],
 	};
 };
