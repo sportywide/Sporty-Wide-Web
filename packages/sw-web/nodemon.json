@@ -1,0 +1,5 @@
+{
+	"ignore": ["node_modules"],
+	"watch": ["./src/config/*.js", "./src/next-server.js"],
+	"exec": "node src/next-server.js"
+}

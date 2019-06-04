@@ -5,7 +5,7 @@
 	"author": "",
 	"license": "MIT",
 	"scripts": {
-		"dev": "NODE_ENV=development node ./src/next-server.js",
+		"dev": "NODE_ENV=development nodemon",
 		"build": "next build",
 		"start": "NODE_ENV=production node ./src/next-server.js"
 	},
