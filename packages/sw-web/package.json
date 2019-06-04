@@ -5,9 +5,9 @@
 	"author": "",
 	"license": "MIT",
 	"scripts": {
-		"dev": "NODE_ENV=development node ./src/next-server.js",
+		"dev": "cross-env NODE_ENV=development nodemon",
 		"build": "next build",
-		"start": "NODE_ENV=production node ./src/next-server.js"
+		"start": "cross-env NODE_ENV=production node ./src/next-server.js"
 	},
 	"dependencies": {
 		"express": "4.17.1",

@@ -4,8 +4,6 @@ COPY --chown=sportywide:sportywide ./packages/sw-shared/package*.json $PROJECT_R
 COPY --chown=sportywide:sportywide ./packages/sw-schema/package*.json $PROJECT_ROOT/packages/sw-schema/
 COPY --chown=sportywide:sportywide ./packages/sw-api/package*.json $PROJECT_ROOT/packages/sw-api/
 
-RUN ls
-
 RUN cd $PROJECT_ROOT && npm run bootstrap
 
 USER $USER

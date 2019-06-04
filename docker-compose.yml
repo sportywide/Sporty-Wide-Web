@@ -9,7 +9,7 @@ services:
         command: dev
         volumes:
             - sportywide-app-volume:/opt/app:nocopy
-            - /opt/app/packages/node_modules
+            - /opt/app/node_modules
             - /opt/app/packages/sw-shared/node_modules
             - /opt/app/packages/sw-web/node_modules
     api:
@@ -21,7 +21,7 @@ services:
         command: dev
         volumes:
             - sportywide-app-volume:/opt/app:nocopy
-            - /opt/app/packages/node_modules
+            - /opt/app/node_modules
             - /opt/app/packages/sw-shared/node_modules
             - /opt/app/packages/sw-schema/node_modules
             - /opt/app/packages/sw-api/node_modules
