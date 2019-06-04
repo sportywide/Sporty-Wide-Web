@@ -1,3 +1,4 @@
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { target, externals, watch, node } = require('../plugins/core');
 const { babel } = require('../plugins/babel');
 const nodeExternals = require('webpack-node-externals');
@@ -42,6 +43,7 @@ module.exports = function makeConfig({ entries, output, alias }) {
 			filename: '[name].js',
 			path: output,
 		}),
+		addPlugins([new CleanWebpackPlugin()]),
 		addPlugins([
 			new CopyWebpackPlugin([
 				{

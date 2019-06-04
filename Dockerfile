@@ -14,8 +14,6 @@ adduser -S -u ${PUID} -G ${GROUP} -D ${USER}
 
 RUN mkdir -p /opt/app
 
-RUN npm install -g nodemon
-
 ENV PROJECT_ROOT /opt/app
 
 RUN chown $USER:$GROUP $PROJECT_ROOT

@@ -1,5 +1,10 @@
 version: '3'
 services:
+    base:
+        image: sportywide-base
+        build:
+            context: .
+            dockerfile: Dockerfile
     web:
         build:
             context: .
@@ -7,6 +12,8 @@ services:
         ports:
             - 3000:3000
         command: dev
+        depends_on:
+            - base
         volumes:
             - sportywide-app-volume:/opt/app:nocopy
             - /opt/app/node_modules
@@ -19,6 +26,8 @@ services:
         ports:
             - 5000:5000
         command: dev
+        depends_on:
+            - base
         volumes:
             - sportywide-app-volume:/opt/app:nocopy
             - /opt/app/node_modules

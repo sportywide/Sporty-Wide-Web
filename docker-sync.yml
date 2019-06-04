@@ -6,14 +6,4 @@ syncs:
         sync_host_port: 10870
         sync_strategy: 'unison'
         sync_userid: 1024
-        sync_excludes:
-            [
-                '.idea',
-                '.gitignore',
-                '.last-npm-install.checksum',
-                '.next',
-                'node_modules',
-                'dist',
-                '.DS_Store',
-                '.docker-sync',
-            ]
+        sync_excludes: ['.idea', '.gitignore', '.next', 'node_modules', 'dist', '.DS_Store', '.docker-sync']
