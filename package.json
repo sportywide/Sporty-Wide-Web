@@ -27,6 +27,7 @@
 		"eslint-config-prettier": "4.3.0",
 		"eslint-plugin-prettier": "3.1.0",
 		"eslint-plugin-react": "7.13.0",
+		"fork-ts-checker-webpack-plugin": "1.3.5",
 		"husky": "2.3.0",
 		"lerna": "^3.14.1",
 		"link-parent-bin": "1.0.0",

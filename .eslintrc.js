@@ -15,5 +15,9 @@ module.exports = {
 		'@typescript-eslint/no-use-before-define': 0,
 		'@typescript-eslint/interface-name-prefix': 0,
 		'@typescript-eslint/explicit-function-return-type': 0,
+		'no-undef': 'error',
+	},
+	env: {
+		node: true,
 	},
 };

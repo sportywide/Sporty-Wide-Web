@@ -5,12 +5,16 @@ const nodeExternals = require('webpack-node-externals');
 const path = require('path');
 const paths = require('../../paths');
 const fs = require('fs');
+const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
+
 const {
 	createConfig,
 	setEnv,
 	addPlugins,
 	entryPoint,
+	env,
 	sourceMaps,
 	setMode,
 	setOutput,
@@ -42,6 +46,15 @@ module.exports = function makeConfig({ entries, output, alias, dependencies = []
 			NODE_ENV: process.env.NODE_ENV,
 		}),
 		watch(),
+		env('development', [addPlugins([new ForkTsCheckerWebpackPlugin()]), sourceMaps('inline-source-map')]),
+		env('production', [sourceMaps('source-map')]),
+		addPlugins([
+			new webpack.BannerPlugin({
+				banner: 'require("source-map-support").install();',
+				raw: true,
+				entryOnly: false,
+			}),
+		]),
 		setOutput({
 			filename: '[name].js',
 			path: output,
@@ -77,7 +90,6 @@ module.exports = function makeConfig({ entries, output, alias, dependencies = []
 				])
 			)
 		),
-		sourceMaps(),
 		node(),
 	]);
 };
