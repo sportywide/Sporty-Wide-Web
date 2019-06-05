@@ -17,9 +17,12 @@ const {
 	resolve,
 } = require('@webpack-blocks/webpack');
 
-module.exports = function makeConfig({ entries, output, alias }) {
+module.exports = function makeConfig({ entries, output, alias, dependencies = [] }) {
 	process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 	const isDev = process.env.NODE_ENV === 'development';
+	const packageName = path.basename(path.dirname(output));
+
+	dependencies = [...dependencies, packageName];
 
 	return createConfig([
 		setOutput(output),
@@ -44,22 +47,36 @@ module.exports = function makeConfig({ entries, output, alias }) {
 			path: output,
 		}),
 		addPlugins([new CleanWebpackPlugin()]),
-		addPlugins([
-			new CopyWebpackPlugin([
-				{
-					from: 'config*.js',
-					to: output,
-					context: path.resolve(path.dirname(output), 'src', 'config'),
-				},
-			]),
-			new CopyWebpackPlugin([
-				{
-					from: '.env*',
-					to: output,
-					context: path.resolve(path.dirname(output), 'src', 'config'),
-				},
-			]),
-		]),
+		addPlugins(
+			[].concat(
+				...dependencies.map(dependency => [
+					new CopyWebpackPlugin(
+						[
+							{
+								from: '*',
+								to: path.resolve(output, dependency, 'config'),
+								context: path.resolve(paths.project.root, 'packages', dependency, 'config'),
+							},
+						],
+						{
+							copyUnmodified: true,
+						}
+					),
+					new CopyWebpackPlugin(
+						[
+							{
+								from: '*',
+								to: path.resolve(output, dependency, 'assets'),
+								context: path.resolve(paths.project.root, 'packages', dependency, 'assets'),
+							},
+						],
+						{
+							copyUnmodified: true,
+						}
+					),
+				])
+			)
+		),
 		sourceMaps(),
 		node(),
 	]);

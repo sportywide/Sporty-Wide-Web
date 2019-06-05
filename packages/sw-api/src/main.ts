@@ -1,7 +1,9 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import * as cors from 'cors';
-import config from '@api/config';
+import config from './config';
+import schemaConfig from '@schema/config';
+console.log(schemaConfig.get('mongo_url'));
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
