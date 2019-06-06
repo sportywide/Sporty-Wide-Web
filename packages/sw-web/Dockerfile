@@ -3,7 +3,7 @@ FROM sportywide-base
 COPY --chown=sportywide:sportywide ./packages/sw-shared/package*.json $PROJECT_ROOT/packages/sw-shared/
 COPY --chown=sportywide:sportywide ./packages/sw-web/package*.json $PROJECT_ROOT/packages/sw-web/
 
-RUN cd $PROJECT_ROOT && npm run bootstrap
+RUN cd $PROJECT_ROOT && node /opt/app/bin/install.js sw-web
 
 USER $USER
 
@@ -12,5 +12,5 @@ COPY --chown=sportywide:sportywide ./packages/sw-web $PROJECT_ROOT/packages/sw-w
 
 WORKDIR $PROJECT_ROOT/packages/sw-web
 
-ENTRYPOINT ["/usr/local/bin/npm", "run"]
+ENTRYPOINT ["/bin/sh", "bin/bootstrap.sh"]
 CMD "dev"

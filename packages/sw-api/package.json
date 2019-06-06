@@ -5,7 +5,7 @@
 	"keywords": [],
 	"scripts": {
 		"dev:webpack": "webpack --config ./webpack.config.js",
-		"dev:server": "wait-on dist/main.js && nodemon",
+		"dev:server": "sleep 2 && wait-on dist/main.js && nodemon",
 		"dev": "run-p dev:*"
 	},
 	"license": "ISC",

@@ -32,7 +32,7 @@
 		"lerna": "^3.14.1",
 		"link-parent-bin": "1.0.0",
 		"lint-staged": "8.1.7",
-		"next": "8.1.0",
+		"module-alias": "2.2.0",
 		"nodemon": "1.19.1",
 		"npm-run-all": "4.1.5",
 		"prettier": "1.17.1",
@@ -67,5 +67,9 @@
 		"*.(ts|js|json|html|scss)": [
 			"pretty-quick --staged"
 		]
+	},
+	"_moduleAliases": {
+		"@root": ".",
+		"@shared": "./packages/sw-shared"
 	}
 }

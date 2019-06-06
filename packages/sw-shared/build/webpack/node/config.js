@@ -1,12 +1,15 @@
+require('module-alias/register');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const { target, externals, watch, node } = require('../plugins/core');
 const { babel } = require('../plugins/babel');
 const nodeExternals = require('webpack-node-externals');
 const path = require('path');
-const paths = require('../../paths');
+const paths = require('@shared/build/paths');
+const { getDependencies } = require('@root/helpers/package.js');
 const fs = require('fs');
 const webpack = require('webpack');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
+
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const {
@@ -21,12 +24,11 @@ const {
 	resolve,
 } = require('@webpack-blocks/webpack');
 
-module.exports = function makeConfig({ entries, output, alias, dependencies = [] }) {
+module.exports = function makeConfig({ entries, output, alias }) {
 	process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 	const isDev = process.env.NODE_ENV === 'development';
 	const packageName = path.basename(path.dirname(output));
-
-	dependencies = [...dependencies, packageName];
+	const dependencies = [...getDependencies({ packageName, rootDir: paths.project.root }), packageName];
 
 	return createConfig([
 		setOutput(output),

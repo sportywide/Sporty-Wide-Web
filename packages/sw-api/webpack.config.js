@@ -5,7 +5,6 @@ const path = require('path');
 module.exports = makeConfig({
 	entries: path.resolve(paths.api.src, 'main'),
 	output: paths.api.dist,
-	dependencies: ['sw-schema', 'sw-shared'],
 	alias: {
 		'@shared': 'sportywide-shared/src',
 		'@schema': 'sportywide-schema/src',
