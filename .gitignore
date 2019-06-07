@@ -13,7 +13,7 @@ cmake-build-*/
 # IntelliJ
 out/
 
-.last-npm-install.checksum
+install.lock
 
 checkstyle/
 

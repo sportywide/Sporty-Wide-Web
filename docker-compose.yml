@@ -15,7 +15,8 @@ services:
         depends_on:
             - base
         volumes:
-            - sportywide-app-volume:/opt/app:nocopy
+            - ./packages/sw-shared:/opt/app/packages/sw-shared
+            - ./packages/sw-web:/opt/app/packages/sw-web
             - /opt/app/node_modules
             - /opt/app/packages/sw-shared/node_modules
             - /opt/app/packages/sw-web/node_modules
@@ -29,12 +30,9 @@ services:
         depends_on:
             - base
         volumes:
-            - sportywide-app-volume:/opt/app:nocopy
-            - /opt/app/node_modules
+            - ./packages/sw-api:/opt/app/packages/sw-api
+            - ./packages/sw-shared:/opt/app/packages/sw-shared
+            - ./packages/sw-schema:/opt/app/packages/sw-schema
             - /opt/app/packages/sw-shared/node_modules
             - /opt/app/packages/sw-schema/node_modules
             - /opt/app/packages/sw-api/node_modules
-
-volumes:
-    sportywide-app-volume:
-        external: true

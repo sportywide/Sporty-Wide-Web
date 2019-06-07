@@ -9,3 +9,11 @@ exports.getDependencies = function({ rootDir = process.cwd(), packageName }) {
 		.filter(dependency => dependency.startsWith('sportywide-'))
 		.map(dependency => dependency.replace('sportywide-', 'sw-'));
 };
+
+exports.getAllPackages = function({ rootDir = process.cwd() } = {}) {
+	const packagesDir = path.resolve(rootDir, 'packages');
+	if (!fs.existsSync(packagesDir)) {
+		return [];
+	}
+	return fs.readdirSync(packagesDir).filter(package => package.startsWith('sw-'));
+};

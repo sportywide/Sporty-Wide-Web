@@ -18,13 +18,13 @@ ENV PROJECT_ROOT /opt/app
 
 RUN chown $USER:$GROUP $PROJECT_ROOT
 
-COPY --chown=sportywide:sportywide package*.json lerna.json $PROJECT_ROOT/
-COPY --chown=sportywide:sportywide helpers $PROJECT_ROOT/helpers
+COPY --chown=sportywide:sportywide package*.json lerna.json tsconfig.json $PROJECT_ROOT/
 COPY --chown=sportywide:sportywide bin $PROJECT_ROOT/bin
+COPY --chown=sportywide:sportywide helpers $PROJECT_ROOT/helpers
 
 USER $USER
 
 WORKDIR $PROJECT_ROOT
 
-RUN npm ci
+RUN node /opt/app/bin/install.js
 

@@ -18,5 +18,7 @@ module.exports = withCustomBabelConfigFile(
 			};
 			return config;
 		},
+		dest: 'dist',
+		dir: 'src',
 	})
 );

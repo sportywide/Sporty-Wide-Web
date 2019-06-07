@@ -9,6 +9,7 @@
 		"dotenv": "8.0.0",
 		"nconf": "0.10.0",
 		"nconf-js": "1.0.0",
-		"source-map-support": "0.5.12"
+		"source-map-support": "0.5.12",
+		"lodash": "^4.17.11"
 	}
 }

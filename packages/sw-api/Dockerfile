@@ -4,7 +4,7 @@ COPY --chown=sportywide:sportywide ./packages/sw-shared/package*.json $PROJECT_R
 COPY --chown=sportywide:sportywide ./packages/sw-schema/package*.json $PROJECT_ROOT/packages/sw-schema/
 COPY --chown=sportywide:sportywide ./packages/sw-api/package*.json $PROJECT_ROOT/packages/sw-api/
 
-RUN cd $PROJECT_ROOT && node /opt/app/bin/install.js sw-api
+RUN cd $PROJECT_ROOT && node /opt/app/bin/install.js
 
 USER $USER
 
@@ -14,6 +14,6 @@ COPY --chown=sportywide:sportywide ./packages/sw-api $PROJECT_ROOT/packages/sw-a
 
 WORKDIR $PROJECT_ROOT/packages/sw-api
 
-ENTRYPOINT ["/bin/sh", "./bin/bootstrap.sh"]
+ENTRYPOINT ["/bin/sh", "bin/bootstrap.sh"]
 
 CMD "dev"
