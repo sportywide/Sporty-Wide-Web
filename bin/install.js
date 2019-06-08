@@ -38,7 +38,7 @@ function checkLatestInstall() {
 function ensureNpmInstall() {
 	if (!fs.existsSync('node_modules')) {
 		console.log('Installing node_modules');
-		execSync('npm ci && npm run bootstrap');
+		execSync('npm ci');
 		updateChecksum();
 	}
 }
