@@ -5,27 +5,49 @@ const { getAllPackages } = require('../helpers/package');
 const { execSync } = require('../helpers/process');
 const allPackages = getAllPackages();
 const CHECKSUM_FILE = '.last-npm-install.checksum';
+ensureNpmInstall();
+const argv = require('yargs').argv;
+
 checkLatestInstall();
 
 function checkLatestInstall() {
 	console.info('Checking latest install');
 	try {
-		const basePackageChanged = checkBasePackage();
-		const subPackagesChanged = checkSubPackages();
-		if (basePackageChanged || subPackagesChanged) {
-			if (allPackages.length) {
-				installSubPackagesDependencies();
-				for (const packageName of allPackages) {
-					writeCheckSum(path.resolve('packages', packageName));
-				}
-			}
-			writeCheckSum(process.cwd());
+		const forceInstall = argv.f || argv.force;
+		if (forceInstall) {
+			installBaseDependencies();
+			installSubPackagesDependencies();
+			updateChecksum();
 		} else {
-			console.info('Up to date');
+			const basePackageChanged = checkBasePackage();
+			const subPackagesChanged = checkSubPackages();
+			if (basePackageChanged || subPackagesChanged) {
+				if (allPackages.length) {
+					installSubPackagesDependencies();
+				}
+				updateChecksum();
+			} else {
+				console.info('Up to date');
+			}
 		}
 	} catch (error) {
 		console.error(error);
 	}
+}
+
+function ensureNpmInstall() {
+	if (!fs.existsSync('node_modules')) {
+		console.log('Installing node_modules');
+		execSync('npm ci && npm run bootstrap');
+		updateChecksum();
+	}
+}
+
+function updateChecksum() {
+	for (const packageName of allPackages) {
+		writeCheckSum(path.resolve('packages', packageName));
+	}
+	writeCheckSum(process.cwd());
 }
 
 function checkBasePackage() {
