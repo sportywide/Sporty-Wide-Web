@@ -3,7 +3,7 @@ const path = require('path');
 const paths = {
 	get web() {
 		return {
-			root: path.resolve(paths.project.root, 'sw-web'),
+			root: path.resolve(paths.project.root, 'packages', 'sw-web'),
 			get src() {
 				return path.resolve(this.root, 'src');
 			},

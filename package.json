@@ -10,7 +10,6 @@
 		"@babel/preset-env": "7.4.5",
 		"@babel/preset-typescript": "7.3.3",
 		"@types/node": "12.0.4",
-		"@types/react": "16.8.19",
 		"@typescript-eslint/eslint-plugin": "1.9.0",
 		"@typescript-eslint/parser": "1.9.0",
 		"@webpack-blocks/babel": "2.0.0",

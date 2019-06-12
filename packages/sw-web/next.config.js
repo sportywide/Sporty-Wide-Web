@@ -13,7 +13,7 @@ module.exports = withCustomBabelConfigFile(
 				alias: {
 					...oldConfig.resolve.alias,
 					'@shared': 'sportywide-shared/src',
-					'@web': paths.web.src,
+					'@web': paths.web.src + '/',
 				},
 			};
 			return config;

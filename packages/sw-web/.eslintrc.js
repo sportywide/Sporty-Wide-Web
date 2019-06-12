@@ -3,6 +3,9 @@ module.exports = {
 	env: {
 		browser: true,
 	},
+	rules: {
+		'react/display-name': 0,
+	},
 	plugins: ['react'],
 	settings: {
 		react: {

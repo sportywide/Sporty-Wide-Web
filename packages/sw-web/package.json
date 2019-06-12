@@ -15,12 +15,23 @@
 		"next": "8.1.0",
 		"react": "16.8.6",
 		"react-dom": "16.8.6",
-		"rxjs": "6.3.3",
-		"sportywide-shared": "1.0.0"
+		"rxjs": "6.5.2",
+		"sportywide-shared": "1.0.0",
+		"next-redux-wrapper": "2.1.0",
+		"react-redux": "7.1.0",
+		"redux": "4.0.1",
+		"redux-observable": "1.1.0",
+		"redux-thunk": "2.3.0",
+		"prop-types": "15.7.2",
+		"recompose": "0.30.0",
+		"axios-observable": "1.1.1"
 	},
 	"devDependencies": {
 		"@types/next": "8.0.5",
-		"next-plugin-custom-babel-config": "1.0.2"
+		"@types/react": "16.8.19",
+		"@types/styled-jsx": "2.2.8",
+		"next-plugin-custom-babel-config": "1.0.2",
+		"redux-devtools-extension": "2.13.8"
 	},
 	"jest": {
 		"moduleFileExtensions": [

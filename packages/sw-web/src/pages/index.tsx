@@ -1,16 +1,27 @@
 import React from 'react';
+import Link from 'next/link';
+import { CharacterInfo } from '@web/features/home/components';
 
-class IndexPage extends React.Component {
-	componentDidMount(): void {
-		console.log('here');
-		fetch('/api/hello')
-			.then(res => res.text())
-			.then(console.log);
-	}
+interface Props {
+	startFetchingCharacters: Function;
+	stopFetchingCharacters: Function;
+}
 
+class Counter extends React.Component<Props, any> {
 	render() {
-		return <h1>eeee</h1>;
+		return (
+			<div>
+				<h1>Index Page</h1>
+				<CharacterInfo />
+				<br />
+				<nav>
+					<Link href="/other">
+						<a>Navigate to &quot;/other&quot;</a>
+					</Link>
+				</nav>
+			</div>
+		);
 	}
 }
 
-export default IndexPage;
+export default Counter;
