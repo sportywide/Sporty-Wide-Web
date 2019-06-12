@@ -1,8 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import { IHomeState } from '../store/reducers/';
 import PropTypes from 'prop-types';
 
-const CharacterInfo = ({ character, error, isFetchedOnServer = false }) => (
+const CharacterInfo = ({ character, error, isFetchedOnServer = false }: IHomeState) => (
 	<div className="CharacterInfo">
 		{error ? (
 			<p>We encountered and error.</p>
@@ -40,8 +41,4 @@ CharacterInfo.propTypes = {
 	isFetchedOnServer: PropTypes.bool,
 };
 
-export default connect(state => ({
-	character: state.character,
-	error: state.error,
-	isFetchedOnServer: state.isFetchedOnServer,
-}))(CharacterInfo);
+export default connect(({ home }: { home: IHomeState }) => home)(CharacterInfo);

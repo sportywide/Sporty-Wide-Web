@@ -98,8 +98,9 @@ function getLastPackageChecksum(dir) {
 
 function getCurrentPackageChecksum(dir) {
 	const computeHash = crypto.createHash('sha1');
+	const packageLockPath = path.resolve(dir, 'package-lock.json');
 	const packageContents = fs.readFileSync(path.resolve(dir, 'package.json'), 'utf8');
-	const packageLockContents = fs.readFileSync(path.resolve(dir, 'package-lock.json'), 'utf8');
+	const packageLockContents = fs.existsSync(packageLockPath) ? fs.readFileSync(packageLockPath, 'utf8') : '';
 	computeHash.update(packageContents + packageLockContents, 'utf8');
 	return computeHash.digest('hex');
 }

@@ -10,7 +10,7 @@ export const fetchUserEpic = (action$, state$) => {
 	return action$.ofType(START_FETCHING_CHARACTERS).pipe(
 		mergeMap(() =>
 			interval(3000).pipe(
-				mergeMap(() => fetchCharacter(state$.value.nextCharacterId)),
+				mergeMap(() => fetchCharacter(state$.value.home.nextCharacterId)),
 				takeUntil(action$.ofType(STOP_FETCHING_CHARACTERS))
 			)
 		)

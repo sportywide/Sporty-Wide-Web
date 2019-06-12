@@ -24,7 +24,9 @@
 		"redux-thunk": "2.3.0",
 		"prop-types": "15.7.2",
 		"recompose": "0.30.0",
-		"axios-observable": "1.1.1"
+		"axios-observable": "1.1.1",
+		"axios": "0.18.0",
+		"hoist-non-react-statics": "3.3.0"
 	},
 	"devDependencies": {
 		"@types/next": "8.0.5",
