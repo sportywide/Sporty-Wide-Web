@@ -1,8 +1,8 @@
-const path = require('path');
-const crypto = require('crypto');
-const fs = require('fs');
-const { getAllPackages } = require('../helpers/package');
-const { execSync } = require('../helpers/process');
+import path from 'path';
+import crypto from 'crypto';
+import fs from 'fs';
+import { getAllPackages } from '../helpers/package';
+import { execSync } from '../helpers/process';
 const allPackages = getAllPackages();
 const CHECKSUM_FILE = '.last-npm-install.checksum';
 ensureNpmInstall();

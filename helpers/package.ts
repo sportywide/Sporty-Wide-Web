@@ -1,19 +1,19 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
-exports.getDependencies = function({ rootDir = process.cwd(), packageName }) {
+export function getDependencies({ rootDir = process.cwd(), packageName }) {
 	const packageJson = JSON.parse(
 		fs.readFileSync(path.resolve(rootDir, 'packages', packageName, 'package.json'), 'utf-8')
 	);
 	return [...Object.keys(packageJson.dependencies || {}), ...Object.keys(packageJson.devDependencies || {})]
 		.filter(dependency => dependency.startsWith('sportywide-'))
 		.map(dependency => dependency.replace('sportywide-', 'sw-'));
-};
+}
 
-exports.getAllPackages = function({ rootDir = process.cwd() } = {}) {
+export function getAllPackages({ rootDir = process.cwd() } = {}) {
 	const packagesDir = path.resolve(rootDir, 'packages');
 	if (!fs.existsSync(packagesDir)) {
 		return [];
 	}
-	return fs.readdirSync(packagesDir).filter(package => package.startsWith('sw-'));
-};
+	return fs.readdirSync(packagesDir).filter(packageName => packageName.startsWith('sw-'));
+}

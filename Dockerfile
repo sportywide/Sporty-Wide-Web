@@ -26,5 +26,5 @@ USER $USER
 
 WORKDIR $PROJECT_ROOT
 
-RUN node /opt/app/bin/install.js
+RUN npm run install:dependencies
 

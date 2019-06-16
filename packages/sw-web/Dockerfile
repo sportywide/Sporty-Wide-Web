@@ -3,7 +3,7 @@ FROM sportywide-base
 COPY --chown=sportywide:sportywide ./packages/sw-shared/package*.json $PROJECT_ROOT/packages/sw-shared/
 COPY --chown=sportywide:sportywide ./packages/sw-web/package*.json $PROJECT_ROOT/packages/sw-web/
 
-RUN cd $PROJECT_ROOT && node /opt/app/bin/install.js
+RUN cd $PROJECT_ROOT && npm run install:dependencies
 
 USER $USER
 

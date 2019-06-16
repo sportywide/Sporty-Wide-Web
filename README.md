@@ -7,7 +7,7 @@
 
 ### Initial setup:
 
--   `node bin/install.js`
+-   `npm run install:dependencies`
 
 ### Project structure
 

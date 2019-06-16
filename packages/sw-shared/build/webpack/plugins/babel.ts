@@ -1,4 +1,4 @@
-exports.babel = function(options = {}) {
+export function babel(options = {}) {
 	return (context, { merge }) =>
 		merge({
 			module: {
@@ -17,4 +17,4 @@ exports.babel = function(options = {}) {
 				],
 			},
 		});
-};
+}

@@ -4,9 +4,9 @@
 	"description": "This package contains all API related code",
 	"keywords": [],
 	"scripts": {
-		"dev:webpack": "webpack --config ./webpack.config.js",
-		"dev:server": "sleep 2 && wait-on dist/main.js && nodemon",
-		"dev": "run-p dev:*"
+		"dev:webpack": "ts-node -r tsconfig-paths/register node_modules/.bin/webpack",
+		"dev:server": "wait-on dist/main.js && nodemon",
+		"dev": "rm -rf dist/ && run-p dev:*"
 	},
 	"license": "ISC",
 	"dependencies": {

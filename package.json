@@ -5,6 +5,7 @@
 	"description": "A Social network for Sports",
 	"devDependencies": {
 		"@babel/core": "7.4.5",
+		"ts-node": "8.3.0",
 		"@babel/plugin-proposal-class-properties": "7.4.4",
 		"@babel/plugin-proposal-decorators": "7.4.4",
 		"@babel/preset-env": "7.4.5",
@@ -31,12 +32,12 @@
 		"lerna": "^3.14.1",
 		"link-parent-bin": "1.0.0",
 		"lint-staged": "8.1.7",
-		"module-alias": "2.2.0",
 		"nodemon": "1.19.1",
 		"npm-run-all": "4.1.5",
 		"prettier": "1.17.1",
 		"pretty-quick": "1.11.0",
 		"typescript": "3.4.5",
+		"tsconfig-paths": "3.8.0",
 		"wait-on": "3.2.0",
 		"webpack": "4.32.2",
 		"webpack-cli": "3.3.2",
@@ -45,7 +46,8 @@
 	},
 	"scripts": {
 		"bootstrap": "lerna bootstrap --hoist && link-parent-bin",
-		"cz": "git add . && git-cz"
+		"cz": "git add . && git-cz",
+		"install:dependencies": "ts-node bin/install.ts"
 	},
 	"config": {
 		"commitizen": {
@@ -67,9 +69,5 @@
 		"*.(ts|js|json|html|scss)": [
 			"pretty-quick --staged"
 		]
-	},
-	"_moduleAliases": {
-		"@root": ".",
-		"@shared": "./packages/sw-shared"
 	}
 }

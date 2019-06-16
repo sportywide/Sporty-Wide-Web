@@ -1,30 +1,27 @@
-require('module-alias/register');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const { target, externals, watch, node } = require('../plugins/core');
-const { babel } = require('../plugins/babel');
-const nodeExternals = require('webpack-node-externals');
-const path = require('path');
-const paths = require('@shared/build/paths');
-const { getDependencies } = require('@root/helpers/package');
-const fs = require('fs');
-const webpack = require('webpack');
-const CopyWebpackPlugin = require('copy-webpack-plugin');
-
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
-
-const {
-	createConfig,
-	setEnv,
+import { getDependencies } from '@root/helpers/package';
+import { externals, node, target, watch } from '../plugins/core';
+import { CleanWebpackPlugin } from 'clean-webpack-plugin';
+import { babel } from '../plugins/babel';
+import nodeExternals from 'webpack-node-externals';
+import path from 'path';
+import paths from '@build/paths';
+import fs from 'fs';
+import CopyWebpackPlugin from 'copy-webpack-plugin';
+import webpack from 'webpack';
+import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+import {
 	addPlugins,
+	createConfig,
 	entryPoint,
 	env,
-	sourceMaps,
+	resolve,
+	setEnv,
 	setMode,
 	setOutput,
-	resolve,
-} = require('@webpack-blocks/webpack');
+	sourceMaps,
+} from '@webpack-blocks/webpack';
 
-module.exports = function makeConfig({ entries, output, alias }) {
+export function makeConfig({ entries, output, alias }) {
 	process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 	const isDev = process.env.NODE_ENV === 'development';
 	const packageName = path.basename(path.dirname(output));
@@ -64,6 +61,7 @@ module.exports = function makeConfig({ entries, output, alias }) {
 		addPlugins([new CleanWebpackPlugin()]),
 		addPlugins(
 			[].concat(
+				//@ts-ignore
 				...dependencies.map(dependency => [
 					new CopyWebpackPlugin(
 						[
@@ -94,7 +92,7 @@ module.exports = function makeConfig({ entries, output, alias }) {
 		),
 		node(),
 	]);
-};
+}
 
 function getNodeModules() {
 	const projectRoot = paths.project.root;

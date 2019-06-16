@@ -1,29 +1,29 @@
-exports.target = function target(target) {
+export function target(target) {
 	return (context, util) =>
 		util.merge({
 			target,
 		});
-};
+}
 
-exports.externals = function externals(externals) {
+export function externals(externals) {
 	return (context, util) =>
 		util.merge({
 			externals,
 		});
-};
+}
 
-exports.watch = function() {
+export function watch() {
 	return (context, util) =>
 		util.merge({
 			watch: true,
 		});
-};
+}
 
-exports.node = function() {
+export function node() {
 	return (context, util) =>
 		util.merge({
 			node: {
 				__dirname: false,
 			},
 		});
-};
+}

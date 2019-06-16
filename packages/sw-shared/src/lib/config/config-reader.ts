@@ -1,12 +1,10 @@
-const nconf = require('nconf');
-const JsFormat = require('nconf-js').default;
-nconf.formats.js = new JsFormat();
-const path = require('path');
+import nconf from 'nconf';
+import JsFormat from 'nconf-js';
+import path from 'path';
+(nconf.formats as any).js = new JsFormat();
 
-exports.getConfigProvider = getConfigProvider;
-exports.readConfig = readConfig;
-
-function getConfigProvider() {
+export function getConfigProvider() {
+	//@ts-ignore
 	const provider = new nconf.Provider();
 	provider.key = nconf.key;
 	provider.path = nconf.path;
@@ -22,7 +20,7 @@ function getConfigProvider() {
 	return provider;
 }
 
-function readConfig(configPath, env = 'development') {
+export function readConfig(configPath, env = 'development') {
 	const dotenv = require('dotenv');
 	dotenv.config({ path: path.resolve(configPath, `.env`) });
 	dotenv.config({ path: path.resolve(configPath, `.env.${env}`) });

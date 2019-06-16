@@ -1,6 +1,6 @@
-const express = require('express');
-const next = require('next');
-const config = require('./config');
+import express from 'express';
+import next from 'next';
+import config from './config';
 
 const devProxy = {
 	'/api': {
