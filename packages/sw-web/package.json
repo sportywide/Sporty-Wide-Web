@@ -26,14 +26,11 @@
 		"recompose": "0.30.0",
 		"axios-observable": "1.1.1",
 		"axios": "0.18.0",
-		"hoist-non-react-statics": "3.3.0"
+		"hoist-non-react-statics": "3.3.0",
+		"redux-devtools-extension": "2.13.8"
 	},
 	"devDependencies": {
-		"@types/next": "8.0.5",
-		"@types/react": "16.8.19",
-		"@types/styled-jsx": "2.2.8",
-		"next-plugin-custom-babel-config": "1.0.2",
-		"redux-devtools-extension": "2.13.8"
+		"next-plugin-custom-babel-config": "1.0.2"
 	},
 	"jest": {
 		"moduleFileExtensions": [

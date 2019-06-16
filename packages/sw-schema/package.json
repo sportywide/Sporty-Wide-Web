@@ -1,14 +1,17 @@
 {
-  "name": "sportywide-schema",
-  "version": "1.0.0",
-  "description": "This package contains all database services and schema",
-  "keywords": [],
-  "license": "ISC",
-  "dependencies": {
-    "@nestjs/common": "6.2.4",
-    "@nestjs/core": "6.2.4",
-    "@nestjs/mongoose": "6.1.2",
-    "mongoose": "5.5.12",
-    "sportywide-shared": "1.0.0"
-  }
+	"name": "sportywide-schema",
+	"version": "1.0.0",
+	"description": "This package contains all database services and schema",
+	"keywords": [],
+	"license": "ISC",
+	"dependencies": {
+		"@nestjs/common": "6.2.4",
+		"@nestjs/core": "6.2.4",
+		"@nestjs/mongoose": "6.1.2",
+		"mongoose": "5.5.12",
+		"sportywide-shared": "1.0.0",
+		"sequelize": "5.8.9",
+		"sequelize-typescript": "0.6.11",
+		"mysql2": "1.6.5"
+	}
 }

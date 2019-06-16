@@ -11,6 +11,10 @@
 		"@babel/preset-env": "7.4.5",
 		"@babel/preset-typescript": "7.3.3",
 		"@types/node": "12.0.4",
+		"@types/sequelize": "4.28.3",
+		"@types/next": "8.0.5",
+		"@types/react": "16.8.19",
+		"@types/styled-jsx": "2.2.8",
 		"@typescript-eslint/eslint-plugin": "1.9.0",
 		"@typescript-eslint/parser": "1.9.0",
 		"@webpack-blocks/babel": "2.0.0",
@@ -45,7 +49,7 @@
 		"yargs": "13.2.4"
 	},
 	"scripts": {
-		"bootstrap": "lerna bootstrap --hoist && link-parent-bin",
+		"bootstrap": "lerna bootstrap && link-parent-bin",
 		"cz": "git add . && git-cz",
 		"install:dependencies": "ts-node bin/install.ts"
 	},
@@ -69,5 +73,8 @@
 		"*.(ts|js|json|html|scss)": [
 			"pretty-quick --staged"
 		]
+	},
+	"dependencies": {
+		"helmet": "3.18.0"
 	}
 }

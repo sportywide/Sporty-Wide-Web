@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { MongooseModule } from '@nestjs/mongoose';
-import { FormSchema } from './models/form';
+import { databaseProviders } from '@schema/core/database.provider';
+import { SchemaUserModule } from '@schema/user/user.module';
 
 @Module({
-	imports: [MongooseModule.forFeature([{ name: 'Form', schema: FormSchema }])],
-	controllers: [],
-	providers: [],
+	imports: [SchemaUserModule],
+	providers: [...databaseProviders],
+	exports: [...databaseProviders, SchemaUserModule],
 })
 export class SchemaModule {}
