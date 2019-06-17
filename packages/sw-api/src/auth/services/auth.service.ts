@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException, NotFoundException, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
@@ -23,10 +23,11 @@ export class AuthService {
 	}
 
 	public jwtSign(user: User) {
+		const id = user.get('id') || user.id;
 		return this.jwtService.sign({
-			sub: user.get('id'),
+			sub: id,
 			user: {
-				id: user.get('id'),
+				id,
 				email: user.get('email'),
 				firstName: user.get('firstName'),
 				lastName: user.get('lastName'),
@@ -39,7 +40,7 @@ export class AuthService {
 		if (!user) {
 			throw new NotFoundException(`User with email ${email} cannot be found`);
 		}
-		if (!this.cryptoService.comparePassword(password, user.get('password'))) {
+		if (!CryptoService.comparePassword(password, user.get('password'))) {
 			throw new BadRequestException('Incorrect password');
 		}
 		return user;

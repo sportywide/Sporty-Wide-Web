@@ -1,34 +1,21 @@
-import {
-	Table,
-	Column,
-	Model,
-	CreatedAt,
-	UpdatedAt,
-	PrimaryKey,
-	AutoIncrement,
-	BeforeCreate,
-	BeforeUpdate,
-	Default,
-	DataType,
-	Unique,
-} from 'sequelize-typescript';
+import { Table, Column, BeforeCreate, BeforeUpdate, Default, DataType, Unique } from 'sequelize-typescript';
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { hashPassword } from '@shared/lib/utils/crypto';
+import { BaseEntity } from '@schema/core/base.entity';
 
 @Table({
 	tableName: 'user',
 })
-export class User extends Model<User> {
-	@PrimaryKey
-	@AutoIncrement
-	@Column
-	id: number;
-
-	@Column
+export class User extends BaseEntity<User> {
+	@Column({
+		field: 'first_name',
+	})
 	firstName: string;
 
-	@Column
+	@Column({
+		field: 'last_name',
+	})
 	lastName: string;
 
 	@Unique({
@@ -39,21 +26,21 @@ export class User extends Model<User> {
 	email: string;
 
 	@Default('USER')
-	@Column(DataType.ENUM('ADMIN', 'USER'))
+	@Column({
+		field: 'user_role',
+		type: DataType.ENUM('ADMIN', 'USER'),
+	})
 	role: UserRole;
 
 	@Default('PENDING')
-	@Column(DataType.ENUM('PENDING', 'ACTIVE'))
+	@Column({
+		field: 'user_status',
+		type: DataType.ENUM('PENDING', 'ACTIVE'),
+	})
 	status: UserStatus;
 
 	@Column
 	password: string;
-
-	@CreatedAt
-	creationDate: Date;
-
-	@UpdatedAt
-	updatedOn: Date;
 
 	@BeforeCreate
 	@BeforeUpdate

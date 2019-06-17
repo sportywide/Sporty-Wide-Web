@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException, Inject } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { User } from '@schema/user/models/user.entity';
 import { UserDto } from '@shared/lib/dtos/user/user.dto';

@@ -3,15 +3,15 @@ import { comparePassword, computeHash, hashPassword } from '@shared/lib/utils/cr
 
 @Injectable()
 export class CryptoService {
-	private computeHash(password, salt) {
-		return computeHash(password, salt);
-	}
-
-	public hashPassword(password) {
+	public static hashPassword(password) {
 		return hashPassword(password);
 	}
 
-	public comparePassword(rawPassword, passwordHash) {
+	public static comparePassword(rawPassword, passwordHash) {
 		return comparePassword(rawPassword, passwordHash);
+	}
+
+	private static computeHash(password, salt) {
+		return computeHash(password, salt);
 	}
 }

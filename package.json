@@ -15,6 +15,7 @@
 		"@types/next": "8.0.5",
 		"@types/react": "16.8.19",
 		"@types/styled-jsx": "2.2.8",
+		"@types/express": "4.17.0",
 		"@typescript-eslint/eslint-plugin": "1.9.0",
 		"@typescript-eslint/parser": "1.9.0",
 		"@webpack-blocks/babel": "2.0.0",

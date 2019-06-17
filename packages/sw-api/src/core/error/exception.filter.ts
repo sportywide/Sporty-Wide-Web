@@ -4,6 +4,7 @@ import { ValidationError } from 'sequelize';
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
 	catch(exception: unknown, host: ArgumentsHost) {
+		console.error(exception);
 		const ctx = host.switchToHttp();
 		const response = ctx.getResponse();
 		const request = ctx.getRequest();
