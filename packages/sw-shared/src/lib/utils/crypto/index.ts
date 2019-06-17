@@ -8,13 +8,13 @@ export function computeHash(password, salt) {
 }
 
 export function hashPassword(password) {
-	const salt = randomBytes(32).toString('hex');
+	const salt = randomBytes(KEY_LENGTH).toString('hex');
 	const hash = computeHash(password, salt);
-	return [salt, hash].join('$');
+	return [hash, salt].join('$');
 }
 
 export function comparePassword(rawPassword, passwordHash) {
-	const [originalHash, salt] = passwordHash.split('$')[1];
+	const [originalHash, salt] = passwordHash.split('$');
 	const computedHash = computeHash(rawPassword, salt);
 	return originalHash === computedHash;
 }

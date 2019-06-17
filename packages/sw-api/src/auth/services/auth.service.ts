@@ -5,6 +5,7 @@ import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { CryptoService } from '@api/auth/services/crypto.service';
 import { UserService } from '@api/user/services/user.service';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@schema/user/models/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -18,7 +19,19 @@ export class AuthService {
 		createUserDto['role'] = UserRole.USER;
 		createUserDto['status'] = UserStatus.PENDING;
 		const user = await this.userService.create(createUserDto);
-		return this.jwtService.sign(user);
+		return this.jwtSign(user);
+	}
+
+	public jwtSign(user: User) {
+		return this.jwtService.sign({
+			sub: user.get('id'),
+			user: {
+				id: user.get('id'),
+				email: user.get('email'),
+				firstName: user.get('firstName'),
+				lastName: user.get('lastName'),
+			},
+		});
 	}
 
 	public async logIn(email, password) {
@@ -26,9 +39,10 @@ export class AuthService {
 		if (!user) {
 			throw new NotFoundException(`User with email ${email} cannot be found`);
 		}
-		if (await this.cryptoService.comparePassword(user.password, password)) {
+		if (!this.cryptoService.comparePassword(password, user.get('password'))) {
 			throw new BadRequestException('Incorrect password');
 		}
+		return user;
 	}
 
 	public async verify(payload) {

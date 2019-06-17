@@ -9,14 +9,14 @@ export class AuthController {
 	constructor(private readonly authService: AuthService, private readonly jwtService: JwtService) {}
 
 	@Post('signup')
-	public async signUp(@Body() user: CreateUserDto) {
-		return await this.authService.signUp(user);
+	public signUp(@Body() user: CreateUserDto) {
+		return this.authService.signUp(user);
 	}
 
 	@Post('login')
 	@HttpCode(HttpStatus.OK)
 	@UseGuards(LocalAuthGuard)
-	public async login(@Req() req) {
-		return await this.jwtService.sign(req.user);
+	public login(@Req() req) {
+		return this.authService.jwtSign(req.user);
 	}
 }

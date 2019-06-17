@@ -10,12 +10,15 @@ import {
 	BeforeUpdate,
 	Default,
 	DataType,
+	Unique,
 } from 'sequelize-typescript';
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { hashPassword } from '@shared/lib/utils/crypto';
 
-@Table
+@Table({
+	tableName: 'user',
+})
 export class User extends Model<User> {
 	@PrimaryKey
 	@AutoIncrement
@@ -28,6 +31,10 @@ export class User extends Model<User> {
 	@Column
 	lastName: string;
 
+	@Unique({
+		name: 'uq_user_email',
+		msg: 'Email is already chosen',
+	})
 	@Column
 	email: string;
 
@@ -51,8 +58,8 @@ export class User extends Model<User> {
 	@BeforeCreate
 	@BeforeUpdate
 	static hashPassword(instance: User) {
-		if (instance.password) {
-			instance.password = hashPassword(instance.password);
+		if (instance.changed('password')) {
+			instance.set('password', hashPassword(instance.get('password')));
 		}
 	}
 }
