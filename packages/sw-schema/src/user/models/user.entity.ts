@@ -42,6 +42,11 @@ export class User extends BaseEntity<User> {
 	@Column
 	password: string;
 
+	@Column({
+		field: 'refresh_token',
+	})
+	refreshToken: string;
+
 	@BeforeCreate
 	@BeforeUpdate
 	static hashPassword(instance: User) {

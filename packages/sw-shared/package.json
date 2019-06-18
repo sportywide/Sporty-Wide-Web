@@ -12,6 +12,7 @@
 		"source-map-support": "0.5.12",
 		"lodash": "4.17.11",
 		"class-validator": "0.9.1",
-		"class-transformer": "0.2.3"
+		"class-transformer": "0.2.3",
+		"uuid": "3.3.2"
 	}
 }

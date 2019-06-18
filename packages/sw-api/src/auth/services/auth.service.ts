@@ -6,6 +6,7 @@ import { CryptoService } from '@api/auth/services/crypto.service';
 import { UserService } from '@api/user/services/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@schema/user/models/user.entity';
+import uuid from 'uuid/v4';
 
 @Injectable()
 export class AuthService {
@@ -19,11 +20,18 @@ export class AuthService {
 		createUserDto['role'] = UserRole.USER;
 		createUserDto['status'] = UserStatus.PENDING;
 		const user = await this.userService.create(createUserDto);
-		return this.jwtSign(user);
+		return this.createTokens(user);
 	}
 
-	public jwtSign(user: User) {
-		const id = user.get('id') || user.id;
+	public async createTokens(user: User) {
+		const accessToken = this.createAccessToken(user);
+		const refreshToken = await this.createRefreshToken(user);
+
+		return { accessToken, refreshToken };
+	}
+
+	private createAccessToken(user: User) {
+		const id = user.get('id');
 		return this.jwtService.sign({
 			sub: id,
 			user: {
@@ -40,7 +48,7 @@ export class AuthService {
 		if (!user) {
 			throw new NotFoundException(`User with email ${email} cannot be found`);
 		}
-		if (!CryptoService.comparePassword(password, user.get('password'))) {
+		if (!this.cryptoService.comparePassword(password, user.get('password'))) {
 			throw new BadRequestException('Incorrect password');
 		}
 		return user;
@@ -52,5 +60,16 @@ export class AuthService {
 			throw new UnauthorizedException('Invalid token');
 		}
 		return user;
+	}
+
+	public async clearTokens(user: User) {
+		return user.set('refreshToken', null).save();
+	}
+
+	private async createRefreshToken(user) {
+		const refreshToken = uuid();
+		await user.set('refreshToken', refreshToken).save();
+
+		return refreshToken;
 	}
 }

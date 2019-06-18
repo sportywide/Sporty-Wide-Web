@@ -24,15 +24,6 @@ async function bootstrap() {
 			},
 		})
 	);
-	app.useGlobalPipes(
-		new ValidationPipe({
-			transform: true,
-			whitelist: true,
-			validationError: {
-				target: false,
-			},
-		})
-	);
 	await app.listen(config.get('port') || 5000);
 }
 

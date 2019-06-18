@@ -10,12 +10,14 @@ import { COOKIE_JWT_PAYLOAD, COOKIE_JWT_SIGNATURE } from '@api/auth/constants';
 export class JwtStrategy extends PassportStrategy(Strategy) {
 	constructor(private readonly authService: AuthService, @Inject('API_CONFIG') private readonly config: Provider) {
 		super({
-			jwtFromRequest: (req: Request) => {
-				return `${req.cookies[COOKIE_JWT_PAYLOAD]}.${req.cookies[COOKIE_JWT_SIGNATURE]}`;
-			},
+			jwtFromRequest: req => this.getToken(req),
 			passReqToCallback: false,
 			secretOrKey: config.get('jwt:secret_key'),
 		});
+	}
+
+	getToken(req: Request) {
+		return `${req.cookies[COOKIE_JWT_PAYLOAD]}.${req.cookies[COOKIE_JWT_SIGNATURE]}`;
 	}
 
 	async validate(payload, done: Function) {

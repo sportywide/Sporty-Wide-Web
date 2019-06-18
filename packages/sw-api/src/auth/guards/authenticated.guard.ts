@@ -8,14 +8,13 @@ export class AuthenticatedGuard implements CanActivate {
 		const request = context.switchToHttp().getRequest();
 		const response = context.switchToHttp().getResponse();
 
-		return new Observable<boolean>(observer => {
+		return new Promise<boolean>(resolve => {
 			passport.authenticate('jwt', function(err, user) {
 				if (user) {
-					observer.next(false);
+					resolve(false);
 				} else {
-					observer.next(true);
+					resolve(true);
 				}
-				observer.complete();
 			})(request, response);
 		});
 	}

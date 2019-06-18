@@ -1,7 +1,7 @@
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { IsEmail, IsNotEmpty, Allow } from 'class-validator';
-import { Exclude, Type } from 'class-transformer';
+import { Exclude } from 'class-transformer';
 
 export class CreateUserDto {
 	@IsNotEmpty()

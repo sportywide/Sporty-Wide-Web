@@ -1,10 +1,13 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
 import { ValidationError } from 'sequelize';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
+	private logger: Logger;
+	constructor() {
+		this.logger = new Logger(GlobalExceptionFilter.name);
+	}
 	catch(exception: unknown, host: ArgumentsHost) {
-		console.error(exception);
 		const ctx = host.switchToHttp();
 		const response = ctx.getResponse();
 		const request = ctx.getRequest();
@@ -17,6 +20,10 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 		}
 
 		const message = exception instanceof Error ? exception.message : exception;
+
+		if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
+			this.logger.error(message, exception instanceof Error ? exception.stack : undefined);
+		}
 
 		response.status(status).json({
 			statusCode: status,
