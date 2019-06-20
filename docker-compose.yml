@@ -28,6 +28,9 @@ services:
         command: dev
         environment:
             WAIT_HOSTS: mysql:3306
+            MYSQL_USER: ${MYSQL_USER}
+            MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+            MYSQL_DATABASE: ${MYSQL_DATABASE}
         depends_on:
             - base
         volumes:

@@ -1,5 +1,5 @@
 import nconf from 'nconf';
-import JsFormat from 'nconf-js';
+import JsFormat from 'nconf-js-improved';
 import path from 'path';
 (nconf.formats as any).js = new JsFormat();
 

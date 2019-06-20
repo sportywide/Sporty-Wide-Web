@@ -3,10 +3,10 @@
 module.exports = {
 	mongo_url: 'http://localhost:6000',
 	mysql: {
-		username: 'sw-user',
-		password: 'sw-password',
+		username: process.env.MYSQL_USER,
+		password: process.env.MYSQL_PASSWORD,
 		host: 'mysql',
 		port: 3306,
-		database: 'sportywide',
+		database: process.env.MYSQL_DATABASE,
 	},
 };
