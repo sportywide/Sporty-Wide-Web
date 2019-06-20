@@ -2,4 +2,4 @@
 
 cd $PROJECT_ROOT && npm run install:dependencies && cd -
 
-npm run "$@"
+/usr/local/bin/wait && npm run "$@"

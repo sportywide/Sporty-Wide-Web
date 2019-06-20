@@ -17,7 +17,6 @@ services:
         volumes:
             - ./packages/sw-shared:/opt/app/packages/sw-shared
             - ./packages/sw-web:/opt/app/packages/sw-web
-            - /opt/app/node_modules
             - /opt/app/packages/sw-shared/node_modules
             - /opt/app/packages/sw-web/node_modules
     api:
@@ -27,6 +26,8 @@ services:
         ports:
             - 5000:5000
         command: dev
+        environment:
+            WAIT_HOSTS: mysql:3306
         depends_on:
             - base
         volumes:
@@ -37,3 +38,4 @@ services:
             - /opt/app/packages/sw-shared/node_modules
             - /opt/app/packages/sw-schema/node_modules
             - /opt/app/packages/sw-api/node_modules
+            - /opt/app/packages/sw-core/node_modules

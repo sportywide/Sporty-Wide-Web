@@ -5,17 +5,16 @@
 	"description": "A Social network for Sports",
 	"devDependencies": {
 		"@babel/core": "7.4.5",
-		"ts-node": "8.3.0",
 		"@babel/plugin-proposal-class-properties": "7.4.4",
 		"@babel/plugin-proposal-decorators": "7.4.4",
 		"@babel/preset-env": "7.4.5",
 		"@babel/preset-typescript": "7.3.3",
-		"@types/node": "12.0.4",
-		"@types/sequelize": "4.28.3",
-		"@types/next": "8.0.5",
-		"@types/react": "16.8.19",
-		"@types/styled-jsx": "2.2.8",
 		"@types/express": "4.17.0",
+		"@types/next": "8.0.5",
+		"@types/node": "12.0.4",
+		"@types/react": "16.8.19",
+		"@types/sequelize": "4.28.3",
+		"@types/styled-jsx": "2.2.8",
 		"@typescript-eslint/eslint-plugin": "1.9.0",
 		"@typescript-eslint/parser": "1.9.0",
 		"@webpack-blocks/babel": "2.0.0",
@@ -41,8 +40,9 @@
 		"npm-run-all": "4.1.5",
 		"prettier": "1.17.1",
 		"pretty-quick": "1.11.0",
-		"typescript": "3.4.5",
+		"ts-node": "8.3.0",
 		"tsconfig-paths": "3.8.0",
+		"typescript": "3.4.5",
 		"wait-on": "3.2.0",
 		"webpack": "4.32.2",
 		"webpack-cli": "3.3.2",
@@ -52,7 +52,7 @@
 	"scripts": {
 		"bootstrap": "lerna bootstrap && link-parent-bin",
 		"cz": "git add . && git-cz",
-		"install:dependencies": "ts-node bin/install.ts"
+		"install:dependencies": "ts-node -T bin/install.ts"
 	},
 	"config": {
 		"commitizen": {

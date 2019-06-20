@@ -6,8 +6,8 @@ import { execSync } from '../helpers/process';
 const allPackages = getAllPackages();
 const CHECKSUM_FILE = '.last-npm-install.checksum';
 ensureNpmInstall();
-const argv = require('yargs').argv;
 
+import { argv } from 'yargs';
 checkLatestInstall();
 
 function checkLatestInstall() {
@@ -74,6 +74,9 @@ function checkSubPackages() {
 }
 
 function writeCheckSum(dir) {
+	if (!fs.existsSync(path.resolve(dir, 'node_modules'))) {
+		return;
+	}
 	const currentChecksum = getCurrentPackageChecksum(dir);
 	fs.writeFileSync(path.resolve(dir, 'node_modules', CHECKSUM_FILE), currentChecksum, {
 		encoding: 'utf-8',

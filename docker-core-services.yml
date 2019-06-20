@@ -1,0 +1,22 @@
+version: '3'
+services:
+    mysql:
+        image: sportywide/sportywide-mysql
+        environment:
+            - MYSQL_DATABASE=${MYSQL_DATABASE}
+            - MYSQL_USER=${MYSQL_USER}
+            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+        volumes:
+            - ./db/mysql:/var/lib/mysql
+        ports:
+            - '${MYSQL_PORT}:3306'
+    flyway:
+        image: sportywide/sportywide-flyway
+        command: -url=jdbc:mysql://mysql:3306/${MYSQL_DATABASE} -user=${MYSQL_USER} -password=${MYSQL_PASSWORD} migrate
+        volumes:
+            - './sql:/flyway/sql'
+        environment:
+            WAIT_HOSTS: mysql:3306
+        depends_on:
+            - mysql
