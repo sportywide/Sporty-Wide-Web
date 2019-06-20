@@ -5,10 +5,11 @@ import { AuthService } from '@api/auth/services/auth.service';
 import { Request } from 'express';
 import { Provider } from 'nconf';
 import { COOKIE_JWT_PAYLOAD, COOKIE_JWT_SIGNATURE } from '@api/auth/constants';
+import { API_CONFIG } from '@api/core/config/config.constant';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-	constructor(private readonly authService: AuthService, @Inject('API_CONFIG') private readonly config: Provider) {
+	constructor(private readonly authService: AuthService, @Inject(API_CONFIG) private readonly config: Provider) {
 		super({
 			jwtFromRequest: req => this.getToken(req),
 			passReqToCallback: false,

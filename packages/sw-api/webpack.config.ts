@@ -8,6 +8,7 @@ module.exports = makeConfig({
 	alias: {
 		'@shared': path.resolve(paths.shared.root, 'src'),
 		'@schema': path.resolve(paths.schema.root, 'src'),
+		'@core': path.resolve(paths.core.root, 'src'),
 		'@api': path.resolve(__dirname, 'src'),
 	},
 });

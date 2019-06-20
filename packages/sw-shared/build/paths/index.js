@@ -7,12 +7,6 @@ const paths = {
 			get src() {
 				return path.resolve(this.root, 'src');
 			},
-			get nodeModules() {
-				return path.resolve(this.root, 'node_modules');
-			},
-			get bin() {
-				return path.resolve(this.root, 'node_modules', '.bin');
-			},
 		};
 	},
 	get shared() {
@@ -27,12 +21,6 @@ const paths = {
 			get src() {
 				return path.resolve(this.root, 'src');
 			},
-			get nodeModules() {
-				return path.resolve(this.root, 'node_modules');
-			},
-			get bin() {
-				return path.resolve(this.root, 'node_modules', '.bin');
-			},
 		};
 	},
 	get schema() {
@@ -41,11 +29,13 @@ const paths = {
 			get src() {
 				return path.resolve(this.root, 'src');
 			},
-			get nodeModules() {
-				return path.resolve(this.root, 'node_modules');
-			},
-			get bin() {
-				return path.resolve(this.root, 'node_modules', '.bin');
+		};
+	},
+	get core() {
+		return {
+			root: path.resolve(paths.project.root, 'packages', 'sw-core'),
+			get src() {
+				return path.resolve(this.root, 'src');
 			},
 		};
 	},
@@ -58,23 +48,11 @@ const paths = {
 			get dist() {
 				return path.resolve(this.root, 'dist');
 			},
-			get nodeModules() {
-				return path.resolve(this.root, 'node_modules');
-			},
-			get bin() {
-				return path.resolve(this.root, 'node_modules', '.bin');
-			},
 		};
 	},
 	get project() {
 		return {
 			root: path.resolve(__dirname, '..', '..', '..', '..'),
-			get nodeModules() {
-				return path.resolve(this.root, 'node_modules');
-			},
-			get bin() {
-				return path.resolve(this.root, 'node_modules', '.bin');
-			},
 		};
 	},
 };

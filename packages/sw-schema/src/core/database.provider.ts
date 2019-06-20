@@ -1,22 +1,23 @@
 import { Sequelize } from 'sequelize-typescript';
-import config from '@schema/config';
 import { User } from '@schema/user/models/user.entity';
+import { SCHEMA_CONFIG } from '@schema/core/config/config.constant';
 
 export const databaseProviders = [
 	{
 		provide: 'SEQUELIZE',
-		useFactory: async () => {
+		useFactory: async schemaConfig => {
 			const sequelize = new Sequelize({
 				dialect: 'mysql',
-				host: config.get('mysql:host'),
-				port: config.get('mysql:port'),
-				username: config.get('mysql:username'),
-				password: config.get('mysql:password'),
-				database: config.get('mysql:database'),
+				host: schemaConfig.get('mysql:host'),
+				port: schemaConfig.get('mysql:port'),
+				username: schemaConfig.get('mysql:username'),
+				password: schemaConfig.get('mysql:password'),
+				database: schemaConfig.get('mysql:database'),
 			});
 			sequelize.addModels([User]);
 			await sequelize.sync();
 			return sequelize;
 		},
+		inject: [SCHEMA_CONFIG],
 	},
 ];

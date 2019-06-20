@@ -1,12 +1,11 @@
-import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Logger } from '@nestjs/common';
+import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Inject } from '@nestjs/common';
 import { ValidationError } from 'sequelize';
+import { API_LOGGER } from '@core/logging/logging.constant';
+import { Logger } from 'log4js';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
-	private logger: Logger;
-	constructor() {
-		this.logger = new Logger(GlobalExceptionFilter.name);
-	}
+	constructor(@Inject(API_LOGGER) private apiLogger: Logger) {}
 	catch(exception: unknown, host: ArgumentsHost) {
 		const ctx = host.switchToHttp();
 		const response = ctx.getResponse();
@@ -22,7 +21,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 		const message = exception instanceof Error ? exception.message : exception;
 
 		if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
-			this.logger.error(message, exception instanceof Error ? exception.stack : undefined);
+			this.apiLogger.error(message, exception instanceof Error ? exception.stack : undefined);
 		}
 
 		response.status(status).json({

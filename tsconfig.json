@@ -27,7 +27,8 @@
 			"@shared/*": ["./packages/sw-shared/src/*"],
 			"@build/*": ["./packages/sw-shared/build/*"],
 			"@api/*": ["./packages/sw-api/src/*"],
-			"@schema/*": ["./packages/sw-schema/src/*"]
+			"@schema/*": ["./packages/sw-schema/src/*"],
+			"@core/*": ["./packages/sw-core/src/*"]
 		}
 	},
 	"exclude": ["node_modules"]

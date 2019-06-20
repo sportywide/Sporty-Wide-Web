@@ -27,8 +27,13 @@ export function readConfig(configPath, env = 'development') {
 
 	const nconf = getConfigProvider();
 
-	nconf.file({
+	nconf.file('environments', {
 		file: path.resolve(configPath, `config.${env}.js`),
+		format: nconf.formats.js,
+	});
+
+	nconf.file('defaults', {
+		file: path.resolve(configPath, `config.default.js`),
 		format: nconf.formats.js,
 	});
 

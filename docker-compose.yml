@@ -32,6 +32,7 @@ services:
         volumes:
             - ./packages/sw-api:/opt/app/packages/sw-api
             - ./packages/sw-shared:/opt/app/packages/sw-shared
+            - ./packages/sw-core:/opt/app/packages/sw-core
             - ./packages/sw-schema:/opt/app/packages/sw-schema
             - /opt/app/packages/sw-shared/node_modules
             - /opt/app/packages/sw-schema/node_modules
