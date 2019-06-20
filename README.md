@@ -7,6 +7,7 @@
 
 ### Initial setup:
 
+-   `npm install -g ts-node typescript`
 -   `npm run install:dependencies`
 
 ### Project structure
@@ -15,6 +16,7 @@ The app is structured into 4 packages:
 
 -   sw-web: contains react code and other related front end assets. Bootstraped by Next.js server (`see src/next-server.js`)
 -   sw-api: contains REST API related code. Written in nestjs
+-   sw-core: contains common code for back end services (e.g. logging, queueing)
 -   sw-schema: contains code specific to database access
 -   sw-model: contains utility code and shared data transfer object (DTO) classes
 
@@ -22,7 +24,8 @@ The app is structured into 4 packages:
 
 #### Running with docker (Recommended)
 
--   Start docker services: `docker compose up`
+-   Start core services (mysql, flyway, redis ...) in one tab: `docker compose -f docker-core-services.yml up`
+-   Start docker application services in another tab: `docker compose up`
 
 ##### To run just a specified service
 
