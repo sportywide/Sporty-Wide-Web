@@ -8,6 +8,8 @@
 		"@nestjs/core": "6.2.4",
 		"log4js": "4.3.1",
 		"log4js-logstash-tcp": "1.0.8",
-		"sportywide-shared": "1.0.0"
+		"sportywide-shared": "1.0.0",
+		"nest-bull": "0.8.0",
+		"bull": "3.10.0"
 	}
 }

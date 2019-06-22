@@ -1,7 +1,6 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post, Req, Res, UseGuards, Get } from '@nestjs/common';
 import { AuthService } from '@api/auth/services/auth.service';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
-import { JwtService } from '@nestjs/jwt';
 import { LocalAuthGuard } from '@api/auth/guards/local.guard';
 import { COOKIE_CSRF, COOKIE_JWT_PAYLOAD, COOKIE_JWT_SIGNATURE, COOKIE_REFRESH_TOKEN } from '@api/auth/constants';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
@@ -9,10 +8,11 @@ import { AuthenticatedGuard } from '@api/auth/guards/authenticated.guard';
 import { getValidationPipe } from '@api/core/pipe/validation';
 import { User } from '@api/core/decorators/user';
 import { RefreshTokenGuard } from '@api/auth/guards/refresh-token.guard';
+import { EmailService } from '@api/email/email.service';
 
 @Controller('auth')
 export class AuthController {
-	constructor(private readonly authService: AuthService, private readonly jwtService: JwtService) {}
+	constructor(private readonly authService: AuthService, private emailService: EmailService) {}
 
 	@Post('signup')
 	@UseGuards(AuthenticatedGuard)
@@ -25,6 +25,12 @@ export class AuthController {
 		const tokens = await this.authService.signUp(user);
 		this.setCookies({ tokens, res, req });
 		res.send(tokens);
+	}
+
+	@Get('email')
+	public async sendEmail() {
+		await this.emailService.sendEmail();
+		return 1;
 	}
 
 	@Post('login')

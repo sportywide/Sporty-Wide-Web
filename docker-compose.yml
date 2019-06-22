@@ -27,7 +27,7 @@ services:
             - 5000:5000
         command: dev
         environment:
-            WAIT_HOSTS: mysql:3306
+            WAIT_HOSTS: mysql:3306,redis:6379
             MYSQL_USER: ${MYSQL_USER}
             MYSQL_PASSWORD: ${MYSQL_PASSWORD}
             MYSQL_DATABASE: ${MYSQL_DATABASE}
@@ -41,4 +41,18 @@ services:
             - /opt/app/packages/sw-shared/node_modules
             - /opt/app/packages/sw-schema/node_modules
             - /opt/app/packages/sw-api/node_modules
+            - /opt/app/packages/sw-core/node_modules
+    email:
+        build:
+            context: .
+            dockerfile: ./packages/sw-email/Dockerfile
+        command: dev
+        environment:
+            WAIT_HOSTS: redis:6379
+        depends_on:
+            - base
+        volumes:
+            - ./packages/sw-shared:/opt/app/packages/sw-shared
+            - ./packages/sw-core:/opt/app/packages/sw-core
+            - /opt/app/packages/sw-shared/node_modules
             - /opt/app/packages/sw-core/node_modules

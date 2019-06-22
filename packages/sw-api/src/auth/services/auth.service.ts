@@ -7,19 +7,22 @@ import { UserService } from '@api/user/services/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@schema/user/models/user.entity';
 import uuid from 'uuid/v4';
+import { EmailService } from '@api/email/email.service';
 
 @Injectable()
 export class AuthService {
 	constructor(
 		private readonly userService: UserService,
 		private readonly cryptoService: CryptoService,
-		private readonly jwtService: JwtService
+		private readonly jwtService: JwtService,
+		private readonly emailService: EmailService
 	) {}
 
 	public async signUp(createUserDto: CreateUserDto) {
 		createUserDto['role'] = UserRole.USER;
 		createUserDto['status'] = UserStatus.PENDING;
 		const user = await this.userService.create(createUserDto);
+		await this.emailService.sendEmail();
 		return this.createTokens(user);
 	}
 

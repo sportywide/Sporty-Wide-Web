@@ -66,7 +66,10 @@ export function makeConfig({ entries, output, alias }) {
 					new CopyWebpackPlugin(
 						[
 							{
-								from: '*',
+								from: {
+									glob: '**/*',
+									dot: true,
+								},
 								to: path.resolve(output, dependency, 'config'),
 								context: path.resolve(paths.project.root, 'packages', dependency, 'config'),
 							},
@@ -78,7 +81,10 @@ export function makeConfig({ entries, output, alias }) {
 					new CopyWebpackPlugin(
 						[
 							{
-								from: '*',
+								from: {
+									glob: '**/*',
+									dot: true,
+								},
 								to: path.resolve(output, dependency, 'assets'),
 								context: path.resolve(paths.project.root, 'packages', dependency, 'assets'),
 							},

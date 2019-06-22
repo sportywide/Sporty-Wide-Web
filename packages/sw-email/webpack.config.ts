@@ -3,12 +3,11 @@ import paths from 'sportywide-shared/build/paths';
 import path from 'path';
 
 module.exports = makeConfig({
-	entries: path.resolve(paths.api.src, 'main'),
-	output: paths.api.dist,
+	entries: path.resolve(paths.email.src, 'main'),
+	output: paths.email.dist,
 	alias: {
 		'@shared': paths.shared.src,
-		'@schema': paths.schema.src,
 		'@core': paths.core.src,
-		'@api': paths.api.src,
+		'@email': paths.email.src,
 	},
 });

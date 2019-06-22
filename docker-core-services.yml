@@ -20,3 +20,14 @@ services:
             WAIT_HOSTS: mysql:3306
         depends_on:
             - mysql
+    redis:
+        image: sportywide/sportywide-redis
+        volumes:
+            - ./db/redis:/data
+        ports:
+            - '${REDIS_PORT}:6379'
+    mailhog:
+        image: sportywide/sportywide-mailhog
+        ports:
+            - '${MAILHOG_UI_PORT}:1025'
+            - '${MAILHOG_TRANSPORT_PORT}:8025'

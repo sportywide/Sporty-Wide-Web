@@ -21,7 +21,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 		const message = exception instanceof Error ? exception.message : exception;
 
 		if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
-			this.apiLogger.error(message, exception instanceof Error ? exception.stack : undefined);
+			this.apiLogger.error(message, exception);
 		}
 
 		response.status(status).json({

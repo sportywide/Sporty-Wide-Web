@@ -10,6 +10,7 @@ import { JwtStrategy } from '@api/auth/strategy/jwt.strategy';
 import { LocalStrategy } from '@api/auth/strategy/local.strategy';
 import { SharedModule } from '@api/shared/shared.module';
 import { CoreApiModule } from '@api/core/core-api.module';
+import { EmailModule } from '@api/email/email.module';
 
 @Module({
 	imports: [
@@ -23,6 +24,7 @@ import { CoreApiModule } from '@api/core/core-api.module';
 		UserModule,
 		CoreApiModule,
 		SharedModule,
+		EmailModule,
 	],
 	controllers: [AuthController],
 	providers: [AuthService, CryptoService, JwtStrategy, LocalStrategy],

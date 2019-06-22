@@ -1,5 +1,8 @@
 /* eslint @typescript-eslint/camelcase: 0 */
 
 module.exports = {
-	mongo_url: 'http://localhost:6000',
+	redis: {
+		host: 'redis',
+		port: 6379,
+	},
 };
