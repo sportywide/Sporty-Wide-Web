@@ -22,7 +22,7 @@ export class AuthService {
 		createUserDto['role'] = UserRole.USER;
 		createUserDto['status'] = UserStatus.PENDING;
 		const user = await this.userService.create(createUserDto);
-		await this.emailService.sendEmail();
+		await this.emailService.sendUserVerificationEmail(user);
 		return this.createTokens(user);
 	}
 

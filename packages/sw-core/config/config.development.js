@@ -13,4 +13,8 @@ module.exports = {
 			log_file: 'sw.log',
 		},
 	},
+	support_user: {
+		email: 'norepy@sportywide.com',
+		name: 'Sporty Wide',
+	},
 };

@@ -22,8 +22,6 @@
 		"passport": "0.4.0",
 		"cors": "2.8.5",
 		"jsonwebtoken": "8.5.1",
-		"rxjs": "6.5.2",
-		"reflect-metadata": "0.1.13",
 		"sportywide-schema": "1.0.0",
 		"sportywide-shared": "1.0.0",
 		"sportywide-core": "1.0.0"

@@ -54,5 +54,7 @@ services:
         volumes:
             - ./packages/sw-shared:/opt/app/packages/sw-shared
             - ./packages/sw-core:/opt/app/packages/sw-core
+            - ./packages/sw-email:/opt/app/packages/sw-email
             - /opt/app/packages/sw-shared/node_modules
             - /opt/app/packages/sw-core/node_modules
+            - /opt/app/packages/sw-email/node_modules

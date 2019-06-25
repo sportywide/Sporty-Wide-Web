@@ -27,12 +27,6 @@ export class AuthController {
 		res.send(tokens);
 	}
 
-	@Get('email')
-	public async sendEmail() {
-		await this.emailService.sendEmail();
-		return 1;
-	}
-
 	@Post('login')
 	@HttpCode(HttpStatus.OK)
 	@UseGuards(AuthenticatedGuard, LocalAuthGuard)

@@ -1,3 +1,8 @@
 /* eslint @typescript-eslint/camelcase: 0 */
 
-module.exports = {};
+module.exports = {
+	smtp: {
+		host: 'mailhog',
+		port: 1025,
+	},
+};

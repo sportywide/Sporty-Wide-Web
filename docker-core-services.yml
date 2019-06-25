@@ -29,5 +29,5 @@ services:
     mailhog:
         image: sportywide/sportywide-mailhog
         ports:
-            - '${MAILHOG_UI_PORT}:1025'
-            - '${MAILHOG_TRANSPORT_PORT}:8025'
+            - '${MAILHOG_TRANSPORT_PORT}:1025'
+            - '${MAILHOG_UI_PORT}:8025'

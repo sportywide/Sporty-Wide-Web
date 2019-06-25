@@ -1,9 +1,7 @@
-import { EmailContext } from '@email/email.context';
+import { EmailContextFactory } from '@email/email.context';
 
 async function bootstrap() {
-	const app = await EmailContext();
-
-	app.init();
+	return EmailContextFactory.create();
 }
 
 bootstrap();

@@ -54,4 +54,8 @@ export class User extends BaseEntity<User> {
 			instance.set('password', hashPassword(instance.get('password')));
 		}
 	}
+
+	getName() {
+		return [this.get('firstName'), this.get('lastName')].join(' ');
+	}
 }

@@ -1,11 +1,13 @@
 import { NestFactory } from '@nestjs/core';
 import { EmailModule } from './email.module';
-import { INestApplication } from '@nestjs/common';
+import { INestApplicationContext } from '@nestjs/common';
 
-let context: INestApplication | null = null;
-export const EmailContext = async () => {
-	if (!context) {
-		context = await NestFactory.create(EmailModule);
-	}
-	return context;
+let context: INestApplicationContext | null = null;
+export const EmailContextFactory = {
+	create: async () => {
+		if (!context) {
+			context = await NestFactory.createApplicationContext(EmailModule);
+		}
+		return context;
+	},
 };

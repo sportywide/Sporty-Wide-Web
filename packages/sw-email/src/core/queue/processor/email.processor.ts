@@ -4,16 +4,45 @@ import { Inject } from '@nestjs/common';
 import { EMAIL_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import { EMAIL_QUEUE } from '@core/microservices/queue.constants';
+import nodemailer, { Transporter } from 'nodemailer';
+import { EMAIL_CONFIG } from '@email/core/config/config.constant';
+import { Provider } from 'nconf';
+import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import Mail from 'nodemailer/lib/mailer';
+const isProduction = process.env.NODE_ENV === 'production';
 
 @Queue({
 	name: EMAIL_QUEUE,
 })
 export class EmailProcessor {
-	constructor(@Inject(EMAIL_LOGGER) private readonly logger: Logger) {}
+	private transporter: Transporter;
+
+	constructor(
+		@Inject(EMAIL_CONFIG) private readonly emailConfig: Provider,
+		@Inject(EMAIL_LOGGER) private readonly logger: Logger
+	) {
+		const transportOptions: SMTPTransport.Options = {
+			host: emailConfig.get('smtp:host'),
+			port: emailConfig.get('smtp:port'),
+			secure: isProduction,
+			tls: {
+				rejectUnauthorized: isProduction,
+			},
+		};
+
+		if (isProduction) {
+			transportOptions.auth = {
+				user: emailConfig.get('smtp:user'),
+				pass: emailConfig.get('smtp:password'),
+			};
+		}
+
+		this.transporter = nodemailer.createTransport(transportOptions);
+	}
 
 	@QueueProcess()
-	processEmail(job: Job<number>) {
+	processEmail(job: Job<Mail.Options>) {
 		this.logger.debug('Sending email');
-		return 1;
+		this.transporter.sendMail(job.data);
 	}
 }
