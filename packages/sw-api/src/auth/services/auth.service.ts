@@ -8,6 +8,15 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '@schema/user/models/user.entity';
 import uuid from 'uuid/v4';
 import { EmailService } from '@api/email/email.service';
+import { ApiModelProperty } from '@nestjs/swagger';
+
+export class Tokens {
+	@ApiModelProperty()
+	accessToken: string;
+
+	@ApiModelProperty()
+	refreshToken: string;
+}
 
 @Injectable()
 export class AuthService {
@@ -18,7 +27,7 @@ export class AuthService {
 		private readonly emailService: EmailService
 	) {}
 
-	public async signUp(createUserDto: CreateUserDto) {
+	public async signUp(createUserDto: CreateUserDto): Promise<Tokens> {
 		createUserDto['role'] = UserRole.USER;
 		createUserDto['status'] = UserStatus.PENDING;
 		const user = await this.userService.create(createUserDto);
@@ -26,7 +35,7 @@ export class AuthService {
 		return this.createTokens(user);
 	}
 
-	public async createTokens(user: User) {
+	public async createTokens(user: User): Promise<Tokens> {
 		const accessToken = this.createAccessToken(user);
 		const refreshToken = await this.createRefreshToken(user);
 

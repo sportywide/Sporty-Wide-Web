@@ -8,6 +8,7 @@ import * as csurf from 'csurf';
 import { LOG4J_PROVIDER } from '@core/logging/logging.constant';
 const CSRF_WHITE_LIST = ['login', 'signup'];
 const isProduction = process.env.NODE_ENV === 'production';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
@@ -31,6 +32,16 @@ async function bootstrap() {
 			nolog: '\\.js|\\.css|\\.png',
 		})
 	);
+
+	const options = new DocumentBuilder()
+		.setTitle('SportyWide API')
+		.setDescription('SportyWide API description')
+		.setVersion('1.0')
+		.build();
+
+	const document = SwaggerModule.createDocument(app, options);
+	SwaggerModule.setup('doc', app, document);
+
 	await app.listen(config.get('port') || 5000);
 }
 
