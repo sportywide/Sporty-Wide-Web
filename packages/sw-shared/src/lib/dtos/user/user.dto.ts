@@ -20,6 +20,10 @@ export class UserDto {
 	@Expose()
 	email: string;
 
+	@ApiModelProperty()
+	@Expose()
+	username: string;
+
 	@ApiModelProperty({ enum: ['admin', 'user'] })
 	@Expose()
 	role: UserRole;

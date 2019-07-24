@@ -9,6 +9,7 @@ import { User } from '@schema/user/models/user.entity';
 import uuid from 'uuid/v4';
 import { EmailService } from '@api/email/email.service';
 import { ApiModelProperty } from '@nestjs/swagger';
+import { plainToClass } from 'class-transformer';
 
 export class Tokens {
 	@ApiModelProperty()
@@ -30,7 +31,10 @@ export class AuthService {
 	public async signUp(createUserDto: CreateUserDto): Promise<Tokens> {
 		createUserDto['role'] = UserRole.USER;
 		createUserDto['status'] = UserStatus.PENDING;
-		const user = await this.userService.create(createUserDto);
+		console.log(createUserDto);
+		console.log(plainToClass(User, createUserDto));
+		const userValues = plainToClass(User, createUserDto);
+		const user = await this.userService.createOne(userValues);
 		await this.emailService.sendUserVerificationEmail(user);
 		return this.createTokens(user);
 	}
@@ -43,31 +47,32 @@ export class AuthService {
 	}
 
 	private createAccessToken(user: User) {
-		const id = user.get('id');
+		const id = user.id;
 		return this.jwtService.sign({
 			sub: id,
 			user: {
 				id,
-				email: user.get('email'),
-				firstName: user.get('firstName'),
-				lastName: user.get('lastName'),
+				email: user.email,
+				firstName: user.firstName,
+				lastName: user.lastName,
+				name: user.name,
 			},
 		});
 	}
 
-	public async logIn(email, password) {
-		const user = await this.userService.findOne({ where: { email } });
+	public async logIn(username, password) {
+		const user = await this.userService.findOne({ username });
 		if (!user) {
-			throw new NotFoundException(`User with email ${email} cannot be found`);
+			throw new NotFoundException(`User with username ${username} cannot be found`);
 		}
-		if (!this.cryptoService.comparePassword(password, user.get('password'))) {
+		if (!this.cryptoService.comparePassword(password, user.password)) {
 			throw new BadRequestException('Incorrect password');
 		}
 		return user;
 	}
 
 	public async verify(payload) {
-		const user = await this.userService.findOne({ where: { id: payload.sub } });
+		const user = await this.userService.findById(payload.sub);
 		if (!user) {
 			throw new UnauthorizedException('Invalid token');
 		}
@@ -75,12 +80,14 @@ export class AuthService {
 	}
 
 	public async clearTokens(user: User) {
-		return user.set('refreshToken', null).save();
+		user.refreshToken = undefined;
+		return this.userService.save(user);
 	}
 
-	private async createRefreshToken(user) {
+	private async createRefreshToken(user: User) {
 		const refreshToken = uuid();
-		await user.set('refreshToken', refreshToken).save();
+		user.refreshToken = refreshToken;
+		await this.userService.save(user);
 
 		return refreshToken;
 	}

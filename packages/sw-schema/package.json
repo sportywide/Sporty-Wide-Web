@@ -6,11 +6,11 @@
 	"license": "ISC",
 	"dependencies": {
 		"@nestjs/mongoose": "6.1.2",
+		"@nestjs/typeorm": "6.1.3",
+		"typeorm": "0.2.18",
 		"mongoose": "5.5.12",
 		"sportywide-shared": "1.0.0",
 		"sportywide-core": "1.0.0",
-		"sequelize": "5.8.9",
-		"sequelize-typescript": "0.6.11",
 		"mysql2": "1.6.5"
 	}
 }

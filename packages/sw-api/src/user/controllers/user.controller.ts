@@ -1,11 +1,20 @@
-import { Controller, Get, HttpStatus, NotFoundException, Param, UseGuards } from '@nestjs/common';
+import {
+	Controller,
+	Get,
+	HttpStatus,
+	NotFoundException,
+	Param,
+	UseGuards,
+	UseInterceptors,
+	ClassSerializerInterceptor,
+} from '@nestjs/common';
 import { UserDto } from '@shared/lib/dtos/user/user.dto';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
-import { plainToClass } from 'class-transformer';
 import { User } from '@api/core/decorators/user';
 import { UserService } from '@api/user/services/user.service';
 import { ApiOkResponse, ApiResponse, ApiUseTags } from '@nestjs/swagger';
 import { AuthorizedApiOperation } from '@api/core/decorators/api-doc';
+import { plainToClass } from 'class-transformer';
 
 @ApiUseTags('users')
 @Controller('user')
@@ -17,7 +26,7 @@ export class UserController {
 	@UseGuards(JwtAuthGuard)
 	@Get('me')
 	public getCurrentUser(@User() user): UserDto {
-		return plainToClass(UserDto, user.toJSON(), {
+		return plainToClass(UserDto, user, {
 			excludeExtraneousValues: true,
 		});
 	}
@@ -32,7 +41,7 @@ export class UserController {
 		if (!user) {
 			throw new NotFoundException(`User with id ${id} cannot be found`);
 		}
-		return plainToClass(UserDto, user.toJSON(), {
+		return plainToClass(UserDto, user, {
 			excludeExtraneousValues: true,
 		});
 	}

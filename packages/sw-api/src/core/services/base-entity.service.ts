@@ -1,31 +1,37 @@
-import { IFindOptions, Model } from 'sequelize-typescript';
+import { Repository, FindConditions, DeleteResult } from 'typeorm';
 
-export class BaseEntityService<T extends Model<T>> {
-	constructor(private readonly repository) {}
+export class BaseEntityService<T> {
+	constructor(private readonly repository: Repository<T>) {}
 
 	public async findAll(): Promise<T[]> {
-		return this.repository.findAll();
+		return this.repository.find();
 	}
 
-	public async findOne(params: IFindOptions<T>): Promise<T | null> {
+	public async findOne(params: FindConditions<T>): Promise<T | undefined> {
 		return this.repository.findOne(params);
 	}
 
-	public async create(dto): Promise<T> {
-		const entity = await this.repository.create(dto);
-		entity.set('id', entity.get('id') || entity.id);
-		return entity;
+	public async create(dtos: T[]): Promise<T[]> {
+		return this.repository.create(dtos);
 	}
 
-	public async findById(id: number): Promise<T> {
-		return this.repository.findByPk(id);
+	public async save(dto: T) {
+		return this.repository.save(dto);
 	}
 
-	public async delete(params: IFindOptions<T>): Promise<any> {
-		const instance = await this.repository.findOne(params);
-		if (!instance) {
-			return;
-		}
-		return instance.destroy();
+	public async createOne(dto: T): Promise<T> {
+		return this.repository.create(dto)[0];
+	}
+
+	public async findByIds(ids: number[]): Promise<T[]> {
+		return this.repository.findByIds(ids);
+	}
+
+	public async findById(id: number): Promise<T | undefined> {
+		return this.repository.findOne(id);
+	}
+
+	public async delete(params: FindConditions<T>): Promise<DeleteResult> {
+		return this.repository.delete(params);
 	}
 }

@@ -25,8 +25,8 @@ export class EmailService {
 					name: this.coreConfig.get('support_user:name'),
 				},
 				to: {
-					address: user.get('email'),
-					name: user.getName(),
+					address: user.email,
+					name: user.name,
 				},
 				subject: 'You have signed up for sportywide',
 				html: '<b>Please click on the link below to finish signup</b>',

@@ -1,61 +1,62 @@
-import { Table, Column, BeforeCreate, BeforeUpdate, Default, DataType, Unique } from 'sequelize-typescript';
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { hashPassword } from '@shared/lib/utils/crypto';
 import { BaseEntity } from '@schema/core/base.entity';
+import { Entity, Column, Index, BeforeInsert, BeforeUpdate } from 'typeorm';
 
-@Table({
-	tableName: 'user',
-})
-export class User extends BaseEntity<User> {
+@Entity()
+export class User extends BaseEntity {
 	@Column({
-		field: 'first_name',
+		length: 30,
 	})
 	firstName: string;
 
 	@Column({
-		field: 'last_name',
+		length: 30,
 	})
 	lastName: string;
 
-	@Unique({
-		name: 'uq_user_email',
-		msg: 'Email is already chosen',
+	@Index({ unique: true })
+	@Column({
+		length: 50,
 	})
-	@Column
 	email: string;
 
-	@Default('USER')
+	@Index({ unique: true })
 	@Column({
-		field: 'user_role',
-		type: DataType.ENUM('ADMIN', 'USER'),
+		length: 25,
+	})
+	username: string;
+
+	@Column({
+		type: 'enum',
+		enum: UserRole,
+		default: UserRole.USER,
 	})
 	role: UserRole;
 
-	@Default('PENDING')
 	@Column({
-		field: 'user_status',
-		type: DataType.ENUM('PENDING', 'ACTIVE'),
+		type: 'enum',
+		enum: UserStatus,
+		default: UserStatus.PENDING,
 	})
 	status: UserStatus;
 
-	@Column
+	@Column()
 	password: string;
 
-	@Column({
-		field: 'refresh_token',
-	})
-	refreshToken: string;
+	@Column()
+	refreshToken?: string;
 
-	@BeforeCreate
-	@BeforeUpdate
-	static hashPassword(instance: User) {
-		if (instance.changed('password')) {
-			instance.set('password', hashPassword(instance.get('password')));
+	@BeforeInsert()
+	@BeforeUpdate()
+	hashPassword() {
+		if (this.changed('password')) {
+			this.password = hashPassword(this.password);
 		}
 	}
 
-	getName() {
-		return [this.get('firstName'), this.get('lastName')].join(' ');
+	get name() {
+		return [this.firstName, this.lastName].filter(value => value).join(' ');
 	}
 }

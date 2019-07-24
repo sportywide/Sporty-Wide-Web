@@ -1,17 +1,19 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { User } from '@schema/user/models/user.entity';
 import { UserDto } from '@shared/lib/dtos/user/user.dto';
-import { IFindOptions } from 'sequelize-typescript';
 import { BaseEntityService } from '@api/core/services/base-entity.service';
+import { Repository, FindConditions } from 'typeorm';
+import { plainToClass } from 'class-transformer';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class UserService extends BaseEntityService<User> {
-	constructor(@Inject('USER_REPOSITORY') private readonly userRepository: typeof User) {
+	constructor(@InjectRepository(User) private readonly userRepository: Repository<User>) {
 		super(userRepository);
 	}
 
-	public async update(params: IFindOptions<User>, createUserDto: CreateUserDto): Promise<UserDto> {
+	public async update(params: FindConditions<User>, createUserDto: CreateUserDto): Promise<UserDto> {
 		const user = await this.userRepository.findOne(params);
 		if (!user) {
 			throw new NotFoundException(`User cannot be found`);
@@ -19,10 +21,12 @@ export class UserService extends BaseEntityService<User> {
 
 		const { firstName, lastName, password } = createUserDto;
 
-		user.set('firstName', firstName);
-		user.set('lastName', lastName);
-		user.set('password', password);
+		user.firstName = firstName;
+		user.lastName = lastName;
+		user.password = password;
 
-		return user.save();
+		const updatedUser = await this.userRepository.save(user);
+
+		return plainToClass(UserDto, updatedUser);
 	}
 }

@@ -41,8 +41,8 @@ export class EmailProcessor {
 	}
 
 	@QueueProcess()
-	processEmail(job: Job<Mail.Options>) {
+	async processEmail(job: Job<Mail.Options>) {
 		this.logger.debug('Sending email');
-		this.transporter.sendMail(job.data);
+		await this.transporter.sendMail(job.data);
 	}
 }

@@ -1,7 +1,8 @@
 import { ArgumentsHost, Catch, ExceptionFilter, HttpException, HttpStatus, Inject } from '@nestjs/common';
-import { ValidationError } from 'sequelize';
 import { API_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
+import { QueryFailedError } from 'typeorm';
+import { getFriendlyErrorMessage } from '@schema/core/utils/error-message';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -11,14 +12,15 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 		const response = ctx.getResponse();
 		const request = ctx.getRequest();
 
+		let message = exception instanceof Error ? exception.message : exception;
+
 		let status = HttpStatus.INTERNAL_SERVER_ERROR;
 		if (exception instanceof HttpException) {
 			status = exception.getStatus();
-		} else if (exception instanceof ValidationError) {
+		} else if (exception instanceof QueryFailedError) {
 			status = HttpStatus.BAD_REQUEST;
+			message = getFriendlyErrorMessage(exception);
 		}
-
-		const message = exception instanceof Error ? exception.message : exception;
 
 		if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
 			this.apiLogger.error(message, exception);

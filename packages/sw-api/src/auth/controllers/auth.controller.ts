@@ -33,7 +33,7 @@ export class AuthController {
 		res.send(tokens);
 	}
 
-	@ApiImplicitParam({ name: 'email', type: String })
+	@ApiImplicitParam({ name: 'username', type: String })
 	@ApiImplicitParam({ name: 'password', type: String })
 	@ApiOkResponse({ description: 'User has logged in successfully', type: Tokens })
 	@ApiOperation({ title: 'Log in endpoint' })

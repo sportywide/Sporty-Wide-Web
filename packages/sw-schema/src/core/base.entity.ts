@@ -1,20 +1,31 @@
-import { Model, PrimaryKey, AutoIncrement, Column, CreatedAt, UpdatedAt } from 'sequelize-typescript';
+import { PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, AfterLoad } from 'typeorm';
 
-export class BaseEntity<T extends Model<T>> extends Model<T> {
-	@PrimaryKey
-	@AutoIncrement
-	@Column
+export abstract class BaseEntity {
+	_initialValues = {};
+
+	@PrimaryGeneratedColumn()
 	id: number;
 
-	@CreatedAt
-	@Column({
-		field: 'created_at',
-	})
+	@CreateDateColumn({ type: 'datetime' })
 	createdAt: Date;
 
-	@UpdatedAt
-	@Column({
-		field: 'updated_at',
-	})
+	@UpdateDateColumn({ type: 'datetime' })
 	updatedAt: Date;
+
+	@AfterLoad()
+	afterLoad() {
+		this._initialValues = Object.keys(this)
+			.filter(key => !key.startsWith('_') && typeof this[key] !== 'function')
+			.reduce((currentObject, key) => {
+				return { ...currentObject, [key]: this[key] };
+			}, {});
+	}
+
+	changed(key) {
+		return this._initialValues[key] !== this[key];
+	}
+
+	getChange(key) {
+		return { from: this._initialValues[key], to: this[key] };
+	}
 }

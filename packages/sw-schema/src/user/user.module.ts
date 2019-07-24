@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
-import { userProviders } from '@schema/user/providers/user.provider';
+import { User } from '@schema/user/models/user.entity';
+import { CoreSchemaModule } from '@schema/core/core-schema.module';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
-	providers: [...userProviders],
-	exports: [...userProviders],
+	imports: [CoreSchemaModule, TypeOrmModule.forFeature([User])],
 })
 export class SchemaUserModule {}

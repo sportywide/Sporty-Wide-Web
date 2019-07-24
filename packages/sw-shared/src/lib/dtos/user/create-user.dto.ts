@@ -13,6 +13,10 @@ export class CreateUserDto {
 	@IsNotEmpty()
 	lastName: string;
 
+	@ApiModelProperty()
+	@IsNotEmpty()
+	username: string;
+
 	@Allow()
 	role: UserRole;
 
