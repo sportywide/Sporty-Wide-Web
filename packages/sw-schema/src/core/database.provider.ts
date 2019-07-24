@@ -1,6 +1,6 @@
 import { Sequelize } from 'sequelize-typescript';
 import { User } from '@schema/user/models/user.entity';
-import { SCHEMA_CONFIG } from '@schema/core/config/config.constant';
+import { SCHEMA_CONFIG } from '@core/config/config.constants';
 
 export const databaseProviders = [
 	{

@@ -5,9 +5,9 @@ import { InjectQueue } from 'nest-bull';
 import { API_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import { MailDto } from '@shared/lib/dtos/email/mail.dto';
-import { CORE_CONFIG } from '@core/config/config.constant';
 import { Provider } from 'nconf';
 import { User } from '@schema/user/models/user.entity';
+import { CORE_CONFIG } from '@core/config/config.constants';
 
 @Injectable()
 export class EmailService {

@@ -1,9 +1,17 @@
 import { Module } from '@nestjs/common';
 import { databaseProviders } from '@schema/core/database.provider';
-import { configProvider } from '@schema/core/config/config.provider';
+import { ConfigModule } from '@core/config/config.module';
+import * as path from 'path';
+import { SCHEMA_CONFIG } from '@core/config/config.constants';
 
 @Module({
-	providers: [...databaseProviders, configProvider],
-	exports: [...databaseProviders, configProvider],
+	imports: [
+		ConfigModule.forRoot({
+			configFile: path.resolve(__dirname, 'sw-schema', 'config'),
+			exportAs: SCHEMA_CONFIG,
+		}),
+	],
+	providers: [...databaseProviders],
+	exports: [...databaseProviders],
 })
 export class CoreSchemaModule {}

@@ -5,7 +5,7 @@ import { AuthService } from '@api/auth/services/auth.service';
 import { Request } from 'express';
 import { Provider } from 'nconf';
 import { COOKIE_JWT_PAYLOAD, COOKIE_JWT_SIGNATURE } from '@api/auth/constants';
-import { API_CONFIG } from '@api/core/config/config.constant';
+import { API_CONFIG } from '@core/config/config.constants';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

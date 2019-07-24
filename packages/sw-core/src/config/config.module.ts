@@ -1,8 +1,16 @@
-import { Module } from '@nestjs/common';
-import { configProvider } from '@core/config/config.provider';
+import { readConfig } from '@shared/lib/config/config-reader';
+import { DynamicModule } from '@nestjs/common';
 
-@Module({
-	exports: [configProvider],
-	providers: [configProvider],
-})
-export class CoreConfigModule {}
+export class ConfigModule {
+	static forRoot({ configFile, exportAs }): DynamicModule {
+		const provider = {
+			provide: exportAs,
+			useValue: readConfig(configFile, process.env.NODE_ENV),
+		};
+		return {
+			module: ConfigModule,
+			providers: [provider],
+			exports: [provider],
+		};
+	}
+}

@@ -3,7 +3,7 @@ import { Provider } from 'nconf';
 import log4j, { Configuration } from 'log4js';
 import merge from 'lodash.merge';
 import os from 'os';
-import { CORE_CONFIG } from '@core/config/config.constant';
+import { CORE_CONFIG } from '@core/config/config.constants';
 
 function filenameToken(logEvent) {
 	return logEvent.fileName ? logEvent.fileName.replace(__dirname, '').replace(/^\/webpack:/, '') : '';

@@ -1,26 +1,33 @@
-import { Module, Inject, forwardRef } from '@nestjs/common';
+import { Module, Inject } from '@nestjs/common';
 import { BullModule, InjectQueue } from 'nest-bull';
 import { Queue } from 'bull';
-import config from '@core/config';
 import { CoreModule } from '@core/core.module';
 import { EMAIL_LOGGER } from '@core/logging/logging.constant';
 import { EmailProcessor } from '@email/core/queue/processor/email.processor';
 import { EMAIL_QUEUE } from '@core/microservices/queue.constants';
 import { CoreEmailModule } from '@email/core/core-email.module';
+import { Provider } from 'nconf';
+import { CORE_CONFIG } from '@core/config/config.constants';
 
 @Module({
 	imports: [
-		BullModule.forRoot({
+		BullModule.forRootAsync({
 			name: EMAIL_QUEUE,
-			options: {
-				redis: {
-					host: config.get('redis:host'),
-					port: config.get('redis:port'),
-				},
+			imports: [CoreModule],
+			inject: [CORE_CONFIG],
+			useFactory: (coreConfig: Provider) => {
+				return {
+					options: {
+						redis: {
+							host: coreConfig.get('redis:host'),
+							port: coreConfig.get('redis:port'),
+						},
+					},
+				};
 			},
 		}),
 		CoreModule,
-		forwardRef(() => CoreEmailModule),
+		CoreEmailModule,
 	],
 	providers: [EmailProcessor],
 	controllers: [],
