@@ -4,7 +4,7 @@ import { CoreSchemaModule } from '@schema/core/core-schema.module';
 import { SCHEMA_CONFIG } from '@core/config/config.constants';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from '@schema/core/naming-strategy';
-import { getMetadataArgsStorage } from 'typeorm';
+import { User } from '@schema/user/models/user.entity';
 
 @Module({
 	imports: [
@@ -19,7 +19,7 @@ import { getMetadataArgsStorage } from 'typeorm';
 				username: schemaConfig.get('mysql:username'),
 				password: schemaConfig.get('mysql:password'),
 				database: schemaConfig.get('mysql:database'),
-				entities: getMetadataArgsStorage().tables.map(table => table.target),
+				entities: [User],
 				namingStrategy: new SnakeNamingStrategy(),
 			}),
 			imports: [CoreSchemaModule],
@@ -27,3 +27,12 @@ import { getMetadataArgsStorage } from 'typeorm';
 	],
 })
 export class SchemaModule {}
+
+function getEntities() {
+	const entityContext = (require as any).context('.', true, /\.entity\.ts$/);
+	return entityContext.keys().map(id => {
+		const entityModule = entityContext(id);
+		const [entity] = Object.values(entityModule);
+		return entity;
+	});
+}

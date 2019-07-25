@@ -20,7 +20,7 @@ export class BaseEntityService<T> {
 	}
 
 	public async createOne(dto: T): Promise<T> {
-		return this.repository.create(dto)[0];
+		return this.repository.create(dto);
 	}
 
 	public async findByIds(ids: number[]): Promise<T[]> {

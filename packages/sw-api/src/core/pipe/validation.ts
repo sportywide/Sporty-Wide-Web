@@ -1,12 +1,10 @@
-import { ValidationPipe } from '@nestjs/common';
+import { YupValidationPipe } from '@core/validation/validation.pipe';
 
 export function getValidationPipe(options = {}) {
-	return new ValidationPipe({
-		transform: true,
-		whitelist: true,
-		validationError: {
-			target: false,
-		},
+	return new YupValidationPipe({
+		abortEarly: true,
+		stripUnknown: true,
+		strict: true,
 		...options,
 	});
 }

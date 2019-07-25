@@ -31,8 +31,6 @@ export class AuthService {
 	public async signUp(createUserDto: CreateUserDto): Promise<Tokens> {
 		createUserDto['role'] = UserRole.USER;
 		createUserDto['status'] = UserStatus.PENDING;
-		console.log(createUserDto);
-		console.log(plainToClass(User, createUserDto));
 		const userValues = plainToClass(User, createUserDto);
 		const user = await this.userService.createOne(userValues);
 		await this.emailService.sendUserVerificationEmail(user);

@@ -17,6 +17,8 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 		let status = HttpStatus.INTERNAL_SERVER_ERROR;
 		if (exception instanceof HttpException) {
 			status = exception.getStatus();
+			const response = exception.getResponse();
+			message = typeof response === 'object' && (response as any).message ? (response as any).message : response;
 		} else if (exception instanceof QueryFailedError) {
 			status = HttpStatus.BAD_REQUEST;
 			message = getFriendlyErrorMessage(exception);

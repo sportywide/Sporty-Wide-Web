@@ -10,12 +10,11 @@
 		"nconf": "0.10.0",
 		"nconf-js-improved": "1.0.1",
 		"source-map-support": "0.5.12",
-		"class-validator": "0.9.1",
 		"class-transformer": "0.2.3",
 		"uuid": "3.3.2",
 		"lodash.merge": "4.6.2",
 		"@nestjs/swagger": "3.1.0",
 		"yup": "0.27.0",
-		"yup-decorator": "1.0.1"
+		"yup-decorator": "1.0.3"
 	}
 }

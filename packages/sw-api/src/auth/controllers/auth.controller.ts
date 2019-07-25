@@ -5,12 +5,12 @@ import { LocalAuthGuard } from '@api/auth/guards/local.guard';
 import { COOKIE_CSRF, COOKIE_JWT_PAYLOAD, COOKIE_JWT_SIGNATURE, COOKIE_REFRESH_TOKEN } from '@api/auth/constants';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { AuthenticatedGuard } from '@api/auth/guards/authenticated.guard';
-import { getValidationPipe } from '@api/core/pipe/validation';
 import { User } from '@api/core/decorators/user';
 import { RefreshTokenGuard } from '@api/auth/guards/refresh-token.guard';
 import { EmailService } from '@api/email/email.service';
 import { ApiCreatedResponse, ApiOperation, ApiOkResponse, ApiUseTags, ApiImplicitParam } from '@nestjs/swagger';
 import { AuthorizedApiOperation } from '@api/core/decorators/api-doc';
+import { getValidationPipe } from '@api/core/pipe/validation';
 
 @ApiUseTags('auth')
 @Controller('auth')
