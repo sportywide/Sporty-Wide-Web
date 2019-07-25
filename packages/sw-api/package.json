@@ -12,9 +12,9 @@
 	"dependencies": {
 		"@nestjs/jwt": "6.1.1",
 		"passport-jwt": "4.0.0",
-		"@nestjs/platform-express": "6.3.1",
-		"swagger-ui-express": "4.0.6",
-		"helmet": "3.18.0",
+		"@nestjs/platform-express": "6.5.3",
+		"swagger-ui-express": "4.0.7",
+		"helmet": "3.20.0",
 		"csurf": "git://github.com/vdtn359/csurf.git#sw-1.10.0",
 		"cookie-parser": "1.4.4",
 		"express-rate-limit": "5.0.0",
