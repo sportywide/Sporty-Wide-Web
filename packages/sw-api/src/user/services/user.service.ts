@@ -2,9 +2,9 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { User } from '@schema/user/models/user.entity';
 import { UserDto } from '@shared/lib/dtos/user/user.dto';
-import { BaseEntityService } from '@api/core/services/base-entity.service';
+import { BaseEntityService } from '@api/core/services/entity/base-entity.service';
 import { Repository, FindConditions } from 'typeorm';
-import { plainToClass } from 'class-transformer';
+import { plainToClass } from 'class-transformer-imp';
 import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
@@ -27,6 +27,6 @@ export class UserService extends BaseEntityService<User> {
 
 		const updatedUser = await this.userRepository.save(user);
 
-		return plainToClass(UserDto, updatedUser);
+		return updatedUser;
 	}
 }

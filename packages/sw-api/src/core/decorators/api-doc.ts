@@ -1,14 +1,16 @@
 import { waterfall } from '@shared/lib/utils/fp/combine';
-import { HttpStatus } from '@nestjs/common';
-import { ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiNotFoundResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
+import { ucFirst } from '@shared/lib/utils/string/converstion';
 
-export const AuthorizedApiOperation = (metadata: {
+interface IOperationMetadata {
 	title: string;
 	description?: string;
 	operationId?: string;
 	deprecated?: boolean;
-}) =>
-	waterfall(
-		ApiOperation(metadata),
-		ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'User not authorized' })
-	);
+}
+
+export const AuthorizedApiOperation = (metadata: IOperationMetadata) =>
+	waterfall(ApiOperation(metadata), ApiUnauthorizedResponse({ description: 'User not authorized' }));
+
+export const NotFoundResponse = (type: string) =>
+	ApiNotFoundResponse({ description: `${ucFirst(type)} cannot be found` });

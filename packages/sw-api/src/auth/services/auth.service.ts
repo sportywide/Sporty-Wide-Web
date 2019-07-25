@@ -9,7 +9,7 @@ import { User } from '@schema/user/models/user.entity';
 import uuid from 'uuid/v4';
 import { EmailService } from '@api/email/email.service';
 import { ApiModelProperty } from '@nestjs/swagger';
-import { plainToClass } from 'class-transformer';
+import { plainToClass } from 'class-transformer-imp';
 
 export class Tokens {
 	@ApiModelProperty()

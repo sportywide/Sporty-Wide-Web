@@ -50,9 +50,13 @@ export class User extends BaseEntity {
 
 	@BeforeInsert()
 	@BeforeUpdate()
-	hashPassword() {
+	didSaveUser() {
 		if (this.changed('password')) {
 			this.password = hashPassword(this.password);
+		}
+
+		if (this.changed('username')) {
+			throw new Error('Cannot change username');
 		}
 	}
 

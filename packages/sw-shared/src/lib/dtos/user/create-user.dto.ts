@@ -1,11 +1,13 @@
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { ApiModelProperty } from '@nestjs/swagger';
-import { schema, is, a } from 'yup-decorator';
+import { Creatable, Editable } from '@shared/lib/utils/decorators/permissions';
+import { a, is, schema } from 'yup-decorator';
 
 @schema()
 export class CreateUserDto {
 	@ApiModelProperty()
+	@Editable(UserRole.USER)
 	@is(
 		a
 			.string()
@@ -15,9 +17,11 @@ export class CreateUserDto {
 	firstName: string;
 
 	@ApiModelProperty()
+	@Editable(UserRole.USER)
 	@is(a.string().max(30, 'Last name is too long'))
 	lastName: string;
 
+	@Creatable(UserRole.USER)
 	@ApiModelProperty()
 	@is(
 		a
@@ -28,11 +32,14 @@ export class CreateUserDto {
 	)
 	username: string;
 
+	@Editable(UserRole.ADMIN)
 	role: UserRole;
 
+	@Editable(UserRole.ADMIN)
 	status: UserStatus;
 
 	@ApiModelProperty()
+	@Editable(UserRole.USER)
 	@is(
 		a
 			.string()
@@ -42,6 +49,7 @@ export class CreateUserDto {
 	email: string;
 
 	@ApiModelProperty()
+	@Editable(UserRole.USER)
 	@is(a.string().required('Password is required'))
 	password: string;
 }

@@ -3,6 +3,7 @@ import { API_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import { QueryFailedError } from 'typeorm';
 import { getFriendlyErrorMessage } from '@schema/core/utils/error-message';
+import { ForbiddenError } from 'csurf';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -14,7 +15,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
 		let message = exception instanceof Error ? exception.message : exception;
 
-		let status = HttpStatus.INTERNAL_SERVER_ERROR;
+		let status = (exception as any).status || HttpStatus.INTERNAL_SERVER_ERROR;
 		if (exception instanceof HttpException) {
 			status = exception.getStatus();
 			const response = exception.getResponse();

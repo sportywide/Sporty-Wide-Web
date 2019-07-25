@@ -5,7 +5,7 @@ import { LocalAuthGuard } from '@api/auth/guards/local.guard';
 import { COOKIE_CSRF, COOKIE_JWT_PAYLOAD, COOKIE_JWT_SIGNATURE, COOKIE_REFRESH_TOKEN } from '@api/auth/constants';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { AuthenticatedGuard } from '@api/auth/guards/authenticated.guard';
-import { User } from '@api/core/decorators/user';
+import { CurrentUser } from '@api/core/decorators/user';
 import { RefreshTokenGuard } from '@api/auth/guards/refresh-token.guard';
 import { EmailService } from '@api/email/email.service';
 import { ApiCreatedResponse, ApiOperation, ApiOkResponse, ApiUseTags, ApiImplicitParam } from '@nestjs/swagger';
@@ -62,7 +62,7 @@ export class AuthController {
 	@Post('logout')
 	@HttpCode(HttpStatus.OK)
 	@UseGuards(JwtAuthGuard)
-	public async logout(@User() user, @Req() req, @Res() res) {
+	public async logout(@CurrentUser() user, @Req() req, @Res() res) {
 		this.clearCookie(req, res);
 		this.authService.clearTokens(user);
 		res.send();
