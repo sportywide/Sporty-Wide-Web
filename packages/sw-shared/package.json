@@ -15,6 +15,6 @@
 		"lodash.merge": "4.6.2",
 		"@nestjs/swagger": "3.1.0",
 		"yup": "0.27.0",
-		"yup-decorator": "1.0.3"
+		"yup-decorator": "2.0.0"
 	}
 }
