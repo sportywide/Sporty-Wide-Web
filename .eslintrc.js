@@ -5,6 +5,9 @@ module.exports = {
 		'prettier/@typescript-eslint',
 		'plugin:prettier/recommended',
 		'plugin:react/recommended',
+		'plugin:import/errors',
+		'plugin:import/warnings',
+		'plugin:import/typescript',
 	],
 	plugins: ['@typescript-eslint'],
 	rules: {
@@ -13,8 +16,12 @@ module.exports = {
 		'@typescript-eslint/no-explicit-any': 0,
 		'@typescript-eslint/no-var-requires': 0,
 		'@typescript-eslint/no-use-before-define': 0,
+		'@typescript-eslint/interface-name-prefix': 0,
 		'@typescript-eslint/explicit-function-return-type': 0,
 		'no-undef': 'error',
+		'import/dynamic-import-chunkname': 'warn',
+		'import/order': 'warn',
+		'import/no-unresolved': 0,
 	},
 	env: {
 		node: true,

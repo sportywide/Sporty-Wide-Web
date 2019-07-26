@@ -1,5 +1,5 @@
 import { of } from 'rxjs';
-import { map, catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 import axios from 'axios-observable';
 import { fetchCharacterFailure, fetchCharacterSuccess } from '@web/features/home/store/actions';
 

@@ -1,6 +1,6 @@
-import { combineEpics, ActionsObservable, StateObservable } from 'redux-observable';
+import { ActionsObservable, StateObservable, combineEpics } from 'redux-observable';
 import { mergeMap } from 'rxjs/operators';
-import { BehaviorSubject, Observable, EMPTY } from 'rxjs';
+import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
 import { AnyAction } from 'redux';
 
 export interface IEpicManager {

@@ -1,7 +1,7 @@
+import * as path from 'path';
 import { Module } from '@nestjs/common';
 import { CoreModule } from '@core/core.module';
 import { ConfigModule } from '@core/config/config.module';
-import * as path from 'path';
 import { EMAIL_CONFIG } from '@core/config/config.constants';
 
 @Module({

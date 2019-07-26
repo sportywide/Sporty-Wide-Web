@@ -4,11 +4,11 @@ import {
 	Get,
 	NotFoundException,
 	Param,
-	Put,
-	UseGuards,
-	UnauthorizedException,
-	Patch,
 	ParseIntPipe,
+	Patch,
+	Put,
+	UnauthorizedException,
+	UseGuards,
 } from '@nestjs/common';
 import { UserDto } from '@shared/lib/dtos/user/user.dto';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';

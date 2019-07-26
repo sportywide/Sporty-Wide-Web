@@ -8,7 +8,7 @@ import { AuthenticatedGuard } from '@api/auth/guards/authenticated.guard';
 import { CurrentUser } from '@api/core/decorators/user';
 import { RefreshTokenGuard } from '@api/auth/guards/refresh-token.guard';
 import { EmailService } from '@api/email/email.service';
-import { ApiCreatedResponse, ApiOperation, ApiOkResponse, ApiUseTags, ApiImplicitParam } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiImplicitParam, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { AuthorizedApiOperation } from '@api/core/decorators/api-doc';
 import { getValidationPipe } from '@api/core/pipe/validation';
 

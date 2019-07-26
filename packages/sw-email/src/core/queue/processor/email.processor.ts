@@ -9,6 +9,7 @@ import { Provider } from 'nconf';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import Mail from 'nodemailer/lib/mailer';
 import { EMAIL_CONFIG } from '@core/config/config.constants';
+
 const isProduction = process.env.NODE_ENV === 'production';
 
 @Queue({

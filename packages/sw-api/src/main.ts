@@ -1,14 +1,15 @@
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
 import * as cors from 'cors';
 import * as helmet from 'helmet';
 import * as cookieParser from 'cookie-parser';
 import * as csurf from 'csurf';
 import { LOG4J_PROVIDER } from '@core/logging/logging.constant';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { API_CONFIG } from '@core/config/config.constants';
+import { AppModule } from './app.module';
+
 const CSRF_WHITE_LIST = ['login', 'signup'];
 const isProduction = process.env.NODE_ENV === 'production';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
-import { API_CONFIG } from '@core/config/config.constants';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);

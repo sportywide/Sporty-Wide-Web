@@ -1,5 +1,4 @@
-import { combineReducers } from 'redux';
-import { AnyAction, Reducer } from 'redux';
+import { AnyAction, Reducer, combineReducers } from 'redux';
 
 export interface IReducerManager {
 	getReducerMap: Function;

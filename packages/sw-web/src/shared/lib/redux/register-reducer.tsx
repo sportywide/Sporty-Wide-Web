@@ -1,7 +1,7 @@
 import React from 'react';
 import { ReactReduxContext } from 'react-redux';
 import { ISportyWideStore } from '../store';
-import { Reducer, AnyAction } from 'redux';
+import { AnyAction, Reducer } from 'redux';
 import { IReducerManager } from './reducer-manager';
 import { withContext } from '../context/providers';
 import hoistNonReactStatics from 'hoist-non-react-statics';

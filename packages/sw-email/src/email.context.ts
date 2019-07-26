@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
-import { EmailModule } from './email.module';
 import { INestApplicationContext } from '@nestjs/common';
+import { EmailModule } from './email.module';
 
 let context: INestApplicationContext | null = null;
 export const EmailContextFactory = {

@@ -2,7 +2,7 @@ import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { hashPassword } from '@shared/lib/utils/crypto';
 import { BaseEntity } from '@schema/core/base.entity';
-import { Entity, Column, Index, BeforeInsert, BeforeUpdate } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, Index } from 'typeorm';
 
 @Entity()
 export class User extends BaseEntity {

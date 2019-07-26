@@ -1,4 +1,5 @@
 import { pbkdf2Sync, randomBytes } from 'crypto';
+
 const ITERATIONS = 2048;
 const KEY_LENGTH = 32;
 const DIGEST = 'sha512';

@@ -1,6 +1,6 @@
 import { Log4js, Logger } from 'log4js';
 import { LoggerProviderFactory } from '@core/logging/logger-provider.factory';
-import { API_LOGGER, SCHEMA_LOGGER, LOG4J_PROVIDER, EMAIL_LOGGER } from '@core/logging/logging.constant';
+import { API_LOGGER, EMAIL_LOGGER, LOG4J_PROVIDER, SCHEMA_LOGGER } from '@core/logging/logging.constant';
 
 export const log4jsProviders = [
 	{

@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { EMAIL_QUEUE } from '@core/microservices/queue.constants';
 import { Queue } from 'bull';
 import { InjectQueue } from 'nest-bull';

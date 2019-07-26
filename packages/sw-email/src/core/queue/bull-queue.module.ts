@@ -1,4 +1,4 @@
-import { Module, Inject } from '@nestjs/common';
+import { Inject, Module } from '@nestjs/common';
 import { BullModule, InjectQueue } from 'nest-bull';
 import { Queue } from 'bull';
 import { CoreModule } from '@core/core.module';

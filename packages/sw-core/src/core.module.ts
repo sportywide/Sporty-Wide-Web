@@ -1,7 +1,7 @@
+import path from 'path';
 import { Module } from '@nestjs/common';
 import { LoggerModule } from '@core/logging/logger.module';
 import { ConfigModule } from '@core/config/config.module';
-import path from 'path';
 import { CORE_CONFIG } from '@core/config/config.constants';
 
 @Module({

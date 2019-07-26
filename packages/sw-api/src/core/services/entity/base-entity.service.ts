@@ -1,4 +1,4 @@
-import { Repository, FindConditions, DeleteResult } from 'typeorm';
+import { DeleteResult, FindConditions, Repository } from 'typeorm';
 
 export class BaseEntityService<T> {
 	constructor(private readonly repository: Repository<T>) {}

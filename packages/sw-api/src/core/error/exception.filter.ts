@@ -3,7 +3,6 @@ import { API_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import { QueryFailedError } from 'typeorm';
 import { getFriendlyErrorMessage } from '@schema/core/utils/error-message';
-import { ForbiddenError } from 'csurf';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {

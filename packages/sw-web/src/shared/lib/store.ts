@@ -1,9 +1,9 @@
-import { createStore, applyMiddleware, Store } from 'redux';
+import { Store, applyMiddleware, createStore } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import { createEpicMiddleware } from 'redux-observable';
 import { composeWithDevTools } from 'redux-devtools-extension';
-import { createReducerManager, IReducerManager } from './redux/reducer-manager';
-import { createEpicManager, IEpicManager } from '@web/shared/lib/redux/epic-manager';
+import { IEpicManager, createEpicManager } from '@web/shared/lib/redux/epic-manager';
+import { IReducerManager, createReducerManager } from './redux/reducer-manager';
 
 export function initStore(initialState) {
 	const reducerManager = createReducerManager({});

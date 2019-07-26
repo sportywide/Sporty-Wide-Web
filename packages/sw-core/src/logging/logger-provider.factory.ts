@@ -1,8 +1,8 @@
+import os from 'os';
 import { Inject, Injectable } from '@nestjs/common';
 import { Provider } from 'nconf';
 import log4j, { Configuration } from 'log4js';
 import merge from 'lodash.merge';
-import os from 'os';
 import { CORE_CONFIG } from '@core/config/config.constants';
 
 function filenameToken(logEvent) {
