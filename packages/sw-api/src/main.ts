@@ -1,3 +1,4 @@
+declare const module: any;
 import { NestFactory } from '@nestjs/core';
 import * as cors from 'cors';
 import * as helmet from 'helmet';
@@ -36,6 +37,7 @@ async function bootstrap() {
 
 	const options = new DocumentBuilder()
 		.setTitle('SportyWide API')
+		.setSchemes('http', 'https')
 		.setDescription('SportyWide API description')
 		.setVersion('1.0')
 		.build();
@@ -46,6 +48,11 @@ async function bootstrap() {
 	const config = app.get(API_CONFIG);
 
 	await app.listen(config.get('port') || 5000);
+
+	if (module.hot) {
+		module.hot.accept();
+		module.hot.dispose(() => app.close());
+	}
 }
 
 bootstrap();

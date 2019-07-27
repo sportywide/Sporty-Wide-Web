@@ -1,11 +1,9 @@
-import { getDependencies } from '@root/helpers/package';
-import { externals, node, target, watch } from '../plugins/core';
-import { CleanWebpackPlugin } from 'clean-webpack-plugin';
-import { babel } from '../plugins/babel';
-import nodeExternals from 'webpack-node-externals';
 import path from 'path';
-import paths from '@build/paths';
 import fs from 'fs';
+import nodeExternals from 'webpack-node-externals';
+import paths from '@build/paths';
+import { CleanWebpackPlugin } from 'clean-webpack-plugin';
+import { getDependencies } from '@root/helpers/package';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import webpack from 'webpack';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
@@ -20,6 +18,8 @@ import {
 	setOutput,
 	sourceMaps,
 } from '@webpack-blocks/webpack';
+import { babel } from '../plugins/babel';
+import { externals, node, target, watch } from '../plugins/core';
 
 export function makeConfig({ entries, output, alias }) {
 	process.env.NODE_ENV = process.env.NODE_ENV || 'development';
@@ -30,7 +30,7 @@ export function makeConfig({ entries, output, alias }) {
 	return createConfig([
 		setOutput(output),
 		setMode(isDev ? 'development' : 'production'),
-		entryPoint(entries),
+		entryPoint(['webpack/hot/poll?100', ...entries]),
 		target('node'),
 		externals(getNodeModules()),
 		babel({
@@ -45,7 +45,10 @@ export function makeConfig({ entries, output, alias }) {
 			NODE_ENV: process.env.NODE_ENV,
 		}),
 		watch(),
-		env('development', [addPlugins([new ForkTsCheckerWebpackPlugin()]), sourceMaps('inline-source-map')]),
+		env('development', [
+			addPlugins([new ForkTsCheckerWebpackPlugin(), new webpack.HotModuleReplacementPlugin()]),
+			sourceMaps('inline-source-map'),
+		]),
 		env('production', [sourceMaps('source-map')]),
 		addPlugins([
 			new webpack.BannerPlugin({
@@ -115,6 +118,7 @@ function getNodeModules() {
 	].map(dir =>
 		nodeExternals({
 			modulesDir: dir,
+			whitelist: ['webpack/hot/poll?100'],
 		})
 	);
 }

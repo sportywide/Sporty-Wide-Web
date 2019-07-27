@@ -56,14 +56,14 @@ export class UserController {
 	}
 
 	@AuthorizedApiOperation({ title: 'Update user endpoint' })
-	@ApiOkResponse({ description: 'Update an user', type: UserDto })
+	@ApiOkResponse({ description: 'Return the updated user', type: UserDto })
 	@NotFoundResponse('user')
 	@UseGuards(JwtAuthGuard)
 	@Put(':id')
 	@Patch(':id')
 	public async updateUser(
 		@Param('id', new ParseIntPipe()) id: number,
-		@Body() updateParams: Partial<CreateUserDto>,
+		@Body() updateParams: CreateUserDto,
 		@CurrentUser() currentUser
 	): Promise<UserDto> {
 		if (currentUser.role !== UserRole.ADMIN && currentUser.id !== id) {

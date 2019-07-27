@@ -1,7 +1,7 @@
 /* eslint @typescript-eslint/camelcase: 0 */
 
 module.exports = {
-	mongo_url: 'http://localhost:6000',
+	mongo_url: 'http://localhost:60000',
 	mysql: {
 		username: process.env.MYSQL_USER,
 		password: process.env.MYSQL_PASSWORD,
