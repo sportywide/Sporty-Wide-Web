@@ -1,13 +1,14 @@
 import { Module } from '@nestjs/common';
 import { SchemaUserModule } from '@schema/user/user.module';
 import { CoreSchemaModule } from '@schema/core/core-schema.module';
-import { SCHEMA_CONFIG } from '@core/config/config.constants';
+import { CORE_CONFIG, SCHEMA_CONFIG } from '@core/config/config.constants';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SnakeNamingStrategy } from '@schema/core/naming-strategy';
 import { getMetadataArgsStorage } from 'typeorm';
 import { SwRepositoryModule } from '@schema/core/repository/sql/providers/repository.module';
 import './subscribers';
 import { TypeormLoggerService } from '@schema/core/logging/typeorm.logger';
+import { CoreModule } from '@core/core.module';
 const isDev = process.env.NODE_ENV === 'development';
 
 @Module({
@@ -15,8 +16,8 @@ const isDev = process.env.NODE_ENV === 'development';
 		SchemaUserModule,
 		CoreSchemaModule,
 		TypeOrmModule.forRootAsync({
-			inject: [SCHEMA_CONFIG, TypeormLoggerService],
-			useFactory: (schemaConfig, logger) => ({
+			inject: [SCHEMA_CONFIG, CORE_CONFIG, TypeormLoggerService],
+			useFactory: (schemaConfig, coreConfig, logger) => ({
 				type: 'mysql',
 				host: schemaConfig.get('mysql:host'),
 				port: schemaConfig.get('mysql:port'),
@@ -28,8 +29,15 @@ const isDev = process.env.NODE_ENV === 'development';
 				namingStrategy: new SnakeNamingStrategy(),
 				logging: isDev ? ['query', 'error'] : ['error'],
 				logger,
+				cache: {
+					type: 'redis',
+					options: {
+						host: coreConfig.get('redis:host'),
+						port: coreConfig.get('redis:host'),
+					},
+				},
 			}),
-			imports: [CoreSchemaModule],
+			imports: [CoreSchemaModule, CoreModule],
 		}),
 		SwRepositoryModule.forRoot({
 			entities: getEntities(),

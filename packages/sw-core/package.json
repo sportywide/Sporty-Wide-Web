@@ -12,6 +12,7 @@
 		"rxjs": "6.5.2",
 		"reflect-metadata": "0.1.13",
 		"nest-bull": "0.8.1",
-		"bull": "3.10.0"
+		"bull": "3.10.0",
+		"redis": "2.8.0"
 	}
 }
