@@ -70,7 +70,7 @@ export class AuthService {
 	}
 
 	public async verify(payload) {
-		const user = await this.userService.findById(payload.sub);
+		const user = await this.userService.findById(payload.sub, true);
 		if (!user) {
 			throw new UnauthorizedException('Invalid token');
 		}

@@ -5,6 +5,5 @@ import { EventSubscriber } from 'typeorm';
 export class SwGlobalSubscriber extends SwSubscriber {
 	afterSaveEntities(entityIds: EntityIds) {
 		super.afterSaveEntities(entityIds);
-		console.log('Save entities', entityIds);
 	}
 }

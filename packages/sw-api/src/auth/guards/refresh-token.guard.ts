@@ -35,7 +35,7 @@ export class RefreshTokenGuard implements CanActivate {
 					return resolve(false);
 				}
 				const userId = decodedPayload.sub;
-				user = await this.userService.findById(userId);
+				user = await this.userService.findById(userId, true);
 				if (!user || user.refreshToken !== refreshToken) {
 					return resolve(false);
 				}

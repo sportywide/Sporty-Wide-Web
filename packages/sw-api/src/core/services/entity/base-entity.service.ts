@@ -27,8 +27,13 @@ export class BaseEntityService<T> {
 		return this.repository.findByIds(ids);
 	}
 
-	public async findById(id: number): Promise<T | undefined> {
-		return this.repository.findOne(id);
+	public async findById(id: number, cache?): Promise<T | undefined> {
+		return this.repository.findOne({
+			where: {
+				id,
+			},
+			cache,
+		});
 	}
 
 	public async delete(params: FindConditions<T>): Promise<DeleteResult> {

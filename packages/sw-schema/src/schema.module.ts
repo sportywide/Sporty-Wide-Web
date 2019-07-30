@@ -7,14 +7,16 @@ import { SnakeNamingStrategy } from '@schema/core/naming-strategy';
 import { getMetadataArgsStorage } from 'typeorm';
 import { SwRepositoryModule } from '@schema/core/repository/sql/providers/repository.module';
 import './subscribers';
+import { TypeormLoggerService } from '@schema/core/logging/typeorm.logger';
+const isDev = process.env.NODE_ENV === 'development';
 
 @Module({
 	imports: [
 		SchemaUserModule,
 		CoreSchemaModule,
 		TypeOrmModule.forRootAsync({
-			inject: [SCHEMA_CONFIG],
-			useFactory: schemaConfig => ({
+			inject: [SCHEMA_CONFIG, TypeormLoggerService],
+			useFactory: (schemaConfig, logger) => ({
 				type: 'mysql',
 				host: schemaConfig.get('mysql:host'),
 				port: schemaConfig.get('mysql:port'),
@@ -24,6 +26,8 @@ import './subscribers';
 				entities: getEntities(),
 				subscribers: getSubscribers(),
 				namingStrategy: new SnakeNamingStrategy(),
+				logging: isDev ? ['query', 'error'] : ['error'],
+				logger,
 			}),
 			imports: [CoreSchemaModule],
 		}),

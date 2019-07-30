@@ -159,7 +159,9 @@ class SwQueryBuilder<T> {
 	}
 }
 
-export declare type SwRepository<T> = Repository<T> & SwBaseRepository<T>;
+//hack to prevent export not found warning when babel typescript strips out type information
+export const SwRepository = {};
+export type SwRepository<T> = Repository<T> & SwBaseRepository<T>;
 
 export function getSwRepository<T>(connection: Connection, objectType: ObjectType<T>): SwRepository<T> {
 	const repository = connection.getRepository<T>(objectType);
