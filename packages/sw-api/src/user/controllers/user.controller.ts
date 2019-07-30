@@ -69,7 +69,7 @@ export class UserController {
 		if (currentUser.role !== UserRole.ADMIN && currentUser.id !== id) {
 			throw new UnauthorizedException('You are not allowed to edit other users');
 		}
-		const user = await this.userService.findById(id);
+		const user = await this.userService.findById(id, true);
 		if (!user) {
 			throw new NotFoundException(`User with id ${id} cannot be found`);
 		}

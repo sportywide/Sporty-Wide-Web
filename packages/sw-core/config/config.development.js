@@ -6,6 +6,7 @@ module.exports = {
 		// 	host: 'localhost',
 		// 	port: 1234,
 		// },
+		default: 'DEBUG',
 		file: {
 			max_log_size: 5242880,
 			num_backups: 5,

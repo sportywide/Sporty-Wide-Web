@@ -28,24 +28,27 @@ const defaultPatternLayout = {
 export class LoggerProviderFactory {
 	constructor(@Inject(CORE_CONFIG) private readonly coreConfig: Provider) {}
 
-	configure() {
-		const log4jConfig = this.buildConfig(this.coreConfig);
-		return log4j.configure(log4jConfig);
+	configure(logLevel) {
+		const log4jConfig = this.buildConfig(this.coreConfig, log4j.levels[logLevel].levelStr);
+		const loggerFactory = log4j.configure(log4jConfig);
+		const logger = loggerFactory.getLogger('core');
+		logger.info('Log level', logLevel);
+		return loggerFactory;
 	}
 
-	private buildConfig(coreConfig): Configuration {
+	private buildConfig(coreConfig, defaultLevel = log4j.levels.INFO.levelStr): Configuration {
 		let log4jsConfig: Configuration = {
 			appenders: {},
 			categories: {
 				default: {
 					appenders: [],
-					level: log4j.levels.INFO.levelStr,
+					level: defaultLevel,
 					// @ts-ignore
 					enableCallStack: true,
 				},
 				http: {
 					appenders: [],
-					level: log4j.levels.INFO.levelStr,
+					level: defaultLevel,
 					// @ts-ignore
 					enableCallStack: true,
 				},
@@ -78,7 +81,6 @@ export class LoggerProviderFactory {
 			categories: {
 				default: {
 					appenders: ['console'],
-					level: log4j.levels.DEBUG.levelStr,
 				},
 			},
 		});

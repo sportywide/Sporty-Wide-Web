@@ -7,36 +7,36 @@ import { SCHEMA_LOGGER } from '@core/logging/logging.constant';
 export class TypeormLoggerService implements Logger {
 	constructor(@Inject(SCHEMA_LOGGER) private logger: SchemaLogger) {}
 
-	public logQuery(query: string, parameters?: any[], queryRunner?: QueryRunner) {
-		this.logger.trace(query, parameters, queryRunner);
+	public logQuery(query: string, parameters?: any[]) {
+		this.logger.debug(query, parameters);
 	}
 
-	public logQueryError(error: string, query: string, parameters?: any[], queryRunner?: QueryRunner) {
-		this.logger.error(query, parameters, queryRunner);
+	public logQueryError(error: string, query: string, parameters?: any[]) {
+		this.logger.error(query, parameters);
 	}
 
-	public logQuerySlow(time: number, query: string, parameters?: any[], queryRunner?: QueryRunner) {
-		this.logger.warn(`Slow query took ${time} ms: %o %o %o`, query, parameters, queryRunner);
+	public logQuerySlow(time: number, query: string, parameters?: any[]) {
+		this.logger.warn(`Slow query took ${time} ms: %o %o %o`, query, parameters);
 	}
 
-	public logSchemaBuild(message: string, queryRunner?: QueryRunner) {
-		this.logger.info(message, queryRunner);
+	public logSchemaBuild(message: string) {
+		this.logger.info(message);
 	}
 
-	public logMigration(message: string, queryRunner?: QueryRunner) {
-		this.logger.info(message, queryRunner);
+	public logMigration(message: string) {
+		this.logger.info(message);
 	}
 
-	public log(level: 'log' | 'info' | 'warn', message: any, queryRunner?: QueryRunner) {
+	public log(level: 'log' | 'info' | 'warn', message: any) {
 		switch (level) {
 			case 'log':
-				this.logger.info(message, queryRunner);
+				this.logger.info(message);
 				break;
 			case 'info':
-				this.logger.info(message, queryRunner);
+				this.logger.info(message);
 				break;
 			case 'warn':
-				this.logger.warn(message, queryRunner);
+				this.logger.warn(message);
 				break;
 		}
 	}
