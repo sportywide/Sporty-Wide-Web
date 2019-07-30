@@ -30,7 +30,7 @@ export function makeConfig({ entries, output, alias }) {
 	return createConfig([
 		setOutput(output),
 		setMode(isDev ? 'development' : 'production'),
-		entryPoint(['webpack/hot/poll?100', ...entries]),
+		entryPoint(entries),
 		target('node'),
 		externals(getNodeModules()),
 		babel({
@@ -45,10 +45,7 @@ export function makeConfig({ entries, output, alias }) {
 			NODE_ENV: process.env.NODE_ENV,
 		}),
 		watch(),
-		env('development', [
-			addPlugins([new ForkTsCheckerWebpackPlugin(), new webpack.HotModuleReplacementPlugin()]),
-			sourceMaps('inline-source-map'),
-		]),
+		env('development', [addPlugins([new ForkTsCheckerWebpackPlugin()]), sourceMaps('inline-source-map')]),
 		env('production', [sourceMaps('source-map')]),
 		addPlugins([
 			new webpack.BannerPlugin({
@@ -118,7 +115,6 @@ function getNodeModules() {
 	].map(dir =>
 		nodeExternals({
 			modulesDir: dir,
-			whitelist: ['webpack/hot/poll?100'],
 		})
 	);
 }

@@ -1,7 +1,6 @@
-import { DynamicModule, forwardRef } from '@nestjs/common';
+import { DynamicModule } from '@nestjs/common';
 import { getConnectionToken } from '@nestjs/typeorm';
 import { getSwRepository } from '@schema/core/repository/sql/base.repository';
-import { SchemaModule } from '@schema/schema.module';
 
 const tokenMap = new Map<string, Map<Function, symbol>>();
 
