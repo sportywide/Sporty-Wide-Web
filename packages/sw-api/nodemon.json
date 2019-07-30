@@ -1,6 +1,0 @@
-{
-	"ignore": ["src", "node_modules"],
-	"watch": ["config/"],
-	"delay": 2,
-	"exec": "node dist/main.js"
-}

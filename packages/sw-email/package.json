@@ -10,7 +10,7 @@
 	},
 	"scripts": {
 		"dev:webpack": "ts-node -r tsconfig-paths/register node_modules/.bin/webpack",
-		"dev:server": "wait-on dist/main.js && nodemon",
+		"dev:server": "wait-on dist/main.js && node dist/main.js",
 		"dev": "rm -rf dist/ && run-p dev:*"
 	}
 }
