@@ -18,12 +18,12 @@ const isDev = process.env.NODE_ENV === 'development';
 		TypeOrmModule.forRootAsync({
 			inject: [SCHEMA_CONFIG, CORE_CONFIG, TypeormLoggerService],
 			useFactory: (schemaConfig, coreConfig, logger) => ({
-				type: 'mysql',
-				host: schemaConfig.get('mysql:host'),
-				port: schemaConfig.get('mysql:port'),
-				username: schemaConfig.get('mysql:username'),
-				password: schemaConfig.get('mysql:password'),
-				database: schemaConfig.get('mysql:database'),
+				type: 'postgres',
+				host: schemaConfig.get('postgres:host'),
+				port: schemaConfig.get('postgres:port'),
+				username: schemaConfig.get('postgres:username'),
+				password: schemaConfig.get('postgres:password'),
+				database: schemaConfig.get('postgres:database'),
 				entities: getEntities(),
 				subscribers: getSubscribers(),
 				namingStrategy: new SnakeNamingStrategy(),

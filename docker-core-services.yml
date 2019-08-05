@@ -1,25 +1,24 @@
 version: '3'
 services:
-    mysql:
-        image: sportywide/sportywide-mysql
+    postgres:
+        image: sportywide/sportywide-postgres
         environment:
-            - MYSQL_DATABASE=${MYSQL_DATABASE}
-            - MYSQL_USER=${MYSQL_USER}
-            - MYSQL_PASSWORD=${MYSQL_PASSWORD}
-            - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+            - POSTGRES_DB=${POSTGRES_DB}
+            - POSTGRES_USER=${POSTGRES_USER}
+            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
         volumes:
-            - mysql:/var/lib/mysql
+            - postgres:/var/lib/postgres/data
         ports:
-            - '${MYSQL_PORT}:3306'
+            - '${POSTGRES_PORT}:5432'
     flyway:
         image: sportywide/sportywide-flyway
-        command: -url=jdbc:mysql://mysql:3306/${MYSQL_DATABASE} -user=${MYSQL_USER} -password=${MYSQL_PASSWORD} migrate
+        command: -url=jdbc:postgresql://postgres:5432/${POSTGRES_DB} -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} migrate
         volumes:
             - './sql:/flyway/sql'
         environment:
-            WAIT_HOSTS: mysql:3306
+            WAIT_HOSTS: postgres:5432
         depends_on:
-            - mysql
+            - postgres
     redis:
         image: sportywide/sportywide-redis
         volumes:
@@ -32,5 +31,5 @@ services:
             - '${MAILHOG_TRANSPORT_PORT}:1025'
             - '${MAILHOG_UI_PORT}:8025'
 volumes:
-    mysql:
+    postgres:
     redis:

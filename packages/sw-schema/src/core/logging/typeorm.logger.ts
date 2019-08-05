@@ -1,5 +1,5 @@
 import { Injectable, Inject } from '@nestjs/common';
-import { Logger, QueryRunner } from 'typeorm';
+import { Logger } from 'typeorm';
 import { Logger as SchemaLogger } from 'log4js';
 import { SCHEMA_LOGGER } from '@core/logging/logging.constant';
 

@@ -6,10 +6,10 @@ export abstract class BaseEntity {
 	@PrimaryGeneratedColumn()
 	id: number;
 
-	@CreateDateColumn({ type: 'datetime' })
+	@CreateDateColumn({ type: 'timestamptz' })
 	createdAt: Date;
 
-	@UpdateDateColumn({ type: 'datetime' })
+	@UpdateDateColumn({ type: 'timestamptz' })
 	updatedAt: Date;
 
 	@AfterLoad()

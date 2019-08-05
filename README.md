@@ -24,7 +24,7 @@ The app is structured into 4 packages:
 
 #### Running with docker (Recommended)
 
--   Start core services (mysql, flyway, redis ...) in one tab: `docker compose -f docker-core-services.yml up`
+-   Start core services (postgres, flyway, redis ...) in one tab: `docker compose -f docker-core-services.yml up`
 -   Start docker application services in another tab: `docker compose up`
 
 ##### To run just a specified service
