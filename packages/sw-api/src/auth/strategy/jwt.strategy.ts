@@ -23,7 +23,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 
 	async validate(payload, done: Function) {
 		try {
-			const user = this.authService.verify(payload);
+			const user = await this.authService.verify(payload);
 			done(null, user);
 		} catch (err) {
 			done(err, null);

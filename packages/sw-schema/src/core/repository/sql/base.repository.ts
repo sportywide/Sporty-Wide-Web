@@ -13,6 +13,7 @@ import {
 } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { SwSubscriber } from '@schema/core/subscriber/sql/base.subscriber';
+import { wrap } from '@shared/lib/utils/object/proxy';
 
 class SwBaseRepository<T> {
 	constructor(private repository: Repository<T>) {}
@@ -109,6 +110,10 @@ class SwBaseRepository<T> {
 	}
 }
 
+//hack to prevent export not found warning when babel typescript strips out type information
+export const SwRepository = {};
+export type SwRepository<T> = Repository<T> & SwBaseRepository<T>;
+
 class SwQueryBuilder<T> {
 	constructor(private queryBuilder: QueryBuilder<T>, private objectType: ObjectType<T> | EntitySchema<T> | string) {}
 
@@ -155,41 +160,14 @@ class SwQueryBuilder<T> {
 
 	static from<T>(queryBuilder: QueryBuilder<T>, objectType) {
 		const customQueryBuilder = new SwQueryBuilder(queryBuilder, objectType);
-		return wrap(customQueryBuilder, queryBuilder) as SwQueryBuilder<T> & QueryBuilder<T>;
+		return wrap(customQueryBuilder, queryBuilder) as SwRepository<T>;
 	}
 }
-
-//hack to prevent export not found warning when babel typescript strips out type information
-export const SwRepository = {};
-export type SwRepository<T> = Repository<T> & SwBaseRepository<T>;
 
 export function getSwRepository<T>(connection: Connection, objectType: ObjectType<T>): SwRepository<T> {
 	const repository = connection.getRepository<T>(objectType);
 	const customRepository = new SwBaseRepository<T>(repository);
 	return wrap(customRepository, repository) as SwRepository<T>;
-}
-
-function wrap(wrapper, base) {
-	const proxy = new Proxy(wrapper, {
-		get(target, property) {
-			if (property in target) {
-				return getProperty(target, property, proxy);
-			}
-
-			return getProperty(base, property, proxy);
-		},
-	});
-	return proxy;
-}
-function getProperty(object, property, proxy) {
-	if (typeof object[property] === 'function') {
-		const oldFunction = object[property];
-		object[property] = function(...args) {
-			const value = oldFunction.apply(object, args);
-			return value === object ? proxy : value;
-		};
-	}
-	return object[property];
 }
 
 function notifyUpdate(repository, entityIds) {
