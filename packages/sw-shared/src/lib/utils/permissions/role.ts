@@ -18,9 +18,9 @@ export function compareRole(role1, role2) {
 }
 
 export function getLowerRoles(role) {
-	return Object.keys(userMapping).filter(currentRole => compareRole(currentRole, role.toLowerCase()) <= 0);
+	return Object.keys(userMapping).filter(currentRole => compareRole(currentRole, role.toUpperCase()) <= 0);
 }
 
 export function getHigherRoles(role) {
-	return Object.keys(userMapping).filter(currentRole => compareRole(currentRole, role.toLowerCase()) >= 0);
+	return Object.keys(userMapping).filter(currentRole => compareRole(currentRole, role.toUpperCase()) >= 0);
 }

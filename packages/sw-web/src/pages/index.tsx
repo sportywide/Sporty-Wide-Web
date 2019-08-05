@@ -39,7 +39,7 @@ class Counter extends React.Component<IProps, any> {
 				<br />
 				<nav>
 					<Link href="/other">
-						<a>Navigate to &quot;/other&quot;</a>
+						<a>Navigates to &quot;/other&quot;</a>
 					</Link>
 				</nav>
 			</div>

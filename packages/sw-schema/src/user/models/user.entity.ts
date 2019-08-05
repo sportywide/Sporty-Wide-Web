@@ -55,7 +55,7 @@ export class User extends BaseEntity {
 			this.password = hashPassword(this.password);
 		}
 
-		if (this.changed('username')) {
+		if (this.id && this.changed('username')) {
 			throw new Error('Cannot change username');
 		}
 	}
