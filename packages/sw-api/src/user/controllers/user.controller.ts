@@ -80,7 +80,7 @@ export class UserController {
 			objectType: CreateUserDto,
 		});
 
-		updatedUser = await this.userService.save(updatedUser as User);
+		updatedUser = await this.userService.saveOne(updatedUser as User);
 
 		return plainToClass(UserDto, updatedUser, {
 			excludeExtraneousValues: true,

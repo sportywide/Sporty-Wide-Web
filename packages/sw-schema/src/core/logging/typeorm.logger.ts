@@ -8,7 +8,7 @@ export class TypeormLoggerService implements Logger {
 	constructor(@Inject(SCHEMA_LOGGER) private logger: SchemaLogger) {}
 
 	public logQuery(query: string, parameters?: any[]) {
-		this.logger.debug(query, parameters);
+		this.logger.trace(query, parameters);
 	}
 
 	public logQueryError(error: string, query: string, parameters?: any[]) {

@@ -11,15 +11,19 @@ export class BaseEntityService<T> {
 		return this.repository.findOne(params);
 	}
 
-	public async create(dtos: T[]): Promise<T[]> {
+	public createEntity(dtos: T[]): T[] {
 		return this.repository.create(dtos);
 	}
 
-	public async save(dto: T) {
+	public async saveOne(dto: T) {
 		return this.repository.save(dto);
 	}
 
-	public async createOne(dto: T): Promise<T> {
+	public async save(dto: T[]) {
+		return this.repository.save(dto);
+	}
+
+	public createOneEntity(dto: T): T {
 		return this.repository.create(dto);
 	}
 

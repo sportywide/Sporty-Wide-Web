@@ -32,7 +32,7 @@ export class AuthService {
 		createUserDto['role'] = UserRole.USER;
 		createUserDto['status'] = UserStatus.PENDING;
 		const userValues = plainToClass(User, createUserDto);
-		const user = await this.userService.createOne(userValues);
+		const user = await this.userService.saveOne(userValues);
 		await this.emailService.sendUserVerificationEmail(user);
 		return this.createTokens(user);
 	}
@@ -79,13 +79,13 @@ export class AuthService {
 
 	public async clearTokens(user: User) {
 		user.refreshToken = undefined;
-		return this.userService.save(user);
+		return this.userService.saveOne(user);
 	}
 
 	private async createRefreshToken(user: User) {
 		const refreshToken = uuid();
 		user.refreshToken = refreshToken;
-		await this.userService.save(user);
+		await this.userService.saveOne(user);
 
 		return refreshToken;
 	}
