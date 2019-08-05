@@ -8,7 +8,7 @@ services:
             - MYSQL_PASSWORD=${MYSQL_PASSWORD}
             - MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
         volumes:
-            - ./db/mysql:/var/lib/mysql
+            - mysql:/var/lib/mysql
         ports:
             - '${MYSQL_PORT}:3306'
     flyway:
@@ -23,7 +23,7 @@ services:
     redis:
         image: sportywide/sportywide-redis
         volumes:
-            - ./db/redis:/data
+            - redis:/data
         ports:
             - '${REDIS_PORT}:6379'
     mailhog:
@@ -31,3 +31,6 @@ services:
         ports:
             - '${MAILHOG_TRANSPORT_PORT}:1025'
             - '${MAILHOG_UI_PORT}:8025'
+volumes:
+    mysql:
+    redis:
