@@ -28,6 +28,7 @@ services:
             target: base
         ports:
             - 5000:5000
+            - 9229:9229
         command: dev
         environment:
             WAIT_HOSTS: postgres:5432,redis:6379
@@ -58,6 +59,8 @@ services:
             POSTGRES_DATABASE: ${POSTGRES_DB}
         depends_on:
             - base
+        ports:
+            - 9230:9229
         volumes:
             - ./packages/sw-shared:/opt/app/packages/sw-shared
             - ./packages/sw-core:/opt/app/packages/sw-core
