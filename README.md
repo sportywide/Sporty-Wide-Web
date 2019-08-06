@@ -10,6 +10,20 @@
 -   `npm install -g ts-node typescript`
 -   `npm run install:dependencies`
 -   Rename .env.example to .env and tweak it to your needs
+-   Install mkcert: https://github.com/FiloSottile/mkcert
+-   Run `mkcert -install` to install a local CA
+-   Create self-signed SSL certificates: 
+
+```bash
+mkcert --key-file certs/sportywide-key.pem --cert-file certs/sportywide-cert.pem sportywidedev.com *.sportywidedev.com localhost 127.0.0.1 ::1
+```
+
+-   Add the following entries to /etc/hosts 
+
+```bash
+127.0.0.1 sportywidedev.com api.sportywidedev.com www.sportywidedev.com
+```
+- After following the running instructions below, you should be able to access the API at `https://api.sportywidedev.com` and the app at `https://www.sportywidedev.com`
 
 ### Services
 
