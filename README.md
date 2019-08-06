@@ -10,15 +10,27 @@
 -   `npm install -g ts-node typescript`
 -   `npm run install:dependencies`
 
+### Services
+
+* Redis: 
+    * Database queries caching
+    * Queuing tasks
+* Postgresql:
+* Mailhog:
+    * Capturing email locally
+* Flyway:
+    * Database migration
+    
 ### Project structure
 
-The app is structured into 4 packages:
+The app is structured into multiple packages:
 
 -   sw-web: contains react code and other related front end assets. Bootstraped by Next.js server (`see src/next-server.js`)
 -   sw-api: contains REST API related code. Written in nestjs
 -   sw-core: contains common code for back end services (e.g. logging, queueing)
 -   sw-schema: contains code specific to database access
--   sw-model: contains utility code and shared data transfer object (DTO) classes
+-   sw-shared: contains utility code and shared data transfer object (DTO) classes
+-   sw-email: a microservice that will be responsible for sending emails, communicate with other services via redis
 
 ### Running
 
@@ -35,8 +47,8 @@ The app is structured into 4 packages:
 
 Run one of the following commands
 
--   `docker-compose run --rm --entrypoint sh <service>`
--   `docker-compose exec -it <container> sh`
+-   `docker-compose run --rm --entrypoint sh <service>`: This will run the container and open an shell session to debug
+-   `docker-compose exec -it <container> sh`: This will create a shell session to an already running container. Use `docker ps` to find the container ID
 
 #### Running locally
 
@@ -84,8 +96,3 @@ module.exports = {
 -   Install a dependency to a sub package
 
         	`lerna add [--dev] --scope <package>`
-
-### Troubleshooting
-
--   Module not found. Simply run `npm run bootstrap` from the project folder
--   Files are not synced. Remove the volume with `docker-sync clean` and then restart docker and docker-sync
