@@ -1,10 +1,10 @@
 import React from 'react';
 import { ReactReduxContext } from 'react-redux';
-import { ISportyWideStore } from '../store';
 import { AnyAction, Reducer } from 'redux';
-import { IReducerManager } from './reducer-manager';
-import { withContext } from '../context/providers';
 import hoistNonReactStatics from 'hoist-non-react-statics';
+import { ISportyWideStore } from '../store';
+import { withContext } from '../context/providers';
+import { IReducerManager } from './reducer-manager';
 
 interface IProps {
 	context: ReactReduxContext;

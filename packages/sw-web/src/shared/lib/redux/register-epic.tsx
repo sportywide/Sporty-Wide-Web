@@ -1,9 +1,9 @@
 import React from 'react';
 import { ReactReduxContext } from 'react-redux';
-import { ISportyWideStore } from '../store';
-import { withContext } from '../context/providers';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import { IEpicManager } from '@web/shared/lib/redux/epic-manager';
+import { ISportyWideStore } from '../store';
+import { withContext } from '../context/providers';
 
 interface IProps {
 	context: ReactReduxContext;

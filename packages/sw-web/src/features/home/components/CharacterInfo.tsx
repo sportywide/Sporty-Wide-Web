@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { IHomeState } from '../store/reducers/';
 import PropTypes from 'prop-types';
+import { IHomeState } from '../store/reducers/';
 
 const CharacterInfo = ({ character, error, isFetchedOnServer = false }: IHomeState) => (
 	<div className="CharacterInfo">
