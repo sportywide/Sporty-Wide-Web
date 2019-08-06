@@ -19,6 +19,9 @@ services:
         command: dev
         depends_on:
             - base
+        labels:
+            - "traefik.frontend.rule=Host:www.sportywidedev.com,sportywidedev.com"
+            - "traefik.port=3000"
         volumes:
             - ./packages/sw-shared:/opt/app/packages/sw-shared
             - ./packages/sw-web:/opt/app/packages/sw-web
@@ -35,6 +38,9 @@ services:
             - 5000:5000
             - 9229:9229
         command: dev
+        labels:
+            - "traefik.frontend.rule=Host:api.sportywidedev.com"
+            - "traefik.port=5000"
         environment:
             WAIT_HOSTS: postgres:5432,redis:6379
             POSTGRES_USER: ${POSTGRES_USER}

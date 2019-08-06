@@ -10,7 +10,7 @@ cmake-build-*/
 # File-based project format
 *.iws
 
-db
+certs/*.pem
 
 # IntelliJ
 out/

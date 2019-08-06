@@ -37,7 +37,21 @@ services:
             - '${MAILHOG_TRANSPORT_PORT}:1025'
             - '${MAILHOG_UI_PORT}:8025'
         networks:
-            - sportywide-backend    
+            - sportywide-backend  
+    traefik:
+        image: traefik
+        command: --web --docker --logLevel=INFO
+        ports:
+            - 80:80
+            - 443:443
+            - 8080:8080
+        volumes:
+            - /var/run/docker.sock:/var/run/docker.sock
+            - ./traefik.toml:/traefik.toml:ro
+            - ./certs:/certs:ro 
+        networks:
+          - sportywide-frontend
+          - sportywide-backend
 volumes:
     postgres:
     redis:
