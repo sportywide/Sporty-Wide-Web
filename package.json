@@ -22,6 +22,8 @@
 		"@typescript-eslint/parser": "1.13.0",
 		"@webpack-blocks/babel": "2.0.1",
 		"@webpack-blocks/webpack": "2.0.1",
+		"next-plugin-custom-babel-config": "1.0.2",
+		"@zeit/next-bundle-analyzer": "0.1.2",
 		"@zeit/next-typescript": "1.1.1",
 		"babel-loader": "8.0.6",
 		"babel-plugin-transform-typescript-metadata": "0.2.2",

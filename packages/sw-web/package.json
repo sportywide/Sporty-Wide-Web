@@ -6,13 +6,16 @@
 	"license": "MIT",
 	"scripts": {
 		"dev": "cross-env NODE_ENV=development nodemon -L",
-		"build": "next build",
-		"start": "cross-env NODE_ENV=production ts-node -r tsconfig-paths/register ./src/next-server.ts"
+		"build": "next build ./src",
+		"start": "cross-env NODE_ENV=production ts-node -r tsconfig-paths/register ./src/next-server.ts",
+		"analyze": "BUNDLE_ANALYZE=both next build ./src",
+		"analyze:server": "BUNDLE_ANALYZE=server next build ./src",
+		"analyze:browser": "BUNDLE_ANALYZE=browser next build ./src"
 	},
 	"dependencies": {
 		"express": "4.17.1",
 		"http-proxy-middleware": "0.19.1",
-		"next": "9.0.2",
+		"next": "9.0.3",
 		"react": "16.8.6",
 		"react-dom": "16.8.6",
 		"rxjs": "6.5.2",
@@ -28,9 +31,6 @@
 		"axios": "0.19.0",
 		"hoist-non-react-statics": "3.3.0",
 		"redux-devtools-extension": "2.13.8"
-	},
-	"devDependencies": {
-		"next-plugin-custom-babel-config": "1.0.2"
 	},
 	"jest": {
 		"moduleFileExtensions": [
