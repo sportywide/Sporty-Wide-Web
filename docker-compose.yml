@@ -1,4 +1,4 @@
-version: '3.4'
+version: '3.5'
 services:
     base:
         image: sportywide-base
@@ -6,6 +6,9 @@ services:
             context: .
             dockerfile: Dockerfile
             target: dev
+        networks:
+            - sportywide-backend
+            - sportywide-frontend
     web:
         build:
             context: .
@@ -21,6 +24,8 @@ services:
             - ./packages/sw-web:/opt/app/packages/sw-web
             - /opt/app/packages/sw-shared/node_modules
             - /opt/app/packages/sw-web/node_modules
+        networks:
+            - sportywide-frontend    
     api:
         build:
             context: .
@@ -46,6 +51,8 @@ services:
             - /opt/app/packages/sw-schema/node_modules
             - /opt/app/packages/sw-api/node_modules
             - /opt/app/packages/sw-core/node_modules
+        networks:
+            - sportywide-backend    
     email:
         build:
             context: .
@@ -70,3 +77,12 @@ services:
             - /opt/app/packages/sw-core/node_modules
             - /opt/app/packages/sw-email/node_modules
             - /opt/app/packages/sw-schema/node_modules
+        networks:
+            - sportywide-backend    
+networks:
+    sportywide-frontend:
+        external:
+            name: sportywide-frontend
+    sportywide-backend:
+        external:
+            name: sportywide-backend
