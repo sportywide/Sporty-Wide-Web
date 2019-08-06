@@ -9,6 +9,7 @@
 
 -   `npm install -g ts-node typescript`
 -   `npm run install:dependencies`
+-   Rename .env.example to .env and tweak it to your needs
 
 ### Services
 
@@ -88,11 +89,11 @@ module.exports = {
 };
 ```
 
--   Run npm command with lerna. Use one of the followings
+* Run npm command with lerna. Use one of the followings
 
-        	* `lerna run --scope <package> --stream dev (for only one package)`
-        	* `lerna run --stream dev (for all packages)`
+    * `npx lerna run --scope <package> --stream dev (for only one package)`
+    * `npx lerna run --stream dev (for all packages)`
 
--   Install a dependency to a sub package
 
-        	`lerna add [--dev] --scope <package>`
+* Install a dependency to a sub package
+    * `lerna add [--dev] --scope <package>`
