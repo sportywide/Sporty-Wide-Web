@@ -1,14 +1,16 @@
-version: '3'
+version: '3.4'
 services:
     base:
         image: sportywide-base
         build:
             context: .
             dockerfile: Dockerfile
+            target: dev
     web:
         build:
             context: .
             dockerfile: ./packages/sw-web/Dockerfile
+            target: base
         ports:
             - 3000:3000
         command: dev
@@ -23,6 +25,7 @@ services:
         build:
             context: .
             dockerfile: ./packages/sw-api/Dockerfile
+            target: base
         ports:
             - 5000:5000
         command: dev
@@ -46,6 +49,7 @@ services:
         build:
             context: .
             dockerfile: ./packages/sw-email/Dockerfile
+            target: base
         command: dev
         environment:
             WAIT_HOSTS: redis:6379

@@ -1,4 +1,4 @@
-FROM node:10-alpine
+FROM node:10-alpine AS base
 
 ARG PUID=1024
 ENV PUID ${PUID}
@@ -34,5 +34,15 @@ USER $USER
 
 WORKDIR $PROJECT_ROOT
 
+FROM base as dev
+COPY --chown=sportywide:sportywide ./packages/sw-shared/package*.json $PROJECT_ROOT/packages/sw-shared/
+COPY --chown=sportywide:sportywide ./packages/sw-core/package*.json $PROJECT_ROOT/packages/sw-core/
+COPY --chown=sportywide:sportywide ./packages/sw-web/package*.json $PROJECT_ROOT/packages/sw-web/
+COPY --chown=sportywide:sportywide ./packages/sw-api/package*.json $PROJECT_ROOT/packages/sw-api/
+COPY --chown=sportywide:sportywide ./packages/sw-email/package*.json $PROJECT_ROOT/packages/sw-email/
+COPY --chown=sportywide:sportywide ./packages/sw-schema/package*.json $PROJECT_ROOT/packages/sw-schema/
+RUN npm run install:dependencies
+
+FROM base as prod
 RUN npm run install:dependencies
 
