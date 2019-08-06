@@ -1,21 +1,15 @@
-import { Queue, QueueProcess } from 'nest-bull';
-import { Job } from 'bull';
-import { Inject } from '@nestjs/common';
+import nodemailer, { Transporter } from 'nodemailer';
+import { EMAIL_CONFIG } from '@core/config/config.constants';
+import { Provider } from 'nconf';
 import { EMAIL_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
-import { EMAIL_QUEUE } from '@core/microservices/queue.constants';
-import nodemailer, { Transporter } from 'nodemailer';
-import { Provider } from 'nconf';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import { Inject, Injectable } from '@nestjs/common';
 import Mail from 'nodemailer/lib/mailer';
-import { EMAIL_CONFIG } from '@core/config/config.constants';
-
 const isProduction = process.env.NODE_ENV === 'production';
 
-@Queue({
-	name: EMAIL_QUEUE,
-})
-export class EmailProcessor {
+@Injectable()
+export class EmailService {
 	private transporter: Transporter;
 
 	constructor(
@@ -41,9 +35,8 @@ export class EmailProcessor {
 		this.transporter = nodemailer.createTransport(transportOptions);
 	}
 
-	@QueueProcess()
-	async processEmail(job: Job<Mail.Options>) {
+	sendMail(mailOptions: Mail.Options) {
 		this.logger.debug('Sending email');
-		await this.transporter.sendMail(job.data);
+		return this.transporter.sendMail(mailOptions);
 	}
 }

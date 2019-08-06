@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { CoreModule } from '@core/core.module';
 import { ConfigModule } from '@core/config/config.module';
 import { EMAIL_CONFIG } from '@core/config/config.constants';
+import { EmailService } from '@email/core/email/email.service';
 
 @Module({
 	imports: [
@@ -12,5 +13,7 @@ import { EMAIL_CONFIG } from '@core/config/config.constants';
 			exportAs: EMAIL_CONFIG,
 		}),
 	],
+	providers: [EmailService],
+	exports: [EmailService],
 })
 export class CoreEmailModule {}

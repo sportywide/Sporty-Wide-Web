@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common';
 import { CoreEmailModule } from '@email/core/core-email.module';
-import { BullQueueModule } from '@email/core/queue/bull-queue.module';
+import { UserEmailQueueModule } from '@email/queue/user/user-email-queue.module';
 
 @Module({
-	imports: [CoreEmailModule, BullQueueModule],
+	imports: [CoreEmailModule, UserEmailQueueModule],
 	controllers: [],
 })
 export class EmailModule {}

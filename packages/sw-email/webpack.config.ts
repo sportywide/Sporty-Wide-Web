@@ -9,5 +9,6 @@ module.exports = makeConfig({
 		'@shared': paths.shared.src,
 		'@core': paths.core.src,
 		'@email': paths.email.src,
+		'@schema': paths.schema.src,
 	},
 });

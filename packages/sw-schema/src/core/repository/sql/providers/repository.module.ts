@@ -2,8 +2,6 @@ import { DynamicModule } from '@nestjs/common';
 import { getConnectionToken } from '@nestjs/typeorm';
 import { getSwRepository } from '@schema/core/repository/sql/base.repository';
 
-const tokenMap = new Map<string, Map<Function, symbol>>();
-
 export class SwRepositoryModule {
 	static forRoot({
 		connection = 'default',
@@ -12,8 +10,6 @@ export class SwRepositoryModule {
 		connection?: string;
 		entities: Function[];
 	}): DynamicModule {
-		registerTokens(connection, entities);
-
 		const providers = getProviders(connection, entities);
 		return {
 			providers,
@@ -21,17 +17,6 @@ export class SwRepositoryModule {
 			module: SwRepositoryModule,
 		};
 	}
-}
-
-function registerTokens(connection, entities: Function[]) {
-	let connectionEntityMap = tokenMap.get(connection);
-	if (!connectionEntityMap) {
-		connectionEntityMap = new Map<Function, symbol>();
-		tokenMap.set(connection, connectionEntityMap);
-	}
-	entities.forEach(entity => {
-		connectionEntityMap!.set(entity, Symbol(entity.name));
-	});
 }
 
 function getProviders(connectionName, entities: Function[] = []) {
@@ -43,13 +28,5 @@ function getProviders(connectionName, entities: Function[] = []) {
 }
 
 export function getSwRepositoryToken(entity: Function, connectionName: string) {
-	const connectionEntityMap = tokenMap.get(connectionName);
-	if (!connectionEntityMap) {
-		throw new Error(`Unknown connection ${connectionName}`);
-	}
-	const token = connectionEntityMap.get(entity);
-	if (!token) {
-		throw new Error('Entity is not registered');
-	}
-	return token;
+	return `sw-repository-${connectionName}-${entity.name}`;
 }

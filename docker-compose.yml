@@ -53,12 +53,17 @@ services:
         command: dev
         environment:
             WAIT_HOSTS: redis:6379
+            POSTGRES_USER: ${POSTGRES_USER}
+            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+            POSTGRES_DATABASE: ${POSTGRES_DB}
         depends_on:
             - base
         volumes:
             - ./packages/sw-shared:/opt/app/packages/sw-shared
             - ./packages/sw-core:/opt/app/packages/sw-core
             - ./packages/sw-email:/opt/app/packages/sw-email
+            - ./packages/sw-schema:/opt/app/packages/sw-schema
             - /opt/app/packages/sw-shared/node_modules
             - /opt/app/packages/sw-core/node_modules
             - /opt/app/packages/sw-email/node_modules
+            - /opt/app/packages/sw-schema/node_modules

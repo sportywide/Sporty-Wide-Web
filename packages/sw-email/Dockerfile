@@ -3,6 +3,7 @@ FROM sportywide-base AS base
 USER $USER
 
 COPY --chown=sportywide:sportywide ./packages/sw-shared $PROJECT_ROOT/packages/sw-shared/
+COPY --chown=sportywide:sportywide ./packages/sw-schema $PROJECT_ROOT/packages/sw-schema/
 COPY --chown=sportywide:sportywide ./packages/sw-core $PROJECT_ROOT/packages/sw-core/
 COPY --chown=sportywide:sportywide ./packages/sw-email $PROJECT_ROOT/packages/sw-email/
 RUN cd $PROJECT_ROOT && npx lerna link

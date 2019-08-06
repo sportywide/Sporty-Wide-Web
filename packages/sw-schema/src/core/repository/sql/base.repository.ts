@@ -14,6 +14,7 @@ import {
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { SwSubscriber } from '@schema/core/subscriber/sql/base.subscriber';
 import { wrap } from '@shared/lib/utils/object/proxy';
+import { BaseEntity } from '@schema/core/base.entity';
 
 class SwBaseRepository<T> {
 	constructor(private repository: Repository<T>) {}
@@ -42,6 +43,21 @@ class SwBaseRepository<T> {
 			notifyUpdate(this.repository, updatedEntityIds);
 		}
 		return updateResult;
+	}
+
+	async save(...args) {
+		// @ts-ignore
+		const result = await this.repository.save(...args);
+		let entities = result;
+		if (!Array.isArray(entities)) {
+			entities = [entities];
+		}
+		entities.forEach(entity => {
+			if (entity instanceof BaseEntity) {
+				entity.afterLoad();
+			}
+		});
+		return result;
 	}
 
 	async delete(
