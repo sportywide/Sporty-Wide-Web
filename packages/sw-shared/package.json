@@ -11,6 +11,8 @@
 		"nconf-js-improved": "1.0.1",
 		"source-map-support": "0.5.12",
 		"class-transformer-imp": "0.2.3",
+		"core-decorators": "0.20.0",
+		"reflect-metadata": "0.1.13",
 		"uuid": "3.3.2",
 		"lodash.merge": "4.6.2",
 		"@nestjs/swagger": "3.1.0",

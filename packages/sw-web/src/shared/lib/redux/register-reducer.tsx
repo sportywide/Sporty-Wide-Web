@@ -4,7 +4,7 @@ import { AnyAction, Reducer } from 'redux';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import { ISportyWideStore } from '../store';
 import { withContext } from '../context/providers';
-import { IReducerManager } from './reducer-manager';
+import { ReducerManager } from './reducer-manager';
 
 interface IProps {
 	context: ReactReduxContext;
@@ -13,7 +13,7 @@ interface IProps {
 export function registerReducer(reducers: { [key: string]: Reducer<any, AnyAction> }) {
 	return WrappedComponent => {
 		class NewComponent extends React.Component<IProps> {
-			reducerManager: IReducerManager;
+			reducerManager: ReducerManager;
 
 			constructor(props) {
 				super(props);
@@ -25,7 +25,7 @@ export function registerReducer(reducers: { [key: string]: Reducer<any, AnyActio
 				NewComponent.registerReducers(this.reducerManager);
 			}
 
-			static registerReducers(reducerManager: IReducerManager) {
+			static registerReducers(reducerManager: ReducerManager) {
 				for (const [key, reducer] of Object.entries(reducers)) {
 					reducerManager.add(key, reducer);
 				}

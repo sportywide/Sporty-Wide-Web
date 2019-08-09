@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import App, { Container } from 'next/app';
 import React from 'react';
 import { Store } from 'redux';

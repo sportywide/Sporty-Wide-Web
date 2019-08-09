@@ -1,49 +1,50 @@
-import { AnyAction, Reducer, combineReducers } from 'redux';
+import { autobind } from 'core-decorators';
+import { combineReducers } from 'redux';
 
-export interface IReducerManager {
-	getReducerMap: Function;
-	reduce: Reducer<any, AnyAction>;
-	add: (key: string, reducer: Reducer<any, AnyAction>) => void;
-	remove: (key: string) => void;
+export class ReducerManager {
+	reducers: {};
+	combinedReducers: any;
+	keysToRemove: string[];
+
+	constructor(initialReducers = {}) {
+		this.reducers = { ...initialReducers };
+		this.combinedReducers = Object.keys(this.reducers).length ? combineReducers(this.reducers) : state => state;
+		this.keysToRemove = [];
+	}
+
+	@autobind
+	reduce(state, action) {
+		if (this.keysToRemove.length > 0) {
+			state = { ...state };
+			for (const key of this.keysToRemove) {
+				delete state[key];
+			}
+			this.keysToRemove = [];
+		}
+
+		return this.combinedReducers(state, action);
+	}
+
+	@autobind
+	add(key, reducer) {
+		if (!key || this.reducers[key]) {
+			return;
+		}
+		this.reducers[key] = reducer;
+		this.combinedReducers = combineReducers(this.reducers);
+	}
+
+	@autobind
+	remove(key) {
+		if (!key || !this.reducers[key]) {
+			return;
+		}
+		delete this.reducers[key];
+		this.keysToRemove.push(key);
+		this.combinedReducers = combineReducers(this.reducers);
+	}
 }
-export function createReducerManager(initialReducers = {}): IReducerManager {
-	const reducers = { ...initialReducers };
 
-	// Create the initial combinedReducer
-	let combinedReducer = Object.keys(reducers).length ? combineReducers(reducers) : state => state;
-
-	let keysToRemove: string[] = [];
-
-	return {
-		getReducerMap: () => reducers,
-
-		reduce: (state, action) => {
-			if (keysToRemove.length > 0) {
-				state = { ...state };
-				for (const key of keysToRemove) {
-					delete state[key];
-				}
-				keysToRemove = [];
-			}
-
-			return combinedReducer(state, action);
-		},
-
-		add: (key, reducer) => {
-			if (!key || reducers[key]) {
-				return;
-			}
-			reducers[key] = reducer;
-			combinedReducer = combineReducers(reducers);
-		},
-
-		remove: key => {
-			if (!key || !reducers[key]) {
-				return;
-			}
-			delete reducers[key];
-			keysToRemove.push(key);
-			combinedReducer = combineReducers(reducers);
-		},
-	};
+export function createReducerManager(initialReducers) {
+	return new ReducerManager(initialReducers);
 }

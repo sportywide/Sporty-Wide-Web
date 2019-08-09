@@ -7,6 +7,6 @@ export const fetchCharacter = (id, isServer?: boolean) =>
 	axios.get(`https://swapi.co/api/people/${id}`).pipe(
 		map(response => fetchCharacterSuccess(response.data, isServer)),
 		catchError(error => {
-			return of(fetchCharacterFailure(error.response.data, isServer));
+			return of(fetchCharacterFailure(error.response && error.response.data, isServer));
 		})
 	);
