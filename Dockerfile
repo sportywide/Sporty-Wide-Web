@@ -35,6 +35,7 @@ USER $USER
 WORKDIR $PROJECT_ROOT
 
 FROM base as dev
+ENV NODE_ENV=development
 COPY --chown=sportywide:sportywide ./packages/sw-shared/package*.json $PROJECT_ROOT/packages/sw-shared/
 COPY --chown=sportywide:sportywide ./packages/sw-core/package*.json $PROJECT_ROOT/packages/sw-core/
 COPY --chown=sportywide:sportywide ./packages/sw-web/package*.json $PROJECT_ROOT/packages/sw-web/
@@ -44,5 +45,6 @@ COPY --chown=sportywide:sportywide ./packages/sw-schema/package*.json $PROJECT_R
 RUN npm run install:dependencies
 
 FROM base as prod
+ENV NODE_ENV=production
 RUN npm run install:dependencies
 

@@ -5,15 +5,21 @@ import { getAllPackages } from '../helpers/package';
 import { execSync } from '../helpers/process';
 const allPackages = getAllPackages();
 const CHECKSUM_FILE = '.last-npm-install.checksum';
+const isProduction = process.env.NODE_ENV === 'production';
+if (isProduction) {
+	console.info('Install in production mode');
+}
+
 ensureNpmInstall();
 
+// eslint-disable-next-line import/order
 import { argv } from 'yargs';
+const forceInstall = argv.f || argv.force;
 checkLatestInstall();
 
 function checkLatestInstall() {
 	console.info('Checking latest install');
 	try {
-		const forceInstall = argv.f || argv.force;
 		if (forceInstall) {
 			installBaseDependencies();
 			installSubPackagesDependencies();
@@ -38,7 +44,7 @@ function checkLatestInstall() {
 function ensureNpmInstall() {
 	if (!fs.existsSync('node_modules')) {
 		console.log('Installing node_modules');
-		execSync('npm ci');
+		execSync(isProduction ? 'npm ci --production --no-optional' : 'npm ci');
 		updateChecksum();
 	}
 }
@@ -84,11 +90,11 @@ function writeCheckSum(dir) {
 }
 
 function installBaseDependencies() {
-	execSync('npm install');
+	execSync(isProduction ? 'npm install --production --no-optional' : 'npm install');
 }
 
 function installSubPackagesDependencies() {
-	execSync('npm run bootstrap');
+	execSync(isProduction ? 'npm run bootstrap:prod' : 'npm run bootstrap');
 }
 
 function getLastPackageChecksum(dir) {

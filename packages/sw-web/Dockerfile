@@ -11,4 +11,5 @@ ENTRYPOINT ["/bin/sh", "bin/bootstrap.sh"]
 CMD "dev"
 
 FROM base AS prod
+ENV NODE_ENV=production
 RUN cd $PROJECT_ROOT && npm run install:dependencies
