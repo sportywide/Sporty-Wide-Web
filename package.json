@@ -59,7 +59,7 @@
 	},
 	"scripts": {
 		"bootstrap": "lerna bootstrap && link-parent-bin",
-		"bootstrap:prod": "lerna bootstrap -- --production --no-optional --ci && link-parent-bin",
+		"bootstrap:prod": "lerna bootstrap -- --production --no-optional --ci && link-parent-bin -s true -d false -o false",
 		"cz": "git add . && git-cz",
 		"install:dependencies": "ts-node -T bin/install.ts"
 	},
