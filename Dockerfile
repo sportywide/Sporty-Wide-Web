@@ -22,7 +22,7 @@ RUN mkdir -p /opt/app
 
 ENV PROJECT_ROOT /opt/app
 
-RUN chown $USER:$GROUP $PROJECT_ROOT
+RUN chown -R $USER:$GROUP $PROJECT_ROOT
 
 RUN npm install -g ts-node@8.3.0 typescript@3.5.2
 
