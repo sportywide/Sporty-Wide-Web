@@ -4,7 +4,7 @@ import { defaultValidationOptions } from '@shared/lib/utils/validation';
 import { validate } from 'yup-decorator';
 import { plainToClass } from 'class-transformer-imp';
 import { getEditableGroupsForUser } from '@shared/lib/utils/decorators/permissions';
-import merge from 'lodash.merge';
+import { merge } from 'lodash';
 
 @Injectable()
 export class ApiValidationService {

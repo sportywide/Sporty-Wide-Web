@@ -1,8 +1,8 @@
 import os from 'os';
 import { Inject, Injectable } from '@nestjs/common';
 import { Provider } from 'nconf';
+import { mergeConcatArray } from '@shared/lib/utils/object/merge';
 import log4j, { Configuration } from 'log4js';
-import merge from 'lodash.merge';
 import { CORE_CONFIG } from '@core/config/config.constants';
 
 function filenameToken(logEvent) {
@@ -71,7 +71,7 @@ export class LoggerProviderFactory {
 	}
 
 	private buildConsoleConfig(log4jsConfig: Configuration) {
-		log4jsConfig = merge(log4jsConfig, {
+		log4jsConfig = mergeConcatArray(log4jsConfig, {
 			appenders: {
 				console: {
 					type: 'console',
@@ -88,7 +88,7 @@ export class LoggerProviderFactory {
 	}
 
 	private buildLogStashConfig(log4jsConfig: Configuration, coreConfig) {
-		log4jsConfig = merge(log4jsConfig, {
+		log4jsConfig = mergeConcatArray(log4jsConfig, {
 			appenders: {
 				logstash: {
 					type: 'log4js-logstash-tcp',
@@ -123,7 +123,7 @@ export class LoggerProviderFactory {
 			num_backups: numBackups,
 		} = coreConfig.get('logging:file');
 
-		log4jsConfig = merge(log4jsConfig, {
+		log4jsConfig = mergeConcatArray(log4jsConfig, {
 			appenders: {
 				access: {
 					type: 'dateFile',

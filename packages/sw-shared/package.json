@@ -14,7 +14,7 @@
 		"core-decorators": "0.20.0",
 		"reflect-metadata": "0.1.13",
 		"uuid": "3.3.2",
-		"lodash.merge": "4.6.2",
+		"lodash": "4.17.15",
 		"@nestjs/swagger": "3.1.0",
 		"yup": "0.27.0",
 		"yup-decorator": "2.0.0"
