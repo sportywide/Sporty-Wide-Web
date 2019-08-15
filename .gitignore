@@ -15,6 +15,8 @@ certs/*.pem
 # IntelliJ
 out/
 
+.vagrant
+
 install.lock
 
 checkstyle/

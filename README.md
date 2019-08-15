@@ -3,10 +3,11 @@
 ### Prerequisites:
 
 -   Node 8.x+
--   Docker https://docs.docker.com/install/
+-   Vagrant https://www.vagrantup.com/
 
 ### Initial setup:
 
+-   Install vagrant plugins: `vagrant plugin install vagrant-hostsupdater` and `vagrant plugin install vagrant-docker-compose`
 -   `npm install -g ts-node typescript`
 -   `npm run install:dependencies`
 -   Rename .env.example to .env and tweak it to your needs
@@ -21,7 +22,7 @@ mkcert --key-file certs/sportywide-key.pem --cert-file certs/sportywide-cert.pem
 -   Add the following entries to /etc/hosts 
 
 ```bash
-127.0.0.1 sportywidedev.com api.sportywidedev.com www.sportywidedev.com
+192.168.50.10 api.sportywidedev.com www.sportywidedev.com
 ```
 - After following the running instructions below, you should be able to access the API at `https://api.sportywidedev.com` and the app at `https://www.sportywidedev.com`
 
@@ -49,10 +50,12 @@ The app is structured into multiple packages:
 
 ### Running
 
-#### Running with docker (Recommended)
+#### Running with docker + vagrant (Recommended)
 
--   Start core services (postgres, flyway, redis ...) in one tab: `docker compose -f docker-core-services.yml up`
--   Start docker application services in another tab: `docker compose up`
+-   Spin up Vagrant development machine: `vagrant up`
+-   Wait for docker core services to run 
+-   SSH into the machine `vagrant ssh`
+-   Start docker application services: `docker compose up`
 
 ##### To run just a specified service
 
@@ -60,10 +63,11 @@ The app is structured into multiple packages:
 
 ##### To debug a service
 
-Run one of the following commands
+Run one of the following commands (in Vagrant)
 
+-   `docker ps`: This will show you all the running containers
 -   `docker-compose run --rm --entrypoint sh <service>`: This will run the container and open an shell session to debug
--   `docker-compose exec -it <container> sh`: This will create a shell session to an already running container. Use `docker ps` to find the container ID
+-   `docker exec -it <containerId> sh`: This will create a shell session to an already running container. Use `docker ps` to find the container ID
 
 #### Running locally
 
