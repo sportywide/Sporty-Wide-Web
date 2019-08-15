@@ -45,6 +45,7 @@ function ensureNpmInstall() {
 	if (!fs.existsSync('node_modules')) {
 		console.log('Installing node_modules');
 		execSync(isProduction ? 'npm ci --production --no-optional' : 'npm ci');
+		execSync('npm audit fix');
 		updateChecksum();
 	}
 }
@@ -91,6 +92,7 @@ function writeCheckSum(dir) {
 
 function installBaseDependencies() {
 	execSync(isProduction ? 'npm install --production --no-optional' : 'npm install');
+	execSync('npm audit fix');
 }
 
 function installSubPackagesDependencies() {

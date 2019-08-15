@@ -1,7 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { connect } from 'react-redux';
-import { Flag, Segment } from 'semantic-ui-react';
+import { Flag, Segment, Button } from 'semantic-ui-react';
 import { CharacterInfo } from '@web/features/home/components';
 import { fetchCharacter } from '@web/features/home/services/character.service';
 import { startFetchingCharacters, stopFetchingCharacters } from '@web/features/home/store/actions';
@@ -41,6 +41,7 @@ class Counter extends React.Component<IProps, any> {
 					<Flag name="ae" />
 					<Flag name="france" />
 					<Flag name="myanmar" />
+					<Button primary>Test semantic</Button>
 				</Segment>
 				<br />
 				<nav>

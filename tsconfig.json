@@ -25,6 +25,7 @@
 			"@root/*": ["./*"],
 			"@web/*": ["./packages/sw-web/src/*"],
 			"@shared/*": ["./packages/sw-shared/src/*"],
+			"@semantic/*": ["./semantic/dist/*"],
 			"@build/*": ["./packages/sw-shared/build/*"],
 			"@api/*": ["./packages/sw-api/src/*"],
 			"@schema/*": ["./packages/sw-schema/src/*"],

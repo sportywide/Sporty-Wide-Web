@@ -40,6 +40,7 @@
 		"eslint-plugin-import": "2.18.2",
 		"eslint-plugin-prettier": "3.1.0",
 		"eslint-plugin-react": "7.14.3",
+		"fomantic-ui": "2.7.7",
 		"fork-ts-checker-webpack-plugin": "1.3.7",
 		"file-loader": "4.2.0",
 		"husky": "3.0.1",
@@ -66,6 +67,7 @@
 	"scripts": {
 		"bootstrap": "lerna bootstrap && link-parent-bin",
 		"bootstrap:prod": "lerna bootstrap -- --production --no-optional --ci && link-parent-bin -s true -d false -o false",
+		"build:css": "cd semantic && gulp build-css build-assets",
 		"cz": "git add . && git-cz",
 		"install:dependencies": "ts-node -T bin/install.ts"
 	},
