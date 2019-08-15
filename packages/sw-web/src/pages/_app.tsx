@@ -1,3 +1,4 @@
+import 'fomantic-ui-css/semantic.min.css';
 import 'reflect-metadata';
 import App, { Container } from 'next/app';
 import React from 'react';
