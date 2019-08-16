@@ -26,7 +26,7 @@ RUN chown -R $USER:$GROUP $PROJECT_ROOT
 
 RUN npm install -g ts-node@8.3.0 typescript@3.5.2
 
-COPY --chown=sportywide:sportywide package*.json lerna.json tsconfig.json $PROJECT_ROOT/
+COPY --chown=sportywide:sportywide package*.json lerna.json tsconfig.json semantic semantic.json $PROJECT_ROOT/
 COPY --chown=sportywide:sportywide bin $PROJECT_ROOT/bin
 COPY --chown=sportywide:sportywide helpers $PROJECT_ROOT/helpers
 
