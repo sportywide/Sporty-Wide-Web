@@ -32,7 +32,7 @@
 		"rxjs": "6.5.2",
 		"semantic-ui-react": "0.87.3",
 		"sportywide-shared": "1.0.0",
-		"sporty-wide-style": "1.0.0"
+		"sporty-wide-style": "1.0.1"
 	},
 	"jest": {
 		"moduleFileExtensions": [

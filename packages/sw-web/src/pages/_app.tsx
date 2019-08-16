@@ -1,4 +1,5 @@
 import 'sporty-wide-style/dist/semantic.min.css';
+import 'sporty-wide-style/dist/basscss.min.css';
 import 'reflect-metadata';
 import App, { Container } from 'next/app';
 import React from 'react';

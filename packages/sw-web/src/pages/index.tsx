@@ -34,7 +34,7 @@ class Counter extends React.Component<IProps, any> {
 
 	render() {
 		return (
-			<div>
+			<div className="ub-p4">
 				<h1>Index Page</h1>
 				<CharacterInfo />
 				<Segment>
