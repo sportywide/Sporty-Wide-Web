@@ -60,11 +60,7 @@ function updateChecksum() {
 function checkBasePackage() {
 	console.info('Checking base package');
 	const currentChecksum = getCurrentPackageChecksum(process.cwd());
-	if (currentChecksum !== getLastPackageChecksum(process.cwd())) {
-		installBaseDependencies();
-		return true;
-	}
-	return false;
+	return currentChecksum !== getLastPackageChecksum(process.cwd());
 }
 
 function checkSubPackages() {

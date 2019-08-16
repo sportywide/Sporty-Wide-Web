@@ -15,7 +15,6 @@ const nextConfig = {
 				...oldConfig.resolve.alias,
 				'@shared': 'sportywide-shared/src',
 				'@web': `${paths.web.src}/`,
-				'@semantic': path.resolve(paths.project.root, 'semantic', 'dist'),
 			},
 		};
 		config.module.rules.push({
