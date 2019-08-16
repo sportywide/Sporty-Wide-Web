@@ -6,8 +6,13 @@ import { execSync } from '../helpers/process';
 const allPackages = getAllPackages();
 const CHECKSUM_FILE = '.last-npm-install.checksum';
 const isProduction = process.env.NODE_ENV === 'production';
+const noOptional = !!process.env.NO_OPTIONAL;
 if (isProduction) {
 	console.info('Install in production mode');
+}
+
+if (noOptional) {
+	console.info('No Optional Dependencies');
 }
 
 ensureNpmInstall();
@@ -21,7 +26,6 @@ function checkLatestInstall() {
 	console.info('Checking latest install');
 	try {
 		if (forceInstall) {
-			installBaseDependencies();
 			installSubPackagesDependencies();
 			updateChecksum();
 		} else {
@@ -44,7 +48,7 @@ function checkLatestInstall() {
 function ensureNpmInstall() {
 	if (!fs.existsSync('node_modules')) {
 		console.log('Installing node_modules');
-		execSync(isProduction ? 'npm ci --production --no-optional' : 'npm ci');
+		execSync(isProduction ? 'npm ci --production --no-optional' : `npm ci ${noOptional ? '--no-optional' : ''}`);
 		execSync('npm audit fix');
 		updateChecksum();
 	}
@@ -86,13 +90,14 @@ function writeCheckSum(dir) {
 	});
 }
 
-function installBaseDependencies() {
-	execSync(isProduction ? 'npm install --production --no-optional' : 'npm install');
-	execSync('npm audit fix');
-}
-
 function installSubPackagesDependencies() {
-	execSync(isProduction ? 'npm run bootstrap:prod' : 'npm run bootstrap');
+	if (isProduction) {
+		execSync('npm run bootstrap:prod');
+	} else if (noOptional) {
+		execSync('npm run bootstrap:no-optional');
+	} else {
+		execSync('npm run bootstrap');
+	}
 }
 
 function getLastPackageChecksum(dir) {

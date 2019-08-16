@@ -42,7 +42,7 @@ COPY --chown=sportywide:sportywide ./packages/sw-web/package*.json $PROJECT_ROOT
 COPY --chown=sportywide:sportywide ./packages/sw-api/package*.json $PROJECT_ROOT/packages/sw-api/
 COPY --chown=sportywide:sportywide ./packages/sw-email/package*.json $PROJECT_ROOT/packages/sw-email/
 COPY --chown=sportywide:sportywide ./packages/sw-schema/package*.json $PROJECT_ROOT/packages/sw-schema/
-RUN npm run install:dependencies
+RUN NO_OPTIONAL=1 npm run install:dependencies
 
 FROM base as prod
 ENV NODE_ENV=production
