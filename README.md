@@ -13,22 +13,29 @@
 -   Rename .env.example to .env and tweak it to your needs
 -   Install mkcert: https://github.com/FiloSottile/mkcert
 -   Run `mkcert -install` to install a local CA
--   Create self-signed SSL certificates: 
+-   Create self-signed SSL certificates:
 
 ```bash
 mkcert --key-file certs/sportywide-key.pem --cert-file certs/sportywide-cert.pem sportywidedev.com *.sportywidedev.com localhost 127.0.0.1 ::1
 ```
 
--   Add the following entries to /etc/hosts 
+-   Add the following entries to /etc/hosts
 
 ```bash
 192.168.50.10 api.sportywidedev.com www.sportywidedev.com
 ```
 - After following the running instructions below, you should be able to access the API at `https://api.sportywidedev.com` and the app at `https://www.sportywidedev.com`
 
+```
+⚠️ **Warning**:
+For windows, you will need to disable Hyper-V and Windows Hyper-V platform to run virtualbox. You might also need administrator access to run vagrant up for the first time (as this will need access to change your host files)
+
+Another vagrant plugin will need to be installed for NFS to work: https://github.com/winnfsd/vagrant-winnfsd
+```
+
 ### Services
 
-* Redis: 
+* Redis:
     * Database queries caching
     * Queuing tasks
 * Postgresql:
@@ -36,7 +43,7 @@ mkcert --key-file certs/sportywide-key.pem --cert-file certs/sportywide-cert.pem
     * Capturing email locally
 * Flyway:
     * Database migration
-    
+
 ### Project structure
 
 The app is structured into multiple packages:
@@ -53,7 +60,7 @@ The app is structured into multiple packages:
 #### Running with docker + vagrant (Recommended)
 
 -   Spin up Vagrant development machine: `vagrant up`
--   Wait for docker core services to run 
+-   Wait for docker core services to run
 -   SSH into the machine `vagrant ssh`
 -   Start docker application services: `docker compose up`
 

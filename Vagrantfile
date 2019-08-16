@@ -1,6 +1,6 @@
 ## Plugins
 unless Vagrant.has_plugin?("vagrant-hostsupdater")
-	raise 'Missing vagrant-docker-compose plugin! Make sure to install it by `vagrant plugin install vagrant-hostsupdater`.'
+	raise 'Missing vagrant-hostsupdater plugin! Make sure to install it by `vagrant plugin install vagrant-hostsupdater`.'
 end
 unless Vagrant.has_plugin?("vagrant-docker-compose")
 	raise 'Missing vagrant-docker-compose plugin! Make sure to install it by `vagrant plugin install vagrant-docker-compose`.'
