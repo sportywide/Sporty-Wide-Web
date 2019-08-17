@@ -5,7 +5,6 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from '@api/user/services/user.service';
 import { JwtStrategy } from '@api/auth/strategy/jwt.strategy';
 import { TokenExpiredError } from 'jsonwebtoken';
-import { COOKIE_REFRESH_TOKEN } from '@api/auth/constants';
 
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {
@@ -19,7 +18,7 @@ export class RefreshTokenGuard implements CanActivate {
 		const request = context.switchToHttp().getRequest();
 		const response = context.switchToHttp().getResponse();
 
-		const refreshToken = request.cookies[COOKIE_REFRESH_TOKEN];
+		const refreshToken = this.jwtStrategy.getRefreshToken(request);
 		if (!refreshToken) {
 			return false;
 		}

@@ -16,16 +16,6 @@ async function bootstrap() {
 	app.use(helmet());
 	app.use(cookieParser());
 	app.use(cors());
-	app.use(
-		csurf({
-			cookie: {
-				secure: isProduction,
-			},
-			whitelist: req => {
-				return CSRF_WHITE_LIST.some(whiteListPath => req.path && req.path.endsWith(whiteListPath));
-			},
-		})
-	);
 	const log4js = app.get(LOG4J_PROVIDER);
 	app.use(
 		log4js.connectLogger(log4js.getLogger('http'), {
