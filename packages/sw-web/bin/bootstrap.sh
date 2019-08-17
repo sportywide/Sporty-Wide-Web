@@ -1,5 +1,9 @@
 #!/bin/bash
 
-cd "$PROJECT_ROOT" && npm run install:dependencies && cd - || exit
+while ping -c1 base &>/dev/null; 
+  do sleep 1; 
+done; 
+
+echo "Starting"
 
 npm run "$@"

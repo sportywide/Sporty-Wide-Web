@@ -50,6 +50,7 @@ function ensureNpmInstall() {
 		console.log('Installing node_modules');
 		execSync(isProduction ? 'npm ci --production --no-optional' : `npm ci ${noOptional ? '--no-optional' : ''}`);
 		execSync('npm audit fix');
+		execSync('npx lerna clean -y');
 		updateChecksum();
 	}
 }

@@ -5,10 +5,17 @@ services:
         build:
             context: .
             dockerfile: Dockerfile
-            target: dev
+            target: base
         networks:
             - sportywide-backend
             - sportywide-frontend
+        environment:
+            NO_OPTIONAL: 1
+            NODE_ENV: development
+        command: npm run install:dependencies
+        volumes:
+            - .:/opt/app
+            - node_modules:/opt/app/node_modules
     web:
         build:
             context: .
@@ -23,10 +30,8 @@ services:
             - 'traefik.frontend.rule=Host:www.sportywidedev.com,sportywidedev.com'
             - 'traefik.port=3000'
         volumes:
-            - ./packages/sw-shared:/opt/app/packages/sw-shared
-            - ./packages/sw-web:/opt/app/packages/sw-web
-            - /opt/app/packages/sw-shared/node_modules
-            - /opt/app/packages/sw-web/node_modules
+            - .:/opt/app
+            - node_modules:/opt/app/node_modules
         networks:
             - sportywide-frontend
     api:
@@ -49,14 +54,8 @@ services:
         depends_on:
             - base
         volumes:
-            - ./packages/sw-api:/opt/app/packages/sw-api
-            - ./packages/sw-shared:/opt/app/packages/sw-shared
-            - ./packages/sw-core:/opt/app/packages/sw-core
-            - ./packages/sw-schema:/opt/app/packages/sw-schema
-            - /opt/app/packages/sw-shared/node_modules
-            - /opt/app/packages/sw-schema/node_modules
-            - /opt/app/packages/sw-api/node_modules
-            - /opt/app/packages/sw-core/node_modules
+            - .:/opt/app
+            - node_modules:/opt/app/node_modules
         networks:
             - sportywide-backend
     email:
@@ -75,14 +74,8 @@ services:
         ports:
             - 9230:9229
         volumes:
-            - ./packages/sw-shared:/opt/app/packages/sw-shared
-            - ./packages/sw-core:/opt/app/packages/sw-core
-            - ./packages/sw-email:/opt/app/packages/sw-email
-            - ./packages/sw-schema:/opt/app/packages/sw-schema
-            - /opt/app/packages/sw-shared/node_modules
-            - /opt/app/packages/sw-core/node_modules
-            - /opt/app/packages/sw-email/node_modules
-            - /opt/app/packages/sw-schema/node_modules
+            - .:/opt/app
+            - node_modules:/opt/app/node_modules
         networks:
             - sportywide-backend
 networks:
@@ -92,3 +85,6 @@ networks:
     sportywide-backend:
         external:
             name: sportywide-backend
+
+volumes:
+    node_modules:
