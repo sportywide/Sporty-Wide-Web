@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/bash
 
 cd "$PROJECT_ROOT" && npm run install:dependencies && cd - || exit
 

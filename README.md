@@ -7,7 +7,7 @@
 
 ### Initial setup:
 
--   Install vagrant plugins: `vagrant plugin install vagrant-hostsupdater` and `vagrant plugin install vagrant-docker-compose`
+-   Install vagrant plugins `vagrant plugin install vagrant-docker-compose`
 -   `npm install -g ts-node typescript`
 -   `npm run install:dependencies`
 -   Rename .env.example to .env and tweak it to your needs
@@ -22,7 +22,7 @@ mkcert --key-file certs/sportywide-key.pem --cert-file certs/sportywide-cert.pem
 -   Add the following entries to /etc/hosts
 
 ```bash
-192.168.50.10 api.sportywidedev.com www.sportywidedev.com
+192.168.50.10 sportywidedev.com api.sportywidedev.com www.sportywidedev.com
 ```
 
 -   After following the running instructions below, you should be able to access the API at `https://api.sportywidedev.com` and the app at `https://www.sportywidedev.com`
@@ -121,5 +121,5 @@ module.exports = {
     -   `npx lerna run --scope <package> --stream dev (for only one package)`
     -   `npx lerna run --stream dev (for all packages)`
 
-*   Install a dependency to a sub package
+-   Install a dependency to a sub package
     -   `lerna add [--dev] --scope <package>`

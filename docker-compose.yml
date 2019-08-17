@@ -16,7 +16,7 @@ services:
             target: base
         ports:
             - 3000:3000
-        entrypoint: npm run dev
+        command: dev
         depends_on:
             - base
         labels:
@@ -37,7 +37,7 @@ services:
         ports:
             - 5000:5000
             - 9229:9229
-        entrypoint: npm run dev
+        command: dev
         labels:
             - 'traefik.frontend.rule=Host:api.sportywidedev.com'
             - 'traefik.port=5000'
@@ -64,7 +64,7 @@ services:
             context: .
             dockerfile: ./packages/sw-email/Dockerfile
             target: base
-        entrypoint: npm run dev
+        command: dev
         environment:
             WAIT_HOSTS: redis:6379
             POSTGRES_USER: ${POSTGRES_USER}
