@@ -78,8 +78,7 @@
 	},
 	"husky": {
 		"hooks": {
-			"pre-commit": "test -e .git/MERGE_HEAD || lint-staged",
-			"prepare-commit-msg": "test -e .git/MERGE_HEAD || exec < /dev/tty && git cz --hook"
+			"pre-commit": "test -e .git/MERGE_HEAD || lint-staged"
 		}
 	},
 	"browserslist": [
