@@ -24,25 +24,27 @@ mkcert --key-file certs/sportywide-key.pem --cert-file certs/sportywide-cert.pem
 ```bash
 192.168.50.10 api.sportywidedev.com www.sportywidedev.com
 ```
-- After following the running instructions below, you should be able to access the API at `https://api.sportywidedev.com` and the app at `https://www.sportywidedev.com`
+
+-   After following the running instructions below, you should be able to access the API at `https://api.sportywidedev.com` and the app at `https://www.sportywidedev.com`
 
 ```
 ⚠️ **Warning**:
 For windows, you will need to disable Hyper-V and Windows Hyper-V platform to run virtualbox. You might also need administrator access to run vagrant up for the first time (as this will need access to change your host files)
+(Hyper-V can be found at Control Panel > Turn Windows features on or off)
 
 Another vagrant plugin will need to be installed for NFS to work: https://github.com/winnfsd/vagrant-winnfsd
 ```
 
 ### Services
 
-* Redis:
-    * Database queries caching
-    * Queuing tasks
-* Postgresql:
-* Mailhog:
-    * Capturing email locally
-* Flyway:
-    * Database migration
+-   Redis:
+    -   Database queries caching
+    -   Queuing tasks
+-   Postgresql:
+-   Mailhog:
+    -   Capturing email locally
+-   Flyway:
+    -   Database migration
 
 ### Project structure
 
@@ -114,11 +116,10 @@ module.exports = {
 };
 ```
 
-* Run npm command with lerna. Use one of the followings
+-   Run npm command with lerna. Use one of the followings
 
-    * `npx lerna run --scope <package> --stream dev (for only one package)`
-    * `npx lerna run --stream dev (for all packages)`
+    -   `npx lerna run --scope <package> --stream dev (for only one package)`
+    -   `npx lerna run --stream dev (for all packages)`
 
-
-* Install a dependency to a sub package
-    * `lerna add [--dev] --scope <package>`
+*   Install a dependency to a sub package
+    -   `lerna add [--dev] --scope <package>`

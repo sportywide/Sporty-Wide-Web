@@ -16,19 +16,19 @@ services:
             target: base
         ports:
             - 3000:3000
-        command: dev
+        entrypoint: npm run dev
         depends_on:
             - base
         labels:
-            - "traefik.frontend.rule=Host:www.sportywidedev.com,sportywidedev.com"
-            - "traefik.port=3000"
+            - 'traefik.frontend.rule=Host:www.sportywidedev.com,sportywidedev.com'
+            - 'traefik.port=3000'
         volumes:
             - ./packages/sw-shared:/opt/app/packages/sw-shared
             - ./packages/sw-web:/opt/app/packages/sw-web
             - /opt/app/packages/sw-shared/node_modules
             - /opt/app/packages/sw-web/node_modules
         networks:
-            - sportywide-frontend    
+            - sportywide-frontend
     api:
         build:
             context: .
@@ -37,10 +37,10 @@ services:
         ports:
             - 5000:5000
             - 9229:9229
-        command: dev
+        entrypoint: npm run dev
         labels:
-            - "traefik.frontend.rule=Host:api.sportywidedev.com"
-            - "traefik.port=5000"
+            - 'traefik.frontend.rule=Host:api.sportywidedev.com'
+            - 'traefik.port=5000'
         environment:
             WAIT_HOSTS: postgres:5432,redis:6379
             POSTGRES_USER: ${POSTGRES_USER}
@@ -58,13 +58,13 @@ services:
             - /opt/app/packages/sw-api/node_modules
             - /opt/app/packages/sw-core/node_modules
         networks:
-            - sportywide-backend    
+            - sportywide-backend
     email:
         build:
             context: .
             dockerfile: ./packages/sw-email/Dockerfile
             target: base
-        command: dev
+        entrypoint: npm run dev
         environment:
             WAIT_HOSTS: redis:6379
             POSTGRES_USER: ${POSTGRES_USER}
@@ -84,7 +84,7 @@ services:
             - /opt/app/packages/sw-email/node_modules
             - /opt/app/packages/sw-schema/node_modules
         networks:
-            - sportywide-backend    
+            - sportywide-backend
 networks:
     sportywide-frontend:
         external:

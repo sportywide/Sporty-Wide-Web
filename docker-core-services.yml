@@ -11,7 +11,7 @@ services:
         ports:
             - '${POSTGRES_PORT}:5432'
         networks:
-          - sportywide-backend    
+            - sportywide-backend
     flyway:
         image: sportywide/sportywide-flyway
         command: -url=jdbc:postgresql://postgres:5432/${POSTGRES_DB} -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} migrate
@@ -22,7 +22,7 @@ services:
         depends_on:
             - postgres
         networks:
-            - sportywide-backend    
+            - sportywide-backend
     redis:
         image: sportywide/sportywide-redis
         volumes:
@@ -30,14 +30,14 @@ services:
         ports:
             - '${REDIS_PORT}:6379'
         networks:
-            - sportywide-backend    
+            - sportywide-backend
     mailhog:
         image: sportywide/sportywide-mailhog
         ports:
             - '${MAILHOG_TRANSPORT_PORT}:1025'
             - '${MAILHOG_UI_PORT}:8025'
         networks:
-            - sportywide-backend  
+            - sportywide-backend
     traefik:
         image: traefik
         command: --web --docker --logLevel=INFO
@@ -48,10 +48,11 @@ services:
         volumes:
             - /var/run/docker.sock:/var/run/docker.sock
             - ./traefik.toml:/traefik.toml:ro
-            - ./certs:/certs:ro 
+            - ./certs/sportywide-cert.pem:/certs/sportywide-cert.pem
+            - ./certs/sportywide-key.pem:/certs/sportywide-key.pem
         networks:
-          - sportywide-frontend
-          - sportywide-backend
+            - sportywide-frontend
+            - sportywide-backend
 volumes:
     postgres:
     redis:
@@ -62,4 +63,3 @@ networks:
     sportywide-backend:
         driver: bridge
         name: sportywide-backend
-        
