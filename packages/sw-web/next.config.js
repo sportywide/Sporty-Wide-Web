@@ -39,8 +39,8 @@ const nextConfig = {
 		};
 		return config;
 	},
-	dest: 'dist',
-	dir: 'src',
+	distDir: path.join('..', 'next-build'),
+	dir: paths.web.src,
 };
 
 module.exports = withPlugins(

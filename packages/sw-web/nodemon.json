@@ -1,6 +1,5 @@
 {
 	"ignore": ["node_modules"],
-	"watch": ["./config", "./src/next-server.ts"],
-	"exec": "ts-node -r tsconfig-paths/register src/next-server.ts",
-	"ext": "ts js"
+	"watch": ["./config", "./dist"],
+	"exec": "node dist/main.js"
 }

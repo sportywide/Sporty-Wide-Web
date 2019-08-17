@@ -5,9 +5,13 @@
 	"author": "",
 	"license": "MIT",
 	"scripts": {
-		"dev": "NODE_ENV=development nodemon -L",
-		"build": "next build ./src",
-		"start": "NODE_ENV=production ts-node -r tsconfig-paths/register ./src/next-server.ts",
+		"dev:webpack": "ts-node -r tsconfig-paths/register node_modules/.bin/webpack",
+		"dev:server": "wait-on dist/main.js && nodemon",
+		"dev": "rm -rf dist/ && run-p dev:*",
+		"build:next": "rm -rf next-build && next build ./src",
+		"build:webpack": "ts-node -r tsconfig-paths/register node_modules/.bin/webpack",
+		"build": "NODE_ENV=production run-p build:*",
+		"start": "NODE_ENV=production node dist/main.js",
 		"analyze": "BUNDLE_ANALYZE=both next build ./src",
 		"analyze:server": "BUNDLE_ANALYZE=server next build ./src",
 		"analyze:browser": "BUNDLE_ANALYZE=browser next build ./src"
@@ -15,6 +19,7 @@
 	"dependencies": {
 		"axios": "0.19.0",
 		"axios-observable": "1.1.2",
+		"csurf": "https://github.com/vdtn359/csurf.git#sw-1.10.0",
 		"express": "4.17.1",
 		"hoist-non-react-statics": "3.3.0",
 		"http-proxy-middleware": "0.19.1",

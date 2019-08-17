@@ -10,10 +10,7 @@ import { Request } from '@root/node_modules/@types/express';
 export class JwtStrategy extends PassportStrategy(Strategy) {
 	constructor(private readonly authService: AuthService, @Inject(API_CONFIG) private readonly config: Provider) {
 		super({
-			jwtFromRequest: req => {
-				console.log(this.getToken(req));
-				return this.getToken(req);
-			},
+			jwtFromRequest: req => this.getToken(req),
 			passReqToCallback: false,
 			secretOrKey: config.get('jwt:secret_key'),
 		});

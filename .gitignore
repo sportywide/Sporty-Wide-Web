@@ -151,7 +151,7 @@ typings/
 .cache
 
 # next.js build output
-.next
+next-build
 
 # nuxt.js build output
 .nuxt

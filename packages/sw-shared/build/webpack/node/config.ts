@@ -21,7 +21,18 @@ import {
 import { babel } from '../plugins/babel';
 import { externals, node, target, watch } from '../plugins/core';
 
-export function makeConfig({ entries, output, alias }) {
+export function makeConfig({
+	entries,
+	output,
+	alias,
+	tsconfig,
+}: {
+	entries: any;
+	output: string;
+	alias: any;
+	tsconfig?: string;
+}) {
+	// @ts-ignore
 	process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 	const isDev = process.env.NODE_ENV === 'development';
 	const packageName = path.basename(path.dirname(output));
@@ -44,8 +55,15 @@ export function makeConfig({ entries, output, alias }) {
 		setEnv({
 			NODE_ENV: process.env.NODE_ENV,
 		}),
-		watch(),
-		env('development', [addPlugins([new ForkTsCheckerWebpackPlugin()]), sourceMaps('inline-source-map')]),
+		env('development', [
+			addPlugins([
+				new ForkTsCheckerWebpackPlugin({
+					tsconfig,
+				}),
+			]),
+			watch(),
+			sourceMaps('inline-source-map'),
+		]),
 		env('production', [sourceMaps('source-map')]),
 		addPlugins([
 			new webpack.BannerPlugin({

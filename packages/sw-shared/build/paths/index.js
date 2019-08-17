@@ -7,6 +7,9 @@ const paths = {
 			get src() {
 				return path.resolve(this.root, 'src');
 			},
+			get dist() {
+				return path.resolve(this.root, 'dist');
+			},
 		};
 	},
 	get shared() {
