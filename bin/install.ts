@@ -46,9 +46,11 @@ function checkLatestInstall() {
 }
 
 function ensureNpmInstall() {
-	if (!fs.existsSync('node_modules')) {
+	if (!fs.existsSync(path.resolve(__dirname, '..', 'node_modules', CHECKSUM_FILE))) {
 		console.log('Installing node_modules');
-		execSync(isProduction ? 'npm ci --production --no-optional' : `npm ci ${noOptional ? '--no-optional' : ''}`);
+		execSync(
+			isProduction ? 'npm install --production --no-optional' : `npm install ${noOptional ? '--no-optional' : ''}`
+		);
 		execSync('npm audit fix');
 		execSync('npx lerna clean -y');
 		updateChecksum();
