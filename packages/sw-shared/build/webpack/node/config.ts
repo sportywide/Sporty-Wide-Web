@@ -7,6 +7,7 @@ import { getDependencies } from '@root/helpers/package';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import webpack from 'webpack';
 import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
+import { isDevelopment } from '@shared/lib/utils/env';
 import {
 	addPlugins,
 	createConfig,
@@ -34,13 +35,12 @@ export function makeConfig({
 }) {
 	// @ts-ignore
 	process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-	const isDev = process.env.NODE_ENV === 'development';
 	const packageName = path.basename(path.dirname(output));
 	const dependencies = [...getDependencies({ packageName, rootDir: paths.project.root }), packageName];
 
 	return createConfig([
 		setOutput(output),
-		setMode(isDev ? 'development' : 'production'),
+		setMode(isDevelopment() ? 'development' : 'production'),
 		entryPoint(entries),
 		target('node'),
 		externals(getNodeModules()),

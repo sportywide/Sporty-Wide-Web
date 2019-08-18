@@ -8,6 +8,8 @@ import { EmailService } from '@api/email/email.service';
 import { ApiCreatedResponse, ApiImplicitParam, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { AuthorizedApiOperation } from '@api/core/decorators/api-doc';
 import { getValidationPipe } from '@api/core/pipe/validation';
+import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
+import { CurrentUser } from '@api/core/decorators/user';
 
 @ApiUseTags('auth')
 @Controller('auth')

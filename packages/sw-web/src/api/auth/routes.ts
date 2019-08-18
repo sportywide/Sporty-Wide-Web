@@ -1,7 +1,6 @@
 import { Router } from 'express';
-import { login, signup } from '@web/api/auth/auth.controller';
+import { logout } from '@web/api/auth/controller';
 
-export const authRoute = Router();
+export const authRouter = Router();
 
-authRoute.post('/login', login);
-authRoute.post('/signup', signup);
+authRouter.post('/logout', logout);

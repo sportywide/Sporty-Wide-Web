@@ -6,7 +6,7 @@ import { Logger } from 'log4js';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { Inject, Injectable } from '@nestjs/common';
 import Mail from 'nodemailer/lib/mailer';
-const isProduction = process.env.NODE_ENV === 'production';
+import { isProduction } from '@shared/lib/utils/env';
 
 @Injectable()
 export class EmailService {
@@ -19,13 +19,13 @@ export class EmailService {
 		const transportOptions: SMTPTransport.Options = {
 			host: emailConfig.get('smtp:host'),
 			port: emailConfig.get('smtp:port'),
-			secure: isProduction,
+			secure: isProduction(),
 			tls: {
-				rejectUnauthorized: isProduction,
+				rejectUnauthorized: isProduction(),
 			},
 		};
 
-		if (isProduction) {
+		if (isProduction()) {
 			transportOptions.auth = {
 				user: emailConfig.get('smtp:user'),
 				pass: emailConfig.get('smtp:password'),

@@ -4,6 +4,7 @@ import { Provider } from 'nconf';
 import { mergeConcatArray } from '@shared/lib/utils/object/merge';
 import log4j, { Configuration } from 'log4js';
 import { CORE_CONFIG } from '@core/config/config.constants';
+import { isProduction } from '@shared/lib/utils/env';
 
 function filenameToken(logEvent) {
 	return logEvent.fileName ? logEvent.fileName.replace(__dirname, '').replace(/^\/webpack:/, '') : '';
@@ -63,7 +64,7 @@ export class LoggerProviderFactory {
 			log4jsConfig = this.buildLogStashConfig(log4jsConfig, coreConfig);
 		}
 
-		if (process.env.NODE_ENV !== 'production') {
+		if (!isProduction()) {
 			log4jsConfig = this.buildConsoleConfig(log4jsConfig);
 		}
 
