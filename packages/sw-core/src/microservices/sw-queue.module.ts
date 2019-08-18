@@ -1,6 +1,6 @@
 import { CoreModule } from '@core/core.module';
 import { CORE_CONFIG } from '@core/config/config.constants';
-import { Provider } from '@root/node_modules/@types/nconf';
+import { Provider } from 'nconf';
 import { BullModule } from 'nest-bull';
 
 export class SwQueueModule {

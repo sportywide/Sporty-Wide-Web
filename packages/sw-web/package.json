@@ -28,8 +28,8 @@
 		"next-redux-wrapper": "2.1.0",
 		"node-http-proxy-json": "0.1.6",
 		"prop-types": "15.7.2",
-		"react": "16.8.6",
-		"react-dom": "16.8.6",
+		"react": "16.9.0",
+		"react-dom": "16.9.0",
 		"react-redux": "7.1.0",
 		"recompose": "0.30.0",
 		"redux": "4.0.4",
@@ -40,19 +40,5 @@
 		"semantic-ui-react": "0.87.3",
 		"sportywide-shared": "1.0.0",
 		"sporty-wide-style": "1.0.1"
-	},
-	"jest": {
-		"moduleFileExtensions": [
-			"js",
-			"json",
-			"ts"
-		],
-		"rootDir": "src",
-		"testRegex": ".spec.ts$",
-		"transform": {
-			"^.+\\.(t|j)s$": "ts-jest"
-		},
-		"coverageDirectory": "../coverage",
-		"testEnvironment": "node"
 	}
 }

@@ -15,7 +15,7 @@ export function camelcaseToSnakecase(str) {
 		.toLowerCase();
 }
 
-export function dashcaseToSnakecase(str) {
+export function camelcaseToDashcase(str) {
 	if (!str) {
 		return str;
 	}

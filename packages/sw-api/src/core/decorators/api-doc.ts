@@ -1,6 +1,6 @@
 import { waterfall } from '@shared/lib/utils/fp/combine';
 import { ApiNotFoundResponse, ApiOperation, ApiUnauthorizedResponse } from '@nestjs/swagger';
-import { ucFirst } from '@shared/lib/utils/string/converstion';
+import { ucfirst } from '@shared/lib/utils/string/conversion';
 
 interface IOperationMetadata {
 	title: string;
@@ -13,4 +13,4 @@ export const AuthorizedApiOperation = (metadata: IOperationMetadata) =>
 	waterfall(ApiOperation(metadata), ApiUnauthorizedResponse({ description: 'User not authorized' }));
 
 export const NotFoundResponse = (type: string) =>
-	ApiNotFoundResponse({ description: `${ucFirst(type)} cannot be found` });
+	ApiNotFoundResponse({ description: `${ucfirst(type)} cannot be found` });
