@@ -1,15 +1,15 @@
 import {
-	Repository,
-	FindConditions,
 	Connection,
-	ObjectType,
+	DeleteQueryBuilder,
+	EntitySchema,
+	EntitySubscriberInterface,
+	FindConditions,
 	ObjectID,
+	ObjectType,
 	QueryBuilder,
 	QueryRunner,
-	EntitySchema,
-	DeleteQueryBuilder,
+	Repository,
 	UpdateQueryBuilder,
-	EntitySubscriberInterface,
 } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { SwSubscriber } from '@schema/core/subscriber/sql/base.subscriber';
@@ -133,6 +133,11 @@ export type SwRepository<T> = Repository<T> & SwBaseRepository<T>;
 class SwQueryBuilder<T> {
 	constructor(private queryBuilder: QueryBuilder<T>, private objectType: ObjectType<T> | EntitySchema<T> | string) {}
 
+	static from<T>(queryBuilder: QueryBuilder<T>, objectType) {
+		const customQueryBuilder = new SwQueryBuilder(queryBuilder, objectType);
+		return wrap(customQueryBuilder, queryBuilder) as SwRepository<T>;
+	}
+
 	select() {
 		return SwQueryBuilder.from<T>(this.queryBuilder.select(), this.objectType);
 	}
@@ -172,11 +177,6 @@ class SwQueryBuilder<T> {
 		}
 
 		return result;
-	}
-
-	static from<T>(queryBuilder: QueryBuilder<T>, objectType) {
-		const customQueryBuilder = new SwQueryBuilder(queryBuilder, objectType);
-		return wrap(customQueryBuilder, queryBuilder) as SwRepository<T>;
 	}
 }
 

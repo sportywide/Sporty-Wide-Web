@@ -1,4 +1,4 @@
-import { EntitySubscriberInterface, RemoveEvent, InsertEvent, UpdateEvent } from 'typeorm';
+import { EntitySubscriberInterface, InsertEvent, RemoveEvent, UpdateEvent } from 'typeorm';
 
 export interface EntityIds {
 	tableName: string;
@@ -7,8 +7,11 @@ export interface EntityIds {
 
 export interface SwSubscriberInterface {
 	afterSaveEntities?(entityIds: EntityIds);
+
 	afterInsertEntities?(entityIds: EntityIds);
+
 	afterUpdateEntities?(entityIds: EntityIds);
+
 	afterRemoveEntities?(entityIds: EntityIds);
 }
 
@@ -16,6 +19,7 @@ export class SwSubscriber implements EntitySubscriberInterface, SwSubscriberInte
 	afterInsertEntities(entityIds: EntityIds) {
 		this.afterSaveEntities(entityIds);
 	}
+
 	afterUpdateEntities(entityIds: EntityIds) {
 		this.afterSaveEntities(entityIds);
 	}
@@ -40,9 +44,9 @@ export class SwSubscriber implements EntitySubscriberInterface, SwSubscriberInte
 		}
 	}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
 	afterSaveEntities(entityIds: EntityIds) {}
 
-	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-empty-function
 	afterRemoveEntities(entityIds: EntityIds) {}
 }

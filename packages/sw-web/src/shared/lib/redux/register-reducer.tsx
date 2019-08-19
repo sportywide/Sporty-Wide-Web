@@ -21,14 +21,14 @@ export function registerReducer(reducers: { [key: string]: Reducer<any, AnyActio
 				this.reducerManager = (store as ISportyWideStore).reducerManager;
 			}
 
-			componentDidMount() {
-				NewComponent.registerReducers(this.reducerManager);
-			}
-
 			static registerReducers(reducerManager: ReducerManager) {
 				for (const [key, reducer] of Object.entries(reducers)) {
 					reducerManager.add(key, reducer);
 				}
+			}
+
+			componentDidMount() {
+				NewComponent.registerReducers(this.reducerManager);
 			}
 
 			render() {

@@ -1,4 +1,4 @@
-import { Module, NestModule, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
+import { MiddlewareConsumer, Module, NestModule, RequestMethod } from '@nestjs/common';
 import { AuthService } from '@api/auth/services/auth.service';
 import { CryptoService } from '@api/auth/services/crypto.service';
 import { PassportModule } from '@nestjs/passport';

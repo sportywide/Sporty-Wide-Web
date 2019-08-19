@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { LoggerProviderFactory } from '@core/logging/logger-provider.factory';
 import { log4jsProviders } from '@core/logging/logger.providers';
 import { CoreModule } from '@core/core.module';

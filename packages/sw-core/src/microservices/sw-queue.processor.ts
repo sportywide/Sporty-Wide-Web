@@ -1,5 +1,5 @@
 import { Logger } from 'log4js';
-import { OnQueueEvent, BullQueueEvents } from 'nest-bull';
+import { BullQueueEvents, OnQueueEvent } from 'nest-bull';
 import { Job } from 'bull';
 
 export class SwQueueProcessor {

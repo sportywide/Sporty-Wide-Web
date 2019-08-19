@@ -10,6 +10,7 @@ export function wrap(wrapper, base) {
 	});
 	return proxy;
 }
+
 export function getProperty(object, property, proxy) {
 	if (typeof object[property] === 'function') {
 		const oldFunction = object[property];

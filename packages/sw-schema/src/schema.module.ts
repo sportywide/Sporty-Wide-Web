@@ -10,6 +10,7 @@ import './subscribers';
 import { TypeormLoggerService } from '@schema/core/logging/typeorm.logger';
 import { CoreModule } from '@core/core.module';
 import { isDevelopment } from '@shared/lib/utils/env';
+
 const isDev = isDevelopment();
 
 @Module({

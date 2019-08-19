@@ -46,19 +46,6 @@ export class AuthService {
 		return { accessToken, refreshToken };
 	}
 
-	private createAccessToken(user: User) {
-		const id = user.id;
-		return this.jwtService.sign({
-			user: {
-				id,
-				email: user.email,
-				firstName: user.firstName,
-				lastName: user.lastName,
-				name: user.name,
-			},
-		});
-	}
-
 	public async logIn(username, password) {
 		const user = await this.userService.findOne({ username });
 		if (!user) {
@@ -115,6 +102,19 @@ export class AuthService {
 	public async clearTokens(user: User) {
 		user.refreshToken = undefined;
 		return this.userService.saveOne(user);
+	}
+
+	private createAccessToken(user: User) {
+		const id = user.id;
+		return this.jwtService.sign({
+			user: {
+				id,
+				email: user.email,
+				firstName: user.firstName,
+				lastName: user.lastName,
+				name: user.name,
+			},
+		});
 	}
 
 	private async createRefreshToken(user: User) {

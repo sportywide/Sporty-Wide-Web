@@ -59,6 +59,10 @@ export class User extends BaseEntity {
 	@Column()
 	refreshToken?: string;
 
+	get name() {
+		return [this.firstName, this.lastName].filter(value => value).join(' ');
+	}
+
 	@BeforeInsert()
 	@BeforeUpdate()
 	didSaveUser() {
@@ -69,9 +73,5 @@ export class User extends BaseEntity {
 		if (this.id && this.changed('username')) {
 			throw new Error('Cannot change username');
 		}
-	}
-
-	get name() {
-		return [this.firstName, this.lastName].filter(value => value).join(' ');
 	}
 }
