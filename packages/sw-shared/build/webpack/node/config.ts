@@ -19,7 +19,7 @@ import {
 	setOutput,
 	sourceMaps,
 } from '@webpack-blocks/webpack';
-import { babel } from '../plugins/babel';
+import { babelHelper } from '../plugins/transpile';
 import { externals, node, target, watch } from '../plugins/core';
 
 export function makeConfig({
@@ -44,7 +44,7 @@ export function makeConfig({
 		entryPoint(entries),
 		target('node'),
 		externals(getNodeModules()),
-		babel({
+		babelHelper({
 			cwd: path.resolve(__dirname, 'babel'),
 		}),
 		resolve({

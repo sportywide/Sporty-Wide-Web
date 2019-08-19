@@ -1,4 +1,4 @@
-export function babel(options = {}) {
+export function babelHelper(options = {}) {
 	return (context, { merge }) =>
 		merge({
 			module: {
