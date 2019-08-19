@@ -54,8 +54,7 @@ export class AuthController {
 	}
 
 	@Get('facebook/callback')
-	public async facebookCallback(@Req() req, @Res() res) {
-		const tokens = await this.authService.createTokens(req.user);
-		res.send(tokens);
+	public facebookCallback(@Req() req) {
+		return this.authService.createTokens(req.user);
 	}
 }
