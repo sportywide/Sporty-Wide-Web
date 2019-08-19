@@ -14,7 +14,7 @@ services:
             - sportywide-backend
     flyway:
         image: sportywide/sportywide-flyway
-        command: -url=jdbc:postgresql://postgres:5432/${POSTGRES_DB} -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} migrate
+        command: -url=jdbc:postgresql://postgres:5432/${POSTGRES_DB} -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} -outOfOrder=true migrate
         volumes:
             - './sql:/flyway/sql'
         environment:

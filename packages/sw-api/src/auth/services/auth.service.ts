@@ -10,6 +10,8 @@ import uuid from 'uuid/v4';
 import { EmailService } from '@api/email/email.service';
 import { ApiModelProperty } from '@nestjs/swagger';
 import { plainToClass } from 'class-transformer-imp';
+import { SocialProfileDto } from '@shared/lib/dtos/user/social-profile.dto';
+import { SocialProvider } from '@shared/lib/dtos/user/enum/social-provider.enum';
 
 export class Tokens {
 	@ApiModelProperty()
@@ -47,7 +49,6 @@ export class AuthService {
 	private createAccessToken(user: User) {
 		const id = user.id;
 		return this.jwtService.sign({
-			sub: id,
 			user: {
 				id,
 				email: user.email,
@@ -70,11 +71,45 @@ export class AuthService {
 	}
 
 	public async verify(payload) {
-		const user = await this.userService.findById(payload.sub, true);
+		if (!(payload.user && payload.user.id)) {
+			throw new UnauthorizedException('User not found');
+		}
+		const user = await this.userService.findById(payload.user.id, true);
 		if (!user) {
 			throw new UnauthorizedException('Invalid token');
 		}
 		return user;
+	}
+
+	public async socialSignin(socialProvider: SocialProvider, profile: SocialProfileDto) {
+		let user = await this.userService.findBySocialId(profile.id);
+		if (user) {
+			return user;
+		}
+
+		const usernameCount = await this.userService.count({
+			where: {
+				username: profile.username,
+			},
+		});
+
+		let username = profile.username;
+
+		if (usernameCount > 0) {
+			username += '-' + usernameCount;
+		}
+
+		user = plainToClass(User, {
+			firstName: profile.firstName,
+			lastName: profile.lastName,
+			username,
+			email: profile.email,
+			password: uuid(),
+			socialProvider,
+			socialId: profile.id,
+		});
+
+		return await this.userService.saveOne(user);
 	}
 
 	public async clearTokens(user: User) {

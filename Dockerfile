@@ -12,7 +12,7 @@ RUN mkdir -p /opt/app
 
 ENV PROJECT_ROOT /opt/app
 
-RUN npm install -g ts-node@8.3.0 typescript@3.5.2 lerna
+RUN npm install -g ts-node@8.3.0 typescript@3.4.5 lerna
 
 COPY package*.json lerna.json tsconfig.json $PROJECT_ROOT/
 COPY bin $PROJECT_ROOT/bin

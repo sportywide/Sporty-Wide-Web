@@ -1,4 +1,4 @@
-import { Body, Controller, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthService, Tokens } from '@api/auth/services/auth.service';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { LocalAuthGuard } from '@api/auth/guards/local.guard';
@@ -8,8 +8,7 @@ import { EmailService } from '@api/email/email.service';
 import { ApiCreatedResponse, ApiImplicitParam, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { AuthorizedApiOperation } from '@api/core/decorators/api-doc';
 import { getValidationPipe } from '@api/core/pipe/validation';
-import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
-import { CurrentUser } from '@api/core/decorators/user';
+import passport from 'passport';
 
 @ApiUseTags('auth')
 @Controller('auth')
@@ -21,9 +20,8 @@ export class AuthController {
 	@Post('signup')
 	@HttpCode(HttpStatus.CREATED)
 	@UseGuards(AuthenticatedGuard)
-	public async signUp(@Body(getValidationPipe()) user: CreateUserDto, @Req() req, @Res() res) {
-		const tokens = await this.authService.signUp(user);
-		res.send(tokens);
+	public signUp(@Body(getValidationPipe()) user: CreateUserDto) {
+		return this.authService.signUp(user);
 	}
 
 	@ApiImplicitParam({ name: 'username', type: String })
@@ -33,9 +31,8 @@ export class AuthController {
 	@Post('login')
 	@HttpCode(HttpStatus.OK)
 	@UseGuards(AuthenticatedGuard, LocalAuthGuard)
-	public async login(@Req() req, @Res() res) {
-		const tokens = await this.authService.createTokens(req.user);
-		res.send(tokens);
+	public login(@Req() req) {
+		return this.authService.createTokens(req.user);
 	}
 
 	@ApiOkResponse({ description: 'A new refresh token has been created', type: Tokens })
@@ -43,7 +40,21 @@ export class AuthController {
 	@Post('refresh_token')
 	@HttpCode(HttpStatus.OK)
 	@UseGuards(RefreshTokenGuard)
-	public async refreshToken(@Req() req, @Res() res) {
+	public refreshToken(@Req() req) {
+		return this.authService.createTokens(req.user);
+	}
+
+	@Get('facebook')
+	public facebookAuth(@Req() req, @Res() res) {
+		const referrer = req.get('Referrer') || '';
+		passport.authenticate('facebook', {
+			scope: ['email'],
+			callbackURL: `${referrer}/auth/facebook/callback`,
+		})(req, res);
+	}
+
+	@Get('facebook/callback')
+	public async facebookCallback(@Req() req, @Res() res) {
 		const tokens = await this.authService.createTokens(req.user);
 		res.send(tokens);
 	}

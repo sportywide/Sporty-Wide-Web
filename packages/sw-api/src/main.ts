@@ -5,12 +5,14 @@ import * as cookieParser from 'cookie-parser';
 import { LOG4J_PROVIDER } from '@core/logging/logging.constant';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { API_CONFIG } from '@core/config/config.constants';
+import passport from 'passport';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
 	const app = await NestFactory.create(AppModule);
 	app.use(helmet());
 	app.use(cookieParser());
+	app.use(passport.initialize());
 	app.use(cors());
 	const log4js = app.get(LOG4J_PROVIDER);
 	app.use(

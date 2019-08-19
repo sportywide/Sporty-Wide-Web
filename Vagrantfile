@@ -61,6 +61,6 @@ Vagrant.configure(2) do |config|
 		run: "always",
 		inline: <<-SCRIPT
 			cd /vagrant
-			docker-compose -f docker-core-services.yml up
+			docker-compose -f docker-core-services.yml up --build
 		SCRIPT
 end  

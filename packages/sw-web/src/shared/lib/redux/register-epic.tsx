@@ -20,7 +20,7 @@ export function registerEpic(...epics) {
 				this.epicManager = (store as ISportyWideStore).epicManager;
 			}
 
-			componentWillMount() {
+			componentDidMount() {
 				NewComponent.registerEpics(this.epicManager);
 			}
 

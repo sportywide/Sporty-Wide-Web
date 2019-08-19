@@ -3,6 +3,7 @@ import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { hashPassword } from '@shared/lib/utils/crypto';
 import { BaseEntity } from '@schema/core/base.entity';
 import { BeforeInsert, BeforeUpdate, Column, Entity, Index } from 'typeorm';
+import { SocialProvider } from '@shared/lib/dtos/user/enum/social-provider.enum';
 
 @Entity()
 export class User extends BaseEntity {
@@ -44,6 +45,16 @@ export class User extends BaseEntity {
 
 	@Column()
 	password: string;
+
+	@Column()
+	socialId: string;
+
+	@Column({
+		type: 'enum',
+		enum: SocialProvider,
+		default: null,
+	})
+	socialProvider: SocialProvider;
 
 	@Column()
 	refreshToken?: string;

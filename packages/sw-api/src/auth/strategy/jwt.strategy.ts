@@ -1,4 +1,4 @@
-import { Strategy, ExtractJwt } from 'passport-jwt';
+import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import { Inject, Injectable } from '@nestjs/common';
 import { AuthService } from '@api/auth/services/auth.service';
@@ -12,7 +12,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		super({
 			jwtFromRequest: req => this.getToken(req),
 			passReqToCallback: false,
-			secretOrKey: config.get('jwt:secret_key'),
+			secretOrKey: config.get('auth:jwt:secret_key'),
 		});
 	}
 
@@ -24,12 +24,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		return req.get('Refresh-Token');
 	}
 
-	async validate(payload, done: Function) {
-		try {
-			const user = await this.authService.verify(payload);
-			done(null, user);
-		} catch (err) {
-			done(err, null);
-		}
+	validate(payload) {
+		return this.authService.verify(payload);
 	}
 }

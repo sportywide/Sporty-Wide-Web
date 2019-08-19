@@ -3,6 +3,8 @@ import { Request } from 'express';
 import modifyResponse from 'node-http-proxy-json';
 import { COOKIE_CSRF, COOKIE_JWT_PAYLOAD, COOKIE_JWT_SIGNATURE, COOKIE_REFRESH_TOKEN } from '@web/api/auth/constants';
 import { isProduction } from '@shared/lib/utils/env';
+import { getFullPath, normalizePath } from '@shared/lib/utils/url/format';
+import { noop } from '@shared/lib/utils/functions';
 
 export const devProxy = {
 	'/api': {
@@ -20,12 +22,36 @@ export const devProxy = {
 		changeOrigin: true,
 		onProxyReq: function(proxyReq, req) {
 			handleAuthHeader(proxyReq, req);
+			const path = normalizePath(req.path, 'auth');
+			const pathMapping = {
+				'/facebook': setReferrerHeader,
+				'/facebook/callback': setReferrerHeader,
+			};
+
+			const handler = pathMapping[path] || noop;
+			handler(proxyReq, req);
 		},
-		onProxyRes: function(proxyRes, req, res) {
-			setCookies(proxyRes, req, res);
+		onProxyRes: function(proxyRes, req: Request, res) {
+			const path = normalizePath(req.path, 'auth');
+			const pathMapping = {
+				'/login': setCookies,
+				'/signup': setCookies,
+				'/refresh_token': setCookies,
+				'/facebook/callback': setCookiesAndRedirect,
+			};
+
+			const handler = pathMapping[path] || noop;
+			handler(proxyRes, req, res);
 		},
 	},
 };
+
+function setReferrerHeader(proxyReq, req: Request, path?: string) {
+	const referrerUrl = getFullPath(req, path, {
+		protocol: 'https',
+	});
+	proxyReq.setHeader('Referrer', referrerUrl);
+}
 
 function handleAuthHeader(proxyReq, req: Request) {
 	req.cookies = req.cookies || {};
@@ -42,7 +68,14 @@ function handleAuthHeader(proxyReq, req: Request) {
 	}
 }
 
-function setCookies(proxyRes, request, response) {
+function setCookiesAndRedirect(proxyRes, request, response) {
+	if (proxyRes.statusCode >= 400) {
+		response.redirect('/login');
+	}
+	setCookies(proxyRes, request, response, '/');
+}
+
+function setCookies(proxyRes, request, response, redirectUrl) {
 	if (proxyRes.statusCode >= 300) {
 		return;
 	}
@@ -66,6 +99,11 @@ function setCookies(proxyRes, request, response) {
 		response.cookie(COOKIE_CSRF, request.csrfToken(), {
 			secure: isProduction(),
 		});
+
+		if (redirectUrl) {
+			response.status(301);
+			response.location(redirectUrl);
+		}
 
 		return tokens;
 	});

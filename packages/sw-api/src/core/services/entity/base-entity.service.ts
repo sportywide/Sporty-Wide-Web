@@ -1,4 +1,4 @@
-import { DeleteResult, FindConditions, Repository } from 'typeorm';
+import { DeleteResult, FindConditions, Repository, FindManyOptions } from 'typeorm';
 
 export class BaseEntityService<T> {
 	constructor(private readonly repository: Repository<T>) {}
@@ -21,6 +21,10 @@ export class BaseEntityService<T> {
 
 	public async save(dto: T[]) {
 		return this.repository.save(dto);
+	}
+
+	public async count(findOptions: FindManyOptions<T> | undefined) {
+		return this.repository.count(findOptions);
 	}
 
 	public createOneEntity(dto: T): T {

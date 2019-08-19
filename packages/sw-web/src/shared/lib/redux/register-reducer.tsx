@@ -21,7 +21,7 @@ export function registerReducer(reducers: { [key: string]: Reducer<any, AnyActio
 				this.reducerManager = (store as ISportyWideStore).reducerManager;
 			}
 
-			componentWillMount() {
+			componentDidMount() {
 				NewComponent.registerReducers(this.reducerManager);
 			}
 

@@ -9,4 +9,8 @@ export class UserService extends BaseEntityService<User> {
 	constructor(@InjectSwRepository(User) private readonly userRepository: SwRepository<User>) {
 		super(userRepository);
 	}
+
+	findBySocialId(socialId) {
+		return this.findOne({ socialId });
+	}
 }
