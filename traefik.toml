@@ -4,18 +4,23 @@ logLevel = "INFO"
 defaultEntryPoints = ["https","http"]
 
 [entryPoints]
-  [entryPoints.http]
-  address = ":80"
+	[entryPoints.http]
+		address = ":80"
   	[entryPoints.http.redirect]
-  	entryPoint = "https"
-  [entryPoints.https]
-  address = ":443"
-    [entryPoints.https.tls]
-        [[entryPoints.https.tls.certificates]]
-        certFile = "/certs/sportywide-cert.pem"
-        keyFile = "/certs/sportywide-key.pem"
-  [entryPoints.traefik]
-  address = ":8080"
+		entryPoint = "https"
+  	[entryPoints.https]
+		address = ":443"
+		compress = true
+	[entryPoints.https.redirect]
+		regex = "^https://sportywidedev.com/(.*)"
+		replacement = "https://www.sportywidedev.com/$1"
+		permanent = true	
+  	[entryPoints.https.tls]
+		[[entryPoints.https.tls.certificates]]
+			certFile = "/certs/sportywide-cert.pem"
+			keyFile = "/certs/sportywide-key.pem"
+  	[entryPoints.traefik]
+  		address = ":8080"
 
 [api]
 entryPoint = "traefik"

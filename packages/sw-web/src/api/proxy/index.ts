@@ -101,7 +101,7 @@ function setCookies(proxyRes, request, response, redirectUrl) {
 		});
 
 		if (redirectUrl) {
-			response.status(301);
+			response.status(302);
 			response.location(redirectUrl);
 		}
 

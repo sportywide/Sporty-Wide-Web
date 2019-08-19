@@ -78,6 +78,10 @@ Run one of the following commands (in Vagrant)
 -   `docker-compose run --rm --entrypoint sh <service>`: This will run the container and open an shell session to debug
 -   `docker exec -it <containerId> sh`: This will create a shell session to an already running container. Use `docker ps` to find the container ID
 
+##### To restart a service
+
+-   `docker-compose -f docker-core-services.yml restart <service>`: This will restart a core service. You might want to use this command to reload the configuration for a service (e.g. traefik) or attempt to rerun a failed database migration (flyway)
+
 #### Running locally
 
 -   Ensure you have installed all external services on your computer
