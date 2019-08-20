@@ -45,6 +45,7 @@ export class AuthController {
 	}
 
 	@Get('facebook')
+	@UseGuards(AuthenticatedGuard)
 	public facebookAuth(@Req() req, @Res() res) {
 		const referrer = req.get('Referrer') || '';
 		passport.authenticate('facebook', {
@@ -54,11 +55,13 @@ export class AuthController {
 	}
 
 	@Get('facebook/callback')
+	@UseGuards(AuthenticatedGuard)
 	public facebookCallback(@Req() req) {
 		return this.authService.createTokens(req.user);
 	}
 
 	@Get('google')
+	@UseGuards(AuthenticatedGuard)
 	public googleAuth(@Req() req, @Res() res) {
 		const referrer = req.get('Referrer') || '';
 		passport.authenticate('google', {
@@ -68,6 +71,7 @@ export class AuthController {
 	}
 
 	@Get('google/callback')
+	@UseGuards(AuthenticatedGuard)
 	public googleCallback(@Req() req) {
 		return this.authService.createTokens(req.user);
 	}
