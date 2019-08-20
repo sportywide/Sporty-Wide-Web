@@ -5,6 +5,8 @@ import { Provider } from 'nconf';
 import { API_CONFIG } from '@core/config/config.constants';
 import { AuthService } from '@api/auth/services/auth.service';
 import { SocialProvider } from '@shared/lib/dtos/user/enum/social-provider.enum';
+import { SocialProfileDto } from '@shared/lib/dtos/user/social-profile.dto';
+import { UserGender } from '@shared/lib/dtos/user/enum/user-gender.enum';
 
 @Injectable()
 export class GoogleStrategy extends PassportStrategy(Strategy) {
@@ -14,14 +16,20 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
 			clientSecret: config.get('auth:google:client_secret'),
 			passReqToCallback: true,
 		});
+		console.log(config.get('auth:google:client_secret'));
 	}
 
-	async validate(request, profile, done: Function) {
-		try {
-			const user = await this.authService.socialSignin(SocialProvider.GOOGLE, profile);
-			done(null, user);
-		} catch (err) {
-			done(err, null);
-		}
+	async validate(request, accessToken, refreshToken, payload) {
+		const profile: SocialProfileDto = {
+			displayName: payload.displayName,
+			email: payload.email,
+			id: payload.id,
+			username: payload.id,
+			firstName: payload.name.givenName,
+			lastName: payload.name.familyName,
+			gender: payload.gender === 'male' ? UserGender.MALE : UserGender.FEMALE,
+			imageUrl: payload.picture,
+		};
+		return await this.authService.socialSignin(SocialProvider.GOOGLE, profile);
 	}
 }

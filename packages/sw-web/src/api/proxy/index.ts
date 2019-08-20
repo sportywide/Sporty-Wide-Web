@@ -26,6 +26,8 @@ export const devProxy = {
 			const pathMapping = {
 				'/facebook': setReferrerHeader,
 				'/facebook/callback': setReferrerHeader,
+				'/google': setReferrerHeader,
+				'/google/callback': setReferrerHeader,
 			};
 
 			const handler = pathMapping[path] || noop;
@@ -38,6 +40,7 @@ export const devProxy = {
 				'/signup': setCookies,
 				'/refresh_token': setCookies,
 				'/facebook/callback': setCookiesAndRedirect,
+				'/google/callback': setCookiesAndRedirect,
 			};
 
 			const handler = pathMapping[path] || noop;

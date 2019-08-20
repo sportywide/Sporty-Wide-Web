@@ -57,4 +57,18 @@ export class AuthController {
 	public facebookCallback(@Req() req) {
 		return this.authService.createTokens(req.user);
 	}
+
+	@Get('google')
+	public googleAuth(@Req() req, @Res() res) {
+		const referrer = req.get('Referrer') || '';
+		passport.authenticate('google', {
+			scope: ['profile', 'email'],
+			callbackURL: `${referrer}/auth/google/callback`,
+		})(req, res);
+	}
+
+	@Get('google/callback')
+	public googleCallback(@Req() req) {
+		return this.authService.createTokens(req.user);
+	}
 }

@@ -21,6 +21,7 @@ export class FacebookStrategy extends PassportStrategy(Strategy) {
 
 	validate(request, accessToken, refreshToken, payload) {
 		const [email = {}] = payload.emails || [];
+		const [photo = {}] = payload.photos || [];
 		const profile: SocialProfileDto = {
 			displayName: payload.displayName,
 			email: email.value,
@@ -29,6 +30,7 @@ export class FacebookStrategy extends PassportStrategy(Strategy) {
 			firstName: payload.name.givenName,
 			lastName: payload.name.familyName,
 			gender: payload.gender === 'male' ? UserGender.MALE : UserGender.FEMALE,
+			imageUrl: photo.value,
 		};
 		return this.authService.socialSignin(SocialProvider.FACEBOOK, profile);
 	}

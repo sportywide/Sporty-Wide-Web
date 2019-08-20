@@ -4,12 +4,12 @@ module.exports = {
 	port: 5000,
 	auth: {
 		google: {
-			client_id: 'test',
-			client_secret: 'secret',
+			client_id: '431025632688-734iamf9chepek4sdeh0r4r8m5e8m74v.apps.googleusercontent.com',
+			client_secret: process.env.GOOGLE_CLIENT_SECRET,
 		},
 		facebook: {
 			client_id: '676534372837849',
-			client_secret: '8004a8f3edb0203f4d7a6015e6e7e8c7',
+			client_secret: process.env.FACEBOOK_CLIENT_SECRET,
 		},
 		jwt: {
 			secret_key: 'jwtsecret',

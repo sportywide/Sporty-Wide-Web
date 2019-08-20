@@ -8,4 +8,5 @@ export interface SocialProfileDto {
 	lastName: string;
 	displayName: string;
 	gender: UserGender;
+	imageUrl?: string;
 }

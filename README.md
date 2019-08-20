@@ -10,7 +10,7 @@
 -   Install vagrant plugins `vagrant plugin install vagrant-docker-compose`
 -   `npm install -g ts-node typescript`
 -   `npm run install:dependencies`
--   Rename .env.example to .env and tweak it to your needs
+-   Rename .env.example to .env and tweak it to your needs. Note: You can grab credentials from this page: https://sporty-wide.slite.com/app/channels/TsutWVaI3e/collections/SZ98vT6q1Q/notes/Z2rRcShcX6
 -   Install mkcert: https://github.com/FiloSottile/mkcert
 -   Run `mkcert -install` to install a local CA
 -   Create self-signed SSL certificates:

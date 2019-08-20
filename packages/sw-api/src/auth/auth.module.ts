@@ -14,6 +14,7 @@ import { API_CONFIG } from '@core/config/config.constants';
 import { GoogleStrategy } from '@api/auth/strategy/google.strategy';
 import { FacebookStrategy } from '@api/auth/strategy/facebook.strategy';
 import { FacebookCallbackMiddleware } from '@api/auth/middlewares/facebook-callback.middleware';
+import { GoogleCallbackMiddleware } from '@api/auth/middlewares/google-callback.middleware';
 
 @Module({
 	imports: [
@@ -40,6 +41,8 @@ export class AuthModule implements NestModule {
 	configure(consumer: MiddlewareConsumer) {
 		consumer
 			.apply(FacebookCallbackMiddleware)
-			.forRoutes({ path: '/auth/facebook/callback', method: RequestMethod.GET });
+			.forRoutes({ path: '/auth/facebook/callback', method: RequestMethod.GET })
+			.apply(GoogleCallbackMiddleware)
+			.forRoutes({ path: '/auth/google/callback', method: RequestMethod.GET });
 	}
 }
