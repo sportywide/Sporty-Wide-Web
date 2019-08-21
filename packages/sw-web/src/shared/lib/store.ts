@@ -10,6 +10,7 @@ import { authReducer } from '@web/features/auth/store/reducers';
 import { logoutEpic } from '@web/features/auth/store/epics';
 import React from 'react';
 import { createReducerManager, ReducerManager } from './redux/reducer-manager';
+import { IUser } from '@web/shared/lib/interfaces/auth/user';
 
 export interface IDependencies {
 	container: typeof Container;
@@ -42,6 +43,8 @@ export function initStore(initialState = {}, context) {
 
 export const ContainerContext = React.createContext(Container);
 
+export const UserContext = React.createContext<IUser>(null);
+
 export interface ISportyWideStore extends Store {
 	reducerManager: ReducerManager;
 	epicManager: IEpicManager;
@@ -51,8 +54,8 @@ export interface ISportyWideStore extends Store {
 function registerContainer({ auth }) {
 	const user = auth.user;
 	const csrfToken = auth.csrfToken;
-	Container.set('currentUser', user);
-	Container.set('csrfToken', csrfToken);
+	Container.set('currentUser', user || null);
+	Container.set('csrfToken', csrfToken || null);
 	return Container;
 }
 

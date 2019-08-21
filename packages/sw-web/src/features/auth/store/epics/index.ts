@@ -11,7 +11,7 @@ export const logoutEpic = (action$, state$, { container }: IDependencies) => {
 			return authService.logout().pipe(
 				mapTo(logoutSuccess),
 				tap(() => {
-					window.location.href = '/';
+					window.location.href = '/login';
 				})
 			);
 		})
