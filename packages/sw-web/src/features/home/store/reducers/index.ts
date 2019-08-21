@@ -3,7 +3,14 @@ import { AnyAction } from 'redux';
 
 export interface IHomeState {
 	nextCharacterId: number;
-	character: { name?: string; birth_year?: number; gender?: string; skin_color?: string; eye_color?: string };
+	character: {
+		name?: string;
+		url?: string;
+		birth_year?: number;
+		gender?: string;
+		skin_color?: string;
+		eye_color?: string;
+	};
 	isFetchedOnServer: boolean;
 	error: object | string | null;
 }

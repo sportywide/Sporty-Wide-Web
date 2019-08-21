@@ -2,6 +2,7 @@ import React from 'react';
 import { ReactReduxContext } from 'react-redux';
 import { AnyAction, Reducer } from 'redux';
 import hoistNonReactStatics from 'hoist-non-react-statics';
+import { isHotReload } from '@web/shared/lib/helpers/build';
 import { ISportyWideStore } from '../store';
 import { withContext } from '../context/providers';
 import { ReducerManager } from './reducer-manager';
@@ -33,8 +34,10 @@ export function registerReducer(reducers: { [key: string]: Reducer<any, AnyActio
 			}
 
 			componentWillUnmount() {
-				for (const key of Object.keys(reducers)) {
-					this.reducerManager.remove(key);
+				if (!isHotReload()) {
+					for (const key of Object.keys(reducers)) {
+						this.reducerManager.remove(key);
+					}
 				}
 			}
 		}

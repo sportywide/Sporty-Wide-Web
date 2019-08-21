@@ -16,12 +16,16 @@ export interface IDependencies {
 }
 
 export function initStore(initialState = {}, context) {
+	if (context && context.store) {
+		return context.store;
+	}
 	const auth = parseCookies(context) || {};
 
 	const container = registerContainer({ auth });
-	const reducerManager = createReducerManager({
+	const initialReducers = getInitialReducers(initialState, {
 		auth: authReducer,
 	});
+	const reducerManager = createReducerManager(initialReducers);
 	const epicMiddleware = createEpicMiddleware({
 		dependencies: { container },
 	});
@@ -50,4 +54,20 @@ function registerContainer({ auth }) {
 	Container.set('currentUser', user);
 	Container.set('csrfToken', csrfToken);
 	return Container;
+}
+
+function getInitialReducers(initialState, initialReducer) {
+	if (!initialState) {
+		return initialReducer;
+	}
+
+	const reducers = { ...initialReducer };
+
+	Object.keys(initialState).forEach(stateKey => {
+		if (!reducers[stateKey]) {
+			reducers[stateKey] = () => initialState[stateKey];
+		}
+	});
+
+	return reducers;
 }

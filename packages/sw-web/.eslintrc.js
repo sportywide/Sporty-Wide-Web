@@ -5,6 +5,7 @@ module.exports = {
 	},
 	rules: {
 		'react/display-name': 0,
+		'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
 	},
 	plugins: ['react'],
 	settings: {

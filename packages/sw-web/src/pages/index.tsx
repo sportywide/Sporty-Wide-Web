@@ -12,11 +12,13 @@ import { registerEpic } from '@web/shared/lib/redux/register-epic';
 import { fetchUserEpic } from '@web/features/home/store/epics';
 import Head from 'next/head';
 import { logout } from '@web/features/auth/store/actions';
+import { IUser } from '@web/shared/lib/interfaces/auth/user';
 
 interface IProps {
 	startFetchingCharacters: Function;
 	stopFetchingCharacters: Function;
 	logout: Function;
+	user: IUser;
 }
 
 class Counter extends React.Component<IProps, any> {
@@ -41,6 +43,13 @@ class Counter extends React.Component<IProps, any> {
 				<Head>
 					<title>SportyWide</title>
 				</Head>
+				{this.props.user && (
+					<div className="ub-mb1">
+						<h5>Current user</h5>
+						<div>Email: {this.props.user.email}</div>
+						<div>Name: {this.props.user.name}</div>
+					</div>
+				)}
 				<Button onClick={() => this.props.logout()}>Logout</Button>
 				<h1>Index Page</h1>
 				<CharacterInfo />
@@ -65,7 +74,7 @@ const enhance = compose(
 	registerReducer({ home: homeReducer }),
 	registerEpic(fetchUserEpic),
 	connect(
-		null,
+		state => ({ user: state.auth.user }),
 		{
 			startFetchingCharacters,
 			stopFetchingCharacters,

@@ -27,7 +27,7 @@ export class ReducerManager {
 
 	@autobind
 	add(key, reducer) {
-		if (!key || this.reducers[key]) {
+		if (!key) {
 			return;
 		}
 		this.reducers[key] = reducer;
