@@ -1,5 +1,5 @@
 import React from 'react';
-import Link from 'next/link';
+import { Link } from '@web/routes';
 import { connect } from 'react-redux';
 import { Button, Flag, Segment } from 'semantic-ui-react';
 import { CharacterInfo } from '@web/features/home/components';
@@ -10,10 +10,13 @@ import { registerReducer } from '@web/shared/lib/redux/register-reducer';
 import { reducer as homeReducer } from '@web/features/home/store/reducers';
 import { registerEpic } from '@web/shared/lib/redux/register-epic';
 import { fetchUserEpic } from '@web/features/home/store/epics';
+import Head from 'next/head';
+import { logout } from '@web/features/auth/store/actions';
 
 interface IProps {
 	startFetchingCharacters: Function;
 	stopFetchingCharacters: Function;
+	logout: Function;
 }
 
 class Counter extends React.Component<IProps, any> {
@@ -35,6 +38,10 @@ class Counter extends React.Component<IProps, any> {
 	render() {
 		return (
 			<div className="ub-p4">
+				<Head>
+					<title>SportyWide</title>
+				</Head>
+				<Button onClick={() => this.props.logout()}>Logout</Button>
 				<h1>Index Page</h1>
 				<CharacterInfo />
 				<Segment>
@@ -45,7 +52,7 @@ class Counter extends React.Component<IProps, any> {
 				</Segment>
 				<br />
 				<nav>
-					<Link href="/other">
+					<Link route="/other">
 						<a>Navigates to &quot;/other&quot;</a>
 					</Link>
 				</nav>
@@ -62,6 +69,7 @@ const enhance = compose(
 		{
 			startFetchingCharacters,
 			stopFetchingCharacters,
+			logout,
 		}
 	)
 );

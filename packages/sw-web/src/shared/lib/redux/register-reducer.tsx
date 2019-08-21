@@ -19,16 +19,13 @@ export function registerReducer(reducers: { [key: string]: Reducer<any, AnyActio
 				super(props);
 				const { store } = this.props.context;
 				this.reducerManager = (store as ISportyWideStore).reducerManager;
+				NewComponent.registerReducers(this.reducerManager);
 			}
 
 			static registerReducers(reducerManager: ReducerManager) {
 				for (const [key, reducer] of Object.entries(reducers)) {
 					reducerManager.add(key, reducer);
 				}
-			}
-
-			componentDidMount() {
-				NewComponent.registerReducers(this.reducerManager);
 			}
 
 			render() {

@@ -25,7 +25,9 @@
 		"hoist-non-react-statics": "3.3.0",
 		"http-proxy-middleware": "0.19.1",
 		"next": "9.0.3",
-		"next-redux-wrapper": "2.1.0",
+		"next-cookies": "1.1.2",
+		"next-store-wrapper": "3.0.0-alpha.5",
+		"next-routes": "1.4.2",
 		"node-http-proxy-json": "0.1.6",
 		"prop-types": "15.7.2",
 		"react": "16.9.0",
@@ -38,6 +40,7 @@
 		"redux-thunk": "2.3.0",
 		"rxjs": "6.5.2",
 		"semantic-ui-react": "0.87.3",
+		"typedi": "0.8.0",
 		"sportywide-shared": "1.0.0",
 		"sporty-wide-style": "1.0.1"
 	}

@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import express from 'express';
 import next from 'next';
 import cookieParser from 'cookie-parser';
@@ -6,6 +7,7 @@ import { devProxy } from '@web/api/proxy';
 import { isDevelopment, isProduction } from '@shared/lib/utils/env';
 import { authRouter } from '@web/api/auth/routes';
 import config from './config';
+import routes from './routes';
 
 const CSRF_WHITE_LIST = ['login', 'signup'];
 
@@ -15,8 +17,6 @@ const app = next({
 	dir: './src',
 	dev: isDevelopment(),
 });
-
-const handle = app.getRequestHandler();
 
 let server;
 app.prepare()
@@ -36,19 +36,20 @@ app.prepare()
 		server.use('/auth', authRouter);
 		setupProxy(devProxy);
 
+		const handler = routes.getRequestHandler(app);
+
 		// Default catch-all handler to allow Next.js to handle all other routes
-		server.all('*', (req, res) => handle(req, res));
+		server.use(handler);
 
 		server.listen(port, err => {
 			if (err) {
 				throw err;
 			}
-			console.log(`> Ready on port ${port} [${env}]`);
+			console.info(`> Ready on port ${port} [${env}]`);
 		});
 	})
 	.catch(err => {
-		console.log('An error occurred, unable to start the server');
-		console.log(err);
+		console.error('An error occurred, unable to start the server', err);
 	});
 
 function setupProxy(proxy) {

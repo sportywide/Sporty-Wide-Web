@@ -30,4 +30,12 @@ module.exports = {
 		es6: true,
 		jest: true,
 	},
+	overrides: [
+		{
+			files: ['packages/**/*.{js,ts,jsx,ts}'],
+			rules: {
+				'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
+			},
+		},
+	],
 };

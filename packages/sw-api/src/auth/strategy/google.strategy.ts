@@ -16,7 +16,6 @@ export class GoogleStrategy extends PassportStrategy(Strategy) {
 			clientSecret: config.get('auth:google:client_secret'),
 			passReqToCallback: true,
 		});
-		console.log(config.get('auth:google:client_secret'));
 	}
 
 	async validate(request, accessToken, refreshToken, payload) {

@@ -89,7 +89,7 @@ function setCookiesAndRedirect(proxyRes, request, response) {
 
 function setCookies(proxyRes, request, response, redirectUrl) {
 	if (proxyRes.statusCode >= 300) {
-		return;
+		return redirectOnError(proxyRes, request, response);
 	}
 
 	modifyResponse(response, proxyRes, function(tokens) {
