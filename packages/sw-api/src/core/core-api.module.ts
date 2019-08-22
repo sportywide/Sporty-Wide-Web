@@ -8,7 +8,7 @@ import { RequestContextService } from '@api/core/services/request/request-contex
 import { ApiValidationService } from './services/validation/validation.service';
 
 @Module({
-	exports: [ApiValidationService, RequestContextService],
+	exports: [ApiValidationService, RequestContextService, ConfigModule],
 	providers: [exceptionFilterProvider, ApiValidationService, RequestContextService],
 	imports: [
 		CoreModule,

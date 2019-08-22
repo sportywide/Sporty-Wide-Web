@@ -4,7 +4,6 @@ import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { LocalAuthGuard } from '@api/auth/guards/local.guard';
 import { AuthenticatedGuard } from '@api/auth/guards/authenticated.guard';
 import { RefreshTokenGuard } from '@api/auth/guards/refresh-token.guard';
-import { EmailService } from '@api/email/email.service';
 import { ApiCreatedResponse, ApiImplicitParam, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { AuthorizedApiOperation } from '@api/core/decorators/api-doc';
 import { getValidationPipe } from '@api/core/pipe/validation';
@@ -13,7 +12,7 @@ import passport from 'passport';
 @ApiUseTags('auth')
 @Controller('auth')
 export class AuthController {
-	constructor(private readonly authService: AuthService, private emailService: EmailService) {}
+	constructor(private readonly authService: AuthService) {}
 
 	@ApiCreatedResponse({ description: 'User has been created', type: Tokens })
 	@ApiOperation({ title: 'Sign up endpoint' })

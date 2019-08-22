@@ -36,6 +36,10 @@ function checkLatestInstall() {
 					installSubPackagesDependencies();
 				}
 				updateChecksum();
+				if (!isProduction) {
+					execSync("lerna exec 'npx sort-package-json'");
+					execSync('npx sort-package-json');
+				}
 			} else {
 				console.info('Up to date');
 			}

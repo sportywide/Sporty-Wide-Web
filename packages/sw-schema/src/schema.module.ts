@@ -45,6 +45,7 @@ const isDev = isDevelopment();
 			entities: getEntities(),
 		}),
 	],
+	exports: [TypeOrmModule, SwRepositoryModule],
 })
 export class SchemaModule {}
 
