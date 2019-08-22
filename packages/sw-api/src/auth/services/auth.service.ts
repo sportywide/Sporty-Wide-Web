@@ -51,7 +51,7 @@ export class AuthService {
 		if (!user) {
 			throw new NotFoundException(`User with username ${username} cannot be found`);
 		}
-		if (!this.cryptoService.comparePassword(password, user.password)) {
+		if (!(await this.cryptoService.comparePassword(password, user.password))) {
 			throw new BadRequestException('Incorrect password');
 		}
 		return user;

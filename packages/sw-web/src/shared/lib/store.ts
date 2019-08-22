@@ -9,8 +9,8 @@ import { Container } from 'typedi';
 import { authReducer } from '@web/features/auth/store/reducers';
 import { logoutEpic } from '@web/features/auth/store/epics';
 import React from 'react';
-import { createReducerManager, ReducerManager } from './redux/reducer-manager';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
+import { createReducerManager, ReducerManager } from './redux/reducer-manager';
 
 export interface IDependencies {
 	container: typeof Container;

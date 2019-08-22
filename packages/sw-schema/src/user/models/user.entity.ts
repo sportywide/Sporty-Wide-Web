@@ -65,9 +65,9 @@ export class User extends BaseEntity {
 
 	@BeforeInsert()
 	@BeforeUpdate()
-	didSaveUser() {
+	async didSaveUser() {
 		if (this.changed('password')) {
-			this.password = hashPassword(this.password);
+			this.password = await hashPassword(this.password);
 		}
 
 		if (this.id && this.changed('username')) {
