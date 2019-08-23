@@ -9,6 +9,9 @@ import {
 	Put,
 	UnauthorizedException,
 	UseGuards,
+	Delete,
+	HttpCode,
+	HttpStatus,
 } from '@nestjs/common';
 import { UserDto } from '@shared/lib/dtos/user/user.dto';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
@@ -21,6 +24,7 @@ import { plainToClass } from 'class-transformer-imp';
 import { ApiValidationService } from '@api/core/services/validation/validation.service';
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { User } from '@schema/user/models/user.entity';
+import { EnvGuard } from '@api/auth/guards/environment.guard';
 
 @ApiUseTags('users')
 @Controller('user')
@@ -53,6 +57,15 @@ export class UserController {
 		return plainToClass(UserDto, user, {
 			excludeExtraneousValues: true,
 		});
+	}
+
+	@ApiOkResponse({ description: 'User has been deleted' })
+	@AuthorizedApiOperation({ title: 'Delete user by username, only available in development environment' })
+	@Delete('/test/:username')
+	@HttpCode(HttpStatus.NO_CONTENT)
+	@UseGuards(EnvGuard.development())
+	public deleteUserByUsername(@Param('username') username: string) {
+		return this.userService.delete({ username });
 	}
 
 	@AuthorizedApiOperation({ title: 'Update user endpoint' })

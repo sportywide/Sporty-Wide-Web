@@ -4,6 +4,7 @@
 	"description": "A Social network for Sports",
 	"author": "Sporty Wide",
 	"scripts": {
+		"api-test": "ts-node e2e/api/api-test.ts",
 		"bootstrap": "lerna bootstrap && link-parent-bin",
 		"bootstrap:no-optional": "lerna bootstrap -- --no-optional && link-parent-bin",
 		"bootstrap:prod": "lerna bootstrap -- --production --no-optional --ci && link-parent-bin -s true -d false -o false",
@@ -70,6 +71,7 @@
 		"copy-webpack-plugin": "5.0.4",
 		"file-loader": "4.2.0",
 		"fork-ts-checker-webpack-plugin": "1.5.0",
+		"glob": "7.1.4",
 		"lerna": "3.16.4",
 		"next-compose-plugins": "2.2.0",
 		"next-plugin-custom-babel-config": "1.0.2",
@@ -89,6 +91,7 @@
 		"yargs": "14.0.0"
 	},
 	"optionalDependencies": {
+		"@types/newman": "3.11.0",
 		"@typescript-eslint/eslint-plugin": "2.0.0",
 		"@typescript-eslint/parser": "2.0.0",
 		"commitizen": "4.0.3",
@@ -100,6 +103,8 @@
 		"eslint-plugin-react": "7.14.3",
 		"husky": "3.0.4",
 		"lint-staged": "9.2.3",
+		"newman": "4.5.4",
+		"newman-reporter-html": "1.0.3",
 		"prettier": "1.18.2",
 		"pretty-quick": "1.11.1"
 	}
