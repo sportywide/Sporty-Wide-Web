@@ -12,20 +12,21 @@ import { redirect } from '@web/shared/lib/navigation/helper';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 
 interface IProps {
-	store: Store;
-	user: IUser;
+	store?: Store;
+	user?: IUser;
 }
 
 class SportyWideApp extends App<IProps> {
 	static async getInitialProps({ Component, ctx }) {
 		const store: ISportyWideStore = ctx.store;
 		const container = store.container;
-		const user = container.get('currentUser');
+		const user: IUser = container.get('currentUser');
+		let pageProps = {};
+
 		if (!Component.allowUnauthenticated && !user) {
 			await redirect({ context: ctx, route: 'login' });
-			return;
+			return { pageProps };
 		}
-		let pageProps = {};
 
 		if (Component.registerEpics) {
 			Component.registerEpics(store.epicManager);

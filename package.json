@@ -6,13 +6,15 @@
 	"scripts": {
 		"api-test": "ts-node e2e/api/api-test.ts",
 		"bootstrap": "lerna bootstrap && link-parent-bin",
+		"bootstrap:ci": "lerna bootstrap -- --ci --no-optional && link-parent-bin",
 		"bootstrap:no-optional": "lerna bootstrap -- --no-optional && link-parent-bin",
 		"bootstrap:prod": "lerna bootstrap -- --production --no-optional --ci && link-parent-bin -s true -d false -o false",
 		"cz": "git add . && git-cz",
 		"install:dependencies": "ts-node -T bin/install.ts",
 		"test": "jest",
 		"test:coverage": "npm test -- --coverage",
-		"test:watch": "npm test -- --watch"
+		"test:watch": "npm test -- --watch",
+		"validate:ci": "cat .gitlab-ci.yml | curl --header \"Content-Type: application/json\" https://gitlab.com/api/v4/ci/lint --data @-"
 	},
 	"husky": {
 		"hooks": {
@@ -72,6 +74,7 @@
 		"file-loader": "4.2.0",
 		"fork-ts-checker-webpack-plugin": "1.5.0",
 		"glob": "7.1.4",
+		"ignore-loader": "0.1.2",
 		"lerna": "3.16.4",
 		"next-compose-plugins": "2.2.0",
 		"next-plugin-custom-babel-config": "1.0.2",

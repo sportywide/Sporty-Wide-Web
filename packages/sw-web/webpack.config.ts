@@ -9,5 +9,6 @@ module.exports = makeConfig({
 	alias: {
 		'@shared': paths.shared.src,
 		'@web': paths.web.src,
+		'@web-test': path.resolve(paths.web.root, 'test'),
 	},
 });

@@ -13,7 +13,7 @@ module OS
 
     def OS.linux?
         OS.unix? and not OS.mac?
-    end
+    end:q
 end
 
 ## Plugins

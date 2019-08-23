@@ -1,4 +1,5 @@
 const path = require('path');
+const webpack = require('webpack');
 const paths = require('sportywide-shared/build/paths');
 const withPlugins = require('next-compose-plugins');
 const babel = require('next-plugin-custom-babel-config');
@@ -15,6 +16,7 @@ const nextConfig = {
 				...oldConfig.resolve.alias,
 				'@shared': 'sportywide-shared/src',
 				'@web': `${paths.web.src}/`,
+				'@web-test': path.resolve(paths.web.root, 'test'),
 			},
 		};
 		config.module.rules.push({
@@ -29,6 +31,17 @@ const nextConfig = {
 				},
 			},
 		});
+
+		config.plugins.push(
+			new webpack.BannerPlugin({
+				banner: 'require("reflect-metadata");',
+				raw: true,
+			})
+		);
+
+		config.node = {
+			fs: 'empty',
+		};
 
 		return config;
 	},

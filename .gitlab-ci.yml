@@ -1,0 +1,24 @@
+image: timbru31/node-alpine-git
+
+stages:
+    - install_dependencies
+    - build
+    - test
+install_dependencies:
+    stage: install_dependencies
+    script:
+        - npm install -g lerna
+        - npm cache clear --force
+        - npm run bootstrap:ci
+    artifacts:
+        paths:
+            - node_modules/
+            - packages/*/node_modules
+build:
+    stage: build
+    script:
+        - npx lerna run build --stream
+test:
+    stage: test
+    script:
+        - npm run test:coverage

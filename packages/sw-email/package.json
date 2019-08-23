@@ -4,6 +4,7 @@
 	"description": "Email microservice",
 	"license": "ISC",
 	"scripts": {
+		"build": "NODE_ENV=production ts-node -r tsconfig-paths/register node_modules/.bin/webpack",
 		"dev": "rm -rf dist/ && run-p dev:*",
 		"dev:server": "wait-on dist/main.js && nodemon",
 		"dev:webpack": "ts-node -r tsconfig-paths/register node_modules/.bin/webpack"
