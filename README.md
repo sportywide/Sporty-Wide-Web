@@ -82,6 +82,13 @@ Run one of the following commands (in Vagrant)
 
 -   `docker-compose -f docker-core-services.yml restart <service>`: This will restart a core service. You might want to use this command to reload the configuration for a service (e.g. traefik) or attempt to rerun a failed database migration (flyway)
 
+##### API testing
+
+Run one of the following commands
+
+-   npm run api-test (run this on local)
+-   docker-compose -f docker-compose.yml -f docker-e2e.yml up api-test (run this inside vagrant)
+
 #### Running locally
 
 -   Ensure you have installed all external services on your computer

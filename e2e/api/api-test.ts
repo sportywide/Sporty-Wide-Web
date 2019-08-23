@@ -12,6 +12,8 @@ runApiTests().then(() => {
 	console.info('Test suites run successfully');
 });
 
+let hasError = false;
+
 async function runApiTests() {
 	const IGNORE_COLLECTION = ['auth', 'cleanup'];
 	await execPath(path.resolve(__dirname, 'collections', 'auth', 'auth.collection.json'));
@@ -20,6 +22,7 @@ async function runApiTests() {
 		.filter(collectionFile => !IGNORE_COLLECTION.includes(path.basename(collectionFile, '.collection.json')));
 	await Promise.all(collectionFiles.map(execPath));
 	await execPath(path.resolve(__dirname, 'collections', 'cleanup', 'cleanup.collection.json'));
+	process.exit(hasError ? 1 : 0);
 }
 
 async function execPath(collectionFile) {
@@ -41,6 +44,14 @@ async function execPath(collectionFile) {
 				collection,
 				reporters: ['cli', 'html'],
 				reporter: { html: { export: path.resolve(__dirname, 'reports', `${basename}.html`) } },
+				globals: {
+					values: [
+						{
+							key: 'sw_base_url',
+							value: process.env.SW_API_URL || 'https://api.sportywidedev.com',
+						},
+					],
+				},
 				environment,
 			})
 			.on('start', function() {
@@ -62,7 +73,10 @@ async function execPath(collectionFile) {
 			})
 			.on('done', function(err, summary) {
 				if (err || summary.error) {
-					console.info('collection run encountered an error.');
+					console.error('collection run encountered an error.');
+				} else if (summary.run.failures && summary.run.failures.length) {
+					console.info(`collection run failed with ${summary.run.failures.length} error(s)`);
+					hasError = true;
 				} else {
 					console.info('collection run completed.');
 				}

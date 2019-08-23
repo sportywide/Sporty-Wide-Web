@@ -1,4 +1,5 @@
 import { CanActivate } from '@nestjs/common';
+import { Observable } from 'rxjs';
 
 export class EnvGuard {
 	static condition(fn): CanActivate {

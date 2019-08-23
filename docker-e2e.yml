@@ -1,0 +1,25 @@
+version: '3.5'
+services:
+    api-test:
+        image: sportywide-base
+        container_name: sw_api_test
+        command: api-test
+        depends_on:
+            - base
+            - api
+        volumes:
+            - .:/opt/app
+            - node_modules:/opt/app/node_modules
+        environment:
+            WAIT_HOSTS: api:5000
+            WAIT_SLEEP_INTERVAL: 10
+            WAIT_HOSTS_TIMEOUT: 120
+        networks:
+            - sw_net_backend
+networks:
+    sw_net_frontend:
+        external:
+            name: sw_net_frontend
+    sw_net_backend:
+        external:
+            name: sw_net_backend
