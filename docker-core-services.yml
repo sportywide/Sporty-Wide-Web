@@ -38,6 +38,9 @@ services:
             - '${MAILHOG_UI_PORT}:8025'
         networks:
             - sportywide-backend
+        labels:
+            - 'traefik.frontend.rule=Host:mail.sportywidedev.com'
+            - 'traefik.port=8025'
     traefik:
         image: traefik
         command: --web --docker --logLevel=INFO
