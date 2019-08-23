@@ -43,7 +43,7 @@ export function initStore(initialState = {}, context) {
 
 export const ContainerContext = React.createContext(Container);
 
-export const UserContext = React.createContext<IUser>(null);
+export const UserContext = React.createContext<IUser | null>(null);
 
 export interface ISportyWideStore extends Store {
 	reducerManager: ReducerManager;

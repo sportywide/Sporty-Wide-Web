@@ -2,13 +2,14 @@ import React, { useContext } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { UserContext } from '@web/shared/lib/store';
+import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { IHomeState } from '../store/reducers/';
 
 const CharacterInfo = ({ character, error, isFetchedOnServer = false }: IHomeState) => {
 	if (!character) {
 		return <div>Loading</div>;
 	}
-	const user = useContext(UserContext);
+	const user: IUser = useContext(UserContext);
 	return (
 		<div className="CharacterInfo">
 			{error ? (
