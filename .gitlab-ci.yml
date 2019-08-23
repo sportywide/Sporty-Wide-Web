@@ -7,7 +7,6 @@ stages:
 install_dependencies:
     stage: install_dependencies
     script:
-        - npm install -g lerna
         - npm cache clear --force
         - npm run bootstrap:ci
     cache:
