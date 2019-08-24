@@ -6,6 +6,16 @@ const routeMappings = [
 		pattern: '/login',
 		page: 'auth/login',
 	},
+	{
+		name: 'home',
+		pattern: '/home',
+		page: 'index',
+	},
+	{
+		name: 'signup',
+		pattern: '/signup',
+		page: 'auth/signup',
+	},
 ];
 
 let routes = new Routes();
@@ -20,5 +30,5 @@ export const Router = routes.Router;
 
 export function findPathForRoute(routeName) {
 	const routeMapping = routeMappings.find(route => route.name === routeName);
-	return routeMapping ? routeMapping.pattern || `/${routeName}` : null;
+	return (routeMapping && routeMapping.pattern) || `/${routeName}`;
 }

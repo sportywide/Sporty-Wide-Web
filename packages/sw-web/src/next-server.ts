@@ -10,7 +10,6 @@ import config from './config';
 import routes from './routes';
 
 const CSRF_WHITE_LIST = ['login', 'signup'];
-
 const port = parseInt(config.get('port'), 10) || 3000;
 const env = process.env.NODE_ENV;
 const app = next({

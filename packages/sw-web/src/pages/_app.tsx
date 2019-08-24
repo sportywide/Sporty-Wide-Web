@@ -10,6 +10,7 @@ import withRedux from 'next-store-wrapper';
 import { initStore, ISportyWideStore, UserContext } from '@web/shared/lib/store';
 import { redirect } from '@web/shared/lib/navigation/helper';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
+import { allowActiveOnly } from '@web/shared/lib/auth/check-user';
 
 interface IProps {
 	store?: Store;
@@ -23,8 +24,16 @@ class SportyWideApp extends App<IProps> {
 		const user: IUser = container.get('currentUser');
 		let pageProps = {};
 
-		if (!Component.allowUnauthenticated && !user) {
-			await redirect({ context: ctx, route: 'login' });
+		const checkUser = Component.checkUser || allowActiveOnly;
+		const allowUser = checkUser(user);
+
+		if (!allowUser) {
+			await redirect({
+				context: ctx,
+				route: Component.failureRedirect || 'login',
+				replace: true,
+			});
+
 			return { pageProps };
 		}
 

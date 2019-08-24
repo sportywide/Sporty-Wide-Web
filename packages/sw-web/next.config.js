@@ -6,9 +6,11 @@ const babel = require('next-plugin-custom-babel-config');
 const bundleAnalyzer = require('@zeit/next-bundle-analyzer');
 const css = require('@zeit/next-css');
 const scss = require('@zeit/next-sass');
+const { ENTRY_ORDER, default: InjectPlugin } = require('webpack-inject-plugin');
 
 const nextConfig = {
-	webpack: config => {
+	webpack: (config, options) => {
+		const { dir } = options;
 		const oldConfig = config;
 		config.resolve = {
 			...(oldConfig.resolve || {}),
@@ -32,10 +34,20 @@ const nextConfig = {
 			},
 		});
 
+		config.module.rules.push({
+			test: /\.(ts|tsx)$/,
+			exclude: [/node_modules/, dir],
+			use: {
+				loader: 'babel-loader',
+				options: {
+					cwd: path.resolve(paths.shared.webpack, 'react', 'babel'),
+				},
+			},
+		});
+
 		config.plugins.push(
-			new webpack.BannerPlugin({
-				banner: 'require("reflect-metadata");',
-				raw: true,
+			new InjectPlugin(() => 'require("reflect-metadata")', {
+				entryOrder: ENTRY_ORDER.First,
 			})
 		);
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { allowUnauthenticated } from '@web/shared/lib/auth/allow-unauthenticated';
+import { checkUser, notAllowActive } from '@web/shared/lib/auth/check-user';
 import Head from 'next/head';
 
 class LoginComponent extends React.Component<any> {
@@ -28,4 +28,4 @@ class LoginComponent extends React.Component<any> {
 		);
 	}
 }
-export default allowUnauthenticated(LoginComponent);
+export default checkUser(notAllowActive, 'home')(LoginComponent);
