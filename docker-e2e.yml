@@ -1,7 +1,7 @@
 version: '3.5'
 services:
     api-test:
-        image: sportywide-base
+        image: sportywide/sportywide-base
         container_name: sw_api_test
         command: api-test
         depends_on:

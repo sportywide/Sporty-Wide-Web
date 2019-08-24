@@ -1,4 +1,4 @@
-FROM sportywide-base AS base
+FROM sportywide/sportywide-base AS base
 
 COPY ./packages/sw-shared $PROJECT_ROOT/packages/sw-shared/
 COPY ./packages/sw-web $PROJECT_ROOT/packages/sw-web/
