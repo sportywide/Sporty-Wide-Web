@@ -1,9 +1,18 @@
+.only-default: &only-default
+    refs:
+        - master
+        - testing
+        - release
+        - merge_requests
+        - tags
+
 image: sportywide/sportywide-node-alpine
 
 stages:
     - install_dependencies
     - build
     - test
+
 install_dependencies:
     stage: install_dependencies
     script:
@@ -15,11 +24,14 @@ install_dependencies:
             - node_modules/
             - packages/*/node_modules
     only:
+        <<: *only-default
         changes:
             - package-lock.json
 
 build:
     stage: build
+    only:
+        <<: *only-default
     cache:
         key: $CI_COMMIT_REF_SLUG-$CI_PROJECT_DIR
         paths:
@@ -30,6 +42,8 @@ build:
         - npx lerna run build --stream
 test:
     stage: test
+    only:
+        <<: *only-default
     cache:
         key: $CI_COMMIT_REF_SLUG-$CI_PROJECT_DIR
         paths:
