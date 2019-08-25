@@ -46,6 +46,7 @@ export const devProxy = {
 				'/login': setCookies,
 				'/signup': setCookies,
 				'/refresh_token': setCookies,
+				'/verify_email': setCookiesAndRedirect,
 				'/facebook': redirectOnError,
 				'/google': redirectOnError,
 				'/facebook/callback': setCookiesAndRedirect,
@@ -83,6 +84,7 @@ function handleAuthHeader(proxyReq, req: Request) {
 function setCookiesAndRedirect(proxyRes, request, response) {
 	if (proxyRes.statusCode >= 400) {
 		response.redirect('/login');
+		return;
 	}
 	setCookies(proxyRes, request, response, '/');
 }

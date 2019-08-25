@@ -1,16 +1,9 @@
-import { AfterLoad, CreateDateColumn, PrimaryGeneratedColumn, UpdateDateColumn } from 'typeorm';
+import { AfterLoad, PrimaryGeneratedColumn } from 'typeorm';
 
-export abstract class BaseEntity {
+export class BaseEntity {
 	_initialValues = {};
 
-	@PrimaryGeneratedColumn()
-	id: number;
-
-	@CreateDateColumn({ type: 'timestamptz' })
-	createdAt: Date;
-
-	@UpdateDateColumn({ type: 'timestamptz' })
-	updatedAt: Date;
+	@PrimaryGeneratedColumn() id: number;
 
 	@AfterLoad()
 	afterLoad() {

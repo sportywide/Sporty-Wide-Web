@@ -12,13 +12,12 @@ import { ApiModelProperty } from '@nestjs/swagger';
 import { plainToClass } from 'class-transformer-imp';
 import { SocialProfileDto } from '@shared/lib/dtos/user/social-profile.dto';
 import { SocialProvider } from '@shared/lib/dtos/user/enum/social-provider.enum';
+import { TokenService } from '@api/auth/services/token.service';
 
 export class Tokens {
-	@ApiModelProperty()
-	accessToken: string;
+	@ApiModelProperty() accessToken: string;
 
-	@ApiModelProperty()
-	refreshToken: string;
+	@ApiModelProperty() refreshToken: string;
 }
 
 @Injectable()
@@ -27,6 +26,7 @@ export class AuthService {
 		private readonly userService: UserService,
 		private readonly cryptoService: CryptoService,
 		private readonly jwtService: JwtService,
+		private readonly tokenService: TokenService,
 		private readonly emailService: EmailService
 	) {}
 
@@ -35,6 +35,7 @@ export class AuthService {
 		createUserDto['status'] = UserStatus.PENDING;
 		const userValues = plainToClass(User, createUserDto);
 		const user = await this.userService.saveOne(userValues);
+		await this.tokenService.createVerifyEmailToken(user);
 		await this.emailService.sendUserVerificationEmail(user);
 		return this.createTokens(user);
 	}
@@ -114,6 +115,7 @@ export class AuthService {
 				lastName: user.lastName,
 				username: user.username,
 				name: user.name,
+				status: user.status,
 			},
 		});
 	}

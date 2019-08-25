@@ -1,12 +1,13 @@
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { hashPassword } from '@shared/lib/utils/crypto';
-import { BaseEntity } from '@schema/core/base.entity';
 import { BeforeInsert, BeforeUpdate, Column, Entity, Index } from 'typeorm';
 import { SocialProvider } from '@shared/lib/dtos/user/enum/social-provider.enum';
+import { BaseEntity } from '@schema/core/base.entity';
+import { TrackTimestamp } from '@schema/core/timestamp/track-timestamp.mixin';
 
 @Entity()
-export class User extends BaseEntity {
+export class User extends TrackTimestamp(BaseEntity) {
 	@Column({
 		length: 30,
 	})
@@ -43,11 +44,9 @@ export class User extends BaseEntity {
 	})
 	status: UserStatus;
 
-	@Column()
-	password: string;
+	@Column() password: string;
 
-	@Column()
-	socialId: string;
+	@Column() socialId: string;
 
 	@Column({
 		type: 'enum',
@@ -56,8 +55,7 @@ export class User extends BaseEntity {
 	})
 	socialProvider: SocialProvider;
 
-	@Column()
-	refreshToken?: string;
+	@Column() refreshToken?: string;
 
 	get name() {
 		return [this.firstName, this.lastName].filter(value => value).join(' ');

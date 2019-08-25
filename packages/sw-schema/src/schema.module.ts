@@ -10,12 +10,16 @@ import './subscribers';
 import { TypeormLoggerService } from '@schema/core/logging/typeorm.logger';
 import { CoreModule } from '@core/core.module';
 import { isDevelopment } from '@shared/lib/utils/env';
+import { SchemaAuthModule } from '@schema/auth/auth.module';
+import { User } from '@schema/user/models/user.entity';
+import { Token } from '@schema/auth/models/token.entity';
 
 const isDev = isDevelopment();
 
 @Module({
 	imports: [
 		SchemaUserModule,
+		SchemaAuthModule,
 		CoreSchemaModule,
 		TypeOrmModule.forRootAsync({
 			inject: [SCHEMA_CONFIG, CORE_CONFIG, TypeormLoggerService],

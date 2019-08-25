@@ -5,4 +5,7 @@ module.exports = {
 		host: 'mailhog',
 		port: 1025,
 	},
+	app: {
+		url: 'https://www.sportywidedev.com',
+	},
 };

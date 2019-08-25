@@ -1,0 +1,4 @@
+export enum TokenType {
+	FORGOT_PASSWORD = 'FORGOT_PASSWORD',
+	CONFIRM_EMAIL = 'CONFIRM_EMAIL',
+}

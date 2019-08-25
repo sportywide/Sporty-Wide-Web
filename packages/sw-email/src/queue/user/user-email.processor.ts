@@ -1,3 +1,4 @@
+import path from 'path';
 import { Queue, QueueProcess } from 'nest-bull';
 import { Job } from 'bull';
 import { USER_EMAIL_QUEUE, USER_SIGNUP_PROCESSOR } from '@core/microservices/queue.constants';
@@ -6,12 +7,19 @@ import { InjectSwRepository } from '@schema/core/repository/sql/inject-repositor
 import { User } from '@schema/user/models/user.entity';
 import { SwRepository } from '@schema/core/repository/sql/base.repository';
 import { MailDto } from '@shared/lib/dtos/email/mail.dto';
-import { CORE_CONFIG } from '@core/config/config.constants';
+import { CORE_CONFIG, EMAIL_CONFIG } from '@core/config/config.constants';
 import { Provider } from 'nconf';
 import { Inject } from '@nestjs/common';
 import { SwQueueProcessor } from '@core/microservices/sw-queue.processor';
 import { EMAIL_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
+import pug from 'pug';
+import { Token } from '@schema/auth/models/token.entity';
+import { TokenType } from '@schema/auth/models/enums/token-type.token';
+
+const compiledVerifyEmail = pug.compileFile(
+	path.resolve(__dirname, 'sw-email', 'assets', 'templates', 'verify-email.pug')
+);
 
 @Queue({
 	name: USER_EMAIL_QUEUE,
@@ -20,8 +28,10 @@ export class UserEmailProcessor extends SwQueueProcessor {
 	constructor(
 		private readonly emailService: EmailService,
 		@Inject(CORE_CONFIG) private readonly coreConfig: Provider,
+		@Inject(EMAIL_CONFIG) private readonly emailConfig: Provider,
 		@Inject(EMAIL_LOGGER) logger: Logger,
-		@InjectSwRepository(User) private readonly userRepository: SwRepository<User>
+		@InjectSwRepository(User) private readonly userRepository: SwRepository<User>,
+		@InjectSwRepository(Token) private readonly tokenRepository: SwRepository<Token>
 	) {
 		super(logger);
 	}
@@ -30,7 +40,17 @@ export class UserEmailProcessor extends SwQueueProcessor {
 	async processUserSignup(job: Job<{ id: number }>) {
 		const user = await this.userRepository.findOne(job.data.id);
 		if (!user) {
-			return;
+			throw new Error('User does not exist');
+		}
+		const token = await this.tokenRepository.findOne({
+			where: {
+				engagementTable: this.userRepository.getTableName(),
+				engagementId: user.id,
+				type: TokenType.CONFIRM_EMAIL,
+			},
+		});
+		if (!token) {
+			throw new Error('Token does not exist');
 		}
 		const mailData: MailDto = {
 			from: {
@@ -42,7 +62,12 @@ export class UserEmailProcessor extends SwQueueProcessor {
 				name: user.name,
 			},
 			subject: 'You have signed up for sportywide',
-			html: '<b>Please click on the link below to finish signup</b>',
+			html: compiledVerifyEmail({
+				appUrl: this.emailConfig.get('app:url'),
+				title: 'Please confirm your email',
+				token: token.content,
+				userId: user.id,
+			}),
 		};
 
 		return this.emailService.sendMail(mailData);

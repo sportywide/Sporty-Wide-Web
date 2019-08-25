@@ -15,6 +15,8 @@ import { GoogleStrategy } from '@api/auth/strategy/google.strategy';
 import { FacebookStrategy } from '@api/auth/strategy/facebook.strategy';
 import { FacebookCallbackMiddleware } from '@api/auth/middlewares/facebook-callback.middleware';
 import { GoogleCallbackMiddleware } from '@api/auth/middlewares/google-callback.middleware';
+import { TokenService } from '@api/auth/services/token.service';
+import { SchemaModule } from '@schema/schema.module';
 
 @Module({
 	imports: [
@@ -29,13 +31,14 @@ import { GoogleCallbackMiddleware } from '@api/auth/middlewares/google-callback.
 				},
 			}),
 		}),
+		SchemaModule,
 		UserModule,
 		CoreApiModule,
 		SharedModule,
 		EmailModule,
 	],
 	controllers: [AuthController],
-	providers: [AuthService, CryptoService, JwtStrategy, LocalStrategy, GoogleStrategy, FacebookStrategy],
+	providers: [AuthService, CryptoService, JwtStrategy, LocalStrategy, GoogleStrategy, FacebookStrategy, TokenService],
 })
 export class AuthModule implements NestModule {
 	configure(consumer: MiddlewareConsumer) {

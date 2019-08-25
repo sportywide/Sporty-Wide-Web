@@ -10,10 +10,11 @@ import { EmailService } from '@email/core/email/email.service';
 		CoreModule,
 		ConfigModule.forRoot({
 			configFile: path.resolve(__dirname, 'sw-email', 'config'),
+
 			exportAs: EMAIL_CONFIG,
 		}),
 	],
 	providers: [EmailService],
-	exports: [EmailService],
+	exports: [EmailService, ConfigModule],
 })
 export class CoreEmailModule {}

@@ -13,7 +13,7 @@ import { fetchUserEpic } from '@web/features/home/store/epics';
 import Head from 'next/head';
 import { logout } from '@web/features/auth/store/actions';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
-import { checkUser, hasUser } from '@web/shared/lib/auth/check-user';
+import { allowActiveOnly, checkUser, hasUser } from '@web/shared/lib/auth/check-user';
 
 interface IProps {
 	startFetchingCharacters: Function;
@@ -72,8 +72,7 @@ class Counter extends React.Component<IProps, any> {
 }
 
 const enhance = compose(
-	//TODO: remove once we implement user verification
-	checkUser(hasUser),
+	checkUser(allowActiveOnly),
 	registerReducer({ home: homeReducer }),
 	registerEpic(fetchUserEpic),
 	connect(

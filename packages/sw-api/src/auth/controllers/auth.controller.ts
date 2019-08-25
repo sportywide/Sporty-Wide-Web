@@ -1,4 +1,17 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res, UseGuards } from '@nestjs/common';
+import {
+	BadRequestException,
+	Body,
+	Controller,
+	Get,
+	HttpCode,
+	HttpStatus,
+	ParseIntPipe,
+	Post,
+	Query,
+	Req,
+	Res,
+	UseGuards,
+} from '@nestjs/common';
 import { AuthService, Tokens } from '@api/auth/services/auth.service';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { LocalAuthGuard } from '@api/auth/guards/local.guard';
@@ -8,19 +21,54 @@ import { ApiCreatedResponse, ApiImplicitParam, ApiOkResponse, ApiOperation, ApiU
 import { AuthorizedApiOperation } from '@api/core/decorators/api-doc';
 import { getValidationPipe } from '@api/core/pipe/validation';
 import passport from 'passport';
+import { TokenService } from '@api/auth/services/token.service';
+import { isBefore } from 'date-fns';
+import { TokenType } from '@schema/auth/models/enums/token-type.token';
+import { UserService } from '@api/user/services/user.service';
+import { User } from '@schema/user/models/user.entity';
+import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 
 @ApiUseTags('auth')
 @Controller('auth')
 export class AuthController {
-	constructor(private readonly authService: AuthService) {}
+	constructor(
+		private readonly authService: AuthService,
+		private readonly tokenService: TokenService,
+		private readonly userService: UserService
+	) {}
 
 	@ApiCreatedResponse({ description: 'User has been created', type: Tokens })
 	@ApiOperation({ title: 'Sign up endpoint' })
 	@Post('signup')
 	@HttpCode(HttpStatus.CREATED)
 	@UseGuards(AuthenticatedGuard)
-	public signUp(@Body(getValidationPipe()) user: CreateUserDto) {
+	public signUp(
+		@Body(getValidationPipe())
+		user: CreateUserDto
+	) {
 		return this.authService.signUp(user);
+	}
+
+	@ApiCreatedResponse({ description: 'User email has been verified', type: Tokens })
+	@ApiOperation({ title: 'Verify email endpoint' })
+	@Get('verify_email')
+	@HttpCode(HttpStatus.OK)
+	public async verifyEmail(
+		@Query('token') verificationCode: string,
+		@Query('user', new ParseIntPipe())
+		userId: number
+	) {
+		const token = await this.tokenService.findOne({
+			content: verificationCode,
+			type: TokenType.CONFIRM_EMAIL,
+			engagementId: userId,
+		});
+		if (!token || isBefore(token.ttl, new Date())) {
+			throw new BadRequestException('Token does not exist or has expired');
+		}
+		const user = await this.userService.activateUser(userId);
+		await this.tokenService.remove(token);
+		return this.authService.createTokens(user);
 	}
 
 	@ApiImplicitParam({ name: 'username', type: String })

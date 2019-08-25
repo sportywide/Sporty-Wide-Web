@@ -45,6 +45,14 @@ class SwBaseRepository<T> {
 		return updateResult;
 	}
 
+	getTableName() {
+		return this.repository.metadata.tableName;
+	}
+
+	getTableNameForEntity(entity) {
+		return this.repository.metadata.connection.getMetadata(entity).tableName;
+	}
+
 	async save(...args) {
 		// @ts-ignore
 		const result = await this.repository.save(...args);
