@@ -1,0 +1,28 @@
+.footer {
+	&__space {
+		font-size: 0;
+		line-height: 0;
+		width: 10px;
+	}
+
+	&__social-links {
+		font-size: 12px;
+		font-weight: bold;
+	}
+
+	&__social-logo {
+		display: block;
+		width: 38px;
+		height: 38px;
+	}
+
+	&__copyright {
+		color: get($colors, 'white');
+		font-size: 14px;
+		width: 75%;
+	}
+
+	&__links {
+		width: 25%;
+	}
+}

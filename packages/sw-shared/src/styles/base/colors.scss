@@ -1,0 +1,21 @@
+$colors: (
+	'white': (
+		base: #fff,
+	),
+	'black': (
+		base: #000,
+	),
+	'primary': (
+		base: #4da88a,
+	),
+	'grey': (
+		base: #ccc,
+	),
+	'accent': (
+		base: #ee4c50,
+	),
+);
+
+.bg {
+	@include map-modifiers($colors, 'background-color');
+}

@@ -14,8 +14,10 @@ import { SwQueueProcessor } from '@core/microservices/sw-queue.processor';
 import { EMAIL_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import pug from 'pug';
+import juice from 'juice';
 import { Token } from '@schema/auth/models/token.entity';
 import { TokenType } from '@schema/auth/models/enums/token-type.token';
+import { css } from '@email/core/utils/styles';
 
 const compiledVerifyEmail = pug.compileFile(
 	path.resolve(__dirname, 'sw-email', 'assets', 'templates', 'verify-email.pug')
@@ -52,6 +54,8 @@ export class UserEmailProcessor extends SwQueueProcessor {
 		if (!token) {
 			throw new Error('Token does not exist');
 		}
+		const baseCss = await css('basscss.min.css');
+		const verifyEmailCss = await css('verify-email.min.css');
 		const mailData: MailDto = {
 			from: {
 				address: this.coreConfig.get('support_user:email'),
@@ -62,12 +66,15 @@ export class UserEmailProcessor extends SwQueueProcessor {
 				name: user.name,
 			},
 			subject: 'You have signed up for sportywide',
-			html: compiledVerifyEmail({
-				appUrl: this.emailConfig.get('app:url'),
-				title: 'Please confirm your email',
-				token: token.content,
-				userId: user.id,
-			}),
+			html: juice.inlineContent(
+				compiledVerifyEmail({
+					appUrl: this.emailConfig.get('app:url'),
+					title: 'Please confirm your email',
+					token: token.content,
+					userId: user.id,
+				}),
+				baseCss + verifyEmailCss
+			),
 		};
 
 		return this.emailService.sendMail(mailData);
