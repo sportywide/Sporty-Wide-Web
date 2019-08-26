@@ -35,6 +35,10 @@ For windows, you will need to disable Hyper-V and Windows Hyper-V platform to ru
 Another vagrant plugin will need to be installed for NFS to work: https://github.com/winnfsd/vagrant-winnfsd
 ```
 
+### FAQ
+
+https://sporty-wide.slite.com/app/channels/TsutWVaI3e/collections/SZ98vT6q1Q/notes/1LH4T7OE~l
+
 ### Services
 
 -   Redis:
