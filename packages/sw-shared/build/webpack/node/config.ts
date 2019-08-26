@@ -2,7 +2,6 @@ import path from 'path';
 import fs from 'fs';
 import nodeExternals from 'webpack-node-externals';
 import paths from '@build/paths';
-import { CleanWebpackPlugin } from 'clean-webpack-plugin';
 import { getDependencies } from '@root/helpers/package';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import webpack from 'webpack';
@@ -76,7 +75,6 @@ export function makeConfig({
 			filename: '[name].js',
 			path: output,
 		}),
-		addPlugins([new CleanWebpackPlugin()]),
 		addPlugins(
 			[].concat(
 				//@ts-ignore

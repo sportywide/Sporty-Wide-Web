@@ -31,3 +31,10 @@ export function node() {
 			},
 		});
 }
+
+export function setEntry(entry) {
+	return (context, util) =>
+		util.merge({
+			entry,
+		});
+}

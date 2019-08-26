@@ -15,6 +15,7 @@
 		"forceConsistentCasingInFileNames": true,
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
+		"diagnostics": false,
 		"noEmit": true,
 		"noImplicitAny": false,
 		"experimentalDecorators": true,
