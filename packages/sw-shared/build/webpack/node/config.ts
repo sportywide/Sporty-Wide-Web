@@ -5,7 +5,6 @@ import paths from '@build/paths';
 import { getDependencies } from '@root/helpers/package';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import webpack from 'webpack';
-import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
 import { isDevelopment } from '@shared/lib/utils/env';
 import {
 	addPlugins,
@@ -45,6 +44,7 @@ export function makeConfig({
 		externals(getNodeModules()),
 		babelHelper({
 			cwd: path.resolve(__dirname, 'babel'),
+			cacheDirectory: true,
 		}),
 		resolve({
 			extensions: ['.ts', '.js', '.tsx', '.jsx', '.json'],
@@ -54,15 +54,7 @@ export function makeConfig({
 		setEnv({
 			NODE_ENV: process.env.NODE_ENV,
 		}),
-		env('development', [
-			addPlugins([
-				new ForkTsCheckerWebpackPlugin({
-					tsconfig,
-				}),
-			]),
-			watch(),
-			sourceMaps('inline-source-map'),
-		]),
+		env('development', [watch(), sourceMaps('inline-source-map')]),
 		env('production', [sourceMaps('source-map')]),
 		addPlugins([
 			new webpack.BannerPlugin({

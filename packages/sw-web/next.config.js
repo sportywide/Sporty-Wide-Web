@@ -41,6 +41,7 @@ const nextConfig = {
 				loader: 'babel-loader',
 				options: {
 					cwd: path.resolve(paths.shared.webpack, 'react', 'babel'),
+					cacheDirectory: true,
 				},
 			},
 		});

@@ -39,7 +39,7 @@ Vagrant.configure(2) do |config|
 	config.vm.network :private_network, ip: $vbox_ip
   
 	config.vm.provider "virtualbox" do |vb|
-		vb.memory = "4096"
+		vb.memory = $vbox_memory
 		vb.customize ["modifyvm", :id, "--name", "Sportywide"]
 		vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
 		vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
