@@ -4,8 +4,8 @@ import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { isDevelopment } from '@shared/lib/utils/env';
 import { addPlugins, createConfig, env, setMode, setOutput } from '@webpack-blocks/webpack';
 import { match } from '@webpack-blocks/core';
-import { css, sass, postcss, extractCss } from '@build/webpack/plugins/styles';
-import { setEntry, watch } from '@build/webpack/plugins/core';
+import { css, extractCss, postcss, sass } from '@build/webpack/plugins/styles';
+import { none, setEntry, watch } from '@build/webpack/plugins/core';
 import FixStyleOnlyEntriesPlugin from 'webpack-fix-style-only-entries';
 
 export function makeConfig({ entries, output }: { entries: any; output: string }) {
@@ -27,12 +27,14 @@ export function makeConfig({ entries, output }: { entries: any; output: string }
 					styleLoader: false,
 					sourceMap: false,
 				}),
-				postcss({
-					config: {
-						path: paths.project.root,
-					},
-					sourceMap: isDevelopment(),
-				}),
+				isDevelopment()
+					? none()
+					: postcss({
+							config: {
+								path: paths.project.root,
+							},
+							sourceMap: isDevelopment(),
+					  }),
 			]
 		),
 		match(
@@ -45,12 +47,14 @@ export function makeConfig({ entries, output }: { entries: any; output: string }
 					styleLoader: false,
 					sourceMap: isDevelopment(),
 				}),
-				postcss({
-					config: {
-						path: paths.project.root,
-					},
-					sourceMap: isDevelopment(),
-				}),
+				isDevelopment()
+					? none()
+					: postcss({
+							config: {
+								path: paths.project.root,
+							},
+							sourceMap: isDevelopment(),
+					  }),
 				sass({
 					sourceMap: isDevelopment(),
 				}),

@@ -1,7 +1,10 @@
 import {
 	Body,
 	Controller,
+	Delete,
 	Get,
+	HttpCode,
+	HttpStatus,
 	NotFoundException,
 	Param,
 	ParseIntPipe,
@@ -9,9 +12,6 @@ import {
 	Put,
 	UnauthorizedException,
 	UseGuards,
-	Delete,
-	HttpCode,
-	HttpStatus,
 } from '@nestjs/common';
 import { UserDto } from '@shared/lib/dtos/user/user.dto';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
@@ -75,7 +75,8 @@ export class UserController {
 	@Put(':id')
 	@Patch(':id')
 	public async updateUser(
-		@Param('id', new ParseIntPipe()) id: number,
+		@Param('id', new ParseIntPipe())
+		id: number,
 		@Body() updateParams: Partial<CreateUserDto>,
 		@CurrentUser() currentUser
 	): Promise<UserDto> {

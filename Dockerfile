@@ -16,7 +16,7 @@ RUN mkdir -p /opt/app
 
 ENV PROJECT_ROOT /opt/app
 
-COPY package*.json lerna.json tsconfig.json $PROJECT_ROOT/
+COPY package*.json lerna.json *.ts *.js tsconfig.json $PROJECT_ROOT/
 COPY bin $PROJECT_ROOT/bin
 COPY helpers $PROJECT_ROOT/helpers
 

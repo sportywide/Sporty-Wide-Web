@@ -1,5 +1,6 @@
-import { pbkdf2Sync, pbkdf2, randomBytes } from 'crypto';
+import { pbkdf2, pbkdf2Sync, randomBytes } from 'crypto';
 import { promisify } from 'util';
+
 const pbkdf2Promise = promisify(pbkdf2);
 const ITERATIONS = 2048;
 const KEY_LENGTH = 32;

@@ -4,6 +4,7 @@ import { ConfigModule } from '@core/config/config.module';
 import { CORE_CONFIG } from '@core/config/config.constants';
 import { LoggerProviderFactory } from '@core/logging/logger-provider.factory';
 import { log4jsProviders } from '@core/logging/logger.providers';
+import { fileProvider } from '@core/io/file.provider';
 
 @Module({
 	imports: [
@@ -12,7 +13,7 @@ import { log4jsProviders } from '@core/logging/logger.providers';
 			exportAs: CORE_CONFIG,
 		}),
 	],
-	providers: [LoggerProviderFactory, ...log4jsProviders],
-	exports: [ConfigModule, LoggerProviderFactory, ...log4jsProviders],
+	providers: [LoggerProviderFactory, ...log4jsProviders, fileProvider],
+	exports: [ConfigModule, LoggerProviderFactory, ...log4jsProviders, fileProvider],
 })
 export class CoreModule {}

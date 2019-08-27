@@ -1,4 +1,3 @@
-import path from 'path';
 import { Queue, QueueProcess } from 'nest-bull';
 import { Job } from 'bull';
 import { USER_EMAIL_QUEUE, USER_SIGNUP_PROCESSOR } from '@core/microservices/queue.constants';
@@ -13,15 +12,10 @@ import { Inject } from '@nestjs/common';
 import { SwQueueProcessor } from '@core/microservices/sw-queue.processor';
 import { EMAIL_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
-import pug from 'pug';
-import juice from 'juice';
 import { Token } from '@schema/auth/models/token.entity';
 import { TokenType } from '@schema/auth/models/enums/token-type.token';
-import { css } from '@email/core/utils/styles';
-
-const compiledVerifyEmail = pug.compileFile(
-	path.resolve(__dirname, 'sw-email', 'assets', 'templates', 'verify-email.pug')
-);
+import { StylesheetService } from '@email/core/email/styles/styles.service';
+import { TemplateService } from '@email/core/email/template/template.service';
 
 @Queue({
 	name: USER_EMAIL_QUEUE,
@@ -33,7 +27,9 @@ export class UserEmailProcessor extends SwQueueProcessor {
 		@Inject(EMAIL_CONFIG) private readonly emailConfig: Provider,
 		@Inject(EMAIL_LOGGER) logger: Logger,
 		@InjectSwRepository(User) private readonly userRepository: SwRepository<User>,
-		@InjectSwRepository(Token) private readonly tokenRepository: SwRepository<Token>
+		@InjectSwRepository(Token) private readonly tokenRepository: SwRepository<Token>,
+		private readonly stylesheetService: StylesheetService,
+		private readonly templateService: TemplateService
 	) {
 		super(logger);
 	}
@@ -54,8 +50,11 @@ export class UserEmailProcessor extends SwQueueProcessor {
 		if (!token) {
 			throw new Error('Token does not exist');
 		}
-		const baseCss = await css('basscss.min.css');
-		const verifyEmailCss = await css('verify-email.min.css');
+		const [compiledTemplate, baseCss, verifyEmailCss] = await Promise.all([
+			this.templateService.compile('verify-email.pug'),
+			this.stylesheetService.css('basscss.min.css'),
+			this.stylesheetService.css('verify-email.min.css'),
+		]);
 		const mailData: MailDto = {
 			from: {
 				address: this.coreConfig.get('support_user:email'),
@@ -66,8 +65,8 @@ export class UserEmailProcessor extends SwQueueProcessor {
 				name: user.name,
 			},
 			subject: 'You have signed up for sportywide',
-			html: juice.inlineContent(
-				compiledVerifyEmail({
+			html: this.templateService.injectCss(
+				compiledTemplate({
 					appUrl: this.emailConfig.get('app:url'),
 					title: 'Please confirm your email',
 					token: token.content,

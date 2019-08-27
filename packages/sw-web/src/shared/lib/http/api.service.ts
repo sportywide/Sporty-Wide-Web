@@ -1,4 +1,4 @@
-import { Inject, Service } from 'typedi';
+import { Service } from 'typedi';
 import axios, { Axios } from 'axios-observable';
 import { COOKIE_CSRF } from '@web/api/auth/constants';
 

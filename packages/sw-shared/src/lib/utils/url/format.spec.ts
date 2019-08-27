@@ -1,4 +1,4 @@
-import { normalizePath, getFullPath } from './format';
+import { getFullPath, normalizePath } from './format';
 
 function mockRequest({ host, protocol }) {
 	return {

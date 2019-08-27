@@ -4,6 +4,8 @@ import { CoreModule } from '@core/core.module';
 import { ConfigModule } from '@core/config/config.module';
 import { EMAIL_CONFIG } from '@core/config/config.constants';
 import { EmailService } from '@email/core/email/email.service';
+import { TemplateService } from '@email/core/email/template/template.service';
+import { StylesheetService } from '@email/core/email/styles/styles.service';
 
 @Module({
 	imports: [
@@ -14,7 +16,7 @@ import { EmailService } from '@email/core/email/email.service';
 			exportAs: EMAIL_CONFIG,
 		}),
 	],
-	providers: [EmailService],
-	exports: [EmailService, ConfigModule],
+	providers: [EmailService, TemplateService, StylesheetService],
+	exports: [EmailService, ConfigModule, TemplateService, StylesheetService],
 })
 export class CoreEmailModule {}

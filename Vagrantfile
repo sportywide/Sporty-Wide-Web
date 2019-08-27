@@ -30,7 +30,7 @@ end
 ## Variables
 $app_name = "sportywidedev.com"
 $vbox_ip = "192.168.50.10"
-$vbox_memory = 4096
+$vbox_memory = 5192
 
 Vagrant.configure(2) do |config|
 	config.ssh.extra_args = ["-t", "cd /vagrant; bash --login"]

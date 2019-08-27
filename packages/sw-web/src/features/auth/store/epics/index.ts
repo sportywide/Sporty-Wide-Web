@@ -1,6 +1,6 @@
 import { LOGOUT } from '@web/features/auth/store/actions/actions.constants';
 import { AuthService } from '@web/features/auth/services/auth.service';
-import { mergeMap, mapTo, tap } from 'rxjs/operators';
+import { mapTo, mergeMap, tap } from 'rxjs/operators';
 import { logoutSuccess } from '@web/features/auth/store/actions';
 import { IDependencies } from '@web/shared/lib/store';
 

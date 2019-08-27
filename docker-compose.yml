@@ -1,6 +1,7 @@
 version: '3.5'
 services:
     node:
+        container_name: sw_node
         image: sportywide/sportywide-node-alpine
         build:
             context: .

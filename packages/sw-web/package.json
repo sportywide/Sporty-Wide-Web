@@ -10,10 +10,10 @@
 		"analyze:server": "BUNDLE_ANALYZE=server next build ./src",
 		"build": "NODE_ENV=production run-p build:*",
 		"build:next": "rm -rf next-build && next build ./src",
-		"build:webpack": "webpack -r ts-node/register -r tsconfig-paths/register",
+		"build:webpack": "webpack -r sportywide-shared/build/ts-node/register -r tsconfig-paths/register",
 		"dev": "rm -rf dist/ && run-p dev:*",
 		"dev:server": "wait-on dist/main.js && nodemon",
-		"dev:webpack": "webpack -r ts-node/register -r tsconfig-paths/register",
+		"dev:webpack": "webpack -r sportywide-shared/build/ts-node/register -r tsconfig-paths/register",
 		"start": "NODE_ENV=production node dist/main.js"
 	},
 	"dependencies": {

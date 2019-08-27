@@ -25,8 +25,6 @@ import { TokenService } from '@api/auth/services/token.service';
 import { isBefore } from 'date-fns';
 import { TokenType } from '@schema/auth/models/enums/token-type.token';
 import { UserService } from '@api/user/services/user.service';
-import { User } from '@schema/user/models/user.entity';
-import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 
 @ApiUseTags('auth')
 @Controller('auth')

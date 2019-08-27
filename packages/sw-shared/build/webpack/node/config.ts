@@ -1,11 +1,8 @@
 import path from 'path';
 import fs from 'fs';
 import nodeExternals from 'webpack-node-externals';
-import paths from '@build/paths';
-import { getDependencies } from '@root/helpers/package';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import webpack from 'webpack';
-import { isDevelopment } from '@shared/lib/utils/env';
 import {
 	addPlugins,
 	createConfig,
@@ -17,6 +14,9 @@ import {
 	setOutput,
 	sourceMaps,
 } from '@webpack-blocks/webpack';
+import { getDependencies } from '@root/helpers/package';
+import { isDevelopment } from '@shared/lib/utils/env';
+import paths from '@build/paths';
 import { babelHelper } from '../plugins/transpile';
 import { externals, node, target, watch } from '../plugins/core';
 

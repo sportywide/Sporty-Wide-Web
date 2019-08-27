@@ -5,10 +5,10 @@
 	"keywords": [],
 	"license": "ISC",
 	"scripts": {
-		"build": "NODE_ENV=production webpack -r ts-node/register -r tsconfig-paths/register",
+		"build": "NODE_ENV=production webpack -r sportywide-shared/build/ts-node/register -r tsconfig-paths/register",
 		"dev": "rm -rf dist/ && run-p dev:*",
 		"dev:server": "wait-on dist/main.js && nodemon",
-		"dev:webpack": "webpack -r ts-node/register -r tsconfig-paths/register"
+		"dev:webpack": "webpack -r sportywide-shared/build/ts-node/register -r tsconfig-paths/register"
 	},
 	"dependencies": {
 		"@nestjs/jwt": "6.1.1",
