@@ -2,7 +2,7 @@ import React from 'react';
 import Link from 'next/link';
 import Head from 'next/head';
 
-const OtherComponent = () => (
+const SwOtherComponent = () => (
 	<div>
 		<Head>
 			<title>Other page</title>
@@ -14,4 +14,4 @@ const OtherComponent = () => (
 	</div>
 );
 
-export const Other = OtherComponent;
+export const SwOther = SwOtherComponent;

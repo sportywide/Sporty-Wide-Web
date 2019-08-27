@@ -2,7 +2,7 @@ import React from 'react';
 import { checkUser, notAllowActive } from '@web/shared/lib/auth/check-user';
 import Head from 'next/head';
 
-class LoginComponent extends React.Component<any> {
+class SwLoginPage extends React.Component<any> {
 	render() {
 		return (
 			<div className="ub-p4">
@@ -28,4 +28,4 @@ class LoginComponent extends React.Component<any> {
 		);
 	}
 }
-export default checkUser(notAllowActive, 'home')(LoginComponent);
+export default checkUser(notAllowActive, 'home')(SwLoginPage);

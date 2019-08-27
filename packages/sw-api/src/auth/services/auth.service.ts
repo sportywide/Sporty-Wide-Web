@@ -116,6 +116,7 @@ export class AuthService {
 				username: user.username,
 				name: user.name,
 				status: user.status,
+				socialProvider: user.socialProvider,
 			},
 		});
 	}

@@ -22,7 +22,7 @@ interface IProps {
 	user: IUser;
 }
 
-class Counter extends React.Component<IProps, any> {
+class SwHomePage extends React.Component<IProps, any> {
 	static async getInitialProps({ store, isServer }) {
 		const resultAction = await fetchCharacter(1, isServer).toPromise(); // we need to convert observable to Promise
 		store.dispatch(resultAction);
@@ -85,4 +85,4 @@ const enhance = compose(
 	)
 );
 
-export default enhance(Counter);
+export default enhance(SwHomePage);

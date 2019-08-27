@@ -5,7 +5,7 @@ import { UserContext } from '@web/shared/lib/store';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { IHomeState } from '../store/reducers/';
 
-const CharacterInfo = ({ character, error, isFetchedOnServer = false }: IHomeState) => {
+const SwCharacterInfo = ({ character, error, isFetchedOnServer = false }: IHomeState) => {
 	if (!character) {
 		return <div>Loading</div>;
 	}
@@ -45,10 +45,10 @@ const CharacterInfo = ({ character, error, isFetchedOnServer = false }: IHomeSta
 	);
 };
 
-CharacterInfo.propTypes = {
+SwCharacterInfo.propTypes = {
 	character: PropTypes.object,
 	error: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
 	isFetchedOnServer: PropTypes.bool,
 };
 
-export default connect(({ home }: { home: IHomeState }) => home)(CharacterInfo);
+export default connect(({ home }: { home: IHomeState }) => home)(SwCharacterInfo);

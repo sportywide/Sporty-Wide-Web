@@ -2,7 +2,7 @@ import React from 'react';
 import { allowAnonymousOnly, checkUser } from '@web/shared/lib/auth/check-user';
 import Head from 'next/head';
 
-class SignupComponent extends React.Component<any> {
+class SwSignupPage extends React.Component<any> {
 	render() {
 		return (
 			<div className="ub-p4">
@@ -14,4 +14,4 @@ class SignupComponent extends React.Component<any> {
 		);
 	}
 }
-export default checkUser(allowAnonymousOnly, 'home')(SignupComponent);
+export default checkUser(allowAnonymousOnly, 'home')(SwSignupPage);

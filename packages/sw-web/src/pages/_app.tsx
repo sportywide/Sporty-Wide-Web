@@ -17,7 +17,7 @@ interface IProps {
 	user?: IUser;
 }
 
-class SportyWideApp extends App<IProps> {
+class SwApp extends App<IProps> {
 	static async getInitialProps({ Component, ctx }) {
 		const store: ISportyWideStore = ctx.store;
 		const container = store.container;
@@ -66,4 +66,4 @@ class SportyWideApp extends App<IProps> {
 	}
 }
 
-export default withRedux(initStore)(SportyWideApp);
+export default withRedux(initStore)(SwApp);
