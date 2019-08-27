@@ -1,6 +1,8 @@
 import React from 'react';
 import { SwConfirmSocial } from '@web/features/auth/components/ConfirmSocialComponent';
+import { SwPrimaryBackGround } from '@web/shared/styled/core.styled';
 import Head from 'next/head';
+import { Container, Form, Segment, Grid, GridColumn } from 'semantic-ui-react';
 
 class SwConfirmSocialPage extends React.Component<any> {
 	render() {
@@ -9,10 +11,19 @@ class SwConfirmSocialPage extends React.Component<any> {
 				<Head>
 					<title>Complete your account</title>
 				</Head>
-				<SwConfirmSocial />
+				<SwPrimaryBackGround>
+					<Container style={{ width: '100%' }}>
+						<Grid verticalAlign={'middle'} centered>
+							<GridColumn mobile={16} tablet={10} computer={8}>
+								<SwConfirmSocial />
+							</GridColumn>
+						</Grid>
+					</Container>
+				</SwPrimaryBackGround>
 			</>
 		);
 	}
 }
+
 // export default checkUser(allowPendingSocialOnly, 'home')(ConfirmSocialPage);
 export default SwConfirmSocialPage;

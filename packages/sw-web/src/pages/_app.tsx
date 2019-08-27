@@ -11,11 +11,19 @@ import { initStore, ISportyWideStore, UserContext } from '@web/shared/lib/store'
 import { redirect } from '@web/shared/lib/navigation/helper';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { allowActiveOnly } from '@web/shared/lib/auth/check-user';
+import { ThemeProvider } from 'styled-components';
 
 interface IProps {
 	store?: Store;
 	user?: IUser;
 }
+
+const theme = {
+	colors: {
+		primary: '#4da88a',
+		accent: '#ee4c50',
+	},
+};
 
 class SwApp extends App<IProps> {
 	static async getInitialProps({ Component, ctx }) {
@@ -56,11 +64,13 @@ class SwApp extends App<IProps> {
 		const { Component, pageProps, store, user } = this.props;
 		return (
 			<Container>
-				<Provider store={store}>
-					<UserContext.Provider value={user}>
-						<Component {...pageProps} />
-					</UserContext.Provider>
-				</Provider>
+				<ThemeProvider theme={theme}>
+					<Provider store={store}>
+						<UserContext.Provider value={user}>
+							<Component {...pageProps} />
+						</UserContext.Provider>
+					</Provider>
+				</ThemeProvider>
 			</Container>
 		);
 	}
