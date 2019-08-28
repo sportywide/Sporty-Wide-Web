@@ -51,6 +51,7 @@ export const devProxy = {
 				'/google': redirectOnError,
 				'/facebook/callback': setCookiesAndRedirect,
 				'/google/callback': setCookiesAndRedirect,
+				'/complete_social_profile': setCookiesAndRedirect,
 			};
 
 			const handler = pathMapping[path] || redirectOnError;

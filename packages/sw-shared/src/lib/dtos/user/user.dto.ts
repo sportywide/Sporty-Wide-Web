@@ -1,7 +1,7 @@
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { Expose, Type } from 'class-transformer-imp';
-import { ApiModelProperty } from '@nestjs/swagger';
+import { ApiModelProperty } from '@shared/lib/utils/api/decorators';
 
 export class UserDto {
 	@ApiModelProperty()

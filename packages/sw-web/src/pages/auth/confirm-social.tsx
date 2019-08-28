@@ -3,6 +3,7 @@ import { SwConfirmSocial } from '@web/features/auth/components/ConfirmSocialComp
 import { SwPrimaryBackGround } from '@web/shared/styled/core.styled';
 import Head from 'next/head';
 import { Container, Form, Segment, Grid, GridColumn } from 'semantic-ui-react';
+import { allowAll, checkUser } from '@web/shared/lib/auth/check-user';
 
 class SwConfirmSocialPage extends React.Component<any> {
 	render() {
@@ -26,4 +27,4 @@ class SwConfirmSocialPage extends React.Component<any> {
 }
 
 // export default checkUser(allowPendingSocialOnly, 'home')(ConfirmSocialPage);
-export default SwConfirmSocialPage;
+export default checkUser(allowAll)(SwConfirmSocialPage);

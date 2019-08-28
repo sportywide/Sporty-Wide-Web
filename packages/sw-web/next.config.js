@@ -16,8 +16,8 @@ const nextConfig = {
 			...(oldConfig.resolve || {}),
 			alias: {
 				...oldConfig.resolve.alias,
-				'@shared': 'sportywide-shared/src',
-				'@web': `${paths.web.src}/`,
+				'@shared': paths.shared.src,
+				'@web': paths.web.src,
 				'@web-test': path.resolve(paths.web.root, 'test'),
 			},
 		};
@@ -44,6 +44,11 @@ const nextConfig = {
 					cacheDirectory: true,
 				},
 			},
+		});
+
+		config.module.rules.push({
+			test: /@nestjs/,
+			use: 'null-loader',
 		});
 
 		config.plugins.push(

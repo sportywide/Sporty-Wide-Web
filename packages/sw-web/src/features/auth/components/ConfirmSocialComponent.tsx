@@ -2,6 +2,8 @@ import React from 'react';
 import { Formik, FormikProps } from 'formik';
 import { Segment, Form, Image, Header } from 'semantic-ui-react';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
+import { getSchemaByType } from 'yup-decorator';
+import { CompleteSocialProfileDto } from '@shared/lib/dtos/user/complete-social-profile.dto';
 
 const SwConfirmSocialComponent: React.FC<any> = () => {
 	return (
@@ -10,7 +12,13 @@ const SwConfirmSocialComponent: React.FC<any> = () => {
 			<Header as={'h3'} className={'ub-align-self-center'}>
 				Complete your profile
 			</Header>
-			<Formik initialValues={{}} onSubmit={console.info} render={renderForm} />
+			<Formik
+				initialValues={{}}
+				onSubmit={console.info}
+				validationSchema={getSchemaByType(CompleteSocialProfileDto)}
+			>
+				{renderForm}
+			</Formik>
 		</Segment>
 	);
 };
