@@ -4,7 +4,7 @@ import { Field, getIn, FieldProps, FieldConfig } from 'formik';
 export interface FormFieldProps extends FieldConfig {
 	component: string | React.ComponentType<any>;
 	componentProps: any;
-	onChange?: (e: React.ChangeEvent<any>, params?: { name: string; value: any }) => void;
+	onChange?: (e: React.ChangeEvent<any>, params?: { name?: string; value?: any }) => void;
 	onBlur?: (e: React.FocusEvent<any>) => void;
 }
 

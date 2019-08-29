@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FormFieldProps, SwFormField } from '@web/shared/lib/form/components/FormField';
-import { Form, Progress, Label } from 'semantic-ui-react';
+import { Form, Progress } from 'semantic-ui-react';
 import zxcvbn from 'zxcvbn';
 
 export type PasswordFieldProps = Omit<FormFieldProps, 'component'>;
@@ -33,11 +33,15 @@ export const SwPasswordField: React.FC<PasswordFieldProps> = ({ componentProps, 
 		</div>
 	);
 
-	function handlePasswordChange(e, { value }) {
+	function handlePasswordChange(e, params) {
+		const { value } = params;
 		const { score, feedback } = zxcvbn(value);
 		setScore(score);
 		setFeedback(feedback);
 		setPassword(value);
+		if (onChange) {
+			onChange(e, params);
+		}
 	}
 
 	function getColor(score) {
