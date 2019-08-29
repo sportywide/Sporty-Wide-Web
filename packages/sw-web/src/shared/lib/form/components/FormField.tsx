@@ -1,6 +1,15 @@
 import React from 'react';
 import { Field, getIn } from 'formik';
 
+export interface FormFieldProps {
+	component: string | React.ComponentType<any>;
+	componentProps: any;
+	onChange?: (e: React.ChangeEvent<any>, { name: string, value: any }?) => void;
+	onBlur?: (e: React.FocusEvent<any>) => void;
+	value?: any;
+	[key: string]: any;
+}
+
 const getFormikFieldError = (form, field) => {
 	const { name } = field;
 	const touched = getIn(form.touched, name);
@@ -12,13 +21,24 @@ const setFormikFieldValue = (form, name, value, shouldValidate) => {
 	form.setFieldTouched(name, true, shouldValidate);
 };
 
-export const SwFormField = ({ component, componentProps = {}, onChange, ...fieldProps }: any) => (
+export const SwFormField: React.FC<FormFieldProps> = ({
+	component,
+	componentProps = {},
+	onChange,
+	onBlur,
+	...fieldProps
+}: any) => (
 	<Field
 		{...fieldProps}
 		render={props => {
 			const { id } = componentProps;
 			const { field, form } = props;
-			const { value } = field;
+			const { value: currentFieldValue } = field;
+			let value = currentFieldValue;
+			if ('value' in fieldProps && currentFieldValue !== fieldProps.value) {
+				value = fieldProps.value;
+				setFormikFieldValue(form, field.name, value, getIn(form.touched, field.name));
+			}
 			const error = getFormikFieldError(form, field);
 			componentProps.id = id;
 			componentProps.error = error;
@@ -38,7 +58,12 @@ export const SwFormField = ({ component, componentProps = {}, onChange, ...field
 						onChange(e, { name, value });
 					}
 				},
-				onBlur: form.handleBlur,
+				onBlur: e => {
+					form.handleBlur(e);
+					if (onBlur) {
+						onBlur(e);
+					}
+				},
 			});
 		}}
 	/>
