@@ -13,6 +13,7 @@ import { plainToClass } from 'class-transformer-imp';
 import { SocialProfileDto } from '@shared/lib/dtos/user/social-profile.dto';
 import { SocialProvider } from '@shared/lib/dtos/user/enum/social-provider.enum';
 import { TokenService } from '@api/auth/services/token.service';
+import { CompleteSocialProfileDto } from '@shared/lib/dtos/user/complete-social-profile.dto';
 
 export class Tokens {
 	@ApiModelProperty() accessToken: string;
@@ -37,6 +38,13 @@ export class AuthService {
 		const user = await this.userService.saveOne(userValues);
 		await this.tokenService.createVerifyEmailToken(user);
 		await this.emailService.sendUserVerificationEmail(user);
+		return this.createTokens(user);
+	}
+
+	public async completeSocialProfile(user: User, completeSocialProfile: CompleteSocialProfileDto): Promise<Tokens> {
+		user.password = completeSocialProfile.password;
+		user.username = completeSocialProfile.username;
+		user = await this.userService.saveOne(user);
 		return this.createTokens(user);
 	}
 

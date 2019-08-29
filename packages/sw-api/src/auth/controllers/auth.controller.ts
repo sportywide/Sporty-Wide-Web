@@ -25,6 +25,10 @@ import { TokenService } from '@api/auth/services/token.service';
 import { isBefore } from 'date-fns';
 import { TokenType } from '@schema/auth/models/enums/token-type.token';
 import { UserService } from '@api/user/services/user.service';
+import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
+import { CurrentUser } from '@api/core/decorators/user';
+import { PendingSocialUser, UserCheck } from '@api/auth/decorators/user-check.decorator';
+import { CompleteSocialProfileDto } from '@shared/lib/dtos/user/complete-social-profile.dto';
 
 @ApiUseTags('auth')
 @Controller('auth')
@@ -76,8 +80,8 @@ export class AuthController {
 	@Post('login')
 	@HttpCode(HttpStatus.OK)
 	@UseGuards(AuthenticatedGuard, LocalAuthGuard)
-	public login(@Req() req) {
-		return this.authService.createTokens(req.user);
+	public login(@CurrentUser() user) {
+		return this.authService.createTokens(user);
 	}
 
 	@ApiOkResponse({ description: 'A new refresh token has been created', type: Tokens })
@@ -85,8 +89,8 @@ export class AuthController {
 	@Post('refresh-token')
 	@HttpCode(HttpStatus.OK)
 	@UseGuards(RefreshTokenGuard)
-	public refreshToken(@Req() req) {
-		return this.authService.createTokens(req.user);
+	public refreshToken(@CurrentUser() user) {
+		return this.authService.createTokens(user);
 	}
 
 	@Get('facebook')
@@ -101,8 +105,8 @@ export class AuthController {
 
 	@Get('facebook/callback')
 	@UseGuards(AuthenticatedGuard)
-	public facebookCallback(@Req() req) {
-		return this.authService.createTokens(req.user);
+	public facebookCallback(@CurrentUser() user) {
+		return this.authService.createTokens(user);
 	}
 
 	@Get('google')
@@ -117,7 +121,18 @@ export class AuthController {
 
 	@Get('google/callback')
 	@UseGuards(AuthenticatedGuard)
-	public googleCallback(@Req() req) {
-		return this.authService.createTokens(req.user);
+	public googleCallback(@CurrentUser() user) {
+		return this.authService.createTokens(user);
+	}
+
+	@Post('complete-social-profile')
+	@PendingSocialUser()
+	@UseGuards(JwtAuthGuard)
+	public confirmSocialProfile(
+		@CurrentUser() user,
+		@Body(getValidationPipe())
+		completeSocialProfileDto: CompleteSocialProfileDto
+	) {
+		return this.authService.completeSocialProfile(user, completeSocialProfileDto);
 	}
 }

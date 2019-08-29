@@ -5,6 +5,7 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, Index } from 'typeorm';
 import { SocialProvider } from '@shared/lib/dtos/user/enum/social-provider.enum';
 import { BaseEntity } from '@schema/core/base.entity';
 import { TrackTimestamp } from '@schema/core/timestamp/track-timestamp.mixin';
+import { BadRequestException } from '@nestjs/common';
 
 @Entity()
 export class User extends TrackTimestamp(BaseEntity) {
@@ -68,8 +69,8 @@ export class User extends TrackTimestamp(BaseEntity) {
 			this.password = await hashPassword(this.password);
 		}
 
-		if (this.id && this.changed('username')) {
-			throw new Error('Cannot change username');
+		if (this.id && !(this.status == UserStatus.PENDING && this.socialProvider) && this.changed('username')) {
+			throw new BadRequestException('Cannot change username');
 		}
 	}
 }

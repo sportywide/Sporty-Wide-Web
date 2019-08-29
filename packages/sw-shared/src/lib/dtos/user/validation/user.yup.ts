@@ -15,6 +15,6 @@ export function password() {
 		.min(8, 'Must be greater than 8 characters')
 		.matches(
 			/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#_\-?&])[A-Za-z\d@$!%*_\-#?&]{8,}$/,
-			'Must contain letters, numbers and special characters'
+			'Password must contain letters, numbers and special characters'
 		);
 }
