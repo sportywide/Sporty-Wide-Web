@@ -24,6 +24,7 @@ module.exports = {
 		'import/dynamic-import-chunkname': 'warn',
 		'import/order': 'warn',
 		'import/no-unresolved': 0,
+		'react/prop-types': 0,
 	},
 	env: {
 		node: true,

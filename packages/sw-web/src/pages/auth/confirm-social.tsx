@@ -2,7 +2,7 @@ import React from 'react';
 import { SwConfirmSocial } from '@web/features/auth/components/ConfirmSocialComponent';
 import { SwPrimaryBackGround } from '@web/shared/styled/core.styled';
 import Head from 'next/head';
-import { Container, Form, Segment, Grid, GridColumn } from 'semantic-ui-react';
+import { Container, Grid, GridColumn } from 'semantic-ui-react';
 import { allowAll, checkUser } from '@web/shared/lib/auth/check-user';
 
 class SwConfirmSocialPage extends React.Component<any> {
@@ -15,7 +15,7 @@ class SwConfirmSocialPage extends React.Component<any> {
 				<SwPrimaryBackGround>
 					<Container style={{ width: '100%' }}>
 						<Grid verticalAlign={'middle'} centered>
-							<GridColumn mobile={16} tablet={10} computer={8}>
+							<GridColumn mobile={14} tablet={8} computer={6}>
 								<SwConfirmSocial />
 							</GridColumn>
 						</Grid>

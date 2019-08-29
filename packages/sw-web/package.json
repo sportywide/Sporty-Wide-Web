@@ -30,7 +30,6 @@
 		"next-routes": "1.4.2",
 		"next-store-wrapper": "3.0.0-alpha.5",
 		"node-http-proxy-json": "0.1.6",
-		"prop-types": "15.7.2",
 		"react": "16.9.0",
 		"react-dom": "16.9.0",
 		"react-redux": "7.1.0",
@@ -44,6 +43,7 @@
 		"sporty-wide-style": "1.0.1",
 		"sportywide-shared": "1.0.0",
 		"styled-components": "4.3.2",
-		"typedi": "0.8.0"
+		"typedi": "0.8.0",
+		"zxcvbn": "4.4.2"
 	}
 }

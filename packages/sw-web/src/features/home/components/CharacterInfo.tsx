@@ -1,11 +1,10 @@
 import React, { useContext } from 'react';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
 import { UserContext } from '@web/shared/lib/store';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { IHomeState } from '../store/reducers/';
 
-const SwCharacterInfo = ({ character, error, isFetchedOnServer = false }: IHomeState) => {
+const SwCharacterInfo: React.FC<IHomeState> = ({ character, error, isFetchedOnServer = false }: IHomeState) => {
 	if (!character) {
 		return <div>Loading</div>;
 	}
@@ -43,12 +42,6 @@ const SwCharacterInfo = ({ character, error, isFetchedOnServer = false }: IHomeS
 			`}</style>
 		</div>
 	);
-};
-
-SwCharacterInfo.propTypes = {
-	character: PropTypes.object,
-	error: PropTypes.oneOfType([PropTypes.object, PropTypes.string]),
-	isFetchedOnServer: PropTypes.bool,
 };
 
 export default connect(({ home }: { home: IHomeState }) => home)(SwCharacterInfo);

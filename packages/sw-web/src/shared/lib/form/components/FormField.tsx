@@ -1,13 +1,11 @@
 import React from 'react';
-import { Field, getIn } from 'formik';
+import { Field, getIn, FieldProps, FieldConfig } from 'formik';
 
-export interface FormFieldProps {
+export interface FormFieldProps extends FieldConfig {
 	component: string | React.ComponentType<any>;
 	componentProps: any;
 	onChange?: (e: React.ChangeEvent<any>, params?: { name: string; value: any }) => void;
 	onBlur?: (e: React.FocusEvent<any>) => void;
-	value?: any;
-	[key: string]: any;
 }
 
 const getFormikFieldError = (form, field) => {
@@ -27,10 +25,10 @@ export const SwFormField: React.FC<FormFieldProps> = ({
 	onChange,
 	onBlur,
 	...fieldProps
-}: any) => (
+}) => (
 	<Field
 		{...fieldProps}
-		render={props => {
+		render={(props: FieldProps) => {
 			const { id } = componentProps;
 			const { field, form } = props;
 			const { value: currentFieldValue } = field;

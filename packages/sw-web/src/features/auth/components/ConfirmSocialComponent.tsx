@@ -4,6 +4,7 @@ import { Segment, Form, Image, Header } from 'semantic-ui-react';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
 import { getSchemaByType } from 'yup-decorator';
 import { CompleteSocialProfileDto } from '@shared/lib/dtos/user/complete-social-profile.dto';
+import { SwPasswordField } from '@web/shared/lib/form/components/PasswordField';
 
 const SwConfirmSocialComponent: React.FC<any> = () => {
 	return (
@@ -35,12 +36,10 @@ function renderForm(props: FormikProps<any>) {
 				}}
 			/>
 
-			<SwFormField
+			<SwPasswordField
 				name="password"
-				component={Form.Input}
 				componentProps={{
 					label: 'Password',
-					type: 'password',
 					placeholder: 'Your password',
 				}}
 			/>
