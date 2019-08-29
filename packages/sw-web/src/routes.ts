@@ -17,8 +17,8 @@ const routeMappings = [
 		page: 'auth/signup',
 	},
 	{
-		name: 'confirm_social',
-		pattern: '/confirm_social',
+		name: 'confirm-social',
+		pattern: '/confirm-social',
 		page: 'auth/confirm-social',
 	},
 ];

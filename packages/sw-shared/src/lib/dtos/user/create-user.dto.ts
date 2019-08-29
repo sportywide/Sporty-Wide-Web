@@ -3,7 +3,7 @@ import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { ApiModelProperty } from '@shared/lib/utils/api/decorators';
 import { Creatable, Editable } from '@shared/lib/utils/decorators/permissions';
 import { a, is, schema } from 'yup-decorator';
-import { username } from '@shared/lib/dtos/user/validation/user.yup';
+import { password, username } from '@shared/lib/dtos/user/validation/user.yup';
 
 @schema()
 export class CreateUserDto {
@@ -43,6 +43,6 @@ export class CreateUserDto {
 
 	@ApiModelProperty()
 	@Editable(UserRole.USER)
-	@is(a.string().required('Password is required'))
+	@is(password())
 	password: string;
 }

@@ -45,13 +45,13 @@ export const devProxy = {
 			const pathMapping = {
 				'/login': setCookies,
 				'/signup': setCookies,
-				'/refresh_token': setCookies,
-				'/verify_email': setCookiesAndRedirect,
+				'/refresh-token': setCookies,
+				'/verify-email': setCookiesAndRedirect,
 				'/facebook': redirectOnError,
 				'/google': redirectOnError,
 				'/facebook/callback': setCookiesAndRedirect,
 				'/google/callback': setCookiesAndRedirect,
-				'/complete_social_profile': setCookiesAndRedirect,
+				'/complete-social-profile': setCookiesAndRedirect,
 			};
 
 			const handler = pathMapping[path] || redirectOnError;

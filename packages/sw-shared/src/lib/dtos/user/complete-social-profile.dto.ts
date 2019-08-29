@@ -1,6 +1,6 @@
 import { a, is, schema } from 'yup-decorator';
 import { ApiModelProperty } from '@shared/lib/utils/api/decorators';
-import { username } from './validation/user.yup';
+import { password, username } from './validation/user.yup';
 
 @schema()
 export class CompleteSocialProfileDto {
@@ -9,7 +9,7 @@ export class CompleteSocialProfileDto {
 	username: string;
 
 	@ApiModelProperty()
-	@is(a.string().required('Password is required'))
+	@is(password())
 	password: string;
 
 	@ApiModelProperty()

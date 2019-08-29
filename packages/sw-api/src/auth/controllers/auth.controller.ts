@@ -49,7 +49,7 @@ export class AuthController {
 
 	@ApiCreatedResponse({ description: 'User email has been verified', type: Tokens })
 	@ApiOperation({ title: 'Verify email endpoint' })
-	@Get('verify_email')
+	@Get('verify-email')
 	@HttpCode(HttpStatus.OK)
 	public async verifyEmail(
 		@Query('token') verificationCode: string,
@@ -82,7 +82,7 @@ export class AuthController {
 
 	@ApiOkResponse({ description: 'A new refresh token has been created', type: Tokens })
 	@AuthorizedApiOperation({ title: 'Refresh token endpoint' })
-	@Post('refresh_token')
+	@Post('refresh-token')
 	@HttpCode(HttpStatus.OK)
 	@UseGuards(RefreshTokenGuard)
 	public refreshToken(@Req() req) {
