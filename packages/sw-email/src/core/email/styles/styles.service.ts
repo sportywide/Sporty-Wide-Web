@@ -1,5 +1,5 @@
 import path from 'path';
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { isProduction } from '@shared/lib/utils/env';
 import { FILE_SERVICE, FileService } from '@core/io/file.provider';
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Field, getIn, FieldProps, FieldConfig } from 'formik';
+import { Field, FieldConfig, FieldProps, getIn } from 'formik';
 
 export interface FormFieldProps extends FieldConfig {
 	component: string | React.ComponentType<any>;

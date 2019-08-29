@@ -1,4 +1,5 @@
 import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
+
 type Constructor<T> = { new (...args: any[]): T };
 
 export function TrackTimestamp<TBase extends Constructor<{}>>(Base: TBase) {

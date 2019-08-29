@@ -1,6 +1,6 @@
 import React from 'react';
 import { Formik, FormikProps } from 'formik';
-import { Segment, Form, Image, Header } from 'semantic-ui-react';
+import { Form, Header, Image, Segment } from 'semantic-ui-react';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
 import { getSchemaByType } from 'yup-decorator';
 import { CompleteSocialProfileDto } from '@shared/lib/dtos/user/complete-social-profile.dto';

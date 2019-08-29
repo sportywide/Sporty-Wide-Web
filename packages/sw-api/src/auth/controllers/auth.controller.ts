@@ -27,7 +27,7 @@ import { TokenType } from '@schema/auth/models/enums/token-type.token';
 import { UserService } from '@api/user/services/user.service';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { CurrentUser } from '@api/core/decorators/user';
-import { PendingSocialUser, UserCheck } from '@api/auth/decorators/user-check.decorator';
+import { PendingSocialUser } from '@api/auth/decorators/user-check.decorator';
 import { CompleteSocialProfileDto } from '@shared/lib/dtos/user/complete-social-profile.dto';
 
 @ApiUseTags('auth')
