@@ -1,7 +1,13 @@
 import config from '@web/config';
 import { Request } from 'express';
 import modifyResponse from 'node-http-proxy-json';
-import { COOKIE_CSRF, COOKIE_JWT_PAYLOAD, COOKIE_JWT_SIGNATURE, COOKIE_REFRESH_TOKEN } from '@web/api/auth/constants';
+import {
+	COOKIE_CSRF,
+	COOKIE_JWT_PAYLOAD,
+	COOKIE_JWT_SIGNATURE,
+	COOKIE_REFERRER,
+	COOKIE_REFRESH_TOKEN,
+} from '@web/api/auth/constants';
 import { isProduction } from '@shared/lib/utils/env';
 import { getFullPath, normalizePath } from '@shared/lib/utils/url/format';
 import { noop } from '@shared/lib/utils/functions';
@@ -12,6 +18,8 @@ import {
 	UNAUTHENTICATED,
 	UNAUTHORIZED,
 } from '@web/shared/lib/http/status-codes';
+import { parseCookies } from '@web/shared/lib/auth/helper';
+import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 
 export const devProxy = {
 	'/api': {
@@ -49,8 +57,8 @@ export const devProxy = {
 				'/verify-email': setCookiesAndRedirect,
 				'/facebook': redirectOnError,
 				'/google': redirectOnError,
-				'/facebook/callback': setCookiesAndRedirect,
-				'/google/callback': setCookiesAndRedirect,
+				'/facebook/callback': socialProfileCallback,
+				'/google/callback': socialProfileCallback,
 				'/complete-social-profile': setCookiesAndRedirect,
 			};
 
@@ -82,12 +90,23 @@ function handleAuthHeader(proxyReq, req: Request) {
 	}
 }
 
-function setCookiesAndRedirect(proxyRes, request, response) {
+function socialProfileCallback(proxyRes, request, response) {
+	const cookies = request.cookies;
+	const { user } = parseCookies(cookies);
+	if (user.status === UserStatus.PENDING) {
+		return setCookiesAndRedirect(proxyRes, request, response, '/complete-social-profile');
+	} else {
+		return setCookiesAndRedirect(proxyRes, request, response);
+	}
+}
+
+function setCookiesAndRedirect(proxyRes, request, response, redirectUrl?: string) {
 	if (proxyRes.statusCode >= 400) {
 		response.redirect('/login');
 		return;
 	}
-	setCookies(proxyRes, request, response, '/');
+	const cookies = request.cookies || {};
+	setCookies(proxyRes, request, response, redirectUrl || cookies[COOKIE_REFERRER] || '/');
 }
 
 function setCookies(proxyRes, request, response, redirectUrl) {
@@ -116,6 +135,9 @@ function setCookies(proxyRes, request, response, redirectUrl) {
 		});
 
 		if (redirectUrl) {
+			if (request.cookies && redirectUrl === request.cookies[COOKIE_REFERRER]) {
+				response.clearCookie(COOKIE_REFERRER);
+			}
 			response.status(TEMPORARY_REDIRECT);
 			response.location(redirectUrl);
 		}

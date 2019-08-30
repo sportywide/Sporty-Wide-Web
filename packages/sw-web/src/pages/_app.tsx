@@ -12,6 +12,7 @@ import { redirect } from '@web/shared/lib/navigation/helper';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { allowActiveOnly } from '@web/shared/lib/auth/check-user';
 import { ThemeProvider } from 'styled-components';
+import { COOKIE_REFERRER } from '@web/api/auth/constants';
 
 interface IProps {
 	store?: Store;
@@ -28,20 +29,19 @@ const theme = {
 class SwApp extends App<IProps> {
 	static async getInitialProps({ Component, ctx }) {
 		const store: ISportyWideStore = ctx.store;
-		const container = store.container;
-		const user: IUser = container.get('currentUser');
 		let pageProps = {};
 
-		const checkUser = Component.checkUser || allowActiveOnly;
-		const allowUser = checkUser(user);
+		const { allowUser, user } = validateUser(ctx, Component);
 
 		if (!allowUser) {
+			if (!user && ctx.req) {
+				ctx.res.cookie(COOKIE_REFERRER, ctx.req.url);
+			}
 			await redirect({
 				context: ctx,
 				route: Component.failureRedirect || 'login',
 				replace: true,
 			});
-
 			return { pageProps };
 		}
 
@@ -63,17 +63,26 @@ class SwApp extends App<IProps> {
 	render() {
 		const { Component, pageProps, store, user } = this.props;
 		return (
-			<Container>
-				<ThemeProvider theme={theme}>
-					<Provider store={store}>
-						<UserContext.Provider value={user}>
-							<Component {...pageProps} />
-						</UserContext.Provider>
-					</Provider>
-				</ThemeProvider>
-			</Container>
+			<ThemeProvider theme={theme}>
+				<Provider store={store}>
+					<UserContext.Provider value={user}>
+						<Component {...pageProps} />
+					</UserContext.Provider>
+				</Provider>
+			</ThemeProvider>
 		);
 	}
+}
+
+function validateUser(context: any, Component) {
+	const store = context.store;
+	const container = store.container;
+	const user: IUser = container.get('currentUser');
+
+	const checkUser = Component.checkUser || allowActiveOnly;
+	const allowUser = checkUser(user);
+
+	return { allowUser, user };
 }
 
 export default withRedux(initStore)(SwApp);

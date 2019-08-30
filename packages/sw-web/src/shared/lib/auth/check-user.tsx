@@ -19,6 +19,7 @@ export function checkUser(checkFunction, failureRedirect = 'login') {
 export const allowAll = () => true;
 export const allowActiveOnly = user => user && user.status === UserStatus.ACTIVE;
 export const allowAnonymousOnly = user => !user;
-export const allowPendingSocialOnly = user => user && user.socialProvider && user.status === UserStatus.ACTIVE;
+export const allowPendingSocialOnly = user => user && user.socialProvider && user.status === UserStatus.PENDING;
+export const allowPendingOnly = user => user.status === UserStatus.PENDING;
 export const hasUser = user => !!user;
 export const notAllowActive = user => !user || user.status !== UserStatus.ACTIVE;

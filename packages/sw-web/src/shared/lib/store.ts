@@ -4,7 +4,7 @@ import { createEpicMiddleware } from 'redux-observable';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { createEpicManager, IEpicManager } from '@web/shared/lib/redux/epic-manager';
 import { isDevelopment } from '@shared/lib/utils/env';
-import { parseCookies } from '@web/shared/lib/auth/helper';
+import { parseContext } from '@web/shared/lib/auth/helper';
 import { Container } from 'typedi';
 import { authReducer } from '@web/features/auth/store/reducers';
 import { logoutEpic } from '@web/features/auth/store/epics';
@@ -20,7 +20,7 @@ export function initStore(initialState = {}, context) {
 	if (context && context.store) {
 		return context.store;
 	}
-	const auth = parseCookies(context) || {};
+	const auth = parseContext(context) || {};
 
 	const container = registerContainer({ auth });
 	const initialReducers = getInitialReducers(initialState, {

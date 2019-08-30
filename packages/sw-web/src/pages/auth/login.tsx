@@ -1,8 +1,33 @@
 import React from 'react';
 import { checkUser, notAllowActive } from '@web/shared/lib/auth/check-user';
 import Head from 'next/head';
+import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
+import { redirect } from '@web/shared/lib/navigation/helper';
 
 class SwLoginPage extends React.Component<any> {
+	static async getInitialProps(context) {
+		const { store } = context;
+		const pageProps = {};
+		const container = store.container;
+		const currentUser = container.get('currentUser');
+
+		if (!currentUser) {
+			return pageProps;
+		}
+
+		if (currentUser.socialProvider && currentUser.status === UserStatus.PENDING) {
+			await redirect({ context, route: 'confirm-social', replace: true });
+			return pageProps;
+		}
+
+		if (currentUser.status === UserStatus.PENDING) {
+			await redirect({ context, route: 'confirm-email', replace: true });
+			return pageProps;
+		}
+
+		return pageProps;
+	}
+
 	render() {
 		return (
 			<div className="ub-p4">

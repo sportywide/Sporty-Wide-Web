@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { FormFieldProps, SwFormField } from '@web/shared/lib/form/components/FormField';
 import { Form, Progress } from 'semantic-ui-react';
-import zxcvbn from 'zxcvbn';
 
 export type PasswordFieldProps = Omit<FormFieldProps, 'component'>;
 
@@ -20,7 +19,7 @@ export const SwPasswordField: React.FC<PasswordFieldProps> = ({ componentProps, 
 			/>
 			<Progress
 				color={getColor(score)}
-				style={{ 'margin-bottom': '5px' }}
+				style={{ marginBottom: '5px' }}
 				size={'tiny'}
 				data-tooltip={feedback && feedback.warning ? feedback.warning : null}
 				percent={password ? (Math.max(score, 1) * 100) / 4 : 0}
@@ -33,15 +32,16 @@ export const SwPasswordField: React.FC<PasswordFieldProps> = ({ componentProps, 
 		</div>
 	);
 
-	function handlePasswordChange(e, params) {
-		const { value } = params;
-		const { score, feedback } = zxcvbn(value);
-		setScore(score);
-		setFeedback(feedback);
-		setPassword(value);
+	async function handlePasswordChange(e, params) {
 		if (onChange) {
 			onChange(e, params);
 		}
+		const { value } = params;
+		setPassword(value);
+		const { default: zxcvbn } = await import(/* webpackChunkName: "zxcvbn" */ 'zxcvbn');
+		const { score, feedback } = zxcvbn(value);
+		setScore(score);
+		setFeedback(feedback);
 	}
 
 	function getColor(score) {
