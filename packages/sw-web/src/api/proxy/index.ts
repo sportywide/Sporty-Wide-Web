@@ -59,7 +59,7 @@ export const devProxy = {
 				'/google': redirectOnError,
 				'/facebook/callback': socialProfileCallback,
 				'/google/callback': socialProfileCallback,
-				'/complete-social-profile': setCookiesAndRedirect,
+				'/complete-social-profile': setCookies,
 			};
 
 			const handler = pathMapping[path] || redirectOnError;

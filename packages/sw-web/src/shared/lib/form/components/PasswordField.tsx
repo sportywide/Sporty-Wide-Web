@@ -38,7 +38,7 @@ export const SwPasswordField: React.FC<PasswordFieldProps> = ({ componentProps, 
 		}
 		const { value } = params;
 		setPassword(value);
-		const { default: zxcvbn } = await import(/* webpackChunkName: "zxcvbn" */ 'zxcvbn');
+		const { default: zxcvbn } = await import(/* webpackChunkName: "zxcvbn" */ 'zxcvbn/dist/zxcvbn.js');
 		const { score, feedback } = zxcvbn(value);
 		setScore(score);
 		setFeedback(feedback);

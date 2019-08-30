@@ -1,6 +1,7 @@
 import { Service } from 'typedi';
 import axios, { Axios } from 'axios-observable';
 import { COOKIE_CSRF } from '@web/api/auth/constants';
+import { createRefreshTokenInterceptor } from '@web/shared/lib/http/refresh-token';
 
 @Service({ global: true })
 export class ApiService {
@@ -16,6 +17,10 @@ export class ApiService {
 		this.authBase = axios.create({
 			baseURL: '/auth',
 			xsrfCookieName: COOKIE_CSRF,
+		});
+
+		createRefreshTokenInterceptor(axios as any, () => {
+			return this.authBase.post('/refresh-token').toPromise();
 		});
 	}
 

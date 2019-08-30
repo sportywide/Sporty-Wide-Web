@@ -1,8 +1,6 @@
-import 'sporty-wide-style/dist/semantic.min.css';
-import 'sporty-wide-style/dist/basscss.min.css';
 import '@web/styles/styles.scss';
 import 'reflect-metadata';
-import App, { Container } from 'next/app';
+import App from 'next/app';
 import React from 'react';
 import { Store } from 'redux';
 import { Provider } from 'react-redux';

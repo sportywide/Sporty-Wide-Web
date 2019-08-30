@@ -1,5 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
 const paths = require('sportywide-shared/build/paths');
 const withPlugins = require('next-compose-plugins');
 const babel = require('next-plugin-custom-babel-config');
@@ -7,15 +6,13 @@ const bundleAnalyzer = require('@zeit/next-bundle-analyzer');
 const css = require('@zeit/next-css');
 const scss = require('@zeit/next-sass');
 const { ENTRY_ORDER, default: InjectPlugin } = require('webpack-inject-plugin');
-
 const nextConfig = {
 	webpack: (config, options) => {
 		const { dir } = options;
-		const oldConfig = config;
 		config.resolve = {
-			...(oldConfig.resolve || {}),
+			...(config.resolve || {}),
 			alias: {
-				...oldConfig.resolve.alias,
+				...config.resolve.alias,
 				'@shared': paths.shared.src,
 				'@web': paths.web.src,
 				'@web-test': path.resolve(paths.web.root, 'test'),
@@ -57,16 +54,20 @@ const nextConfig = {
 			})
 		);
 
-		config.node = {
-			fs: 'empty',
-		};
-
 		return config;
 	},
 	webpackDevMiddleware: config => {
 		config.watchOptions = {
+			...(config.watchOptions || {}),
 			poll: 1000, // Check for changes every second
 			aggregateTimeout: 300, // delay before rebuilding
+		};
+		config.noInfo = false;
+		config.logLevel = 'info';
+		config.stats = {
+			assets: false,
+			modules: false,
+			cachedAssets: false,
 		};
 		return config;
 	},

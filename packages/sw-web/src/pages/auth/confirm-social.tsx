@@ -3,14 +3,14 @@ import { SwConfirmSocial } from '@web/features/auth/components/ConfirmSocialComp
 import { SwPrimaryBackGround } from '@web/shared/styled/core.styled';
 import Head from 'next/head';
 import { Container, Grid, GridColumn } from 'semantic-ui-react';
-import { allowPendingSocialOnly, checkUser } from '@web/shared/lib/auth/check-user';
+import { allowAll, allowPendingSocialOnly, checkUser } from '@web/shared/lib/auth/check-user';
 
 class SwConfirmSocialPage extends React.Component<any> {
 	render() {
 		return (
 			<>
 				<Head>
-					<title>Complete your account</title>
+					<title>Complete your profile</title>
 				</Head>
 				<SwPrimaryBackGround>
 					<Container style={{ width: '100%' }}>
@@ -26,4 +26,4 @@ class SwConfirmSocialPage extends React.Component<any> {
 	}
 }
 
-export default checkUser(allowPendingSocialOnly, 'home')(SwConfirmSocialPage);
+export default checkUser(allowAll, 'home')(SwConfirmSocialPage);
