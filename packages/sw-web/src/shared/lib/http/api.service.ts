@@ -19,9 +19,12 @@ export class ApiService {
 			xsrfCookieName: COOKIE_CSRF,
 		});
 
-		createRefreshTokenInterceptor(axios as any, () => {
+		const retryCall = () => {
 			return this.authBase.post('/refresh-token').toPromise();
-		});
+		};
+
+		this.apiBase = createRefreshTokenInterceptor(this.apiBase, retryCall);
+		this.authBase = createRefreshTokenInterceptor(this.authBase, retryCall);
 	}
 
 	api() {

@@ -31,12 +31,7 @@ export const SwFormField: React.FC<FormFieldProps> = ({
 		render={(props: FieldProps) => {
 			const { id } = componentProps;
 			const { field, form } = props;
-			const { value: currentFieldValue } = field;
-			let value = currentFieldValue;
-			if ('value' in fieldProps && currentFieldValue !== fieldProps.value) {
-				value = fieldProps.value;
-				setFormikFieldValue(form, field.name, value, getIn(form.touched, field.name));
-			}
+			const { value } = field;
 			const error = getFormikFieldError(form, field);
 			componentProps.id = id;
 			componentProps.error = error;

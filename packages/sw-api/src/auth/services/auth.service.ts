@@ -44,6 +44,7 @@ export class AuthService {
 	public async completeSocialProfile(user: User, completeSocialProfile: CompleteSocialProfileDto): Promise<Tokens> {
 		user.password = completeSocialProfile.password;
 		user.username = completeSocialProfile.username;
+		user.status = UserStatus.ACTIVE;
 		user = await this.userService.saveOne(user);
 		return this.createTokens(user);
 	}

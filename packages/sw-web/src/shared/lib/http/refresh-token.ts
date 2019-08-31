@@ -1,11 +1,11 @@
 import { Axios } from 'axios-observable';
-import { UNAUTHORIZED } from '@web/shared/lib/http/status-codes';
+import { UNAUTHENTICATED } from '@web/shared/lib/http/status-codes';
 
 export function createRefreshTokenInterceptor(axios: Axios, refreshTokenCall) {
 	const id = axios.interceptors.response.use(
 		res => res,
 		async error => {
-			const statusCodes = [UNAUTHORIZED];
+			const statusCodes = [UNAUTHENTICATED];
 			if (!error.response || (error.response.status && !statusCodes.includes(+error.response.status))) {
 				return Promise.reject(error);
 			}

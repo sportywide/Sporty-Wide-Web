@@ -14,7 +14,6 @@ export const SwPasswordField: React.FC<PasswordFieldProps> = ({ componentProps, 
 				componentProps={{ ...componentProps, type: 'password' }}
 				component={Form.Input}
 				onChange={handlePasswordChange}
-				value={password}
 				{...props}
 			/>
 			<Progress
