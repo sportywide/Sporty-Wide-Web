@@ -1,7 +1,7 @@
 {
 	"name": "sportywide-web",
 	"version": "1.0.0",
-	"description": "",
+	"description": "Sporty Wide Web repository",
 	"license": "MIT",
 	"author": "",
 	"scripts": {
@@ -12,7 +12,7 @@
 		"build:next": "rm -rf next-build && next build ./src",
 		"build:webpack": "TS_NODE_TYPE_CHECK=false TS_NODE_TRANSPILE_ONLY=true webpack -r tsconfig-paths/register",
 		"dev": "rm -rf dist/ && run-p dev:*",
-		"dev:server": "wait-on dist/main.js && nodemon",
+		"dev:server": "wait-on dist/main.js && node dist/main.js",
 		"dev:webpack": "TS_NODE_TRANSPILE_ONLY=true TS_NODE_TYPE_CHECK=false webpack -r tsconfig-paths/register",
 		"start": "NODE_ENV=production node dist/main.js"
 	},

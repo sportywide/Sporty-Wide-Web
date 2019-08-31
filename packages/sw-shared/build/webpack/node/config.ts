@@ -6,7 +6,6 @@ import webpack from 'webpack';
 import {
 	addPlugins,
 	createConfig,
-	entryPoint,
 	env,
 	resolve,
 	setEnv,
@@ -18,18 +17,18 @@ import { getDependencies } from '@root/helpers/package';
 import { isDevelopment } from '@shared/lib/utils/env';
 import paths from '@build/paths';
 import { babelHelper } from '../plugins/transpile';
-import { externals, node, target, watch } from '../plugins/core';
+import { externals, node, none, setEntry, target, watch } from '../plugins/core';
 
 export function makeConfig({
 	entries,
 	output,
 	alias,
-	tsconfig,
+	hot,
 }: {
 	entries: any;
 	output: string;
 	alias: any;
-	tsconfig?: string;
+	hot?: boolean;
 }) {
 	// @ts-ignore
 	process.env.NODE_ENV = process.env.NODE_ENV || 'development';
@@ -39,9 +38,14 @@ export function makeConfig({
 	return createConfig([
 		setOutput(output),
 		setMode(isDevelopment() ? 'development' : 'production'),
-		entryPoint(entries),
+		setEntry(entries),
 		target('node'),
-		externals(getNodeModules()),
+		externals([
+			...getNodeModules(),
+			nodeExternals({
+				whitelist: ['webpack/hot/poll?1000'],
+			}),
+		]),
 		babelHelper({
 			cwd: path.resolve(__dirname, 'babel'),
 			cacheDirectory: true,
@@ -54,7 +58,11 @@ export function makeConfig({
 		setEnv({
 			NODE_ENV: process.env.NODE_ENV,
 		}),
-		env('development', [watch(), sourceMaps('inline-source-map')]),
+		env('development', [
+			watch(),
+			sourceMaps('inline-source-map'),
+			hot ? addPlugins([new webpack.HotModuleReplacementPlugin()]) : none(),
+		]),
 		env('production', [sourceMaps('source-map')]),
 		addPlugins([
 			new webpack.BannerPlugin({

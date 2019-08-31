@@ -1,5 +1,5 @@
 import Routes from 'next-routes';
-
+declare const module: any;
 const routeMappings = [
 	{
 		name: 'login',
@@ -36,4 +36,8 @@ export const Router = routes.Router;
 export function findPathForRoute(routeName) {
 	const routeMapping = routeMappings.find(route => route.name === routeName);
 	return (routeMapping && routeMapping.pattern) || `/${routeName}`;
+}
+
+if (module.hot) {
+	module.hot.accept();
 }

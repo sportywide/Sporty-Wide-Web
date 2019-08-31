@@ -14,7 +14,7 @@ const SwConfirmSocialComponent: React.FC<any> = () => {
 		<Segment className={'ub-flex ub-flex-column'}>
 			<Image className={'ub-align-self-center'} circular size={'tiny'} src={require('@web/static/logo.svg')} />
 			<Header as={'h3'} className={'ub-align-self-center'}>
-				Complete your profile
+				Complete your profiles
 			</Header>
 			<Formik
 				initialValues={{}}

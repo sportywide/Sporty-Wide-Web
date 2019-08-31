@@ -1,3 +1,5 @@
+import 'sporty-wide-style/dist/basscss.min.css';
+import 'sporty-wide-style/dist/semantic.min.css';
 import '@web/styles/styles.scss';
 import 'reflect-metadata';
 import App from 'next/app';

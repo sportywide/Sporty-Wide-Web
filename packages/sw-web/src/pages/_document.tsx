@@ -27,8 +27,6 @@ export default class extends Document<IProps> {
 				<Head>
 					{this.props.styleTags}
 					<link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico" />
-					<link rel="stylesheet" type="text/css" href="/static/basscss.min.css" />
-					<link rel="stylesheet" type="text/css" href="/static/semantic.min.css" />
 				</Head>
 				<body>
 					<Main />

@@ -49,6 +49,7 @@ class SwHomePage extends React.Component<IProps, any> {
 						<h5>Current user</h5>
 						<div>Email: {this.props.user.email}</div>
 						<div>Name: {this.props.user.name}</div>
+						<div>Username: {this.props.user.username}</div>
 					</div>
 				)}
 				<Button onClick={() => this.props.logout()}>Logout</Button>

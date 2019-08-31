@@ -18,8 +18,6 @@ import {
 	UNAUTHENTICATED,
 	UNAUTHORIZED,
 } from '@web/shared/lib/http/status-codes';
-import { parseCookies } from '@web/shared/lib/auth/helper';
-import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 
 export const devProxy = {
 	'/api': {
@@ -57,8 +55,8 @@ export const devProxy = {
 				'/verify-email': setCookiesAndRedirect,
 				'/facebook': redirectOnError,
 				'/google': redirectOnError,
-				'/facebook/callback': socialProfileCallback,
-				'/google/callback': socialProfileCallback,
+				'/facebook/callback': setCookiesAndRedirect,
+				'/google/callback': setCookiesAndRedirect,
 				'/complete-social-profile': setCookies,
 			};
 
@@ -87,16 +85,6 @@ function handleAuthHeader(proxyReq, req: Request) {
 
 	if (refreshToken) {
 		proxyReq.setHeader('Refresh-Token', refreshToken);
-	}
-}
-
-function socialProfileCallback(proxyRes, request, response) {
-	const cookies = request.cookies;
-	const { user } = parseCookies(cookies);
-	if (user.status === UserStatus.PENDING) {
-		return setCookiesAndRedirect(proxyRes, request, response, '/complete-social-profile');
-	} else {
-		return setCookiesAndRedirect(proxyRes, request, response);
 	}
 }
 
