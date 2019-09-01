@@ -69,7 +69,7 @@ export class User extends TrackTimestamp(BaseEntity) {
 			this.password = await hashPassword(this.password);
 		}
 
-		if (this.id && !(this.status == UserStatus.PENDING && this.socialProvider) && this.changed('username')) {
+		if (this.id && !(this._initialValues.status == UserStatus.PENDING && this._initialValues.socialProvider) && this.changed('username')) {
 			throw new BadRequestException('Cannot change username');
 		}
 	}

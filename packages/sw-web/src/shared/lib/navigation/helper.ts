@@ -1,6 +1,6 @@
 import { findPathForRoute, Router } from '@web/routes';
 
-export async function redirect({ context, route, replace = true, params = undefined }) {
+export async function redirect({ context = undefined, route, replace = true, params = undefined }) {
 	if (context && context.res) {
 		context.res.writeHead(302, {
 			Location: findPathForRoute(route),

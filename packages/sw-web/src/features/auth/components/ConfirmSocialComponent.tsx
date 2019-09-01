@@ -28,7 +28,8 @@ const SwConfirmSocialComponent: React.FC<any> = () => {
 
 	async function confirmSocialProfile(values) {
 		const authService = container.get(AuthService);
-		return authService.confirmSocial(values).toPromise();
+		await authService.confirmSocial(values).toPromise();
+		window.location.replace('/');
 	}
 };
 

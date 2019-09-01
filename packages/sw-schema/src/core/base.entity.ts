@@ -1,7 +1,7 @@
 import { AfterLoad, PrimaryGeneratedColumn } from 'typeorm';
 
 export class BaseEntity {
-	_initialValues = {};
+	_initialValues: any = {};
 
 	@PrimaryGeneratedColumn() id: number;
 
