@@ -1,29 +1,33 @@
 import 'reflect-metadata';
+import http from 'http';
 import next from 'next';
 import { isDevelopment } from '@shared/lib/utils/env';
 import config from '@web/config';
 declare const module: any;
 const env = process.env.NODE_ENV;
-const app = next({
+import { bootstrap } from './app';
+const nextApp = next({
 	dir: './src',
 	dev: isDevelopment(),
 });
 
-let server;
+let server, express;
 
-app.prepare()
-	.then(() => {
-		serve(app);
+nextApp
+	.prepare()
+	.then(async () => {
+		await startServer();
 
 		if (module.hot) {
+			module.hot.accept(err => console.error(err));
+			module.hot.dispose(() => {
+				console.info('Disposing entry module...');
+				server.close();
+			});
+
 			module.hot.accept('./app', () => {
-				if (server) {
-					server.close(() => {
-						serve(app);
-					});
-				} else {
-					serve(app);
-				}
+				server.removeListener('request', express);
+				reloadServer();
 			});
 		}
 	})
@@ -31,19 +35,26 @@ app.prepare()
 		console.error('An error occurred, unable to start the server', err);
 	});
 
-function serve(app) {
-	console.info('Starting app');
-	const { bootstrap } = require('./app');
-	const express = bootstrap(app);
+function startServer() {
+	console.info('Starting express application');
 
-	return new Promise((resolve, reject) => {
+	return new Promise(resolve => {
+		express = bootstrap(nextApp);
 		const port = parseInt(config.get('port'), 10) || 3000;
-		server = express.listen(port, err => {
-			if (err) {
-				reject(err);
-			}
+		server = http.createServer(express);
+		server.listen(port, () => {
 			console.info(`> Ready on port ${port} [${env}]`);
 			resolve();
 		});
+	});
+}
+
+function reloadServer() {
+	console.info('Reload http server');
+	// eslint-disable-next-line import/dynamic-import-chunkname
+	import('./app').then(({ bootstrap }) => {
+		express = bootstrap(nextApp);
+		server.on('request', express);
+		console.info('http server reloaded');
 	});
 }

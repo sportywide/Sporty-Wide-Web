@@ -38,14 +38,9 @@ export function makeConfig({
 	return createConfig([
 		setOutput(output),
 		setMode(isDevelopment() ? 'development' : 'production'),
-		setEntry(entries),
+		setEntry(hot ? ['webpack/hot/poll?1000', entries] : entries),
 		target('node'),
-		externals([
-			...getNodeModules(),
-			nodeExternals({
-				whitelist: ['webpack/hot/poll?1000'],
-			}),
-		]),
+		externals([...getNodeModules()]),
 		babelHelper({
 			cwd: path.resolve(__dirname, 'babel'),
 			cacheDirectory: true,
@@ -130,6 +125,7 @@ function getNodeModules() {
 		...packageDirs.map(dir => path.resolve(dir, 'node_modules')),
 	].map(dir =>
 		nodeExternals({
+			whitelist: 'webpack/hot/poll?1000',
 			modulesDir: dir,
 		})
 	);
