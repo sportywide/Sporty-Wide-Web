@@ -89,10 +89,6 @@ function handleAuthHeader(proxyReq, req: Request) {
 }
 
 function setCookiesAndRedirect(proxyRes, request, response, redirectUrl?: string) {
-	if (proxyRes.statusCode >= 400) {
-		response.redirect('/login');
-		return;
-	}
 	const cookies = request.cookies || {};
 	setCookies(proxyRes, request, response, redirectUrl || cookies[COOKIE_REFERRER] || '/');
 }
