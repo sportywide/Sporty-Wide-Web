@@ -25,6 +25,7 @@ export default class extends Document<IProps> {
 		return (
 			<html>
 				<Head>
+					<meta httpEquiv="Content-Type" content="text/html; charset=UTF-8" />
 					{this.props.styleTags}
 					<link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico" />
 				</Head>
