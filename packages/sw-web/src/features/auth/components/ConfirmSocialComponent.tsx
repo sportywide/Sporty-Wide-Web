@@ -8,6 +8,7 @@ import { SwPasswordField } from '@web/shared/lib/form/components/PasswordField';
 import { ContainerContext } from '@web/shared/lib/store';
 import { AuthService } from '@web/features/auth/services/auth.service';
 import { validateUnique } from '@web/shared/lib/form/validation';
+import { redirect } from '@web/shared/lib/navigation/helper';
 
 const validateUsername = validateUnique({ table: 'user', field: 'username' });
 const SwConfirmSocialComponent: React.FC<any> = () => {
@@ -31,7 +32,10 @@ const SwConfirmSocialComponent: React.FC<any> = () => {
 	async function confirmSocialProfile(values) {
 		const authService = container.get(AuthService);
 		await authService.confirmSocial(values).toPromise();
-		window.location.replace('/');
+		await redirect({
+			refresh: true,
+			route: 'home',
+		});
 	}
 
 	function renderForm(props: FormikProps<any>) {

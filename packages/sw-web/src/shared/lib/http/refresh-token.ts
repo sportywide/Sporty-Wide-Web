@@ -1,3 +1,4 @@
+import path from 'path';
 import { Axios } from 'axios-observable';
 import { UNAUTHENTICATED } from '@web/shared/lib/http/status-codes';
 
@@ -23,7 +24,14 @@ export function createRefreshTokenInterceptor(axios: Axios, refreshTokenCall) {
 			return refreshCall
 				.then(() => {
 					axios.interceptors.request.eject(requestQueueInterceptorId);
-					return axios.request(error.response.config).toPromise();
+					const config = error.response.config;
+					const relPath = path.relative(config.baseURL, config.url);
+					return axios
+						.request({
+							...config,
+							url: `/${relPath}`,
+						})
+						.toPromise();
 				})
 				.catch(error => {
 					axios.interceptors.request.eject(requestQueueInterceptorId);
