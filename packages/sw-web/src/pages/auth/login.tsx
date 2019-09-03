@@ -3,6 +3,7 @@ import { checkUser, notAllowActive } from '@web/shared/lib/auth/check-user';
 import Head from 'next/head';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { redirect } from '@web/shared/lib/navigation/helper';
+import { Link } from '@web/routes';
 
 class SwLoginPage extends React.Component<any> {
 	static async getInitialProps(context) {
@@ -48,6 +49,11 @@ class SwLoginPage extends React.Component<any> {
 							Google Plus
 						</a>
 					</button>
+					<div>
+						<Link route={'forgot-password'}>
+							<a>Forgot your password?</a>
+						</Link>
+					</div>
 				</div>
 			</div>
 		);

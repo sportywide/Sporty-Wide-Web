@@ -1,22 +1,22 @@
 import React from 'react';
-import { SwConfirmSocial } from '@web/features/auth/components/ConfirmSocial';
 import { SwPrimaryBackGround } from '@web/shared/styled/core.styled';
 import Head from 'next/head';
 import { Container, Grid, GridColumn } from 'semantic-ui-react';
-import { allowPendingSocialOnly, checkUser } from '@web/shared/lib/auth/check-user';
+import { allowAnonymousOnly, checkUser } from '@web/shared/lib/auth/check-user';
+import { SwForgotPassword } from '@web/features/auth/components/ForgotPassword';
 
-class SwConfirmSocialPage extends React.Component<any> {
+class SwForgotPasswordPage extends React.Component<any> {
 	render() {
 		return (
 			<>
 				<Head>
-					<title>Complete your profile</title>
+					<title>Forgot your password</title>
 				</Head>
 				<SwPrimaryBackGround>
 					<Container style={{ width: '100%' }}>
 						<Grid verticalAlign={'middle'} centered>
 							<GridColumn mobile={14} tablet={8} computer={6}>
-								<SwConfirmSocial />
+								<SwForgotPassword />
 							</GridColumn>
 						</Grid>
 					</Container>
@@ -26,4 +26,4 @@ class SwConfirmSocialPage extends React.Component<any> {
 	}
 }
 
-export default checkUser(allowPendingSocialOnly, 'home')(SwConfirmSocialPage);
+export default checkUser(allowAnonymousOnly, 'home')(SwForgotPasswordPage);

@@ -5,6 +5,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import { createEpicManager, IEpicManager } from '@web/shared/lib/redux/epic-manager';
 import { isDevelopment } from '@shared/lib/utils/env';
 import { parseContext } from '@web/shared/lib/auth/helper';
+import { reducer as notifications } from 'react-notification-system-redux';
 import { Container } from 'typedi';
 import { authReducer } from '@web/features/auth/store/reducers';
 import { logoutEpic } from '@web/features/auth/store/epics';
@@ -25,6 +26,7 @@ export function initStore(initialState = {}, context) {
 	const container = registerContainer({ auth });
 	const initialReducers = getInitialReducers(initialState, {
 		auth: authReducer,
+		notifications,
 	});
 	const reducerManager = createReducerManager(initialReducers);
 	const epicMiddleware = createEpicMiddleware({

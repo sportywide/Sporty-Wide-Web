@@ -1,5 +1,6 @@
 /* eslint @typescript-eslint/camelcase: 0 */
 
 module.exports = {
-	cookie_secret: 'testsecret',
+	port: 3000,
+	server_url: 'http://api:5000',
 };

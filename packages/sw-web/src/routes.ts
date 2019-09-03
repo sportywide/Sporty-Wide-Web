@@ -1,5 +1,6 @@
 import Routes from 'next-routes';
 declare const module: any;
+
 const routeMappings = [
 	{
 		name: 'login',
@@ -25,6 +26,11 @@ const routeMappings = [
 		name: 'confirm-email',
 		pattern: '/confirm-email',
 		page: 'auth/confirm-email',
+	},
+	{
+		name: 'forgot-password',
+		pattern: '/forgot-password',
+		page: 'auth/forgot-password',
 	},
 ];
 

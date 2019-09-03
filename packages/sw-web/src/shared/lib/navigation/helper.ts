@@ -28,6 +28,8 @@ export async function redirect({
 				window.location.href = redirectUrl;
 			}
 		} else {
+			const path = findPathForRoute(route);
+			route = path ? route : `/${route}`;
 			if (replace) {
 				return Router.replaceRoute(route, params);
 			} else {

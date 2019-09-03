@@ -6,10 +6,17 @@ import routes from '@web/routes';
 import cookieParser from 'cookie-parser';
 import csurf from 'csurf';
 const CSRF_WHITE_LIST = ['login', 'signup'];
+import flash from 'express-cookie-flash';
+import config from '@web/config';
 
 export function bootstrap(app) {
 	const server = express();
-	server.use(cookieParser());
+	server.use(cookieParser(config.get('cookie_secret')));
+	server.use(
+		flash({
+			secure: isProduction(),
+		})
+	);
 	server.use(
 		csurf({
 			cookie: {

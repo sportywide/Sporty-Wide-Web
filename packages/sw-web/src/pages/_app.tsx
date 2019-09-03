@@ -13,10 +13,14 @@ import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { allowActiveOnly } from '@web/shared/lib/auth/check-user';
 import { ThemeProvider } from 'styled-components';
 import { COOKIE_REFERRER } from '@web/api/auth/constants';
+import Notifications from 'react-notification-system-redux';
+import NotificationContainer from '@web/shared/lib/components/notification/NotificationContainer';
+import { ucfirst } from '@shared/lib/utils/string/conversion';
 
 interface IProps {
 	store?: Store;
 	user?: IUser;
+	flashMessages: {};
 }
 
 const theme = {
@@ -57,7 +61,28 @@ class SwApp extends App<IProps> {
 			pageProps = await Component.getInitialProps(ctx);
 		}
 
-		return { pageProps, user };
+		let flashMessages = {};
+		if (ctx.req) {
+			flashMessages = ctx.req.flash() || {};
+		}
+
+		return { pageProps, user, flashMessages };
+	}
+
+	componentDidMount(): void {
+		const flashMessages = this.props.flashMessages;
+		for (const type of ['success', 'error', 'warning', 'info']) {
+			if (flashMessages[type] && flashMessages[type].length) {
+				for (const message of flashMessages[type]) {
+					this.props.store.dispatch(
+						Notifications[type]({
+							title: ucfirst(type),
+							message,
+						})
+					);
+				}
+			}
+		}
 	}
 
 	render() {
@@ -68,6 +93,7 @@ class SwApp extends App<IProps> {
 					<UserContext.Provider value={user}>
 						<Component {...pageProps} />
 					</UserContext.Provider>
+					<NotificationContainer />
 				</Provider>
 			</ThemeProvider>
 		);

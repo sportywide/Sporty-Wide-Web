@@ -134,11 +134,19 @@ function redirectOnError(proxyRes, req, res) {
 	if (proxyRes.statusCode < 400 || req.method !== 'GET') {
 		return;
 	}
-	if ([NOT_FOUND, UNAUTHORIZED, BAD_REQUEST].includes(proxyRes.statusCode)) {
-		res.redirect('/');
-	} else if (proxyRes.statusCode === UNAUTHENTICATED) {
-		res.redirect('/login');
-	} else {
-		res.redirect('/error');
-	}
+	modifyResponse(res, proxyRes, function(error) {
+		if (error && error.message) {
+			res.flash('error', error.message);
+		}
+
+		res.status(TEMPORARY_REDIRECT);
+		if ([NOT_FOUND, UNAUTHORIZED, BAD_REQUEST].includes(proxyRes.statusCode)) {
+			res.location('/');
+		} else if (proxyRes.statusCode === UNAUTHENTICATED) {
+			res.location('/login');
+		} else {
+			res.location('/error');
+		}
+		return error;
+	});
 }
