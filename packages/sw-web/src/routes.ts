@@ -21,6 +21,11 @@ const routeMappings = [
 		pattern: '/confirm-social',
 		page: 'auth/confirm-social',
 	},
+	{
+		name: 'confirm-email',
+		pattern: '/confirm-email',
+		page: 'auth/confirm-email',
+	},
 ];
 
 let routes = new Routes();
@@ -36,8 +41,4 @@ export const Router = routes.Router;
 export function findPathForRoute(routeName) {
 	const routeMapping = routeMappings.find(route => route.name === routeName);
 	return (routeMapping && routeMapping.pattern) || `/${routeName}`;
-}
-
-if (module.hot) {
-	module.hot.accept();
 }

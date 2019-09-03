@@ -25,7 +25,7 @@ nextApp
 				server.close();
 			});
 
-			module.hot.accept('./app', () => {
+			module.hot.accept(['./app', './routes'], () => {
 				server.removeListener('request', express);
 				reloadServer();
 			});

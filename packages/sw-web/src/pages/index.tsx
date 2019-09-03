@@ -14,6 +14,7 @@ import Head from 'next/head';
 import { logout } from '@web/features/auth/store/actions';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { allowActiveOnly, checkUser } from '@web/shared/lib/auth/check-user';
+import { redirect } from '@web/shared/lib/navigation/helper';
 
 interface IProps {
 	startFetchingCharacters: Function;
@@ -55,6 +56,7 @@ class SwHomePage extends React.Component<IProps, any> {
 				<Button onClick={() => this.props.logout()}>Logout</Button>
 				<h1>Index Page</h1>
 				<CharacterInfo />
+				<Button onClick={() => redirect({ route: 'confirm-email', replace: true })}>Go to other</Button>
 				<Segment>
 					<Flag name="ae" />
 					<Flag name="france" />
