@@ -9,6 +9,7 @@ import { InjectSwRepository } from '@schema/core/repository/sql/inject-repositor
 import { SwRepository } from '@schema/core/repository/sql/base.repository';
 
 const VERIFY_EMAIL_TOKEN_EXPIRATION_LENGTH = 2;
+const FORGOT_PASSWORD_TOKEN_EXPIRATION_LENGTH = 1;
 
 @Injectable()
 export class TokenService extends BaseEntityService<Token> {
@@ -22,6 +23,17 @@ export class TokenService extends BaseEntityService<Token> {
 			engagementTable: this.tokenRepository.getTableNameForEntity(User),
 			type: TokenType.CONFIRM_EMAIL,
 			ttl: addDays(new Date(), VERIFY_EMAIL_TOKEN_EXPIRATION_LENGTH),
+		};
+		return this.saveOne(token as Token);
+	}
+
+	async createForgotPasswordToken(user: User) {
+		const token: Partial<Token> = {
+			content: uuid(),
+			engagementId: user.id,
+			engagementTable: this.tokenRepository.getTableNameForEntity(User),
+			type: TokenType.FORGOT_PASSWORD,
+			ttl: addDays(new Date(), FORGOT_PASSWORD_TOKEN_EXPIRATION_LENGTH),
 		};
 		return this.saveOne(token as Token);
 	}

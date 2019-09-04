@@ -8,6 +8,7 @@ import csurf from 'csurf';
 const CSRF_WHITE_LIST = ['login', 'signup'];
 import flash from 'express-cookie-flash';
 import config from '@web/config';
+import { COOKIE_CSRF } from '@web/api/auth/constants';
 
 export function bootstrap(app) {
 	const server = express();
@@ -29,9 +30,18 @@ export function bootstrap(app) {
 	);
 	server.use('/auth', authRouter);
 	setupProxy(devProxy);
+	server.use((req, res, next) => {
+		const cookies = req.cookies || {};
 
+		if (cookies[COOKIE_CSRF]) {
+			return next();
+		}
+		res.cookie(COOKIE_CSRF, (req as any).csrfToken(), {
+			secure: isProduction(),
+		});
+		next();
+	});
 	const handler = routes.getRequestHandler(app);
-
 	// Default catch-all handler to allow Next.js to handle all other routes
 	server.use(handler);
 

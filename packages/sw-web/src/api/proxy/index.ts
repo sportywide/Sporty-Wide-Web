@@ -135,7 +135,7 @@ function redirectOnError(proxyRes, req, res) {
 		return;
 	}
 	modifyResponse(res, proxyRes, function(error) {
-		if (error && error.message) {
+		if (error && error.message && proxyRes.statusCode !== NOT_FOUND) {
 			res.flash('error', error.message);
 		}
 

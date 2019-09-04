@@ -16,4 +16,8 @@ export class AuthService {
 	confirmSocial(completeSocialProfileDto: CompleteSocialProfileDto) {
 		return this.apiService.auth().post('/complete-social-profile', completeSocialProfileDto);
 	}
+
+	sendForgotPasswordEmail(body) {
+		return this.apiService.auth().post('/forgot-password', body);
+	}
 }

@@ -14,6 +14,7 @@ import { SocialProfileDto } from '@shared/lib/dtos/user/social-profile.dto';
 import { SocialProvider } from '@shared/lib/dtos/user/enum/social-provider.enum';
 import { TokenService } from '@api/auth/services/token.service';
 import { CompleteSocialProfileDto } from '@shared/lib/dtos/user/complete-social-profile.dto';
+import { TokenType } from '@schema/auth/models/enums/token-type.token';
 
 export class Tokens {
 	@ApiModelProperty() accessToken: string;
@@ -47,6 +48,20 @@ export class AuthService {
 		user.status = UserStatus.ACTIVE;
 		user = await this.userService.saveOne(user);
 		return this.createTokens(user);
+	}
+
+	public async sendForgotPasswordEmail(email: string): Promise<void> {
+		const user = await this.userService.findOne({ email });
+		if (!user) {
+			throw new NotFoundException(`User with email ${email} cannot be found`);
+		}
+		await this.tokenService.delete({
+			engagementTable: this.userService.getTableName(),
+			engagementId: user.id,
+			type: TokenType.FORGOT_PASSWORD,
+		});
+		await this.tokenService.createForgotPasswordToken(user);
+		await this.emailService.sendForgotPasswordEmail(user);
 	}
 
 	public async createTokens(user: User): Promise<Tokens> {

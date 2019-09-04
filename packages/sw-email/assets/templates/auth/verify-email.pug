@@ -1,0 +1,15 @@
+extends ../base/layout
+
+block content
+    tr(class='verify-email')
+        td(class='ub-p2 bg-white')
+            table(class='ub-border-none ub-p0 full-width')
+                tr
+                    td(style='email-heading')
+                        b Welcome to Sportywide
+                tr
+                    td(style='verify-email__content')
+                        | Please click the link below to verify your email.
+                        br
+                        br
+                        a(href=appUrl + "/auth/verify-email?token=" + token + '&user=' + userId) Verify your email

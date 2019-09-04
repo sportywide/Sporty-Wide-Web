@@ -125,6 +125,9 @@ export class AuthController {
 		return this.authService.createTokens(user);
 	}
 
+	@ApiOkResponse({ description: 'The user has completed their social profile', type: Tokens })
+	@AuthorizedApiOperation({ title: 'Complete social profile endpoint' })
+	@HttpCode(HttpStatus.OK)
 	@Post('complete-social-profile')
 	@PendingSocialUser()
 	@UseGuards(JwtAuthGuard)
@@ -134,5 +137,15 @@ export class AuthController {
 		completeSocialProfileDto: CompleteSocialProfileDto
 	) {
 		return this.authService.completeSocialProfile(user, completeSocialProfileDto);
+	}
+
+	@ApiOkResponse({ description: 'A forgot password email has been sent' })
+	@AuthorizedApiOperation({ title: 'Send Forgot Password endpoint' })
+	@Post('forgot-password')
+	@HttpCode(HttpStatus.OK)
+	@UseGuards(AuthenticatedGuard)
+	public forgotPassword(@Body() body: { email: string }) {
+		const { email } = body;
+		return this.authService.sendForgotPasswordEmail(email);
 	}
 }

@@ -23,3 +23,24 @@ export function validateUnique({ table, field, debounceMs = 500 }) {
 		});
 	};
 }
+
+export function validateExists({ table, field, debounceMs = 500 }) {
+	const utilService = Container.get(UtilService);
+	const debounce = new Debounce(debounceMs);
+
+	return function(value) {
+		if (!value) {
+			return;
+		}
+		return new Promise<void>((resolve, reject) => {
+			debounce.run(async () => {
+				const exists = !(await utilService.validateUnique({ table, field, value }).toPromise());
+				if (exists) {
+					resolve();
+				} else {
+					reject('Email does not exist');
+				}
+			});
+		});
+	};
+}
