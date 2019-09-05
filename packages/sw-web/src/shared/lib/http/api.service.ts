@@ -3,7 +3,7 @@ import { Service, Inject } from 'typedi';
 import axios, { Axios } from 'axios-observable';
 import { COOKIE_CSRF } from '@web/api/auth/constants';
 import { createRefreshTokenInterceptor } from '@web/shared/lib/http/refresh-token';
-import { BehaviorSubject } from 'rxjs';
+import { BehaviorSubject, Subject } from 'rxjs';
 import { isBrowser } from '@web/shared/lib/environment';
 
 @Service({ global: true })
@@ -11,6 +11,7 @@ export class ApiService {
 	private readonly apiBase: Axios;
 	private readonly authBase: Axios;
 	private apiCallSubscription = new BehaviorSubject<number>(0);
+	private apiErrorSubscription = new Subject<Error>();
 
 	constructor(@Inject('baseUrl') private baseUrl: string) {
 		this.apiBase = axios.create({
@@ -40,6 +41,10 @@ export class ApiService {
 		return this.apiCallSubscription;
 	}
 
+	subscribeToError() {
+		return this.apiErrorSubscription;
+	}
+
 	api() {
 		return this.apiBase;
 	}
@@ -60,6 +65,7 @@ export class ApiService {
 					return response;
 				},
 				error => {
+					this.apiErrorSubscription.next(error);
 					this.apiCallSubscription.next(this.apiCallSubscription.getValue() - 1);
 					return error;
 				}

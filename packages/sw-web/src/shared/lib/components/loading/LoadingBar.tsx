@@ -1,7 +1,6 @@
-import * as React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { ReactReduxContext } from 'react-redux';
 import ReactLoadingBar, { showLoading, hideLoading } from 'react-redux-loading-bar';
-import { useContext, useEffect } from 'react';
 import { Container } from 'typedi';
 import { ApiService } from '@web/shared/lib/http/api.service';
 
