@@ -1,5 +1,6 @@
 import { QueryFailedError } from 'typeorm';
 import { ucfirst } from '@shared/lib/utils/string/conversion';
+
 const ER_DUP_ENTRY = '23505';
 
 export function getFriendlyErrorMessage(err: QueryFailedError) {

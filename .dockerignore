@@ -3,6 +3,6 @@
 **/node_modules
 **/.docker-sync
 **/dist
-**/.next
+**/next-build
 **/.idea
 **/.vagrant

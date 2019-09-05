@@ -1,5 +1,5 @@
 import { interval } from 'rxjs';
-import { mergeMap, takeUntil } from 'rxjs/operators';
+import { exhaustMap, mergeMap, takeUntil } from 'rxjs/operators';
 import {
 	START_FETCHING_CHARACTERS,
 	STOP_FETCHING_CHARACTERS,
@@ -10,7 +10,7 @@ export const fetchUserEpic = (action$, state$) => {
 	return action$.ofType(START_FETCHING_CHARACTERS).pipe(
 		mergeMap(() =>
 			interval(3000).pipe(
-				mergeMap(() => fetchCharacter(state$.value.home.nextCharacterId)),
+				exhaustMap(() => fetchCharacter(state$.value.home.nextCharacterId)),
 				takeUntil(action$.ofType(STOP_FETCHING_CHARACTERS))
 			)
 		)

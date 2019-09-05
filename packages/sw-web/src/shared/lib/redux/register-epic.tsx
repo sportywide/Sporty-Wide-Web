@@ -18,9 +18,6 @@ export function registerEpic(...epics) {
 				super(props);
 				const { store } = this.props.context;
 				this.epicManager = (store as ISportyWideStore).epicManager;
-			}
-
-			componentWillMount() {
 				NewComponent.registerEpics(this.epicManager);
 			}
 

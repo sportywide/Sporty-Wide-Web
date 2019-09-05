@@ -1,22 +1,34 @@
 version: '3.5'
 services:
+    node:
+        container_name: sw_node
+        image: sportywide/sportywide-node-alpine
+        build:
+            context: .
+            dockerfile: Dockerfile
+            target: node
     base:
-        image: sportywide-base
+        container_name: sw_base
+        image: sportywide/sportywide-base
+        depends_on:
+            - node
         build:
             context: .
             dockerfile: Dockerfile
             target: base
         networks:
-            - sportywide-backend
-            - sportywide-frontend
+            - sw_net_backend
+            - sw_net_frontend
         environment:
             NO_OPTIONAL: 1
             NODE_ENV: development
-        command: npm run install:dependencies
+        entrypoint: npm run install:dependencies
         volumes:
             - .:/opt/app
             - node_modules:/opt/app/node_modules
     web:
+        container_name: sw_web
+        image: sportywide/sportywide-web
         build:
             context: .
             dockerfile: ./packages/sw-web/Dockerfile
@@ -32,10 +44,13 @@ services:
         volumes:
             - .:/opt/app
             - node_modules:/opt/app/node_modules
+            - /opt/app/packages/sw-web/next-build
         networks:
-            - sportywide-frontend
-            - sportywide-backend
+            - sw_net_frontend
+            - sw_net_backend
     api:
+        container_name: sw_api
+        image: sportywide/sportywide-api
         build:
             context: .
             dockerfile: ./packages/sw-api/Dockerfile
@@ -52,14 +67,18 @@ services:
             POSTGRES_USER: ${POSTGRES_USER}
             POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
             POSTGRES_DATABASE: ${POSTGRES_DB}
+            FACEBOOK_CLIENT_SECRET: ${FACEBOOK_CLIENT_SECRET}
+            GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
         depends_on:
             - base
         volumes:
             - .:/opt/app
             - node_modules:/opt/app/node_modules
         networks:
-            - sportywide-backend
+            - sw_net_backend
     email:
+        container_name: sw_email
+        image: sportywide/sportywide-email
         build:
             context: .
             dockerfile: ./packages/sw-email/Dockerfile
@@ -78,14 +97,15 @@ services:
             - .:/opt/app
             - node_modules:/opt/app/node_modules
         networks:
-            - sportywide-backend
+            - sw_net_backend
 networks:
-    sportywide-frontend:
+    sw_net_frontend:
         external:
-            name: sportywide-frontend
-    sportywide-backend:
+            name: sw_net_frontend
+    sw_net_backend:
         external:
-            name: sportywide-backend
+            name: sw_net_backend
 
 volumes:
     node_modules:
+        name: sw_volume_node_modules

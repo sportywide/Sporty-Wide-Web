@@ -5,16 +5,17 @@ const babel = require('next-plugin-custom-babel-config');
 const bundleAnalyzer = require('@zeit/next-bundle-analyzer');
 const css = require('@zeit/next-css');
 const scss = require('@zeit/next-sass');
-
+const { ENTRY_ORDER, default: InjectPlugin } = require('webpack-inject-plugin');
 const nextConfig = {
-	webpack: config => {
-		const oldConfig = config;
+	webpack: (config, options) => {
+		const { dir } = options;
 		config.resolve = {
-			...(oldConfig.resolve || {}),
+			...(config.resolve || {}),
 			alias: {
-				...oldConfig.resolve.alias,
-				'@shared': 'sportywide-shared/src',
-				'@web': `${paths.web.src}/`,
+				...config.resolve.alias,
+				'@shared': paths.shared.src,
+				'@web': paths.web.src,
+				'@web-test': path.resolve(paths.web.root, 'test'),
 			},
 		};
 		config.module.rules.push({
@@ -30,17 +31,54 @@ const nextConfig = {
 			},
 		});
 
+		config.module.rules.push({
+			test: /\.(ts|tsx)$/,
+			exclude: [/node_modules/, dir],
+			use: {
+				loader: 'babel-loader',
+				options: {
+					cwd: path.resolve(paths.shared.webpack, 'react', 'babel'),
+					cacheDirectory: true,
+				},
+			},
+		});
+
+		config.module.rules.push({
+			test: /@nestjs/,
+			use: 'null-loader',
+		});
+
+		config.plugins.push(
+			new InjectPlugin(() => 'require("reflect-metadata")', {
+				entryOrder: ENTRY_ORDER.First,
+			})
+		);
+
 		return config;
 	},
 	webpackDevMiddleware: config => {
 		config.watchOptions = {
+			...(config.watchOptions || {}),
 			poll: 1000, // Check for changes every second
 			aggregateTimeout: 300, // delay before rebuilding
+		};
+		config.noInfo = false;
+		config.logLevel = 'info';
+		config.stats = {
+			assets: false,
+			modules: false,
+			cachedAssets: false,
 		};
 		return config;
 	},
 	distDir: path.join('..', 'next-build'),
 	dir: paths.web.src,
+	onDemandEntries: {
+		// period (in ms) where the server will keep pages in the buffer
+		maxInactiveAge: 250 * 1000,
+		// number of pages that should be kept simultaneously without being disposed
+		pagesBufferLength: 10,
+	},
 };
 
 module.exports = withPlugins(

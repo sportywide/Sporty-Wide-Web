@@ -1,7 +1,11 @@
-import { DeleteResult, FindConditions, Repository } from 'typeorm';
+import { DeleteResult, FindConditions, FindManyOptions, Repository } from 'typeorm';
 
 export class BaseEntityService<T> {
 	constructor(private readonly repository: Repository<T>) {}
+
+	getTableName() {
+		return this.repository.metadata.tableName;
+	}
 
 	public async findAll(): Promise<T[]> {
 		return this.repository.find();
@@ -23,6 +27,10 @@ export class BaseEntityService<T> {
 		return this.repository.save(dto);
 	}
 
+	public async count(findOptions: FindManyOptions<T> | undefined) {
+		return this.repository.count(findOptions);
+	}
+
 	public createOneEntity(dto: T): T {
 		return this.repository.create(dto);
 	}
@@ -42,5 +50,9 @@ export class BaseEntityService<T> {
 
 	public async delete(params: FindConditions<T>): Promise<DeleteResult> {
 		return this.repository.delete(params);
+	}
+
+	public async remove(entity: T): Promise<T> {
+		return this.repository.remove(entity);
 	}
 }

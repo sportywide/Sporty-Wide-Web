@@ -1,13 +1,3 @@
-import React from 'react';
-import Link from 'next/link';
+import { SwOther } from '@web/features/home/components/OtherComponent';
 
-const OtherPage = () => (
-	<div>
-		<h1>Other Page</h1>
-		<Link href="/">
-			<a>Get back to &quot;/&quot;</a>
-		</Link>
-	</div>
-);
-
-export default OtherPage;
+export default SwOther;

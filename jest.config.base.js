@@ -15,4 +15,9 @@ module.exports = {
 		'!**/test/**',
 		'!**/node_modules/**',
 	],
+	globals: {
+		'ts-jest': {
+			diagnostics: false,
+		},
+	},
 };

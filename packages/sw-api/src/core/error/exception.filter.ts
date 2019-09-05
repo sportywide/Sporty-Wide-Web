@@ -7,6 +7,7 @@ import { getFriendlyErrorMessage } from '@schema/core/utils/error-message';
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
 	constructor(@Inject(API_LOGGER) private apiLogger: Logger) {}
+
 	catch(exception: unknown, host: ArgumentsHost) {
 		const ctx = host.switchToHttp();
 		const response = ctx.getResponse();

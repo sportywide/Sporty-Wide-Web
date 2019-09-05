@@ -8,7 +8,7 @@ export class ReducerManager {
 
 	constructor(initialReducers = {}) {
 		this.reducers = { ...initialReducers };
-		this.combinedReducers = Object.keys(this.reducers).length ? combineReducers(this.reducers) : state => state;
+		this.combinedReducers = this.syncReducers();
 		this.keysToRemove = [];
 	}
 
@@ -27,11 +27,11 @@ export class ReducerManager {
 
 	@autobind
 	add(key, reducer) {
-		if (!key || this.reducers[key]) {
+		if (!key) {
 			return;
 		}
 		this.reducers[key] = reducer;
-		this.combinedReducers = combineReducers(this.reducers);
+		this.combinedReducers = this.syncReducers();
 	}
 
 	@autobind
@@ -41,7 +41,11 @@ export class ReducerManager {
 		}
 		delete this.reducers[key];
 		this.keysToRemove.push(key);
-		this.combinedReducers = combineReducers(this.reducers);
+		this.combinedReducers = this.syncReducers();
+	}
+
+	private syncReducers() {
+		return Object.keys(this.reducers).length ? combineReducers(this.reducers) : state => state;
 	}
 }
 

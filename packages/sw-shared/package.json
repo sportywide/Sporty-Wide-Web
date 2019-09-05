@@ -2,25 +2,28 @@
 	"name": "sportywide-shared",
 	"version": "1.0.0",
 	"description": "Shared package that contains typescript interfaces, shared utility code between packages and build config",
-	"scripts": {},
 	"keywords": [],
 	"license": "ISC",
+	"scripts": {},
 	"dependencies": {
-		"dotenv": "8.0.0",
-		"nconf": "0.10.0",
-		"nconf-js-improved": "1.0.1",
-		"source-map-support": "0.5.12",
+		"@nestjs/swagger": "3.1.0",
 		"class-transformer-imp": "0.2.3",
 		"core-decorators": "0.20.0",
-		"reflect-metadata": "0.1.13",
-		"uuid": "3.3.2",
+		"date-fns": "2.0.1",
+		"dotenv": "8.1.0",
+		"juice": "5.2.0",
 		"lodash": "4.17.15",
-		"@nestjs/swagger": "3.1.0",
+		"nconf": "0.10.0",
+		"nconf-js-improved": "1.0.1",
+		"pug": "2.0.4",
+		"reflect-metadata": "0.1.13",
+		"source-map-support": "0.5.13",
+		"uuid": "3.3.3",
 		"yup": "0.27.0",
 		"yup-decorator": "2.0.0"
 	},
 	"devDependencies": {
-		"jest": "24.9.0",
-		"identity-obj-proxy": "3.0.0"
+		"identity-obj-proxy": "3.0.0",
+		"jest": "24.9.0"
 	}
 }

@@ -1,59 +1,60 @@
-import express from 'express';
+import 'reflect-metadata';
+import http from 'http';
 import next from 'next';
-import cookieParser from 'cookie-parser';
-import csurf from 'csurf';
-import { devProxy } from '@web/api/proxy';
-import { isDevelopment, isProduction } from '@shared/lib/utils/env';
-import { authRouter } from '@web/api/auth/routes';
-import config from './config';
-const CSRF_WHITE_LIST = ['login', 'signup'];
-
-const port = parseInt(config.get('port'), 10) || 3000;
+import { isDevelopment } from '@shared/lib/utils/env';
+import config from '@web/config';
+declare const module: any;
 const env = process.env.NODE_ENV;
-const app = next({
+import { bootstrap } from './app';
+const nextApp = next({
 	dir: './src',
 	dev: isDevelopment(),
 });
 
-const handle = app.getRequestHandler();
+let server, express;
 
-let server;
-app.prepare()
-	.then(() => {
-		server = express();
-		server.use(cookieParser());
-		server.use(
-			csurf({
-				cookie: {
-					secure: isProduction(),
-				},
-				whitelist: req => {
-					return CSRF_WHITE_LIST.some(whiteListPath => req.path && req.path.endsWith(whiteListPath));
-				},
-			})
-		);
-		server.use('/auth', authRouter);
-		setupProxy(devProxy);
+nextApp
+	.prepare()
+	.then(async () => {
+		await startServer();
 
-		// Default catch-all handler to allow Next.js to handle all other routes
-		server.all('*', (req, res) => handle(req, res));
+		if (module.hot) {
+			module.hot.accept(err => console.error(err));
+			module.hot.dispose(() => {
+				console.info('Disposing entry module...');
+				server.close();
+			});
 
-		server.listen(port, err => {
-			if (err) {
-				throw err;
-			}
-			console.log(`> Ready on port ${port} [${env}]`);
-		});
+			module.hot.accept(['./app', './routes'], () => {
+				server.removeListener('request', express);
+				reloadServer();
+			});
+		}
 	})
 	.catch(err => {
-		console.log('An error occurred, unable to start the server');
-		console.log(err);
+		console.error('An error occurred, unable to start the server', err);
 	});
 
-function setupProxy(proxy) {
-	// Set up the proxy.
-	const proxyMiddleware = require('http-proxy-middleware');
-	Object.keys(proxy).forEach(function(context) {
-		server.use(proxyMiddleware(context, proxy[context]));
+function startServer() {
+	console.info('Starting express application');
+
+	return new Promise(resolve => {
+		express = bootstrap(nextApp);
+		const port = parseInt(config.get('port'), 10) || 3000;
+		server = http.createServer(express);
+		server.listen(port, () => {
+			console.info(`> Ready on port ${port} [${env}]`);
+			resolve();
+		});
+	});
+}
+
+function reloadServer() {
+	console.info('Reload http server');
+	// eslint-disable-next-line import/dynamic-import-chunkname
+	import('./app').then(({ bootstrap }) => {
+		express = bootstrap(nextApp);
+		server.on('request', express);
+		console.info('http server reloaded');
 	});
 }

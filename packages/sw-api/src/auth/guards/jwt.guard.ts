@@ -1,14 +1,17 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { ExecutionContext, ForbiddenException, Injectable, UnauthorizedException } from '@nestjs/common';
+import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
+import { CHECK_METADATA, CheckFunction } from '@api/auth/decorators/user-check.decorator';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
-	handleRequest(err, user, info) {
+	constructor(private readonly reflector: Reflector) {
+		super();
+	}
+
+	handleRequest(err, user, info, context: ExecutionContext) {
 		let message;
-		if (user) {
-			return user;
-		}
 		if (err) {
 			throw err;
 		} else if (info) {
@@ -20,6 +23,10 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 				message = info.message;
 			}
 			throw new UnauthorizedException(message);
+		}
+		const checkFunction = this.reflector.get<CheckFunction>(CHECK_METADATA, context.getHandler());
+		if (checkFunction && !checkFunction(user)) {
+			throw new ForbiddenException('You are not allowed to access this endpoint');
 		}
 		return user;
 	}

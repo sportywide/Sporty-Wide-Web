@@ -1,4 +1,4 @@
-import { camelcaseToSnakecase, camelcaseToDashcase, ucfirst, toCamel } from '@shared/lib/utils/string/conversion';
+import { camelcaseToDashcase, camelcaseToSnakecase, toCamel, ucfirst } from '@shared/lib/utils/string/conversion';
 
 describe('Testing string conversion', () => {
 	describe('Testing ucfirst', () => {

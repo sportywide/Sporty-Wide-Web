@@ -24,10 +24,19 @@ module.exports = {
 		'import/dynamic-import-chunkname': 'warn',
 		'import/order': 'warn',
 		'import/no-unresolved': 0,
+		'react/prop-types': 0,
 	},
 	env: {
 		node: true,
 		es6: true,
 		jest: true,
 	},
+	overrides: [
+		{
+			files: ['packages/**/*.{js,ts,jsx,ts}'],
+			rules: {
+				'no-console': ['error', { allow: ['warn', 'error', 'info'] }],
+			},
+		},
+	],
 };

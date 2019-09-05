@@ -1,6 +1,7 @@
 version: '3.5'
 services:
     postgres:
+        container_name: sw_postgres
         image: sportywide/sportywide-postgres
         environment:
             - POSTGRES_DB=${POSTGRES_DB}
@@ -11,10 +12,11 @@ services:
         ports:
             - '${POSTGRES_PORT}:5432'
         networks:
-            - sportywide-backend
+            - sw_net_backend
     flyway:
+        container_name: sw_flyway
         image: sportywide/sportywide-flyway
-        command: -url=jdbc:postgresql://postgres:5432/${POSTGRES_DB} -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} migrate
+        command: -url=jdbc:postgresql://postgres:5432/${POSTGRES_DB} -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} -outOfOrder=true migrate
         volumes:
             - './sql:/flyway/sql'
         environment:
@@ -22,23 +24,29 @@ services:
         depends_on:
             - postgres
         networks:
-            - sportywide-backend
+            - sw_net_backend
     redis:
+        container_name: sw_redis
         image: sportywide/sportywide-redis
         volumes:
             - redis:/data
         ports:
             - '${REDIS_PORT}:6379'
         networks:
-            - sportywide-backend
+            - sw_net_backend
     mailhog:
+        container_name: sw_mailhog
         image: sportywide/sportywide-mailhog
         ports:
             - '${MAILHOG_TRANSPORT_PORT}:1025'
             - '${MAILHOG_UI_PORT}:8025'
         networks:
-            - sportywide-backend
+            - sw_net_backend
+        labels:
+            - 'traefik.frontend.rule=Host:mail.sportywidedev.com'
+            - 'traefik.port=8025'
     traefik:
+        container_name: sw_traefik
         image: traefik
         command: --web --docker --logLevel=INFO
         ports:
@@ -51,15 +59,17 @@ services:
             - ./certs/sportywide-cert.pem:/certs/sportywide-cert.pem
             - ./certs/sportywide-key.pem:/certs/sportywide-key.pem
         networks:
-            - sportywide-frontend
-            - sportywide-backend
+            - sw_net_frontend
+            - sw_net_backend
 volumes:
     postgres:
+        name: sw_volume_postgres
     redis:
+        name: sw_volume_redis
 networks:
-    sportywide-frontend:
+    sw_net_frontend:
         driver: bridge
-        name: sportywide-frontend
-    sportywide-backend:
+        name: sw_net_frontend
+    sw_net_backend:
         driver: bridge
-        name: sportywide-backend
+        name: sw_net_backend

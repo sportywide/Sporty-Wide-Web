@@ -1,0 +1,3 @@
+a.link {
+	@include map-modifiers($colors, 'color');
+}

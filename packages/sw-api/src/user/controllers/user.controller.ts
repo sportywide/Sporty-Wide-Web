@@ -1,12 +1,16 @@
 import {
 	Body,
 	Controller,
+	Delete,
 	Get,
+	HttpCode,
+	HttpStatus,
 	NotFoundException,
 	Param,
 	ParseIntPipe,
 	Patch,
 	Put,
+	Query,
 	UnauthorizedException,
 	UseGuards,
 } from '@nestjs/common';
@@ -14,13 +18,14 @@ import { UserDto } from '@shared/lib/dtos/user/user.dto';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { CurrentUser } from '@api/core/decorators/user';
 import { UserService } from '@api/user/services/user.service';
-import { ApiOkResponse, ApiUseTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { AuthorizedApiOperation, NotFoundResponse } from '@api/core/decorators/api-doc';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { plainToClass } from 'class-transformer-imp';
 import { ApiValidationService } from '@api/core/services/validation/validation.service';
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { User } from '@schema/user/models/user.entity';
+import { EnvGuard } from '@api/auth/guards/environment.guard';
 
 @ApiUseTags('users')
 @Controller('user')
@@ -35,6 +40,17 @@ export class UserController {
 	@UseGuards(JwtAuthGuard)
 	@Get('me')
 	public getCurrentUser(@CurrentUser() user): UserDto {
+		return plainToClass(UserDto, user, {
+			excludeExtraneousValues: true,
+		});
+	}
+
+	@ApiOkResponse({ description: 'User has been retrieved' })
+	@ApiOperation({ title: 'Find the user by token' })
+	@Get('token')
+	@HttpCode(HttpStatus.OK)
+	public async findByToken(@Query('token') token: string) {
+		const user = await this.userService.findByToken({ token });
 		return plainToClass(UserDto, user, {
 			excludeExtraneousValues: true,
 		});
@@ -55,6 +71,15 @@ export class UserController {
 		});
 	}
 
+	@ApiOkResponse({ description: 'User has been deleted' })
+	@AuthorizedApiOperation({ title: 'Delete user by username, only available in development environment' })
+	@Delete('test/:username')
+	@HttpCode(HttpStatus.NO_CONTENT)
+	@UseGuards(EnvGuard.development())
+	public deleteUserByUsername(@Param('username') username: string) {
+		return this.userService.delete({ username });
+	}
+
 	@AuthorizedApiOperation({ title: 'Update user endpoint' })
 	@ApiOkResponse({ description: 'Update an user', type: UserDto })
 	@NotFoundResponse('user')
@@ -62,7 +87,8 @@ export class UserController {
 	@Put(':id')
 	@Patch(':id')
 	public async updateUser(
-		@Param('id', new ParseIntPipe()) id: number,
+		@Param('id', new ParseIntPipe())
+		id: number,
 		@Body() updateParams: Partial<CreateUserDto>,
 		@CurrentUser() currentUser
 	): Promise<UserDto> {

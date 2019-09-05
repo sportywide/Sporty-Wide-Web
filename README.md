@@ -10,7 +10,7 @@
 -   Install vagrant plugins `vagrant plugin install vagrant-docker-compose`
 -   `npm install -g ts-node typescript`
 -   `npm run install:dependencies`
--   Rename .env.example to .env and tweak it to your needs
+-   Rename .env.example to .env and tweak it to your needs. Note: You can grab credentials from this page: https://sporty-wide.slite.com/app/channels/TsutWVaI3e/collections/SZ98vT6q1Q/notes/Z2rRcShcX6
 -   Install mkcert: https://github.com/FiloSottile/mkcert
 -   Run `mkcert -install` to install a local CA
 -   Create self-signed SSL certificates:
@@ -22,7 +22,7 @@ mkcert --key-file certs/sportywide-key.pem --cert-file certs/sportywide-cert.pem
 -   Add the following entries to /etc/hosts
 
 ```bash
-192.168.50.10 sportywidedev.com api.sportywidedev.com www.sportywidedev.com
+192.168.50.10 sportywidedev.com mail.sportywidedev.com api.sportywidedev.com www.sportywidedev.com
 ```
 
 -   After following the running instructions below, you should be able to access the API at `https://api.sportywidedev.com` and the app at `https://www.sportywidedev.com`
@@ -34,6 +34,10 @@ For windows, you will need to disable Hyper-V and Windows Hyper-V platform to ru
 
 Another vagrant plugin will need to be installed for NFS to work: https://github.com/winnfsd/vagrant-winnfsd
 ```
+
+### FAQ
+
+https://sporty-wide.slite.com/app/channels/TsutWVaI3e/collections/SZ98vT6q1Q/notes/1LH4T7OE~l
 
 ### Services
 
@@ -77,6 +81,17 @@ Run one of the following commands (in Vagrant)
 -   `docker ps`: This will show you all the running containers
 -   `docker-compose run --rm --entrypoint sh <service>`: This will run the container and open an shell session to debug
 -   `docker exec -it <containerId> sh`: This will create a shell session to an already running container. Use `docker ps` to find the container ID
+
+##### To restart a service
+
+-   `docker-compose -f docker-core-services.yml restart <service>`: This will restart a core service. You might want to use this command to reload the configuration for a service (e.g. traefik) or attempt to rerun a failed database migration (flyway)
+
+##### API testing
+
+Run one of the following commands
+
+-   npm run api-test (run this on local)
+-   docker-compose -f docker-compose.yml -f docker-e2e.yml up api-test (run this inside vagrant)
 
 #### Running locally
 

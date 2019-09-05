@@ -1,0 +1,124 @@
+{
+	"info": {
+		"_postman_id": "39062687-40f7-4f32-be73-15e2deae0caa",
+		"name": "SportyWide Auth API",
+		"description": "This is a collection for the SportyWide Auth API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "SportyWide Signup API request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "897786aa-aaff-4f46-868c-712953ce123a",
+						"exec": [
+							"pm.test(\"Status code is 201\", function() {",
+							"   pm.response.to.have.status(201); ",
+							"});",
+							"",
+							"pm.test(\"Tokens are set\", function() {",
+							"   const jsonData = pm.response.json();",
+							"   const {accessToken, refreshToken} = jsonData",
+							"   ",
+							"   pm.expect(accessToken).not.to.be.undefined;",
+							"   pm.expect(refreshToken).not.to.be.undefined;",
+							"});",
+							"",
+							"pm.test(\"User details are set correctly\", function() {",
+							"   const jsonData = pm.response.json();",
+							"   const {accessToken, refreshToken} = jsonData",
+							"   const { user } = JSON.parse(atob(accessToken.split('.')[1]));",
+							"   ",
+							"   pm.expect(user.firstName).to.eql('Postman');",
+							"   pm.expect(user.lastName).to.eql('Testing');",
+							"   pm.expect(user.email).to.eql(pm.environment.get(\"sw_email\"));",
+							"   pm.expect(user.username).to.eql(pm.environment.get(\"sw_username\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"firstName\": \"Postman\",\n\t\"lastName\": \"Testing\",\n\t\"email\": \"{{sw_email}}\",\n\t\"username\": \"{{sw_username}}\",\n\t\"password\": \"{{sw_password}}\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/signup",
+					"host": ["{{base_url}}"],
+					"path": ["signup"]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "SportyWide Login API request",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8552df02-f422-45db-83b1-2b055c71707f",
+						"exec": [
+							"pm.test(\"Status code is 200\", function() {",
+							"   pm.response.to.have.status(200); ",
+							"});",
+							"",
+							"pm.test(\"Tokens are set\", function() {",
+							"   const jsonData = pm.response.json();",
+							"   const {accessToken, refreshToken} = jsonData",
+							"   ",
+							"   pm.expect(accessToken).not.to.be.undefined;",
+							"   pm.expect(refreshToken).not.to.be.undefined;",
+							"});",
+							"",
+							"pm.test(\"User details are set correctly\", function() {",
+							"   const jsonData = pm.response.json();",
+							"   const {accessToken, refreshToken} = jsonData",
+							"   const { user } = JSON.parse(atob(accessToken.split('.')[1]));",
+							"   ",
+							"   pm.expect(user.firstName).to.eql('Postman');",
+							"   pm.expect(user.lastName).to.eql('Testing');",
+							"   pm.expect(user.email).to.eql(pm.environment.get(\"sw_email\"));",
+							"   pm.expect(user.username).to.eql(pm.environment.get(\"sw_username\"));",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"username\": \"{{sw_username}}\",\n\t\"password\": \"{{sw_password}}\"\n}"
+				},
+				"url": {
+					"raw": "{{base_url}}/login",
+					"host": ["{{base_url}}"],
+					"path": ["login"]
+				}
+			},
+			"response": []
+		}
+	]
+}

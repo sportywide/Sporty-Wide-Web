@@ -1,4 +1,4 @@
-FROM sportywide-base AS base
+FROM sportywide/sportywide-base AS base
 
 COPY ./packages/sw-shared $PROJECT_ROOT/packages/sw-shared/
 COPY ./packages/sw-schema $PROJECT_ROOT/packages/sw-schema/
@@ -6,11 +6,6 @@ COPY ./packages/sw-core $PROJECT_ROOT/packages/sw-core/
 COPY ./packages/sw-email $PROJECT_ROOT/packages/sw-email/
 RUN cd $PROJECT_ROOT && npx lerna link
 
-RUN mkdir /opt/scripts
-COPY ./packages/sw-api/bin /opt/scripts
-RUN dos2unix /opt/scripts/*.sh
-RUN chmod a+x /opt/scripts/*.sh
-ENTRYPOINT ["/opt/scripts/bootstrap.sh"]
 CMD "dev"
 
 WORKDIR $PROJECT_ROOT/packages/sw-email

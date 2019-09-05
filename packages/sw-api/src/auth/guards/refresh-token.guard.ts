@@ -29,11 +29,11 @@ export class RefreshTokenGuard implements CanActivate {
 					return resolve(false);
 				}
 				const jwtToken = this.jwtStrategy.getToken(request);
-				const decodedPayload = this.jwtService.decode(jwtToken);
-				if (!decodedPayload) {
+				const decodedPayload: any = this.jwtService.decode(jwtToken);
+				if (!(decodedPayload && decodedPayload.user)) {
 					return resolve(false);
 				}
-				const userId = decodedPayload.sub;
+				const userId = decodedPayload.user.id;
 				user = await this.userService.findById(userId, true);
 				if (!user || user.refreshToken !== refreshToken) {
 					return resolve(false);

@@ -62,6 +62,9 @@ const paths = {
 			get dist() {
 				return path.resolve(this.root, 'dist');
 			},
+			get styles() {
+				return path.resolve(this.root, 'src', 'styles');
+			},
 		};
 	},
 	get project() {

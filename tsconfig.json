@@ -1,11 +1,12 @@
 {
 	"compilerOptions": {
-		"lib": ["esnext"],
+		"lib": ["esnext", "dom"],
 		"module": "commonjs",
 		"target": "es5",
 		"baseUrl": "./",
 		"outDir": "./dist",
 		"allowJs": true,
+		"checkJs": false,
 		"skipLibCheck": true,
 		"esModuleInterop": true,
 		"allowSyntheticDefaultImports": true,
@@ -15,12 +16,13 @@
 		"forceConsistentCasingInFileNames": true,
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
+		"diagnostics": false,
 		"noEmit": true,
 		"noImplicitAny": false,
 		"experimentalDecorators": true,
 		"emitDecoratorMetadata": true,
 		"removeComments": true,
-		"sourceMap": true,
+		"sourceMap": false,
 		"paths": {
 			"@root/*": ["./*"],
 			"@web/*": ["./packages/sw-web/src/*"],

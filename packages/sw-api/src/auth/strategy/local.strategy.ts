@@ -12,12 +12,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
 		});
 	}
 
-	async validate(username, password, done: Function) {
-		try {
-			const user = this.authService.logIn(username, password);
-			done(null, user);
-		} catch (err) {
-			done(err, null);
-		}
+	validate(username, password) {
+		return this.authService.logIn(username, password);
 	}
 }

@@ -1,17 +1,11 @@
 import path from 'path';
 import fs from 'fs';
 import nodeExternals from 'webpack-node-externals';
-import paths from '@build/paths';
-import { CleanWebpackPlugin } from 'clean-webpack-plugin';
-import { getDependencies } from '@root/helpers/package';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import webpack from 'webpack';
-import ForkTsCheckerWebpackPlugin from 'fork-ts-checker-webpack-plugin';
-import { isDevelopment } from '@shared/lib/utils/env';
 import {
 	addPlugins,
 	createConfig,
-	entryPoint,
 	env,
 	resolve,
 	setEnv,
@@ -19,19 +13,22 @@ import {
 	setOutput,
 	sourceMaps,
 } from '@webpack-blocks/webpack';
-import { babel } from '../plugins/babel';
-import { externals, node, target, watch } from '../plugins/core';
+import { getDependencies } from '@root/helpers/package';
+import { isDevelopment } from '@shared/lib/utils/env';
+import paths from '@build/paths';
+import { babelHelper } from '../plugins/transpile';
+import { externals, node, none, setEntry, target, watch } from '../plugins/core';
 
 export function makeConfig({
 	entries,
 	output,
 	alias,
-	tsconfig,
+	hot,
 }: {
 	entries: any;
 	output: string;
 	alias: any;
-	tsconfig?: string;
+	hot?: boolean;
 }) {
 	// @ts-ignore
 	process.env.NODE_ENV = process.env.NODE_ENV || 'development';
@@ -41,11 +38,12 @@ export function makeConfig({
 	return createConfig([
 		setOutput(output),
 		setMode(isDevelopment() ? 'development' : 'production'),
-		entryPoint(entries),
+		setEntry(hot ? ['webpack/hot/poll?1000', entries] : entries),
 		target('node'),
-		externals(getNodeModules()),
-		babel({
+		externals([...getNodeModules()]),
+		babelHelper({
 			cwd: path.resolve(__dirname, 'babel'),
+			cacheDirectory: true,
 		}),
 		resolve({
 			extensions: ['.ts', '.js', '.tsx', '.jsx', '.json'],
@@ -56,13 +54,9 @@ export function makeConfig({
 			NODE_ENV: process.env.NODE_ENV,
 		}),
 		env('development', [
-			addPlugins([
-				new ForkTsCheckerWebpackPlugin({
-					tsconfig,
-				}),
-			]),
 			watch(),
 			sourceMaps('inline-source-map'),
+			hot ? addPlugins([new webpack.HotModuleReplacementPlugin()]) : none(),
 		]),
 		env('production', [sourceMaps('source-map')]),
 		addPlugins([
@@ -76,7 +70,6 @@ export function makeConfig({
 			filename: '[name].js',
 			path: output,
 		}),
-		addPlugins([new CleanWebpackPlugin()]),
 		addPlugins(
 			[].concat(
 				//@ts-ignore
@@ -132,6 +125,7 @@ function getNodeModules() {
 		...packageDirs.map(dir => path.resolve(dir, 'node_modules')),
 	].map(dir =>
 		nodeExternals({
+			whitelist: 'webpack/hot/poll?1000',
 			modulesDir: dir,
 		})
 	);

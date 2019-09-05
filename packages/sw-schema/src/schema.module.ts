@@ -10,11 +10,14 @@ import './subscribers';
 import { TypeormLoggerService } from '@schema/core/logging/typeorm.logger';
 import { CoreModule } from '@core/core.module';
 import { isDevelopment } from '@shared/lib/utils/env';
+import { SchemaAuthModule } from '@schema/auth/auth.module';
+
 const isDev = isDevelopment();
 
 @Module({
 	imports: [
 		SchemaUserModule,
+		SchemaAuthModule,
 		CoreSchemaModule,
 		TypeOrmModule.forRootAsync({
 			inject: [SCHEMA_CONFIG, CORE_CONFIG, TypeormLoggerService],
@@ -44,6 +47,7 @@ const isDev = isDevelopment();
 			entities: getEntities(),
 		}),
 	],
+	exports: [TypeOrmModule, SwRepositoryModule],
 })
 export class SchemaModule {}
 

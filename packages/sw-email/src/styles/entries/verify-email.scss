@@ -1,0 +1,10 @@
+@import '~sportywide-shared/src/styles/styles';
+@import '../base/index';
+
+.verify-email {
+	&__content {
+		padding: 20px 0 30px 0;
+		font-size: 16px;
+		line-height: 20px;
+	}
+}
