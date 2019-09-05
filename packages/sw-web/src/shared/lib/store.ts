@@ -1,5 +1,6 @@
 import { applyMiddleware, createStore, Store } from 'redux';
 import thunkMiddleware from 'redux-thunk';
+import { loadingBarReducer } from 'react-redux-loading-bar';
 import { createEpicMiddleware } from 'redux-observable';
 import { composeWithDevTools } from 'redux-devtools-extension';
 import { createEpicManager, IEpicManager } from '@web/shared/lib/redux/epic-manager';
@@ -27,6 +28,7 @@ export function initStore(initialState = {}, context) {
 	const initialReducers = getInitialReducers(initialState, {
 		auth: authReducer,
 		notifications,
+		loadingBar: loadingBarReducer,
 	});
 	const reducerManager = createReducerManager(initialReducers);
 	const epicMiddleware = createEpicMiddleware({

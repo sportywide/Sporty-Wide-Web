@@ -3,11 +3,14 @@ import { Service, Inject } from 'typedi';
 import axios, { Axios } from 'axios-observable';
 import { COOKIE_CSRF } from '@web/api/auth/constants';
 import { createRefreshTokenInterceptor } from '@web/shared/lib/http/refresh-token';
+import { BehaviorSubject } from 'rxjs';
+import { isBrowser } from '@web/shared/lib/environment';
 
 @Service({ global: true })
 export class ApiService {
 	private readonly apiBase: Axios;
 	private readonly authBase: Axios;
+	private apiCallSubscription = new BehaviorSubject<number>(0);
 
 	constructor(@Inject('baseUrl') private baseUrl: string) {
 		this.apiBase = axios.create({
@@ -28,6 +31,13 @@ export class ApiService {
 
 		this.apiBase = createRefreshTokenInterceptor(this.apiBase, retryCall);
 		this.authBase = createRefreshTokenInterceptor(this.authBase, retryCall);
+		if (isBrowser()) {
+			this.registerApiSubscriptions();
+		}
+	}
+
+	subscribeToApiCalls() {
+		return this.apiCallSubscription;
 	}
 
 	api() {
@@ -36,5 +46,24 @@ export class ApiService {
 
 	auth() {
 		return this.authBase;
+	}
+
+	private registerApiSubscriptions() {
+		[this.apiBase, this.authBase].forEach((axiosInstance: Axios) => {
+			axiosInstance.interceptors.request.use(config => {
+				this.apiCallSubscription.next(this.apiCallSubscription.getValue() + 1);
+				return config;
+			});
+			axiosInstance.interceptors.response.use(
+				response => {
+					this.apiCallSubscription.next(this.apiCallSubscription.getValue() - 1);
+					return response;
+				},
+				error => {
+					this.apiCallSubscription.next(this.apiCallSubscription.getValue() - 1);
+					return error;
+				}
+			);
+		});
 	}
 }
