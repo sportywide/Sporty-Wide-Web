@@ -59,8 +59,12 @@ export const devProxy = {
 				'/google/callback': setCookiesAndRedirect,
 				'/complete-social-profile': setCookies,
 			};
+			let handler;
+			if (path.startsWith('/reset-password')) {
+				handler = setCookies;
+			}
 
-			const handler = pathMapping[path] || redirectOnError;
+			handler = handler || pathMapping[path] || redirectOnError;
 			handler(proxyRes, req, res);
 		},
 	},
@@ -135,7 +139,7 @@ function redirectOnError(proxyRes, req, res) {
 		return;
 	}
 	modifyResponse(res, proxyRes, function(error) {
-		if (error && error.message) {
+		if (error && error.message && proxyRes.statusCode !== NOT_FOUND) {
 			res.flash('error', error.message);
 		}
 

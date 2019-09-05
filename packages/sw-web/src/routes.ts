@@ -32,6 +32,11 @@ const routeMappings = [
 		pattern: '/forgot-password',
 		page: 'auth/forgot-password',
 	},
+	{
+		name: 'reset-password',
+		pattern: '/reset-password',
+		page: 'auth/reset-password',
+	},
 ];
 
 let routes = new Routes();

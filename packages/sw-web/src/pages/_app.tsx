@@ -18,7 +18,7 @@ import NotificationContainer from '@web/shared/lib/components/notification/Notif
 import { ucfirst } from '@shared/lib/utils/string/conversion';
 
 interface IProps {
-	store?: Store;
+	store: Store;
 	user?: IUser;
 	flashMessages: {};
 }

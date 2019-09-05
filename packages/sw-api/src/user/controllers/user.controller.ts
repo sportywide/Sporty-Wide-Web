@@ -10,6 +10,7 @@ import {
 	ParseIntPipe,
 	Patch,
 	Put,
+	Query,
 	UnauthorizedException,
 	UseGuards,
 } from '@nestjs/common';
@@ -17,7 +18,7 @@ import { UserDto } from '@shared/lib/dtos/user/user.dto';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { CurrentUser } from '@api/core/decorators/user';
 import { UserService } from '@api/user/services/user.service';
-import { ApiOkResponse, ApiUseTags } from '@nestjs/swagger';
+import { ApiOkResponse, ApiUseTags, ApiOperation } from '@nestjs/swagger';
 import { AuthorizedApiOperation, NotFoundResponse } from '@api/core/decorators/api-doc';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { plainToClass } from 'class-transformer-imp';
@@ -44,6 +45,17 @@ export class UserController {
 		});
 	}
 
+	@ApiOkResponse({ description: 'User has been retrieved' })
+	@ApiOperation({ title: 'Find the user by token' })
+	@Get('token')
+	@HttpCode(HttpStatus.OK)
+	public async findByToken(@Query('token') token: string) {
+		const user = await this.userService.findByToken({ token });
+		return plainToClass(UserDto, user, {
+			excludeExtraneousValues: true,
+		});
+	}
+
 	@AuthorizedApiOperation({ title: 'Get user endpoint' })
 	@ApiOkResponse({ description: 'Return the user with specified id', type: UserDto })
 	@NotFoundResponse('user')
@@ -61,7 +73,7 @@ export class UserController {
 
 	@ApiOkResponse({ description: 'User has been deleted' })
 	@AuthorizedApiOperation({ title: 'Delete user by username, only available in development environment' })
-	@Delete('/test/:username')
+	@Delete('test/:username')
 	@HttpCode(HttpStatus.NO_CONTENT)
 	@UseGuards(EnvGuard.development())
 	public deleteUserByUsername(@Param('username') username: string) {

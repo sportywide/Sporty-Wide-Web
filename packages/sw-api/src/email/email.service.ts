@@ -1,5 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { USER_EMAIL_QUEUE, USER_SIGNUP_PROCESSOR } from '@core/microservices/queue.constants';
+import {
+	USER_EMAIL_QUEUE,
+	USER_FORGOT_PASSWORD_PROCESSOR,
+	USER_SIGNUP_PROCESSOR,
+} from '@core/microservices/queue.constants';
 import { Queue } from 'bull';
 import { InjectQueue } from 'nest-bull';
 import { API_LOGGER } from '@core/logging/logging.constant';
@@ -17,6 +21,17 @@ export class EmailService {
 		this.apiLogger.debug(`Sending signup email to ${user.username}`);
 		try {
 			return this.userEmailQueue.add(USER_SIGNUP_PROCESSOR, {
+				id: user.id,
+			});
+		} catch (e) {
+			this.apiLogger.error('Failed to send email', e);
+		}
+	}
+
+	public sendForgotPasswordEmail(user: User) {
+		this.apiLogger.debug(`Sending forgot password email to ${user.username}`);
+		try {
+			return this.userEmailQueue.add(USER_FORGOT_PASSWORD_PROCESSOR, {
 				id: user.id,
 			});
 		} catch (e) {

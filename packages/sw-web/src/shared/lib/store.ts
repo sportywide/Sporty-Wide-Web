@@ -23,7 +23,7 @@ export function initStore(initialState = {}, context) {
 	}
 	const auth = parseContext(context) || {};
 
-	const container = registerContainer({ auth });
+	const container = registerContainer({ auth, context });
 	const initialReducers = getInitialReducers(initialState, {
 		auth: authReducer,
 		notifications,
@@ -53,11 +53,16 @@ export interface ISportyWideStore extends Store {
 	container: typeof Container;
 }
 
-function registerContainer({ auth }) {
+function registerContainer({ auth, context }) {
 	const user = auth.user;
 	const csrfToken = auth.csrfToken;
 	Container.set('currentUser', user || null);
 	Container.set('csrfToken', csrfToken || null);
+	if (context.req) {
+		Container.set('baseUrl', `https://${context.req.get('host')}`);
+	} else {
+		Container.set('baseUrl', window.location.origin);
+	}
 	return Container;
 }
 

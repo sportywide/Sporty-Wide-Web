@@ -62,6 +62,7 @@ export function makeConfig({ entries, output }: { entries: any; output: string }
 		),
 		setOutput({
 			path: output,
+			filename: '[name].js',
 		}),
 		addPlugins([new FixStyleOnlyEntriesPlugin()]),
 		addPlugins([
