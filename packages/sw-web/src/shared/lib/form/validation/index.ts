@@ -4,10 +4,9 @@ import { Container } from 'typedi';
 import { Debounce } from '@shared/lib/utils/functions/debounce';
 
 export function validateUnique({ table, field, debounceMs = 500 }) {
-	const utilService = Container.get(UtilService);
-	const debounce = new Debounce(debounceMs);
-
 	return function(value) {
+		const utilService = Container.get(UtilService);
+		const debounce = new Debounce(debounceMs);
 		if (!value) {
 			return;
 		}
@@ -25,10 +24,9 @@ export function validateUnique({ table, field, debounceMs = 500 }) {
 }
 
 export function validateExists({ table, field, debounceMs = 500 }) {
-	const utilService = Container.get(UtilService);
-	const debounce = new Debounce(debounceMs);
-
 	return function(value) {
+		const utilService = Container.get(UtilService);
+		const debounce = new Debounce(debounceMs);
 		if (!value) {
 			return;
 		}
