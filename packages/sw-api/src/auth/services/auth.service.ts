@@ -15,6 +15,7 @@ import { SocialProvider } from '@shared/lib/dtos/user/enum/social-provider.enum'
 import { TokenService } from '@api/auth/services/token.service';
 import { CompleteSocialProfileDto } from '@shared/lib/dtos/user/complete-social-profile.dto';
 import { TokenType } from '@schema/auth/models/enums/token-type.token';
+import { ResetPasswordDto } from '@shared/lib/dtos/user/reset-password-dto';
 
 export class Tokens {
 	@ApiModelProperty() accessToken: string;
@@ -122,6 +123,23 @@ export class AuthService {
 		});
 
 		return await this.userService.saveOne(user);
+	}
+
+	public async resetPassword(userId: number, resetPasswordDto: ResetPasswordDto) {
+		await this.tokenService.delete({
+			engagementTable: this.userService.getTableName(),
+			engagementId: userId,
+			type: TokenType.FORGOT_PASSWORD,
+		});
+
+		const user = await this.userService.findById(userId);
+		if (!user) {
+			throw new BadRequestException(`User with id ${userId} cannot be found`);
+		}
+		user.password = resetPasswordDto.password;
+		await this.userService.saveOne(user);
+
+		return this.createTokens(user);
 	}
 
 	public async clearTokens(user: User) {

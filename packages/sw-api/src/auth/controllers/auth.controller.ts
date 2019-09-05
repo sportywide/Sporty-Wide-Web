@@ -11,6 +11,7 @@ import {
 	Req,
 	Res,
 	UseGuards,
+	Param,
 } from '@nestjs/common';
 import { AuthService, Tokens } from '@api/auth/services/auth.service';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
@@ -29,6 +30,7 @@ import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { CurrentUser } from '@api/core/decorators/user';
 import { PendingSocialUser } from '@api/auth/decorators/user-check.decorator';
 import { CompleteSocialProfileDto } from '@shared/lib/dtos/user/complete-social-profile.dto';
+import { ResetPasswordDto } from '@shared/lib/dtos/user/reset-password-dto';
 
 @ApiUseTags('auth')
 @Controller('auth')
@@ -147,5 +149,29 @@ export class AuthController {
 	public forgotPassword(@Body() body: { email: string }) {
 		const { email } = body;
 		return this.authService.sendForgotPasswordEmail(email);
+	}
+
+	@ApiOkResponse({ description: 'User password has been reset', type: Tokens })
+	@AuthorizedApiOperation({ title: 'Reset Password endpoint' })
+	@Post('reset-password/:id')
+	@HttpCode(HttpStatus.OK)
+	@UseGuards(AuthenticatedGuard)
+	public async resetPassword(
+		@Param('id', new ParseIntPipe()) userId: number,
+		@Query('token') tokenValue: string,
+		@Body(getValidationPipe())
+		resetPasswordDto: ResetPasswordDto
+	) {
+		const token = await this.tokenService.findOne({
+			content: tokenValue,
+			engagementId: userId,
+			engagementTable: this.userService.getTableName(),
+		});
+
+		if (!token || isBefore(token.ttl, new Date())) {
+			throw new BadRequestException('Token does not exist or has expired');
+		}
+
+		return this.authService.resetPassword(userId, resetPasswordDto);
 	}
 }

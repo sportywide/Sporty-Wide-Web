@@ -1,13 +1,14 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
+import { ReactReduxContext } from 'react-redux';
 import { Formik, FormikProps } from 'formik';
 import { Form, Header, Image, Segment, Divider } from 'semantic-ui-react';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
 import { ContainerContext } from '@web/shared/lib/store';
 import { AuthService } from '@web/features/auth/services/auth.service';
 import { validateExists } from '@web/shared/lib/form/validation';
-import { redirect } from '@web/shared/lib/navigation/helper';
 import * as yup from 'yup';
 import styled from 'styled-components';
+import { success } from 'react-notification-system-redux';
 
 const validateEmail = validateExists({ table: 'user', field: 'email' });
 const schema = yup.object().shape({
@@ -15,6 +16,8 @@ const schema = yup.object().shape({
 });
 
 const SwForgotPasswordComponent: React.FC<any> = () => {
+	const [sendingRequest, setSendingRequest] = useState(false);
+	const { store } = useContext(ReactReduxContext);
 	const container = useContext(ContainerContext);
 	const MarginDivider = styled(Divider)`
 		&&& {
@@ -37,8 +40,19 @@ const SwForgotPasswordComponent: React.FC<any> = () => {
 	);
 
 	async function sendForgotPasswordEmail(values) {
+		setSendingRequest(true);
 		const authService = container.get(AuthService);
-		await authService.sendForgotPasswordEmail(values).toPromise();
+		try {
+			await authService.sendForgotPasswordEmail(values).toPromise();
+			store.dispatch(
+				success({
+					title: 'Success',
+					message: 'An email with reset password instruction has been sent',
+				})
+			);
+		} finally {
+			setSendingRequest(false);
+		}
 	}
 
 	function renderForm(props: FormikProps<any>) {
@@ -55,7 +69,7 @@ const SwForgotPasswordComponent: React.FC<any> = () => {
 						validate={validateEmail}
 					/>
 
-					<Form.Button type={'submit'} primary disabled={!props.isValid}>
+					<Form.Button type={'submit'} primary disabled={!props.isValid || sendingRequest}>
 						Send email
 					</Form.Button>
 				</Form>

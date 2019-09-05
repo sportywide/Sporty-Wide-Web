@@ -25,11 +25,16 @@ export function createRefreshTokenInterceptor(axios: Axios, refreshTokenCall) {
 				.then(() => {
 					axios.interceptors.request.eject(requestQueueInterceptorId);
 					const config = error.response.config;
-					const relPath = path.relative(config.baseURL, config.url);
+					let url;
+					if (config.url.startsWith(config.baseUrl)) {
+						url = path.relative(config.baseURL, config.url);
+					} else {
+						url = config.url;
+					}
 					return axios
 						.request({
 							...config,
-							url: `/${relPath}`,
+							url,
 						})
 						.toPromise();
 				})
