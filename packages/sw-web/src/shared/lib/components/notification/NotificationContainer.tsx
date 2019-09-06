@@ -3,7 +3,7 @@ import Notifications, { error, warn } from 'react-notification-system-redux';
 import { connect, ReactReduxContext } from 'react-redux';
 import { ApiService } from '@web/shared/lib/http/api.service';
 import { Container } from 'typedi';
-import { UNAUTHORIZED } from '@web/shared/lib/http/status-codes';
+import { UNAUTHENTICATED } from '@web/shared/lib/http/status-codes';
 
 interface IProps {
 	notifications: any[];
@@ -22,7 +22,7 @@ const NotificationContainer: React.FC<IProps> = function({ notifications }) {
 				title = 'Oops! Something went wrong';
 				message = 'Please try again later';
 				notificationFunc = error;
-			} else if (status >= 400 && status !== UNAUTHORIZED) {
+			} else if (status >= 400 && status !== UNAUTHENTICATED) {
 				title = 'Nope';
 				message = (e.response && e.response.message) || 'Error';
 				notificationFunc = warn;
