@@ -16,6 +16,7 @@
 	},
 	"devDependencies": {
 		"@nestjs/testing": "6.5.3",
+		"sqlite3": "4.1.0",
 		"supertest": "4.0.2"
 	}
 }
