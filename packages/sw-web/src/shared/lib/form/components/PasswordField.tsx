@@ -1,24 +1,45 @@
 import React, { useState } from 'react';
 import { FormFieldProps, SwFormField } from '@web/shared/lib/form/components/FormField';
-import { Form, Progress } from 'semantic-ui-react';
+import { Form, Progress, Icon } from 'semantic-ui-react';
 
-export type PasswordFieldProps = Omit<FormFieldProps, 'component'>;
+export type PasswordFieldProps = Omit<FormFieldProps, 'component'> & {
+	className?: string;
+};
 
-export const SwPasswordField: React.FC<PasswordFieldProps> = ({ componentProps, onChange, ...props }) => {
+export const SwPasswordField: React.FC<PasswordFieldProps> = ({
+	className = '',
+	componentProps,
+	onChange,
+	children,
+	...props
+}) => {
 	const [score, setScore] = useState(0);
 	const [password, setPassword] = useState('');
 	const [feedback, setFeedback] = useState<any>({});
+	const [isShowingPassword, setIsShowingPassword] = useState<boolean>(false);
 	return (
-		<div className={'ub-flex ub-flex-column '}>
+		<div className={`ub-flex ub-flex-column ${className}`}>
 			<SwFormField
-				componentProps={{ ...componentProps, type: 'password' }}
+				componentProps={{
+					...componentProps,
+					type: isShowingPassword ? 'text' : 'password',
+					icon: (
+						<Icon
+							onClick={() => setIsShowingPassword(!isShowingPassword)}
+							name={isShowingPassword ? 'eye slash' : 'eye'}
+							link
+						/>
+					),
+				}}
 				component={Form.Input}
 				onChange={handlePasswordChange}
 				{...props}
-			/>
+			>
+				{children}
+			</SwFormField>
 			<Progress
 				color={getColor(score)}
-				style={{ marginBottom: '5px' }}
+				style={{ marginBottom: '5px', marginTop: '10px' }}
 				size={'tiny'}
 				data-tooltip={feedback && feedback.warning ? feedback.warning : null}
 				percent={password ? (Math.max(score, 1) * 100) / 4 : 0}

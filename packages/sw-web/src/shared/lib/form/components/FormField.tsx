@@ -24,6 +24,7 @@ export const SwFormField: React.FC<FormFieldProps> = ({
 	componentProps = {},
 	onChange,
 	onBlur,
+	children,
 	...fieldProps
 }) => (
 	<Field
@@ -36,28 +37,32 @@ export const SwFormField: React.FC<FormFieldProps> = ({
 			componentProps.id = id;
 			componentProps.error = error;
 			const valueProps = typeof value === 'boolean' ? { checked: value, value: '' } : { value: value || '' };
-			return React.createElement(component, {
-				...componentProps,
-				...field,
-				...props,
-				...valueProps,
-				onChange: (e, { name, value, checked }) => {
-					if (checked != null && value === '') {
-						value = !!checked;
-					}
+			return React.createElement(
+				component,
+				{
+					...componentProps,
+					...field,
+					...props,
+					...valueProps,
+					onChange: (e, { name, value, checked }) => {
+						if (checked != null && value === '') {
+							value = !!checked;
+						}
 
-					setFormikFieldValue(form, name, value, true);
-					if (onChange) {
-						onChange(e, { name, value });
-					}
+						setFormikFieldValue(form, name, value, true);
+						if (onChange) {
+							onChange(e, { name, value });
+						}
+					},
+					onBlur: e => {
+						form.handleBlur(e);
+						if (onBlur) {
+							onBlur(e);
+						}
+					},
 				},
-				onBlur: e => {
-					form.handleBlur(e);
-					if (onBlur) {
-						onBlur(e);
-					}
-				},
-			});
+				children
+			);
 		}}
 	/>
 );
