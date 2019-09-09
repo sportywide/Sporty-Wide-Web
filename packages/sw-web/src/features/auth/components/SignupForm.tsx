@@ -4,20 +4,19 @@ import { Form } from 'semantic-ui-react';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
 import { SwPasswordField } from '@web/shared/lib/form/components/PasswordField';
 import { getSchemaByType } from 'yup-decorator';
-import { LoginDto } from '@shared/lib/dtos/user/login.dto';
-import { Link } from '@web/routes';
+import { SignupDto } from '@shared/lib/dtos/user/signup.dto';
 
 interface IProps {}
 
-const SwLoginFormComponent: React.FC<IProps> = () => {
+const SwSignupFormComponent: React.FC<IProps> = () => {
 	return (
-		<Formik initialValues={{}} onSubmit={handleLogin} validationSchema={getSchemaByType(LoginDto)}>
+		<Formik initialValues={{}} onSubmit={handleSignup} validationSchema={getSchemaByType(SignupDto)}>
 			{renderForm}
 		</Formik>
 	);
 
-	async function handleLogin(values) {
-		console.log('handleLogin======', values);
+	async function handleSignup(values) {
+		console.log('handleSignup======', values);
 	}
 
 	function renderForm(props: FormikProps<any>) {
@@ -36,22 +35,28 @@ const SwLoginFormComponent: React.FC<IProps> = () => {
 
 					<SwPasswordField
 						name="password"
-						disableProgress={true}
 						componentProps={{
 							label: 'Password',
 							placeholder: 'Your password',
 						}}
 					/>
-					<Link route={'forgot-password'}>
-						<a className="ub-flex ub-flex-column ub-mb2 ub-right">Forgot your password?</a>
-					</Link>
+
+					<SwFormField
+						name="confirmPassword"
+						component={Form.Input}
+						componentProps={{
+							label: 'Confirm Password',
+							type: 'password',
+							placeholder: 'Confirm Your password',
+						}}
+					/>
 
 					<button className="ui primary button" disabled={!props.isValid} onClick={props.submitForm}>
-						Login
+						Signup
 					</button>
 				</Form>
 			</div>
 		);
 	}
 };
-export const SwLoginForm = SwLoginFormComponent;
+export const SwSignupForm = SwSignupFormComponent;

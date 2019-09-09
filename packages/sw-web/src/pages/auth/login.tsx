@@ -30,14 +30,27 @@ class SwLoginPage extends React.Component<any> {
 		return pageProps;
 	}
 
+	handleShowSignup = async event => {
+		event.preventDefault();
+		await redirect({ route: 'signup', refresh: false });
+	};
+
 	render() {
 		return (
 			<div className="ub-p4">
-				<h1>Login Page</h1>
+				<h1>Welcome</h1>
 				<Head>
-					<title>Login</title>
+					<title>Welcome</title>
 				</Head>
-				<div>
+				<div className="ui top attached tabular menu">
+					<a className="item active" data-tab="login" onClick={event => event.preventDefault()}>
+						Login
+					</a>
+					<a className="item" data-tab="signup" onClick={this.handleShowSignup}>
+						Signup
+					</a>
+				</div>
+				<div className="ui bottom attached segment" data-tab="login">
 					<SwLoginForm />
 					<hr/>
 					<button className="ui facebook button">
@@ -52,11 +65,6 @@ class SwLoginPage extends React.Component<any> {
 							Google Plus
 						</a>
 					</button>
-					<div>
-						<Link route={'forgot-password'}>
-							<a>Forgot your password?</a>
-						</Link>
-					</div>
 				</div>
 			</div>
 		);
