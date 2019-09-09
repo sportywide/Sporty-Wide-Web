@@ -4,6 +4,7 @@ import Head from 'next/head';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { redirect } from '@web/shared/lib/navigation/helper';
 import { Link } from '@web/routes';
+import { SwLoginForm } from '@web/features/auth/components/LoginForm';
 
 class SwLoginPage extends React.Component<any> {
 	static async getInitialProps(context) {
@@ -37,6 +38,7 @@ class SwLoginPage extends React.Component<any> {
 					<title>Login</title>
 				</Head>
 				<div>
+					<SwLoginForm />
 					<button className="ui facebook button">
 						<a className="link-white" href="/auth/facebook">
 							<i className="facebook icon" />
