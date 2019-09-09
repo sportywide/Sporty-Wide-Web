@@ -2,28 +2,32 @@ import React, { useState } from 'react';
 import { FormFieldProps, SwFormField } from '@web/shared/lib/form/components/FormField';
 import { Form, Progress } from 'semantic-ui-react';
 
-export type PasswordFieldProps = Omit<FormFieldProps, 'component'>;
+export interface PasswordFieldProps extends Omit<FormFieldProps, 'component'> {
+	disableProgress?: boolean;
+}
 
 export const SwPasswordField: React.FC<PasswordFieldProps> = ({ componentProps, onChange, ...props }) => {
 	const [score, setScore] = useState(0);
 	const [password, setPassword] = useState('');
 	const [feedback, setFeedback] = useState<any>({});
 	return (
-		<div className={'ub-flex ub-flex-column '}>
+		<div className={`ub-flex ub-flex-column ${props.disableProgress ? 'ub-mb2' : ''}`}>
 			<SwFormField
 				componentProps={{ ...componentProps, type: 'password' }}
 				component={Form.Input}
 				onChange={handlePasswordChange}
 				{...props}
 			/>
-			<Progress
-				color={getColor(score)}
-				style={{ marginBottom: '5px' }}
-				size={'tiny'}
-				data-tooltip={feedback && feedback.warning ? feedback.warning : null}
-				percent={password ? (Math.max(score, 1) * 100) / 4 : 0}
-			/>
-			{password && (
+			{!props.disableProgress && (
+				<Progress
+					color={getColor(score)}
+					style={{ marginBottom: '5px' }}
+					size={'tiny'}
+					data-tooltip={feedback && feedback.warning ? feedback.warning : null}
+					percent={password ? (Math.max(score, 1) * 100) / 4 : 0}
+				/>
+			)}
+			{!props.disableProgress && password && (
 				<span className={'ub-right-align ub-bold'} style={{ color: getColor(score) }}>
 					{getText(score)}
 				</span>
@@ -37,6 +41,13 @@ export const SwPasswordField: React.FC<PasswordFieldProps> = ({ componentProps, 
 		}
 		const { value } = params;
 		setPassword(value);
+
+		// Skip score and feedback if disabling progress
+		if (props.disableProgress) {
+			return;
+		}
+
+		// Password score and feedback
 		const { default: zxcvbn } = await import(/* webpackChunkName: "zxcvbn" */ 'zxcvbn/dist/zxcvbn.js');
 		const { score, feedback } = zxcvbn(value);
 		setScore(score);

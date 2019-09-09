@@ -5,10 +5,10 @@ import { password, username } from './validation/user.yup';
 @schema()
 export class LoginDto {
 	@ApiModelProperty()
-	@is(password())
+	@is(password(false))
 	password: string;
 
 	@ApiModelProperty()
-	@is(username())
+	@is(username(false))
 	username: string;
 }

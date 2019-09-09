@@ -39,6 +39,7 @@ class SwLoginPage extends React.Component<any> {
 				</Head>
 				<div>
 					<SwLoginForm />
+					<hr/>
 					<button className="ui facebook button">
 						<a className="link-white" href="/auth/facebook">
 							<i className="facebook icon" />

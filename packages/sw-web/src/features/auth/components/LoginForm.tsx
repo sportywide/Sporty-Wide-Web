@@ -7,6 +7,7 @@ import { getSchemaByType } from 'yup-decorator';
 import { LoginDto } from '@shared/lib/dtos/user/login-dto';
 
 interface IProps {}
+
 const SwLoginFormComponent: React.FC<IProps> = () => {
 	return (
 		<Formik initialValues={{}} onSubmit={handleLogin} validationSchema={getSchemaByType(LoginDto)}>
@@ -18,10 +19,14 @@ const SwLoginFormComponent: React.FC<IProps> = () => {
 		console.log('handleLogin======', values);
 	}
 
+	function handleSignup() {
+		console.log('handleSignup======');
+	}
+
 	function renderForm(props: FormikProps<any>) {
 		return (
-			<div className={'ub-px3'}>
-				<Form onSubmit={props.handleSubmit}>
+			<div className={'ub-mb2'}>
+				<Form>
 					<SwFormField
 						name="username"
 						component={Form.Input}
@@ -34,15 +39,19 @@ const SwLoginFormComponent: React.FC<IProps> = () => {
 
 					<SwPasswordField
 						name="password"
+						disableProgress={true}
 						componentProps={{
 							label: 'Password',
 							placeholder: 'Your password',
 						}}
 					/>
 
-					<Form.Button type={'submit'} primary disabled={!props.isValid}>
+					<button className="ui primary button" disabled={!props.isValid} onClick={props.submitForm}>
 						Login
-					</Form.Button>
+					</button>
+					<button className="ui button" onClick={handleSignup}>
+						Signup
+					</button>
 				</Form>
 			</div>
 		);
