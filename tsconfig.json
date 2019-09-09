@@ -31,6 +31,7 @@
 			"@build/*": ["./packages/sw-shared/build/*"],
 			"@api/*": ["./packages/sw-api/src/*"],
 			"@schema/*": ["./packages/sw-schema/src/*"],
+			"@schema-test/*": ["./packages/sw-schema/test/*"],
 			"@core/*": ["./packages/sw-core/src/*"],
 			"@email/*": ["./packages/sw-email/src/*"]
 		}

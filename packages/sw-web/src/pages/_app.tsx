@@ -16,6 +16,7 @@ import { COOKIE_REFERRER } from '@web/api/auth/constants';
 import Notifications from 'react-notification-system-redux';
 import NotificationContainer from '@web/shared/lib/components/notification/NotificationContainer';
 import { ucfirst } from '@shared/lib/utils/string/conversion';
+import { LoadingBar } from '@web/shared/lib/components/loading/LoadingBar';
 
 interface IProps {
 	store: Store;
@@ -91,6 +92,7 @@ class SwApp extends App<IProps> {
 			<ThemeProvider theme={theme}>
 				<Provider store={store}>
 					<UserContext.Provider value={user}>
+						<LoadingBar />
 						<Component {...pageProps} />
 					</UserContext.Provider>
 					<NotificationContainer />

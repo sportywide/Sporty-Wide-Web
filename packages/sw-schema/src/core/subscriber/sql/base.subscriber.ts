@@ -15,7 +15,7 @@ export interface SwSubscriberInterface {
 	afterRemoveEntities?(entityIds: EntityIds);
 }
 
-export class SwSubscriber implements EntitySubscriberInterface, SwSubscriberInterface {
+export class SwSubscriber implements EntitySubscriberInterface<any>, SwSubscriberInterface {
 	afterInsertEntities(entityIds: EntityIds) {
 		this.afterSaveEntities(entityIds);
 	}

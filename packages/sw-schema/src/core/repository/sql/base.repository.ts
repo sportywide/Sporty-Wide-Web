@@ -10,6 +10,9 @@ import {
 	QueryRunner,
 	Repository,
 	UpdateQueryBuilder,
+	SelectQueryBuilder,
+	InsertQueryBuilder,
+	InsertResult,
 } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { SwSubscriber } from '@schema/core/subscriber/sql/base.subscriber';
@@ -71,7 +74,7 @@ class SwBaseRepository<T> {
 	async delete(
 		conditions: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindConditions<T>
 	) {
-		const deletingEntities = await this.advancedFind(conditions);
+		const deletingEntities = await this.advancedFindIds(conditions);
 		const deleteResult = await this.repository.delete(conditions);
 		if (deletingEntities.length) {
 			notifyRemove(this.repository, deletingEntities);
@@ -79,11 +82,11 @@ class SwBaseRepository<T> {
 		return deleteResult;
 	}
 
-	createQueryBuilder(alias?: string, queryRunner?: QueryRunner) {
-		return SwQueryBuilder.from(
+	createQueryBuilder(alias?: string, queryRunner?: QueryRunner): SwSelectQueryBuilder<T> {
+		return SwQueryBaseBuilder.from(
 			this.repository.createQueryBuilder(alias, queryRunner),
 			this.repository.metadata.target
-		);
+		) as SwSelectQueryBuilder<T>;
 	}
 
 	advancedFind(
@@ -136,26 +139,36 @@ class SwBaseRepository<T> {
 
 //hack to prevent export not found warning when babel typescript strips out type information
 export const SwRepository = {};
-export type SwRepository<T> = Repository<T> & SwBaseRepository<T>;
+export type SwRepository<T> = SwBaseRepository<T> & Repository<T>;
 
-class SwQueryBuilder<T> {
+export type SwQueryBuilder<T> = SwQueryBaseBuilder<T> & QueryBuilder<T>;
+export type SwSelectQueryBuilder<T> = SwQueryBaseBuilder<T> & SelectQueryBuilder<T>;
+export type SwUpdateQueryBuilder<T> = SwQueryBaseBuilder<T> & UpdateQueryBuilder<T>;
+export type SwDeleteQueryBuilder<T> = SwQueryBaseBuilder<T> & DeleteQueryBuilder<T>;
+export type SwInsertQueryBuilder<T> = SwQueryBaseBuilder<T> & InsertQueryBuilder<T>;
+
+class SwQueryBaseBuilder<T> {
 	constructor(private queryBuilder: QueryBuilder<T>, private objectType: ObjectType<T> | EntitySchema<T> | string) {}
 
 	static from<T>(queryBuilder: QueryBuilder<T>, objectType) {
-		const customQueryBuilder = new SwQueryBuilder(queryBuilder, objectType);
-		return wrap(customQueryBuilder, queryBuilder) as SwRepository<T>;
+		const customQueryBuilder = new SwQueryBaseBuilder(queryBuilder, objectType);
+		return wrap(customQueryBuilder, queryBuilder) as SwQueryBuilder<T>;
 	}
 
 	select() {
-		return SwQueryBuilder.from<T>(this.queryBuilder.select(), this.objectType);
+		return SwQueryBaseBuilder.from<T>(this.queryBuilder.select(), this.objectType) as SwSelectQueryBuilder<T>;
 	}
 
 	update() {
-		return SwQueryBuilder.from<T>(this.queryBuilder.update(), this.objectType);
+		return SwQueryBaseBuilder.from<T>(this.queryBuilder.update(), this.objectType) as SwUpdateQueryBuilder<T>;
 	}
 
 	delete() {
-		return SwQueryBuilder.from<T>(this.queryBuilder.delete(), this.objectType);
+		return SwQueryBaseBuilder.from<T>(this.queryBuilder.delete(), this.objectType) as SwDeleteQueryBuilder<T>;
+	}
+
+	insert() {
+		return SwQueryBaseBuilder.from<T>(this.queryBuilder.insert(), this.objectType) as SwInsertQueryBuilder<T>;
 	}
 
 	async execute() {
