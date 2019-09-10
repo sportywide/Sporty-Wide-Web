@@ -5,7 +5,7 @@ import { Form, Header, Image, Segment, Divider } from 'semantic-ui-react';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
 import { ContainerContext } from '@web/shared/lib/store';
 import { AuthService } from '@web/features/auth/services/auth.service';
-import { validateExists } from '@web/shared/lib/form/validation';
+import { validateExists } from '@web/shared/lib/form/validation/validators';
 import * as yup from 'yup';
 import styled from 'styled-components';
 import { success } from 'react-notification-system-redux';

@@ -1,20 +1,31 @@
 import React from 'react';
 import { Form, Header, Image } from 'semantic-ui-react';
 import { Formik } from 'formik';
+import * as yup from 'yup';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
 import { SwPasswordField } from '@web/shared/lib/form/components/PasswordField';
 import { UserGender } from '@shared/lib/dtos/user/enum/user-gender.enum';
 import { SwCalendarField } from '@web/shared/lib/form/components/CalendarField';
 import { UserDto } from '@shared/lib/dtos/user/user.dto';
+import { getSchemaByType } from 'yup-decorator';
+import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
+import { modifySchema } from '@web/shared/lib/form/validation/yup';
 
 interface IProps {
 	user: UserDto;
 }
+let schema: any = getSchemaByType(CreateUserDto);
+
+schema = modifySchema(schema, {
+	password: (passwordSchema: yup.StringSchema) => passwordSchema.notRequired(),
+});
+
 const SwBasicProfileComponent: React.FC<IProps> = ({ user }) => {
 	return (
 		<Formik
 			initialValues={{ ...user, gender: user.gender || UserGender.MALE }}
 			enableReinitialize={true}
+			validationSchema={schema}
 			onSubmit={console.log}
 			render={props => {
 				return (
@@ -81,13 +92,7 @@ const SwBasicProfileComponent: React.FC<IProps> = ({ user }) => {
 								/>
 							</Form.Group>
 							<Form.Group widths={2}>
-								<SwCalendarField
-									name={'dob'}
-									componentProps={{
-										placeholder: 'Your birthday',
-										label: 'Date of Birth',
-									}}
-								/>
+								<SwCalendarField name={'dob'} placeholder={'Your birthday'} label={'Date of Birth'} />
 								<SwFormField
 									name="phone"
 									component={Form.Input}
