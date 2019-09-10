@@ -1,10 +1,14 @@
 import React from 'react';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 
-export function withContext(Context) {
+export function withContext(Context, propName = 'context') {
 	return WrappedComponent => {
 		const NewComponent = props => {
-			return <Context.Consumer>{context => <WrappedComponent {...props} context={context} />}</Context.Consumer>;
+			return (
+				<Context.Consumer>
+					{context => <WrappedComponent {...{ ...props, [propName]: context }} />}
+				</Context.Consumer>
+			);
 		};
 
 		hoistNonReactStatics(NewComponent, WrappedComponent);

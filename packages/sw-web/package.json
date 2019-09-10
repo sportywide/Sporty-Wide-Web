@@ -43,6 +43,7 @@
 		"redux-observable": "1.1.0",
 		"redux-thunk": "2.3.0",
 		"rxjs": "6.5.2",
+		"semantic-ui-calendar-react": "0.15.3",
 		"semantic-ui-react": "0.87.3",
 		"sporty-wide-style": "1.0.1",
 		"sportywide-shared": "1.0.0",

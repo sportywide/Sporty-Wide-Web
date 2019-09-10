@@ -1,9 +1,19 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
-export const SwPrimaryBackGround = styled.div`
-	background-color: ${props => props.theme.colors.primary};
+const swBackground = css`
 	width: 100%;
 	height: 100vh;
-	display: flex;
-	align-items: center;
+`;
+export const SwPrimaryBackGround = styled.div`
+	${swBackground};
+	background-color: ${props => props.theme.colors.primary};
+`;
+
+export const SwGreyBackground = styled.div`
+	${swBackground};
+	background-color: ${props => props.theme.colors.grey};
+`;
+
+export const SwContainer = styled.div`
+	width: 100%;
 `;

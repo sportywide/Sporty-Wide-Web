@@ -6,6 +6,7 @@ export interface FormFieldProps extends FieldConfig {
 	componentProps: any;
 	onChange?: (e: React.ChangeEvent<any>, params?: { name?: string; value?: any }) => void;
 	onBlur?: (e: React.FocusEvent<any>) => void;
+	ref?: any;
 }
 
 const getFormikFieldError = (form, field) => {
@@ -23,6 +24,7 @@ export const SwFormField: React.FC<FormFieldProps> = ({
 	component,
 	componentProps = {},
 	onChange,
+	ref,
 	onBlur,
 	children,
 	...fieldProps
@@ -44,6 +46,7 @@ export const SwFormField: React.FC<FormFieldProps> = ({
 					...field,
 					...props,
 					...valueProps,
+					ref,
 					onChange: (e, { name, value, checked }) => {
 						if (checked != null && value === '') {
 							value = !!checked;
