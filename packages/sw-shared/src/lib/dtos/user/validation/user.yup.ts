@@ -1,8 +1,16 @@
 import { a } from 'yup-decorator';
 
-export function username(validateLength: boolean = true) {
+interface IUsernameValidationOptions {
+	validateLength?: boolean;
+}
+
+const defaultUsernameValidationOptions = {
+	validateLength: true,
+};
+
+export function username(options: IUsernameValidationOptions = defaultUsernameValidationOptions) {
 	const base = a.string().required('Username is required');
-	if (validateLength) {
+	if (options.validateLength) {
 		return base
 			.max(25, 'Username is too long')
 			.min(3, 'Username is too short');
@@ -10,9 +18,17 @@ export function username(validateLength: boolean = true) {
 	return base;
 }
 
-export function password(validatePattern: boolean = true) {
+interface IPasswordValidationOptions {
+	validatePattern?: boolean;
+}
+
+const defaultPasswordValidationOptions = {
+	validatePattern: true,
+};
+
+export function password(options: IPasswordValidationOptions = defaultPasswordValidationOptions) {
 	const base = a.string().required('Password is required');
-	if (validatePattern) {
+	if (options.validatePattern) {
 		return base
 			.min(8, 'Must be greater than 8 characters')
 			.matches(

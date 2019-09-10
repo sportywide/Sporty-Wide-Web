@@ -30,11 +30,6 @@ class SwLoginPage extends React.Component<any> {
 		return pageProps;
 	}
 
-	handleShowSignup = async event => {
-		event.preventDefault();
-		await redirect({ route: 'signup', refresh: false });
-	};
-
 	render() {
 		return (
 			<div className="ub-p4">
@@ -43,16 +38,20 @@ class SwLoginPage extends React.Component<any> {
 					<title>Welcome</title>
 				</Head>
 				<div className="ui top attached tabular menu">
-					<a className="item active" data-tab="login" onClick={event => event.preventDefault()}>
-						Login
-					</a>
-					<a className="item" data-tab="signup" onClick={this.handleShowSignup}>
-						Signup
-					</a>
+					<Link route="login">
+						<a className="item active" data-tab="login" onClick={e => e.preventDefault()}>
+							Login
+						</a>
+					</Link>
+					<Link route="signup">
+						<a className="item" data-tab="signup">
+							Signup
+						</a>
+					</Link>
 				</div>
 				<div className="ui bottom attached segment" data-tab="login">
 					<SwLoginForm />
-					<hr/>
+					<hr />
 					<button className="ui facebook button">
 						<a className="link-white" href="/auth/facebook">
 							<i className="facebook icon" />

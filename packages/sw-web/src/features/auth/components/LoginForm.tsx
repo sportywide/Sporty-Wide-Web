@@ -2,7 +2,6 @@ import React from 'react';
 import { Formik, FormikProps } from 'formik';
 import { Form } from 'semantic-ui-react';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
-import { SwPasswordField } from '@web/shared/lib/form/components/PasswordField';
 import { getSchemaByType } from 'yup-decorator';
 import { LoginDto } from '@shared/lib/dtos/user/login.dto';
 import { Link } from '@web/routes';
@@ -34,11 +33,12 @@ const SwLoginFormComponent: React.FC<IProps> = () => {
 						}}
 					/>
 
-					<SwPasswordField
+					<SwFormField
 						name="password"
-						disableProgress={true}
+						component={Form.Input}
 						componentProps={{
 							label: 'Password',
+							type: 'password',
 							placeholder: 'Your password',
 						}}
 					/>

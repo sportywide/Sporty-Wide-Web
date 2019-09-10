@@ -4,13 +4,13 @@ import { Form } from 'semantic-ui-react';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
 import { SwPasswordField } from '@web/shared/lib/form/components/PasswordField';
 import { getSchemaByType } from 'yup-decorator';
-import { SignupDto } from '@shared/lib/dtos/user/signup.dto';
+import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 
 interface IProps {}
 
 const SwSignupFormComponent: React.FC<IProps> = () => {
 	return (
-		<Formik initialValues={{}} onSubmit={handleSignup} validationSchema={getSchemaByType(SignupDto)}>
+		<Formik initialValues={{}} onSubmit={handleSignup} validationSchema={getSchemaByType(CreateUserDto)}>
 			{renderForm}
 		</Formik>
 	);
