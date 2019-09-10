@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 const swBackground = css`
 	width: 100%;
-	height: 100vh;
+	height: 100%;
 `;
 export const SwPrimaryBackGround = styled.div`
 	${swBackground};

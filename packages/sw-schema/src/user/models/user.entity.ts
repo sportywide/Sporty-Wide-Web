@@ -6,6 +6,7 @@ import { SocialProvider } from '@shared/lib/dtos/user/enum/social-provider.enum'
 import { BaseEntity } from '@schema/core/base.entity';
 import { TrackTimestamp } from '@schema/core/timestamp/track-timestamp.mixin';
 import { BadRequestException } from '@nestjs/common';
+import { UserGender } from '@shared/lib/dtos/user/enum/user-gender.enum';
 
 @Entity()
 export class User extends TrackTimestamp(BaseEntity) {
@@ -45,6 +46,13 @@ export class User extends TrackTimestamp(BaseEntity) {
 	})
 	status: UserStatus;
 
+	@Column({
+		type: 'enum',
+		enum: UserGender,
+		default: UserGender.MALE,
+	})
+	gender: UserStatus;
+
 	@Column() password: string;
 
 	@Column() socialId: string;
@@ -69,7 +77,11 @@ export class User extends TrackTimestamp(BaseEntity) {
 			this.password = await hashPassword(this.password);
 		}
 
-		if (this.id && !(this._initialValues.status == UserStatus.PENDING && this._initialValues.socialProvider) && this.changed('username')) {
+		if (
+			this.id &&
+			!(this._initialValues.status == UserStatus.PENDING && this._initialValues.socialProvider) &&
+			this.changed('username')
+		) {
 			throw new BadRequestException('Cannot change username');
 		}
 	}

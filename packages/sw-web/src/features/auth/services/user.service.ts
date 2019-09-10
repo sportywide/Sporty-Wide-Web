@@ -19,4 +19,11 @@ export class UserService {
 			})
 			.pipe(map(({ data }) => data));
 	}
+
+	getBasicProfile(userId) {
+		return this.apiService
+			.api()
+			.get(`/user/${userId}`)
+			.pipe(map(({ data }) => data));
+	}
 }

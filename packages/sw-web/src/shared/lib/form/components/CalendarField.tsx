@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { DateInput } from 'semantic-ui-calendar-react';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
 

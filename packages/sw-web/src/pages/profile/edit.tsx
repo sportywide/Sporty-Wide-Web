@@ -2,12 +2,26 @@ import React from 'react';
 import Head from 'next/head';
 import { SwContainer, SwGreyBackground } from '@web/shared/styled/core.styled';
 import { SwEditProfile } from '@web/features/profile/edit/components/EditProfile';
-import { Grid, GridColumn } from 'semantic-ui-react';
-import { allowAll, checkUser } from '@web/shared/lib/auth/check-user';
-import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
+import { Grid, GridColumn, Loader } from 'semantic-ui-react';
+import { withContext } from '@web/shared/lib/context/providers';
+import { compose } from 'recompose';
+import { UserContext } from '@web/shared/lib/store';
+import { registerReducer } from '@web/shared/lib/redux/register-reducer';
+import { registerEpic } from '@web/shared/lib/redux/register-epic';
+import { connect } from 'react-redux';
+import { fetchBasicUserProfileEpic, fetchUserProfileEpic } from '@web/features/profile/store/epics';
+import { fetchUserProfile } from '@web/features/profile/store/actions';
+import { userProfileReducer } from '@web/features/profile/store/reducers';
 
 class SwEditProfilePage extends React.Component<any> {
+	componentDidMount(): void {
+		this.props.fetchUserProfile(this.props.user.id);
+	}
+
 	render() {
+		if (!(this.props.userProfile && this.props.userProfile.basic)) {
+			return <Loader />;
+		}
 		return (
 			<SwGreyBackground>
 				<Head>
@@ -16,18 +30,7 @@ class SwEditProfilePage extends React.Component<any> {
 				<SwContainer>
 					<Grid verticalAlign={'middle'} centered>
 						<GridColumn mobile={13} tablet={13} computer={13}>
-							<SwEditProfile
-								user={{
-									username: 'vdtn359',
-									email: 'vdtn359@gmail.com',
-									firstName: 'Tuan',
-									lastName: 'Nguyen',
-									socialProvider: null,
-									status: UserStatus.ACTIVE,
-									id: 1,
-									name: 'Tuan Nguyen',
-								}}
-							/>
+							<SwEditProfile userProfile={this.props.userProfile} />
 						</GridColumn>
 					</Grid>
 				</SwContainer>
@@ -36,5 +39,16 @@ class SwEditProfilePage extends React.Component<any> {
 	}
 }
 
-export default checkUser(allowAll)(SwEditProfilePage);
-//export default withContext(UserContext, 'user')(SwEditProfilePage);
+const enhancer = compose(
+	withContext(UserContext, 'user'),
+	registerReducer({ userProfile: userProfileReducer }),
+	registerEpic(fetchBasicUserProfileEpic, fetchUserProfileEpic),
+	connect(
+		state => ({ userProfile: state.userProfile }),
+		{
+			fetchUserProfile,
+		}
+	)
+);
+
+export default enhancer(SwEditProfilePage);

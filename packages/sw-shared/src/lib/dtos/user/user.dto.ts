@@ -2,6 +2,7 @@ import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { Expose, Type } from 'class-transformer-imp';
 import { ApiModelProperty } from '@shared/lib/utils/api/decorators';
+import { UserGender } from '@shared/lib/dtos/user/enum/user-gender.enum';
 
 export class UserDto {
 	@ApiModelProperty()
@@ -31,6 +32,10 @@ export class UserDto {
 	@ApiModelProperty({ enum: ['active', 'pending'] })
 	@Expose()
 	status: UserStatus;
+
+	@ApiModelProperty({ enum: ['male', 'female'] })
+	@Expose()
+	gender: UserGender;
 
 	@Expose()
 	@Type(() => Date)

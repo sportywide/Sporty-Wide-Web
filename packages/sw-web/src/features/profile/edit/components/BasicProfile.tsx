@@ -11,9 +11,11 @@ interface IProps {
 	user: IUser;
 }
 const SwBasicProfileComponent: React.FC<IProps> = ({ user }) => {
+	console.log(user);
 	return (
 		<Formik
-			initialValues={{}}
+			initialValues={user}
+			enableReinitialize={true}
 			onSubmit={console.log}
 			render={props => {
 				return (
@@ -52,7 +54,7 @@ const SwBasicProfileComponent: React.FC<IProps> = ({ user }) => {
 								/>
 
 								<SwFormField
-									name="branch"
+									name="lastName"
 									component={Form.Input}
 									componentProps={{
 										label: 'Last name',
