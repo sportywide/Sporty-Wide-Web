@@ -65,6 +65,7 @@ const SwBasicProfileComponent: React.FC<IProps> = ({ user }) => {
 									name="email"
 									component={Form.Input}
 									componentProps={{
+										icon: 'mail',
 										label: 'Email',
 										placeholder: 'Email',
 									}}
@@ -84,6 +85,15 @@ const SwBasicProfileComponent: React.FC<IProps> = ({ user }) => {
 									componentProps={{
 										placeholder: 'Your birthday',
 										label: 'Date of Birth',
+									}}
+								/>
+								<SwFormField
+									name="phone"
+									component={Form.Input}
+									componentProps={{
+										icon: 'phone',
+										label: 'Phone',
+										placeholder: 'Your Phone',
 									}}
 								/>
 							</Form.Group>
