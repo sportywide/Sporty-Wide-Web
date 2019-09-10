@@ -36,7 +36,7 @@ export function initStore(initialState = {}, context) {
 	});
 	const reduxMiddleware = applyMiddleware(thunkMiddleware.withExtraArgument({ container }), epicMiddleware);
 	const epicManager = createEpicManager(logoutEpic);
-	const enhancers = isDevelopment() ? composeWithDevTools(reduxMiddleware) : reduxMiddleware;
+	const enhancers = isDevelopment() ? composeWithDevTools({ serialize: true })(reduxMiddleware) : reduxMiddleware;
 	const store = createStore(reducerManager.reduce, { ...initialState, auth }, enhancers) as ISportyWideStore;
 	store.reducerManager = reducerManager;
 	store.epicManager = epicManager;
