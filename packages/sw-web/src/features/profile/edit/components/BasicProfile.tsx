@@ -3,18 +3,17 @@ import { Form, Header, Image } from 'semantic-ui-react';
 import { Formik } from 'formik';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
 import { SwPasswordField } from '@web/shared/lib/form/components/PasswordField';
-import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { UserGender } from '@shared/lib/dtos/user/enum/user-gender.enum';
 import { SwCalendarField } from '@web/shared/lib/form/components/CalendarField';
+import { UserDto } from '@shared/lib/dtos/user/user.dto';
 
 interface IProps {
-	user: IUser;
+	user: UserDto;
 }
 const SwBasicProfileComponent: React.FC<IProps> = ({ user }) => {
-	console.log(user);
 	return (
 		<Formik
-			initialValues={user}
+			initialValues={{ ...user, gender: user.gender || UserGender.MALE }}
 			enableReinitialize={true}
 			onSubmit={console.log}
 			render={props => {

@@ -4,9 +4,10 @@ import { SwBasicProfile } from '@web/features/profile/edit/components/BasicProfi
 import { SwWorkProfile } from '@web/features/profile/edit/components/WorkProfile';
 import { SwFormSegment } from '@web/features/profile/edit/styled/edit.styled';
 import { SwSummaryProfile } from '@web/features/profile/edit/components/SummaryProfile';
+import { IUserProfile } from '@web/features/profile/store/reducers';
 
 interface IProps {
-	userProfile: any;
+	userProfile: IUserProfile;
 }
 
 const SwEditProfileComponent: React.FC<IProps> = ({ userProfile }) => {
@@ -19,12 +20,12 @@ const SwEditProfileComponent: React.FC<IProps> = ({ userProfile }) => {
 
 			<SwFormSegment>
 				<Header as={'h3'}> Work and Education </Header>
-				<SwWorkProfile user={userProfile} />
+				<SwWorkProfile user={userProfile.basic} />
 			</SwFormSegment>
 
 			<SwFormSegment>
 				<Header as={'h3'}> Other information </Header>
-				<SwSummaryProfile user={userProfile} />
+				<SwSummaryProfile user={userProfile.basic} />
 			</SwFormSegment>
 		</div>
 	);

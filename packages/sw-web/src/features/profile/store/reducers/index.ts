@@ -1,17 +1,17 @@
-import { FETCH_BASIC_USER_PROFILE_SUCCESS } from '@web/features/profile/store/actions/actions.constants';
-import { AnyAction } from 'redux';
+import { UserDto } from '@shared/lib/dtos/user/user.dto';
+import { createReducer, ActionType } from 'typesafe-actions';
+import * as actions from '@web/features/profile/store/actions';
 
-interface IUserProfile {
-	basic?: any;
+export type UserProfileAction = ActionType<typeof actions>;
+
+export interface IUserProfile {
+	basic?: UserDto;
 }
-export function userProfileReducer(state: IUserProfile = {}, { type, payload }: AnyAction): IUserProfile {
-	switch (type) {
-		case FETCH_BASIC_USER_PROFILE_SUCCESS:
-			return {
-				...state,
-				basic: payload,
-			};
-		default:
-			return state;
-	}
-}
+
+export const userProfileReducer = createReducer<IUserProfile, UserProfileAction>({}).handleAction(
+	actions.fetchBasicUserProfileSuccess,
+	(state, action) => ({
+		...state,
+		basic: action.payload,
+	})
+);

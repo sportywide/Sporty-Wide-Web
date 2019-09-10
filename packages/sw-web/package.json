@@ -49,6 +49,7 @@
 		"sportywide-shared": "1.0.0",
 		"styled-components": "4.3.2",
 		"typedi": "0.8.0",
+		"typesafe-actions": "4.4.2",
 		"zxcvbn": "4.4.2"
 	}
 }

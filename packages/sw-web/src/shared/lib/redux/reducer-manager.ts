@@ -1,8 +1,9 @@
 import { autobind } from 'core-decorators';
-import { combineReducers } from 'redux';
+import { combineReducers, Store } from 'redux';
 
 export class ReducerManager {
 	reducers: {};
+	store: Store;
 	combinedReducers: any;
 	keysToRemove: string[];
 
@@ -32,6 +33,9 @@ export class ReducerManager {
 		}
 		this.reducers[key] = reducer;
 		this.combinedReducers = this.syncReducers();
+		this.store.dispatch({
+			type: '@@ADD_REDUCER',
+		});
 	}
 
 	@autobind
@@ -42,6 +46,9 @@ export class ReducerManager {
 		delete this.reducers[key];
 		this.keysToRemove.push(key);
 		this.combinedReducers = this.syncReducers();
+		this.store.dispatch({
+			type: '@@REMOVE_REDUCER',
+		});
 	}
 
 	private syncReducers() {

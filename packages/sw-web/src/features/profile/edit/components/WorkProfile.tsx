@@ -2,10 +2,10 @@ import React from 'react';
 import { Form, Header, Image } from 'semantic-ui-react';
 import { Formik } from 'formik';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
-import { IUser } from '@web/shared/lib/interfaces/auth/user';
+import { UserDto } from '@shared/lib/dtos/user/user.dto';
 
 interface IProps {
-	user: IUser;
+	user: UserDto;
 }
 const SwWorkProfileComponent: React.FC<IProps> = ({ user }) => {
 	return (

@@ -11,9 +11,15 @@ import { registerEpic } from '@web/shared/lib/redux/register-epic';
 import { connect } from 'react-redux';
 import { fetchBasicUserProfileEpic, fetchUserProfileEpic } from '@web/features/profile/store/epics';
 import { fetchUserProfile } from '@web/features/profile/store/actions';
-import { userProfileReducer } from '@web/features/profile/store/reducers';
+import { IUserProfile, userProfileReducer } from '@web/features/profile/store/reducers';
+import { IUser } from '@web/shared/lib/interfaces/auth/user';
 
-class SwEditProfilePage extends React.Component<any> {
+interface IProps {
+	userProfile: IUserProfile;
+	user: IUser;
+	fetchUserProfile: typeof fetchUserProfile;
+}
+class SwEditProfilePage extends React.Component<IProps> {
 	componentDidMount(): void {
 		this.props.fetchUserProfile(this.props.user.id);
 	}

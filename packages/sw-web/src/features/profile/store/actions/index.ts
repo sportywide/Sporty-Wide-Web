@@ -1,3 +1,5 @@
+import { UserDto } from '@shared/lib/dtos/user/user.dto';
+import { createSwStandardAction } from '@web/shared/lib/redux/action-creators';
 import {
 	FETCH_BASIC_USER_PROFILE,
 	FETCH_BASIC_USER_PROFILE_SUCCESS,
@@ -6,27 +8,8 @@ import {
 	FETCH_USER_PROFILE,
 } from './actions.constants';
 
-export const fetchBasicUserProfileSuccess = basicProfile => ({
-	type: FETCH_BASIC_USER_PROFILE_SUCCESS,
-	payload: basicProfile,
-});
-
-export const fetchExtraUserProfileSuccess = extraProfile => ({
-	type: FETCH_EXTRA_USER_PROFILE_SUCCESS,
-	payload: extraProfile,
-});
-
-export const fetchUserProfile = userId => ({
-	type: FETCH_USER_PROFILE,
-	payload: userId,
-});
-
-export const fetchBasicUserProfile = userId => ({
-	type: FETCH_BASIC_USER_PROFILE,
-	payload: userId,
-});
-
-export const fetchExtraUserProfile = userId => ({
-	type: FETCH_EXTRA_USER_PROFILE,
-	payload: userId,
-});
+export const fetchBasicUserProfileSuccess = createSwStandardAction(FETCH_BASIC_USER_PROFILE_SUCCESS)<UserDto>();
+export const fetchExtraUserProfileSuccess = createSwStandardAction(FETCH_EXTRA_USER_PROFILE_SUCCESS)();
+export const fetchUserProfile = createSwStandardAction(FETCH_USER_PROFILE)<number>();
+export const fetchBasicUserProfile = createSwStandardAction(FETCH_BASIC_USER_PROFILE)<number>();
+export const fetchExtraUserProfile = createSwStandardAction(FETCH_EXTRA_USER_PROFILE)<number>();

@@ -39,6 +39,7 @@ export function initStore(initialState = {}, context) {
 	const enhancers = isDevelopment() ? composeWithDevTools({ serialize: true })(reduxMiddleware) : reduxMiddleware;
 	const store = createStore(reducerManager.reduce, { ...initialState, auth }, enhancers) as ISportyWideStore;
 	store.reducerManager = reducerManager;
+	reducerManager.store = store;
 	store.epicManager = epicManager;
 	store.container = container;
 	epicMiddleware.run(epicManager.rootEpic);
