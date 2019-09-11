@@ -38,6 +38,12 @@ export class UserDto {
 	gender: UserGender;
 
 	@Expose()
+	dob: string;
+
+	@Expose()
+	phone: string;
+
+	@Expose()
 	@Type(() => Date)
 	createdAt: Date;
 

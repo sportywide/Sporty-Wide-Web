@@ -5,13 +5,12 @@ import * as actions from '@web/features/profile/store/actions';
 export type UserProfileAction = ActionType<typeof actions>;
 
 export interface IUserProfile {
-	basic?: UserDto;
+	basic: UserDto;
 }
 
-export const userProfileReducer = createReducer<IUserProfile, UserProfileAction>({}).handleAction(
-	actions.fetchBasicUserProfileSuccess,
-	(state, action) => ({
-		...state,
-		basic: action.payload,
-	})
-);
+export const userProfileReducer = createReducer<IUserProfile, UserProfileAction>({
+	basic: null as any,
+}).handleAction(actions.fetchBasicUserProfileSuccess, (state, action) => ({
+	...state,
+	basic: action.payload,
+}));

@@ -57,6 +57,10 @@ export class User extends TrackTimestamp(BaseEntity) {
 
 	@Column() socialId: string;
 
+	@Column() phone: string;
+
+	@Column({ type: 'date' }) dob: string;
+
 	@Column({
 		type: 'enum',
 		enum: SocialProvider,

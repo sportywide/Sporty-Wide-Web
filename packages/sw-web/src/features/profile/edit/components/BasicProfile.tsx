@@ -5,7 +5,7 @@ import * as yup from 'yup';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
 import { SwPasswordField } from '@web/shared/lib/form/components/PasswordField';
 import { UserGender } from '@shared/lib/dtos/user/enum/user-gender.enum';
-import { SwCalendarField } from '@web/shared/lib/form/components/CalendarField';
+import { SwCalendarDateField } from '@web/shared/lib/form/components/CalendarDateField';
 import { UserDto } from '@shared/lib/dtos/user/user.dto';
 import { getSchemaByType } from 'yup-decorator';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
@@ -13,6 +13,7 @@ import { modifySchema } from '@web/shared/lib/form/validation/yup';
 
 interface IProps {
 	user: UserDto;
+	didSaveProfile: (user: CreateUserDto) => void;
 }
 let schema: any = getSchemaByType(CreateUserDto);
 
@@ -20,13 +21,13 @@ schema = modifySchema(schema, {
 	password: (passwordSchema: yup.StringSchema) => passwordSchema.notRequired(),
 });
 
-const SwBasicProfileComponent: React.FC<IProps> = ({ user }) => {
+const SwBasicProfileComponent: React.FC<IProps> = ({ user, didSaveProfile }) => {
 	return (
 		<Formik
-			initialValues={{ ...user, gender: user.gender || UserGender.MALE }}
+			initialValues={{ ...user, gender: user.gender || UserGender.MALE } as any}
 			enableReinitialize={true}
 			validationSchema={schema}
-			onSubmit={console.log}
+			onSubmit={didSaveProfile}
 			render={props => {
 				return (
 					<>
@@ -92,7 +93,11 @@ const SwBasicProfileComponent: React.FC<IProps> = ({ user }) => {
 								/>
 							</Form.Group>
 							<Form.Group widths={2}>
-								<SwCalendarField name={'dob'} placeholder={'Your birthday'} label={'Date of Birth'} />
+								<SwCalendarDateField
+									name={'dob'}
+									placeholder={'Your birthday'}
+									label={'Date of Birth'}
+								/>
 								<SwFormField
 									name="phone"
 									component={Form.Input}

@@ -9,7 +9,11 @@ import { UserContext } from '@web/shared/lib/store';
 import { registerReducer } from '@web/shared/lib/redux/register-reducer';
 import { registerEpic } from '@web/shared/lib/redux/register-epic';
 import { connect } from 'react-redux';
-import { fetchBasicUserProfileEpic, fetchUserProfileEpic } from '@web/features/profile/store/epics';
+import {
+	fetchBasicUserProfileEpic,
+	fetchUserProfileEpic,
+	saveBasicUserProfileEpic,
+} from '@web/features/profile/store/epics';
 import { fetchUserProfile } from '@web/features/profile/store/actions';
 import { IUserProfile, userProfileReducer } from '@web/features/profile/store/reducers';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
@@ -48,7 +52,7 @@ class SwEditProfilePage extends React.Component<IProps> {
 const enhancer = compose(
 	withContext(UserContext, 'user'),
 	registerReducer({ userProfile: userProfileReducer }),
-	registerEpic(fetchBasicUserProfileEpic, fetchUserProfileEpic),
+	registerEpic(fetchBasicUserProfileEpic, fetchUserProfileEpic, saveBasicUserProfileEpic),
 	connect(
 		state => ({ userProfile: state.userProfile }),
 		{

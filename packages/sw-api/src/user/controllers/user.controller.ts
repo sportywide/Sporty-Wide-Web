@@ -85,7 +85,6 @@ export class UserController {
 	@NotFoundResponse('user')
 	@UseGuards(JwtAuthGuard)
 	@Put(':id')
-	@Patch(':id')
 	public async updateUser(
 		@Param('id', new ParseIntPipe())
 		id: number,

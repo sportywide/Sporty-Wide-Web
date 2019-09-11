@@ -6,7 +6,7 @@ import { allowAnonymousOnly, checkUser } from '@web/shared/lib/auth/check-user';
 import { SwResetPassword } from '@web/features/auth/components/ResetPassword';
 import { redirect } from '@web/shared/lib/navigation/helper';
 import { Container } from 'typedi';
-import { UserService } from '@web/features/auth/services/user.service';
+import { UserService } from '@web/features/user/services/user.service';
 
 class SwResetPasswordPage extends React.Component<any> {
 	static async getInitialProps(context) {

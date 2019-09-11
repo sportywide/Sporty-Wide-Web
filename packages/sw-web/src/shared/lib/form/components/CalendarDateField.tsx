@@ -13,7 +13,7 @@ export interface CalendarFieldProps extends Omit<Omit<DateInputProps, 'value'>, 
 	onBlur?: (e: React.FocusEvent<any>) => void;
 }
 
-const SwCalendarComponent: React.FC<CalendarFieldProps> = ({
+const SwCalendarDateComponent: React.FC<CalendarFieldProps> = ({
 	label,
 	name,
 	dateFormat = 'dd-MM-yyyy',
@@ -30,7 +30,15 @@ const SwCalendarComponent: React.FC<CalendarFieldProps> = ({
 					const { field, form } = props;
 					const { value } = field;
 					const error = getFormikFieldError(form, field);
-					const valueString = isValidDate(value) ? format(value, dateFormat) : value || '';
+					let valueString = value || '';
+					if (isValidDate(value)) {
+						valueString = format(value, dateFormat);
+					} else if (value && value.length === dateFormat.length) {
+						const parsedDate = parse(value, 'yyyy-MM-dd', new Date());
+						if (isValidDate(parsedDate)) {
+							valueString = format(parsedDate, dateFormat);
+						}
+					}
 					// @ts-ignore
 					return React.createElement(DateInput, {
 						...componentProps,
@@ -40,13 +48,17 @@ const SwCalendarComponent: React.FC<CalendarFieldProps> = ({
 						value: valueString,
 						onChange: (e, { value }) => {
 							form.handleChange(e);
-							let parsedValue = value;
+							let parsedValue;
 							if (value && value.length === dateFormat.length) {
 								parsedValue = parse(value, dateFormat, new Date());
-								if (!isValidDate(parsedValue)) {
-									parsedValue = value;
-								}
 							}
+
+							if (isValidDate(parsedValue)) {
+								parsedValue = format(parsedValue, 'yyyy-MM-dd');
+							} else {
+								parsedValue = value;
+							}
+
 							setFormikFieldValue(form, name, parsedValue, true);
 							if (onChange) {
 								onChange(e, { name, parsedValue });
@@ -65,4 +77,4 @@ const SwCalendarComponent: React.FC<CalendarFieldProps> = ({
 	);
 };
 
-export const SwCalendarField = SwCalendarComponent;
+export const SwCalendarDateField = SwCalendarDateComponent;
