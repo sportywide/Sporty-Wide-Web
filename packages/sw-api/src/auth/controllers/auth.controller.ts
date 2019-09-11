@@ -145,7 +145,6 @@ export class AuthController {
 	@AuthorizedApiOperation({ title: 'Resend verification email endpoint' })
 	@HttpCode(HttpStatus.OK)
 	@Post('resend-verification')
-	@PendingSocialUser()
 	@UseGuards(AuthenticatedGuard)
 	public resendVerification(@CurrentUser() user, @Body() body: { email: string }) {
 		const { email } = body;
