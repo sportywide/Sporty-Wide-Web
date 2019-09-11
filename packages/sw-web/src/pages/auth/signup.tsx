@@ -10,6 +10,8 @@ import { signup } from '@web/features/auth/store/actions';
 import { compose } from '@shared/lib/utils/fp/combine';
 import { signupEpic } from '@web/features/auth/store/epics';
 import { authReducer } from '@web/features/auth/store/reducers';
+import { SwPrimaryBackGround } from '@web/shared/styled/core.styled';
+import { Container, GridColumn, Grid } from 'semantic-ui-react';
 
 interface IProps {
 	signup: Function;
@@ -18,40 +20,47 @@ interface IProps {
 class SwSignupPage extends React.Component<IProps, any> {
 	render() {
 		return (
-			<div className="ub-p4">
-				<h1>Welcome</h1>
+			<>
 				<Head>
 					<title>Welcome</title>
 				</Head>
-				<div className="ui top attached tabular menu">
-					<Link route="login">
-						<a className="item" data-tab="login">
-							Login
-						</a>
-					</Link>
-					<Link route="signup">
-						<a className="item active" data-tab="signup" onClick={e => e.preventDefault()}>
-							Signup
-						</a>
-					</Link>
-				</div>
-				<div className="ui bottom attached segment" data-tab="signup">
-					<SwSignupForm onSignup={userDto => this.props.signup(userDto)} />
-					<div className="ui horizontal divider">or</div>
-					<button className="ui facebook button">
-						<a className="link-white" href="/auth/facebook">
-							<i className="facebook icon" />
-							Facebook
-						</a>
-					</button>
-					<button className="ui google plus button">
-						<a className="link-white" href="/auth/google">
-							<i className="google plus icon" />
-							Google Plus
-						</a>
-					</button>
-				</div>
-			</div>
+				<SwPrimaryBackGround>
+					<Container style={{ width: '100%' }}>
+						<Grid verticalAlign={'middle'} centered>
+							<GridColumn mobile={14} tablet={8} computer={6}>
+								<div className="ui top attached tabular menu">
+									<Link route="login">
+										<a className="item" data-tab="login">
+											Login
+										</a>
+									</Link>
+									<Link route="signup">
+										<a className="item active" data-tab="signup" onClick={e => e.preventDefault()}>
+											Signup
+										</a>
+									</Link>
+								</div>
+								<div className="ui bottom attached segment" data-tab="signup">
+									<SwSignupForm onSignup={userDto => this.props.signup(userDto)} />
+									<div className="ui horizontal divider">or</div>
+									<button className="ui facebook button">
+										<a className="link-white" href="/auth/facebook">
+											<i className="facebook icon" />
+											Facebook
+										</a>
+									</button>
+									<button className="ui google plus button">
+										<a className="link-white" href="/auth/google">
+											<i className="google plus icon" />
+											Google Plus
+										</a>
+									</button>
+								</div>
+							</GridColumn>
+						</Grid>
+					</Container>
+				</SwPrimaryBackGround>
+			</>
 		);
 	}
 }

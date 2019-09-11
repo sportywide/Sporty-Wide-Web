@@ -12,6 +12,8 @@ import { authReducer } from '@web/features/auth/store/reducers';
 import { registerEpic } from '@web/shared/lib/redux/register-epic';
 import { loginEpic } from '@web/features/auth/store/epics';
 import { login } from '@web/features/auth/store/actions';
+import { SwPrimaryBackGround } from '@web/shared/styled/core.styled';
+import { Container, Grid, GridColumn } from 'semantic-ui-react';
 
 interface IProps {
 	login: Function;
@@ -43,42 +45,47 @@ class SwLoginPage extends React.Component<IProps, any> {
 
 	render() {
 		return (
-			<div className="ub-p4">
-				<h1>Welcome</h1>
+			<>
 				<Head>
 					<title>Welcome</title>
 				</Head>
-				<section className="one wide tablet">
-					<div className="ui top attached tabular menu">
-						<Link route="login">
-							<a className="item active" data-tab="login" onClick={e => e.preventDefault()}>
-								Login
-							</a>
-						</Link>
-						<Link route="signup">
-							<a className="item" data-tab="signup">
-								Signup
-							</a>
-						</Link>
-					</div>
-					<div className="ui bottom attached segment" data-tab="login">
-						<SwLoginForm onLogin={userDto => this.props.login(userDto)} />
-						<div className="ui horizontal divider">or</div>
-						<button className="ui facebook button">
-							<a className="link-white" href="/auth/facebook">
-								<i className="facebook icon" />
-								Facebook
-							</a>
-						</button>
-						<button className="ui google plus button">
-							<a className="link-white" href="/auth/google">
-								<i className="google plus icon" />
-								Google Plus
-							</a>
-						</button>
-					</div>
-				</section>
-			</div>
+				<SwPrimaryBackGround>
+					<Container style={{ width: '100%' }}>
+						<Grid verticalAlign={'middle'} centered>
+							<GridColumn mobile={14} tablet={8} computer={6}>
+								<div className="ui top attached tabular menu">
+									<Link route="login">
+										<a className="item active" data-tab="login" onClick={e => e.preventDefault()}>
+											Login
+										</a>
+									</Link>
+									<Link route="signup">
+										<a className="item" data-tab="signup">
+											Signup
+										</a>
+									</Link>
+								</div>
+								<div className="ui bottom attached segment" data-tab="login">
+									<SwLoginForm onLogin={userDto => this.props.login(userDto)} />
+									<div className="ui horizontal divider">or</div>
+									<button className="ui facebook button">
+										<a className="link-white" href="/auth/facebook">
+											<i className="facebook icon" />
+											Facebook
+										</a>
+									</button>
+									<button className="ui google plus button">
+										<a className="link-white" href="/auth/google">
+											<i className="google plus icon" />
+											Google Plus
+										</a>
+									</button>
+								</div>
+							</GridColumn>
+						</Grid>
+					</Container>
+				</SwPrimaryBackGround>
+			</>
 		);
 	}
 }
