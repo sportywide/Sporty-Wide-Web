@@ -141,6 +141,17 @@ export class AuthController {
 		return this.authService.completeSocialProfile(user, completeSocialProfileDto);
 	}
 
+	@ApiOkResponse({ description: 'The user asks for another verification email', type: Tokens })
+	@AuthorizedApiOperation({ title: 'Resend verification email endpoint' })
+	@HttpCode(HttpStatus.OK)
+	@Post('resend-verification')
+	@PendingSocialUser()
+	@UseGuards(AuthenticatedGuard)
+	public resendVerification(@CurrentUser() user, @Body() body: { email: string }) {
+		const { email } = body;
+		return this.authService.resendVerificationEmail(email);
+	}
+
 	@ApiOkResponse({ description: 'A forgot password email has been sent' })
 	@AuthorizedApiOperation({ title: 'Send Forgot Password endpoint' })
 	@Post('forgot-password')

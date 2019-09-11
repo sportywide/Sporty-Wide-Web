@@ -1,7 +1,12 @@
-import { LOGIN, LOGOUT, SIGNUP } from '@web/features/auth/store/actions/actions.constants';
+import { LOGIN, LOGOUT, RESEND_VERIFICATION_EMAIL, SIGNUP } from '@web/features/auth/store/actions/actions.constants';
 import { AuthService } from '@web/features/auth/services/auth.service';
 import { mapTo, mergeMap, tap } from 'rxjs/operators';
-import { loginSuccess, logoutSuccess, signupSuccess } from '@web/features/auth/store/actions';
+import {
+	loginSuccess,
+	logoutSuccess,
+	resendVerificationEmailSuccess,
+	signupSuccess,
+} from '@web/features/auth/store/actions';
 import { IDependencies } from '@web/shared/lib/store';
 
 export const logoutEpic = (action$, state$, { container }: IDependencies) => {
@@ -46,3 +51,13 @@ export const loginEpic = (action$, state$, { container }: IDependencies) => {
 	);
 };
 
+export const resendVerificationEpic = (action$, state$, { container }: IDependencies) => {
+	return action$.ofType(RESEND_VERIFICATION_EMAIL).pipe(
+		mergeMap(({ payload }) => {
+			const authService = container.get(AuthService);
+			return authService.resendVerficationEmail(payload).pipe(
+				mapTo(resendVerificationEmailSuccess)
+			);
+		})
+	);
+};

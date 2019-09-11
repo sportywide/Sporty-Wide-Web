@@ -28,6 +28,10 @@ export class AuthService {
 		return this.apiService.auth().post('/complete-social-profile', completeSocialProfileDto);
 	}
 
+	resendVerficationEmail(email: string) {
+		return this.apiService.auth().post('/resend-verification', { email });
+	}
+
 	sendForgotPasswordEmail(body) {
 		return this.apiService.auth().post('/forgot-password', body);
 	}
