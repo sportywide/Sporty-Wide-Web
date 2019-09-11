@@ -2,6 +2,8 @@ import { Inject, Service } from 'typedi';
 import { ApiService } from '@web/shared/lib/http/api.service';
 import { CompleteSocialProfileDto } from '@shared/lib/dtos/user/complete-social-profile.dto';
 import { ResetPasswordDto } from '@shared/lib/dtos/user/reset-password-dto';
+import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
+import { LoginDto } from '@shared/lib/dtos/user/login.dto';
 
 @Service({ global: true })
 export class AuthService {
@@ -9,6 +11,14 @@ export class AuthService {
 		@Inject(type => ApiService)
 		private readonly apiService: ApiService
 	) {}
+
+	signup(userDto: CreateUserDto) {
+		return this.apiService.auth().post('/signup', userDto);
+	}
+
+	login({ username, password }: LoginDto) {
+		return this.apiService.auth().post(`/login?username=${username}&password=${password}`);
+	}
 
 	logout() {
 		return this.apiService.auth().post('/logout');

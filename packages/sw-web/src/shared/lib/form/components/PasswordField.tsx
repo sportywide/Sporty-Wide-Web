@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { FormFieldProps, SwFormField } from '@web/shared/lib/form/components/FormField';
 import { Form, Progress } from 'semantic-ui-react';
 
-export type PasswordFieldProps = Omit<FormFieldProps, 'component'>;
+export interface PasswordFieldProps extends Omit<FormFieldProps, 'component'> {
+	className?: string;
+}
 
 export const SwPasswordField: React.FC<PasswordFieldProps> = ({ componentProps, onChange, ...props }) => {
 	const [score, setScore] = useState(0);
 	const [password, setPassword] = useState('');
 	const [feedback, setFeedback] = useState<any>({});
 	return (
-		<div className={'ub-flex ub-flex-column '}>
+		<div className={`ub-flex ub-flex-column ${props.className || ''}`}>
 			<SwFormField
 				componentProps={{ ...componentProps, type: 'password' }}
 				component={Form.Input}
