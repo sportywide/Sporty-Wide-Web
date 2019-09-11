@@ -5,7 +5,6 @@ import { Creatable, Editable } from '@shared/lib/utils/decorators/permissions';
 import { a, is, schema } from 'yup-decorator';
 import { password, username } from '@shared/lib/dtos/user/validation/user.yup';
 import { UserGender } from '@shared/lib/dtos/user/enum/user-gender.enum';
-import { Type } from 'class-transformer-imp';
 import { date } from '@shared/lib/utils/validation/date.yup';
 
 @schema()
