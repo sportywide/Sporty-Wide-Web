@@ -10,10 +10,15 @@ export interface IEpicManager {
 
 export function createEpicManager(...initialEpics): IEpicManager {
 	const epic$ = new BehaviorSubject(initialEpics.length ? combineEpics(...initialEpics) : null);
+	const epicSet = new Set();
 
 	return {
 		add(...epics) {
 			for (const epic of epics) {
+				if (epicSet.has(epic)) {
+					return;
+				}
+				epicSet.add(epic);
 				epic$.next(epic);
 			}
 		},

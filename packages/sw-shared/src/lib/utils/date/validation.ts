@@ -1,4 +1,4 @@
-import { parse } from "date-fns";
+import { parse } from 'date-fns';
 
 export function isValidDate(date) {
 	return date && date instanceof Date && !isNaN(date.getTime());

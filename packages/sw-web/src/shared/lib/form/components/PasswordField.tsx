@@ -26,13 +26,14 @@ export const SwPasswordField: React.FC<PasswordFieldProps> = ({
 					icon: (
 						<Icon
 							onClick={() => setIsShowingPassword(!isShowingPassword)}
-							name={isShowingPassword ? 'eye slash' : 'eye'}
+							name={isShowingPassword ? 'eye' : 'eye slash'}
 							link
 						/>
 					),
 				}}
 				component={Form.Input}
-				onChange={handlePasswordChange}
+				onValueChange={handlePasswordChange}
+				onChange={onChange}
 				{...props}
 			>
 				{children}
@@ -52,11 +53,7 @@ export const SwPasswordField: React.FC<PasswordFieldProps> = ({
 		</div>
 	);
 
-	async function handlePasswordChange(e, params) {
-		if (onChange) {
-			onChange(e, params);
-		}
-		const { value } = params;
+	async function handlePasswordChange(value = '') {
 		setPassword(value);
 		const { default: zxcvbn } = await import(/* webpackChunkName: "zxcvbn" */ 'zxcvbn/dist/zxcvbn.js');
 		const { score, feedback } = zxcvbn(value);
