@@ -6,6 +6,7 @@ import { a, is, schema } from 'yup-decorator';
 import { password, username } from '@shared/lib/dtos/user/validation/user.yup';
 import { UserGender } from '@shared/lib/dtos/user/enum/user-gender.enum';
 import { Type } from 'class-transformer-imp';
+import { date } from '@shared/lib/utils/validation/date.yup';
 
 @schema()
 export class CreateUserDto {
@@ -50,7 +51,7 @@ export class CreateUserDto {
 
 	@ApiModelProperty()
 	@Editable(UserRole.USER)
-	@is(a.string().nullable(true))
+	@is(date({ nullable: true }))
 	dob: string;
 
 	@ApiModelProperty()

@@ -1,7 +1,6 @@
-import { pbkdf2, pbkdf2Sync, randomBytes } from 'crypto';
+import { pbkdf2, pbkdf2Sync, randomBytes, createHash } from 'crypto';
 import { promisify } from 'util';
 
-const pbkdf2Promise = promisify(pbkdf2);
 const ITERATIONS = 2048;
 const KEY_LENGTH = 32;
 const DIGEST = 'sha512';
@@ -11,6 +10,7 @@ export function computeHashSync(password, salt) {
 }
 
 export function computeHash(password, salt) {
+	const pbkdf2Promise = promisify(pbkdf2);
 	return pbkdf2Promise(password, salt, ITERATIONS, KEY_LENGTH, DIGEST).then(buffer => buffer.toString('hex'));
 }
 
@@ -36,4 +36,10 @@ export async function comparePassword(rawPassword, passwordHash) {
 	const [originalHash, salt] = passwordHash.split('$');
 	const computedHash = await computeHash(rawPassword, salt);
 	return originalHash === computedHash;
+}
+
+export function md5(string) {
+	return createHash('md5')
+		.update(string)
+		.digest('hex');
 }

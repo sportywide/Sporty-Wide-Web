@@ -50,4 +50,7 @@ export class UserDto {
 	@Expose()
 	@Type(() => Date)
 	updatedAt: Date;
+
+	@Expose()
+	profileUrl: string;
 }

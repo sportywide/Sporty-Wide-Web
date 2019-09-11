@@ -5,11 +5,12 @@ import * as yup from 'yup';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
 import { SwPasswordField } from '@web/shared/lib/form/components/PasswordField';
 import { UserGender } from '@shared/lib/dtos/user/enum/user-gender.enum';
-import { SwCalendarDateField } from '@web/shared/lib/form/components/CalendarDateField';
+import { SwCalendarDateField } from '@web/shared/lib/form/components/date/CalendarDateField';
 import { UserDto } from '@shared/lib/dtos/user/user.dto';
 import { getSchemaByType } from 'yup-decorator';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { modifySchema } from '@web/shared/lib/form/validation/yup';
+import { gravatar } from '@web/shared/lib/images/links';
 
 interface IProps {
 	user: UserDto;
@@ -32,11 +33,7 @@ const SwBasicProfileComponent: React.FC<IProps> = ({ user, didSaveProfile }) => 
 				return (
 					<>
 						<div className={'ub-flex ub-flex-center ub-mb4'}>
-							<Image
-								src={'https://pickaface.net/gallery/avatar/unr_randomavatar_170412_0236_9n4c2i.png'}
-								size={'small'}
-								circular
-							/>
+							<Image src={user.profileUrl || gravatar(user.email)} size={'small'} circular />
 							<span className={'ub-ml4'}>
 								<Header as={'h4'}>{user.username}</Header>
 							</span>
@@ -97,6 +94,7 @@ const SwBasicProfileComponent: React.FC<IProps> = ({ user, didSaveProfile }) => 
 									name={'dob'}
 									placeholder={'Your birthday'}
 									label={'Date of Birth'}
+									maxDate={new Date()}
 								/>
 								<SwFormField
 									name="phone"

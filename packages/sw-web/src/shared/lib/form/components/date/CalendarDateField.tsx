@@ -1,7 +1,7 @@
 import React from 'react';
 import { getFormikFieldError, setFormikFieldValue } from '@web/shared/lib/form/components/FormField';
 import { Field, FieldProps } from 'formik';
-import { parse, format } from 'date-fns';
+import { parse, format, isAfter, isBefore } from 'date-fns';
 import { DateInput, DateInputProps } from 'semantic-ui-calendar-react';
 import { isValidDate } from '@shared/lib/utils/date/validation';
 
@@ -19,6 +19,8 @@ const SwCalendarDateComponent: React.FC<CalendarFieldProps> = ({
 	dateFormat = 'dd-MM-yyyy',
 	onChange,
 	onBlur,
+	maxDate,
+	minDate,
 	...componentProps
 }) => {
 	return (
@@ -46,6 +48,8 @@ const SwCalendarDateComponent: React.FC<CalendarFieldProps> = ({
 						error,
 						dateFormat: dateFormat.toUpperCase(), //this is using moment format
 						value: valueString,
+						maxDate,
+						minDate,
 						onChange: (e, { value }) => {
 							form.handleChange(e);
 							let parsedValue;
@@ -54,6 +58,12 @@ const SwCalendarDateComponent: React.FC<CalendarFieldProps> = ({
 							}
 
 							if (isValidDate(parsedValue)) {
+								if (maxDate && isAfter(parsedValue, maxDate)) {
+									parsedValue = maxDate;
+								}
+								if (minDate && isBefore(parsedValue, minDate)) {
+									parsedValue = minDate;
+								}
 								parsedValue = format(parsedValue, 'yyyy-MM-dd');
 							} else {
 								parsedValue = value;
