@@ -51,6 +51,25 @@ export class AuthService {
 		return this.createTokens(user);
 	}
 
+	public async resendVerificationEmail(email: string): Promise<void> {
+		const user = await this.userService.findOne({ email });
+		if (!user) {
+			throw new NotFoundException(`User with email ${email} cannot be found`);
+		}
+
+		// Delete token dedicated for previous verification email
+		// Make sure only one verification email is valid at a time
+		await this.tokenService.delete({
+			engagementTable: this.userService.getTableName(),
+			engagementId: user.id,
+			type: TokenType.CONFIRM_EMAIL,
+		});
+
+		// Regenerate and resend verification email
+		await this.tokenService.createVerifyEmailToken(user);
+		await this.emailService.sendUserVerificationEmail(user);
+	}
+
 	public async sendForgotPasswordEmail(email: string): Promise<void> {
 		const user = await this.userService.findOne({ email });
 		if (!user) {
