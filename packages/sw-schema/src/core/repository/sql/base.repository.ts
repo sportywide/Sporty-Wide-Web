@@ -12,7 +12,6 @@ import {
 	UpdateQueryBuilder,
 	SelectQueryBuilder,
 	InsertQueryBuilder,
-	InsertResult,
 } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { SwSubscriber } from '@schema/core/subscriber/sql/base.subscriber';

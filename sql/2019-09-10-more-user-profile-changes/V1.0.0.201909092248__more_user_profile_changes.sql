@@ -28,4 +28,4 @@ CREATE TABLE "user_profile"
 ALTER TABLE "user" ADD COLUMN phone VARCHAR(30);
 ALTER TABLE "user" ADD COLUMN dob DATE;
 ALTER TABLE "user" ADD COLUMN user_profile_id INT NULL;
-ALTER TABLE "user" ADD FOREIGN KEY (user_profile_id) REFERENCES user_profile(id) ON DELETE CASCADE;
+ALTER TABLE "user" ADD FOREIGN KEY (user_profile_id) REFERENCES user_profile(id);

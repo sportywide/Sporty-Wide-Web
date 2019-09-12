@@ -16,10 +16,9 @@ export class UserProfile extends BaseEntity {
 	@Column()
 	addressId: number;
 
-	@OneToOne(type => Address, { cascade: true, primary: true, lazy: true })
+	@OneToOne(type => Address, { cascade: true, lazy: true })
 	@JoinColumn({
 		name: 'address_id',
-		referencedColumnName: 'id',
 	})
 	address: Promise<Address>;
 }
