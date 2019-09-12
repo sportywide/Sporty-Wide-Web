@@ -168,4 +168,30 @@ export class UserController {
 			},
 		});
 	}
+
+	@AuthorizedApiOperation({ title: 'Get user profile endpoint' })
+	@ApiOkResponse({ description: 'User profile has been retrieved', type: UserProfileDto })
+	@NotFoundResponse('user')
+	@UseGuards(JwtAuthGuard)
+	@Get('profile/:id')
+	public async getUserProfile(
+		@Param('id', new ParseIntPipe()) id: number,
+		@Query('relations') relations: string[] = []
+	): Promise<UserProfileDto> {
+		const allowedRelations = ['address'];
+		relations = relations.filter(relation => allowedRelations.includes(relation));
+		const user = await this.userService.findById({ id });
+		if (!user) {
+			throw new NotFoundException(`User with id ${id} cannot be found`);
+		}
+		const userProfileId = user.profileId;
+		const userProfile = await this.userProfileService.findById({ id: userProfileId, relations });
+		return toDto({
+			value: userProfile,
+			dtoType: UserProfileDto,
+			options: {
+				ignoreDecorators: true,
+			},
+		});
+	}
 }
