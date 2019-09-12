@@ -6,8 +6,6 @@ import { SwRepository } from '@schema/core/repository/sql/base.repository';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { Token } from '@schema/auth/models/token.entity';
 import { UserProfileService } from '@api/user/services/user-profile.service';
-import { UserProfile } from '@schema/user/profile/models/user-profile.entity';
-import { plainToClass } from 'class-transformer-imp';
 import { UserProfileDto } from '@shared/lib/dtos/user/profile/user-profile.dto';
 
 @Injectable()

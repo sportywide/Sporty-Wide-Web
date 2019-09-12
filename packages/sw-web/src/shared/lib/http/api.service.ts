@@ -1,5 +1,5 @@
 import https from 'https';
-import { Service, Inject } from 'typedi';
+import { Inject, Service } from 'typedi';
 import axios, { Axios } from 'axios-observable';
 import { COOKIE_CSRF } from '@web/api/auth/constants';
 import { createRefreshTokenInterceptor } from '@web/shared/lib/http/refresh-token';

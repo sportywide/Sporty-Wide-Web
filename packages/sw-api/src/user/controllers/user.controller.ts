@@ -157,6 +157,7 @@ export class UserController {
 				originalValues: userProfile,
 				objectType: UserProfileDto,
 			});
+
 			userProfile = await this.userProfileService.saveUserProfile(validatedParams);
 		}
 
@@ -176,10 +177,10 @@ export class UserController {
 	@Get('profile/:id')
 	public async getUserProfile(
 		@Param('id', new ParseIntPipe()) id: number,
-		@Query('relations') relations: string[] = []
+		@Query() query: any
 	): Promise<UserProfileDto> {
 		const allowedRelations = ['address'];
-		relations = relations.filter(relation => allowedRelations.includes(relation));
+		const relations = (query.relations || []).filter(relation => allowedRelations.includes(relation));
 		const user = await this.userService.findById({ id });
 		if (!user) {
 			throw new NotFoundException(`User with id ${id} cannot be found`);

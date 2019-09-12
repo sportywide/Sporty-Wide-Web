@@ -1,4 +1,4 @@
-import { a, is, schema, nested } from 'yup-decorator';
+import { a, is, nested, schema } from 'yup-decorator';
 import { ApiModelProperty } from '@shared/lib/utils/api/decorators';
 import { Editable } from '@shared/lib/utils/decorators/permissions';
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';

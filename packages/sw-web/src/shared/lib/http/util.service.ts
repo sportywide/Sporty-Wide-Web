@@ -1,4 +1,4 @@
-import { Service, Inject } from 'typedi';
+import { Inject, Service } from 'typedi';
 import { ApiService } from '@web/shared/lib/http/api.service';
 import { map } from 'rxjs/operators';
 

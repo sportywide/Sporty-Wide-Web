@@ -1,5 +1,5 @@
 import React from 'react';
-import { allowAll, checkUser, notAllowActive } from '@web/shared/lib/auth/check-user';
+import { checkUser, notAllowActive } from '@web/shared/lib/auth/check-user';
 import Head from 'next/head';
 
 class SwConfirmEmailPage extends React.Component<any> {

@@ -1,7 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { ReactReduxContext } from 'react-redux';
 import { Formik, FormikProps } from 'formik';
-import { Form, Header, Image, Segment, Divider } from 'semantic-ui-react';
+import { Divider, Form, Header, Image, Segment } from 'semantic-ui-react';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
 import { ContainerContext } from '@web/shared/lib/store';
 import { AuthService } from '@web/features/auth/services/auth.service';

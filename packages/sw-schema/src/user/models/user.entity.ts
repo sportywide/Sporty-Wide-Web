@@ -1,7 +1,7 @@
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { hashPassword } from '@shared/lib/utils/crypto';
-import { BeforeInsert, BeforeUpdate, Column, Entity, Index, OneToOne, JoinColumn } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, Index, JoinColumn, OneToOne } from 'typeorm';
 import { SocialProvider } from '@shared/lib/dtos/user/enum/social-provider.enum';
 import { BaseEntity } from '@schema/core/base.entity';
 import { TrackTimestamp } from '@schema/core/timestamp/track-timestamp.mixin';

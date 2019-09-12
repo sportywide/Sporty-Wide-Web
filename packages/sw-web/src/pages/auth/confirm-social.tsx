@@ -2,7 +2,7 @@ import React from 'react';
 import { SwConfirmSocial } from '@web/features/auth/components/ConfirmSocial';
 import { SwContainer, SwPrimaryBackGround } from '@web/shared/styled/core.styled';
 import Head from 'next/head';
-import { Container, Grid, GridColumn } from 'semantic-ui-react';
+import { Grid, GridColumn } from 'semantic-ui-react';
 import { allowPendingSocialOnly, checkUser } from '@web/shared/lib/auth/check-user';
 
 class SwConfirmSocialPage extends React.Component<any> {

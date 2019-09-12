@@ -1,4 +1,4 @@
-import { Schema, reach } from 'yup';
+import { reach, Schema } from 'yup';
 
 export function modifySchema(schema: Schema<any>, mutations) {
 	const clonedSchema = schema.clone();

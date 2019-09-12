@@ -1,6 +1,6 @@
 import { Category } from '@schema-test/entities/category.entity';
 import { Post } from '@schema-test/entities/post.entity';
-import { QueryRunner, MigrationInterface } from 'typeorm';
+import { MigrationInterface, QueryRunner } from 'typeorm';
 
 export class SeedPostCategory1567772263000 implements MigrationInterface {
 	public async up(queryRunner: QueryRunner): Promise<any> {

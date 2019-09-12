@@ -32,9 +32,12 @@ export class ApiValidationService {
 				mergeConcatArray(originalValues, strippedValues),
 				value => !isPromise(value)
 			);
-			const updatedObject = plainToClass(objectType, mergeValue, {
-				ignoreDecorators: true,
-			});
+			const updatedObject = filterValues(
+				plainToClass(objectType, mergeValue, {
+					ignoreDecorators: true,
+				}),
+				value => value !== undefined
+			);
 
 			return this.validate({
 				object: updatedObject,
@@ -53,7 +56,6 @@ export class ApiValidationService {
 	}): Partial<typeof objectType> {
 		return filterValues(
 			plainToClass(objectType, value, {
-				ignoreUndefinedValues: true,
 				excludeExtraneousValues: true,
 				groups: getEditableGroupsForUser(user),
 			}),

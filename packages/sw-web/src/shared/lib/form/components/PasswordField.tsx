@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { FormFieldProps, SwFormField } from '@web/shared/lib/form/components/FormField';
-import { Form, Progress, Icon } from 'semantic-ui-react';
+import { Form, Icon, Progress } from 'semantic-ui-react';
 
 export type PasswordFieldProps = Omit<FormFieldProps, 'component'> & {
 	className?: string;

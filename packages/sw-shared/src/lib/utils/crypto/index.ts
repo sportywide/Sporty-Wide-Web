@@ -1,4 +1,4 @@
-import { pbkdf2, pbkdf2Sync, randomBytes, createHash } from 'crypto';
+import { createHash, pbkdf2, pbkdf2Sync, randomBytes } from 'crypto';
 import { promisify } from 'util';
 
 const ITERATIONS = 2048;

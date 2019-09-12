@@ -1,7 +1,7 @@
 import React from 'react';
 import { SwContainer, SwPrimaryBackGround } from '@web/shared/styled/core.styled';
 import Head from 'next/head';
-import { Grid, GridColumn, Container as SemanticContainer } from 'semantic-ui-react';
+import { Grid, GridColumn } from 'semantic-ui-react';
 import { allowAnonymousOnly, checkUser } from '@web/shared/lib/auth/check-user';
 import { SwResetPassword } from '@web/features/auth/components/ResetPassword';
 import { redirect } from '@web/shared/lib/navigation/helper';

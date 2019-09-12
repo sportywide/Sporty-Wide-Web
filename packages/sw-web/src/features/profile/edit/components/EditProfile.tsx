@@ -6,14 +6,15 @@ import { SwWorkProfile } from '@web/features/profile/edit/components/WorkProfile
 import { SwFormSegment } from '@web/features/profile/edit/styled/edit.styled';
 import { SwSummaryProfile } from '@web/features/profile/edit/components/SummaryProfile';
 import { IUserProfile } from '@web/features/profile/store/reducers';
-import { saveBasicUserProfile } from '@web/features/profile/store/actions';
+import { saveBasicUserProfile, saveExtraUserProfile } from '@web/features/profile/store/actions';
 
 interface IProps {
 	userProfile: IUserProfile;
 	saveBasicUserProfile: typeof saveBasicUserProfile;
+	saveExtraUserProfile: typeof saveExtraUserProfile;
 }
 
-const SwEditProfileComponent: React.FC<IProps> = ({ userProfile, saveBasicUserProfile }) => {
+const SwEditProfileComponent: React.FC<IProps> = ({ userProfile, saveBasicUserProfile, saveExtraUserProfile }) => {
 	return (
 		<div className={'ub-mt4'}>
 			<SwFormSegment>
@@ -26,12 +27,20 @@ const SwEditProfileComponent: React.FC<IProps> = ({ userProfile, saveBasicUserPr
 
 			<SwFormSegment>
 				<Header as={'h3'}> Work and Education </Header>
-				<SwWorkProfile user={userProfile.basic} />
+				<SwWorkProfile
+					profile={userProfile.extra}
+					didSaveProfile={profileData => {
+						saveExtraUserProfile({ id: userProfile.basic.id, profileData });
+					}}
+				/>
 			</SwFormSegment>
 
 			<SwFormSegment>
 				<Header as={'h3'}> Other information </Header>
-				<SwSummaryProfile user={userProfile.basic} />
+				<SwSummaryProfile
+					profile={userProfile.extra}
+					didSaveProfile={profileData => saveExtraUserProfile({ id: userProfile.basic.id, profileData })}
+				/>
 			</SwFormSegment>
 		</div>
 	);
@@ -40,5 +49,6 @@ export const SwEditProfile = connect(
 	null,
 	{
 		saveBasicUserProfile,
+		saveExtraUserProfile,
 	}
 )(SwEditProfileComponent);

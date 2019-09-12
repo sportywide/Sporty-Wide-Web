@@ -3,6 +3,7 @@ import { ApiService } from '@web/shared/lib/http/api.service';
 import { map } from 'rxjs/operators';
 import { plainToClass } from 'class-transformer-imp';
 import { UserDto } from '@shared/lib/dtos/user/user.dto';
+import { UserProfileDto } from '@shared/lib/dtos/user/profile/user-profile.dto';
 
 @Service({ global: true })
 export class UserService {
@@ -29,7 +30,28 @@ export class UserService {
 			.pipe(map(({ data }) => plainToClass(UserDto, data)));
 	}
 
+	getExtraProfile({ userId, relations = [] }) {
+		return this.apiService
+			.api()
+			.get(`/user/profile/${userId}`, {
+				params: {
+					relations,
+				},
+			})
+			.pipe(
+				map(({ data }) =>
+					plainToClass(UserProfileDto, data, {
+						ignoreDecorators: true,
+					})
+				)
+			);
+	}
+
 	saveBasicProfile(userId, data) {
 		return this.apiService.api().put(`/user/${userId}`, data);
+	}
+
+	saveExtraProfile(userId, data) {
+		return this.apiService.api().put(`/user/profile/${userId}`, data);
 	}
 }

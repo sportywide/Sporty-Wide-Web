@@ -1,7 +1,7 @@
 import React from 'react';
 import { getFormikFieldError, setFormikFieldValue } from '@web/shared/lib/form/components/FormField';
 import { Field, FieldProps } from 'formik';
-import { parse, format, isAfter, isBefore } from 'date-fns';
+import { format, isAfter, isBefore, parse } from 'date-fns';
 import { DateInput, DateInputProps } from 'semantic-ui-calendar-react';
 import { isValidDate } from '@shared/lib/utils/date/validation';
 

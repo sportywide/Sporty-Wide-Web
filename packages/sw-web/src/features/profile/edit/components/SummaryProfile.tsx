@@ -2,17 +2,18 @@ import React from 'react';
 import { Form } from 'semantic-ui-react';
 import { Formik } from 'formik';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
-import { IUser } from '@web/shared/lib/interfaces/auth/user';
-import { UserDto } from '@shared/lib/dtos/user/user.dto';
+import { UserProfileDto } from '@shared/lib/dtos/user/profile/user-profile.dto';
 
 interface IProps {
-	user: UserDto;
+	profile: UserProfileDto;
+	didSaveProfile: (user: UserProfileDto) => void;
 }
-const SwSummaryProfileComponent: React.FC<IProps> = ({ user }) => {
+const SwSummaryProfileComponent: React.FC<IProps> = ({ profile, didSaveProfile }) => {
 	return (
 		<Formik
-			initialValues={{}}
-			onSubmit={console.log}
+			initialValues={profile}
+			onSubmit={didSaveProfile}
+			enableReinitialize={true}
 			render={props => {
 				return (
 					<Form onSubmit={props.handleSubmit}>

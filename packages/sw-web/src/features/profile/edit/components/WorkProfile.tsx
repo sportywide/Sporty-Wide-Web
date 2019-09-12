@@ -1,18 +1,19 @@
 import React from 'react';
-import { Form, Header, Image } from 'semantic-ui-react';
+import { Form } from 'semantic-ui-react';
 import { Formik } from 'formik';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
-import { UserDto } from '@shared/lib/dtos/user/user.dto';
-import { UserGender } from '@shared/lib/dtos/user/enum/user-gender.enum';
+import { UserProfileDto } from '@shared/lib/dtos/user/profile/user-profile.dto';
 
 interface IProps {
-	user: UserDto;
+	profile: UserProfileDto;
+	didSaveProfile: (user: UserProfileDto) => void;
 }
-const SwWorkProfileComponent: React.FC<IProps> = ({ user }) => {
+const SwWorkProfileComponent: React.FC<IProps> = ({ profile, didSaveProfile }) => {
 	return (
 		<Formik
-			initialValues={{}}
-			onSubmit={console.log}
+			initialValues={profile}
+			enableReinitialize={true}
+			onSubmit={didSaveProfile}
 			render={props => {
 				return (
 					<Form onSubmit={props.handleSubmit}>
@@ -23,7 +24,7 @@ const SwWorkProfileComponent: React.FC<IProps> = ({ user }) => {
 								label: 'Workplace',
 								placeholder: 'Your workplace',
 							}}
-							name="workplace"
+							name="work"
 						/>
 						<SwFormField
 							component={Form.Input}
@@ -32,7 +33,7 @@ const SwWorkProfileComponent: React.FC<IProps> = ({ user }) => {
 								label: 'School',
 								placeholder: 'Your school',
 							}}
-							name="school"
+							name="education"
 						/>
 						<SwFormField
 							component={Form.Input}
@@ -40,7 +41,7 @@ const SwWorkProfileComponent: React.FC<IProps> = ({ user }) => {
 								label: 'Address 1',
 								placeholder: 'Address 1',
 							}}
-							name="street1"
+							name="address.street1"
 						/>
 						<SwFormField
 							component={Form.Input}
@@ -48,11 +49,11 @@ const SwWorkProfileComponent: React.FC<IProps> = ({ user }) => {
 								label: 'Address 2',
 								placeholder: 'Address 2',
 							}}
-							name="street2"
+							name="address.street2"
 						/>
 						<Form.Group widths="equal">
 							<SwFormField
-								name="suburb"
+								name="address.suburb"
 								component={Form.Input}
 								componentProps={{
 									label: 'Suburb',
@@ -60,7 +61,7 @@ const SwWorkProfileComponent: React.FC<IProps> = ({ user }) => {
 								}}
 							/>
 							<SwFormField
-								name="postcode"
+								name="address.postcode"
 								component={Form.Input}
 								componentProps={{
 									label: 'Postcode',
@@ -70,7 +71,7 @@ const SwWorkProfileComponent: React.FC<IProps> = ({ user }) => {
 						</Form.Group>
 						<Form.Group widths="equal">
 							<SwFormField
-								name="city"
+								name="address.city"
 								component={Form.Input}
 								componentProps={{
 									label: 'City',
@@ -78,7 +79,7 @@ const SwWorkProfileComponent: React.FC<IProps> = ({ user }) => {
 								}}
 							/>
 							<SwFormField
-								name="state"
+								name="address.state"
 								component={Form.Input}
 								componentProps={{
 									label: 'State',
@@ -87,14 +88,17 @@ const SwWorkProfileComponent: React.FC<IProps> = ({ user }) => {
 							/>
 
 							<SwFormField
-								name="country"
-								component={Form.Select}
+								name="address.country"
+								component={Form.Input}
 								componentProps={{
 									label: 'Country',
 									placeholder: 'Your country',
 								}}
 							/>
 						</Form.Group>
+						<Form.Button type="submit" primary disabled={!props.isValid}>
+							Save
+						</Form.Button>
 					</Form>
 				);
 			}}

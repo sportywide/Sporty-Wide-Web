@@ -15,11 +15,9 @@ export class UserProfileService extends BaseEntityService<UserProfile> {
 		let userProfile = this.createOneEntity(userProfileDto);
 		userProfile = await this.saveOne(userProfile);
 
-		if (!userProfileDto.addressId && userProfile.addressId) {
-			this.update(userProfile.id, {
-				addressId: userProfile.addressId,
-			});
-		}
+		this.update(userProfile.id, {
+			addressId: userProfile.addressId,
+		});
 
 		return userProfile;
 	}
