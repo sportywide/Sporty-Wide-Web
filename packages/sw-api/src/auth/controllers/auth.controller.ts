@@ -18,7 +18,7 @@ import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { LocalAuthGuard } from '@api/auth/guards/local.guard';
 import { AuthenticatedGuard } from '@api/auth/guards/authenticated.guard';
 import { RefreshTokenGuard } from '@api/auth/guards/refresh-token.guard';
-import { ApiCreatedResponse, ApiImplicitParam, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiUseTags, ApiImplicitBody } from '@nestjs/swagger';
 import { AuthorizedApiOperation } from '@api/core/decorators/api-doc';
 import { getValidationPipe } from '@api/core/pipe/validation';
 import passport from 'passport';
@@ -31,6 +31,7 @@ import { CurrentUser } from '@api/core/decorators/user';
 import { PendingSocialUser } from '@api/auth/decorators/user-check.decorator';
 import { CompleteSocialProfileDto } from '@shared/lib/dtos/user/complete-social-profile.dto';
 import { ResetPasswordDto } from '@shared/lib/dtos/user/reset-password-dto';
+import { LoginDto } from '@shared/lib/dtos/user/login.dto';
 
 @ApiUseTags('auth')
 @Controller('auth')
@@ -75,8 +76,7 @@ export class AuthController {
 		return this.authService.createTokens(user);
 	}
 
-	@ApiImplicitParam({ name: 'username', type: String })
-	@ApiImplicitParam({ name: 'password', type: String })
+	@ApiImplicitBody({ name: 'body', type: LoginDto })
 	@ApiOkResponse({ description: 'User has logged in successfully', type: Tokens })
 	@ApiOperation({ title: 'Log in endpoint' })
 	@Post('login')

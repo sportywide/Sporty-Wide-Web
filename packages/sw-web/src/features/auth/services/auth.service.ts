@@ -16,8 +16,8 @@ export class AuthService {
 		return this.apiService.auth().post('/signup', userDto);
 	}
 
-	login({ username, password }: LoginDto) {
-		return this.apiService.auth().post(`/login?username=${username}&password=${password}`);
+	login(loginDto: LoginDto) {
+		return this.apiService.auth().post('/login', loginDto);
 	}
 
 	logout() {
