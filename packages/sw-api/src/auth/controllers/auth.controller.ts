@@ -5,13 +5,13 @@ import {
 	Get,
 	HttpCode,
 	HttpStatus,
+	Param,
 	ParseIntPipe,
 	Post,
 	Query,
 	Req,
 	Res,
 	UseGuards,
-	Param,
 } from '@nestjs/common';
 import { AuthService, Tokens } from '@api/auth/services/auth.service';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';

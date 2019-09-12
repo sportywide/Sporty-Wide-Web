@@ -33,13 +33,6 @@ const isDev = isDevelopment();
 				namingStrategy: new SnakeNamingStrategy(),
 				logging: isDev ? ['query', 'error'] : ['error'],
 				logger,
-				cache: {
-					type: 'redis',
-					options: {
-						host: coreConfig.get('redis:host'),
-						port: coreConfig.get('redis:host'),
-					},
-				},
 			}),
 			imports: [CoreSchemaModule, CoreModule],
 		}),

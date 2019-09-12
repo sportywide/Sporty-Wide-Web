@@ -1,7 +1,6 @@
-import { Column, Entity, OneToOne, JoinColumn } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
 import { BaseEntity } from '@schema/core/base.entity';
 import { Address } from '@schema/address/models/address.entity';
-import { User } from '@schema/user/models/user.entity';
 
 @Entity()
 export class UserProfile extends BaseEntity {
@@ -15,13 +14,12 @@ export class UserProfile extends BaseEntity {
 	education: string;
 
 	@Column()
-	address_id: number;
+	addressId: number;
 
-	@OneToOne(type => Address, { lazy: true, cascade: true })
+	@OneToOne(type => Address, { cascade: true, primary: true, lazy: true })
 	@JoinColumn({
 		name: 'address_id',
+		referencedColumnName: 'id',
 	})
-	address: Address;
-
-	user: User;
+	address: Promise<Address>;
 }

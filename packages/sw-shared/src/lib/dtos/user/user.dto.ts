@@ -53,4 +53,7 @@ export class UserDto {
 
 	@Expose()
 	profileUrl: string;
+
+	@Expose()
+	profileId: number;
 }

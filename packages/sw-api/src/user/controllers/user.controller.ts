@@ -20,14 +20,13 @@ import { UserService } from '@api/user/services/user.service';
 import { ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { AuthorizedApiOperation, NotFoundResponse } from '@api/core/decorators/api-doc';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
-import { plainToClass } from 'class-transformer-imp';
 import { ApiValidationService } from '@api/core/services/validation/validation.service';
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { User } from '@schema/user/models/user.entity';
 import { EnvGuard } from '@api/auth/guards/environment.guard';
 import { UserProfileDto } from '@shared/lib/dtos/user/profile/user-profile.dto';
 import { UserProfileService } from '@api/user/services/user-profile.service';
-import { filterValues } from '@shared/lib/utils/object/filter';
+import { toDto } from '@api/shared/dto/transform';
 
 @ApiUseTags('users')
 @Controller('user')
@@ -43,8 +42,9 @@ export class UserController {
 	@UseGuards(JwtAuthGuard)
 	@Get('me')
 	public getCurrentUser(@CurrentUser() user): UserDto {
-		return plainToClass(UserDto, user, {
-			excludeExtraneousValues: true,
+		return toDto({
+			value: user,
+			dtoType: UserDto,
 		});
 	}
 
@@ -54,8 +54,9 @@ export class UserController {
 	@HttpCode(HttpStatus.OK)
 	public async findByToken(@Query('token') token: string) {
 		const user = await this.userService.findByToken({ token });
-		return plainToClass(UserDto, user, {
-			excludeExtraneousValues: true,
+		return toDto({
+			value: user,
+			dtoType: UserDto,
 		});
 	}
 
@@ -69,8 +70,9 @@ export class UserController {
 		if (!user) {
 			throw new NotFoundException(`User with id ${id} cannot be found`);
 		}
-		return plainToClass(UserDto, user, {
-			excludeExtraneousValues: true,
+		return toDto({
+			value: user,
+			dtoType: UserDto,
 		});
 	}
 
@@ -110,8 +112,9 @@ export class UserController {
 
 		updatedUser = await this.userService.saveOne(updatedUser as User);
 
-		return plainToClass(UserDto, updatedUser, {
-			excludeExtraneousValues: true,
+		return toDto({
+			value: updatedUser,
+			dtoType: UserDto,
 		});
 	}
 
@@ -133,12 +136,12 @@ export class UserController {
 		if (updateParams.address) {
 			relations.push('profile.address');
 		}
-		const user = await this.userService.findById({ id, cache: true, relations });
+		const user = await this.userService.findById({ id, relations });
 		if (!user) {
 			throw new NotFoundException(`User with id ${id} cannot be found`);
 		}
-		let userProfile;
-		if (!user.profile) {
+		let userProfile = await user.profile;
+		if (!userProfile) {
 			let validatedParams: Partial<UserProfileDto> = this.apiValidationService.strip({
 				value: updateParams,
 				objectType: UserProfileDto,
@@ -151,20 +154,18 @@ export class UserController {
 		} else {
 			const validatedParams: any = await this.apiValidationService.validatePatch({
 				patch: updateParams,
-				originalValues: user.profile,
+				originalValues: userProfile,
 				objectType: UserProfileDto,
 			});
-			userProfile = await this.userProfileService.saveOne(validatedParams);
+			userProfile = await this.userProfileService.saveUserProfile(validatedParams);
 		}
 
-		return filterValues(
-			plainToClass(UserProfileDto, userProfile, {
-				excludeExtraneousValues: true,
+		return toDto({
+			value: userProfile,
+			dtoType: UserProfileDto,
+			options: {
 				ignoreDecorators: true,
-			}),
-			(value, key) => {
-				return !key || !key.startsWith('_');
-			}
-		);
+			},
+		});
 	}
 }
