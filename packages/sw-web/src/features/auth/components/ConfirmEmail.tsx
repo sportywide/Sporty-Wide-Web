@@ -3,7 +3,7 @@ import { Formik, FormikProps } from 'formik';
 import { Form, Header, Segment, Icon } from 'semantic-ui-react';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
 import { getSchemaByType } from 'yup-decorator';
-import { validateExists } from '@web/shared/lib/form/validation';
+import { validateExists } from '@web/shared/lib/form/validation/validators';
 import * as yup from 'yup';
 
 const validateEmail = validateExists({ table: 'user', field: 'email' });
