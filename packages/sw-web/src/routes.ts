@@ -1,4 +1,5 @@
 import Routes from 'next-routes';
+
 declare const module: any;
 
 const routeMappings = [
@@ -36,6 +37,11 @@ const routeMappings = [
 		name: 'reset-password',
 		pattern: '/reset-password',
 		page: 'auth/reset-password',
+	},
+	{
+		name: 'profile-edit',
+		pattern: '/profile/edit',
+		page: 'profile/edit',
 	},
 ];
 

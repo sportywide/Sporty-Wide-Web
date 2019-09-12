@@ -7,7 +7,7 @@ import { CompleteSocialProfileDto } from '@shared/lib/dtos/user/complete-social-
 import { SwPasswordField } from '@web/shared/lib/form/components/PasswordField';
 import { ContainerContext } from '@web/shared/lib/store';
 import { AuthService } from '@web/features/auth/services/auth.service';
-import { validateUnique } from '@web/shared/lib/form/validation';
+import { validateUnique } from '@web/shared/lib/form/validation/validators';
 import { redirect } from '@web/shared/lib/navigation/helper';
 
 const validateUsername = validateUnique({ table: 'user', field: 'username' });

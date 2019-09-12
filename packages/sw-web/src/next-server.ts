@@ -3,9 +3,10 @@ import http from 'http';
 import next from 'next';
 import { isDevelopment } from '@shared/lib/utils/env';
 import config from '@web/config';
+import { bootstrap } from './app';
+
 declare const module: any;
 const env = process.env.NODE_ENV;
-import { bootstrap } from './app';
 const nextApp = next({
 	dir: './src',
 	dev: isDevelopment(),

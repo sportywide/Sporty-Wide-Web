@@ -27,12 +27,14 @@ const NotificationContainer: React.FC<IProps> = function({ notifications }) {
 				message = (e.response && e.response.message) || 'Error';
 				notificationFunc = warn;
 			}
-			store.dispatch(
-				notificationFunc({
-					title,
-					message,
-				})
-			);
+			if (notificationFunc) {
+				store.dispatch(
+					notificationFunc({
+						title,
+						message,
+					})
+				);
+			}
 		});
 	}, []);
 	return <Notifications notifications={notifications} />;

@@ -1,4 +1,5 @@
 import { decodeBase64, encodeBase64 } from '@web/shared/lib/encode/encoding';
+
 let isBrowser = true;
 jest.mock('@web/shared/lib/environment', () => ({
 	isBrowser: () => isBrowser,

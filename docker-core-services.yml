@@ -16,7 +16,7 @@ services:
     flyway:
         container_name: sw_flyway
         image: sportywide/sportywide-flyway
-        command: -url=jdbc:postgresql://postgres:5432/${POSTGRES_DB} -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} -outOfOrder=true migrate
+        command: -url=jdbc:postgresql://postgres:5432/${POSTGRES_DB} -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} -outOfOrder=true -mixed=true migrate
         volumes:
             - './sql:/flyway/sql'
         environment:

@@ -106,7 +106,7 @@ export class AuthService {
 		if (!(payload.user && payload.user.id)) {
 			throw new UnauthorizedException('User not found');
 		}
-		const user = await this.userService.findById(payload.user.id, true);
+		const user = await this.userService.findById({ id: payload.user.id, cache: true });
 		if (!user) {
 			throw new UnauthorizedException('Invalid token');
 		}
@@ -151,7 +151,7 @@ export class AuthService {
 			type: TokenType.FORGOT_PASSWORD,
 		});
 
-		const user = await this.userService.findById(userId);
+		const user = await this.userService.findById({ id: userId });
 		if (!user) {
 			throw new BadRequestException(`User with id ${userId} cannot be found`);
 		}

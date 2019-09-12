@@ -5,6 +5,7 @@ const babel = require('next-plugin-custom-babel-config');
 const bundleAnalyzer = require('@zeit/next-bundle-analyzer');
 const css = require('@zeit/next-css');
 const scss = require('@zeit/next-sass');
+const webpack = require('webpack');
 const { ENTRY_ORDER, default: InjectPlugin } = require('webpack-inject-plugin');
 const nextConfig = {
 	webpack: (config, options) => {
@@ -53,6 +54,8 @@ const nextConfig = {
 				entryOrder: ENTRY_ORDER.First,
 			})
 		);
+
+		config.plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/));
 
 		return config;
 	},

@@ -4,15 +4,14 @@ import {
 	EntitySchema,
 	EntitySubscriberInterface,
 	FindConditions,
+	InsertQueryBuilder,
 	ObjectID,
 	ObjectType,
 	QueryBuilder,
 	QueryRunner,
 	Repository,
-	UpdateQueryBuilder,
 	SelectQueryBuilder,
-	InsertQueryBuilder,
-	InsertResult,
+	UpdateQueryBuilder,
 } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { SwSubscriber } from '@schema/core/subscriber/sql/base.subscriber';

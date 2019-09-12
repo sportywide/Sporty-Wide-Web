@@ -28,6 +28,7 @@ const theme = {
 	colors: {
 		primary: '#4da88a',
 		accent: '#ee4c50',
+		grey: '#e9ebee',
 	},
 };
 

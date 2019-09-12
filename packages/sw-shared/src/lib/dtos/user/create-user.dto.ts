@@ -4,6 +4,8 @@ import { ApiModelProperty } from '@shared/lib/utils/api/decorators';
 import { Creatable, Editable } from '@shared/lib/utils/decorators/permissions';
 import { a, is, schema } from 'yup-decorator';
 import { password, username } from '@shared/lib/dtos/user/validation/user.yup';
+import { UserGender } from '@shared/lib/dtos/user/enum/user-gender.enum';
+import { date } from '@shared/lib/utils/validation/date.yup';
 
 @schema()
 export class CreateUserDto {
@@ -45,4 +47,19 @@ export class CreateUserDto {
 	@Editable(UserRole.USER)
 	@is(password())
 	password: string;
+
+	@ApiModelProperty()
+	@Editable(UserRole.USER)
+	@is(date({ nullable: true }))
+	dob: string;
+
+	@ApiModelProperty()
+	@Editable(UserRole.USER)
+	@is(a.string().nullable(true))
+	phone: string;
+
+	@ApiModelProperty({ enum: ['male', 'female', 'other'] })
+	@Editable(UserRole.USER)
+	@is(a.string().oneOf(Object.values(UserGender)))
+	gender: UserGender;
 }

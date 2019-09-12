@@ -5,10 +5,11 @@ import { devProxy } from '@web/api/proxy';
 import routes from '@web/routes';
 import cookieParser from 'cookie-parser';
 import csurf from 'csurf';
-const CSRF_WHITE_LIST = ['login', 'signup'];
 import flash from 'express-cookie-flash';
 import config from '@web/config';
 import { COOKIE_CSRF } from '@web/api/auth/constants';
+
+const CSRF_WHITE_LIST = ['login', 'signup'];
 
 export function bootstrap(app) {
 	const server = express();

@@ -1,3 +1,4 @@
+import { createSwStandardAction } from '@web/shared/lib/redux/action-creators';
 import {
 	LOGOUT,
 	LOGOUT_SUCCESS,
@@ -11,8 +12,8 @@ import {
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { LoginDto } from '@shared/lib/dtos/user/login.dto';
 
-export const logout = () => ({ type: LOGOUT });
-export const logoutSuccess = () => ({ type: LOGOUT_SUCCESS });
+export const logout = createSwStandardAction(LOGOUT)();
+export const logoutSuccess = createSwStandardAction(LOGOUT_SUCCESS)();
 
 export const login = (loginDto: LoginDto) => ({ type: LOGIN, payload: loginDto });
 export const loginSuccess = () => ({ type: LOGIN_SUCCESS });
