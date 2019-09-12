@@ -2,6 +2,8 @@ import { Inject, Service } from 'typedi';
 import { ApiService } from '@web/shared/lib/http/api.service';
 import { CompleteSocialProfileDto } from '@shared/lib/dtos/user/complete-social-profile.dto';
 import { ResetPasswordDto } from '@shared/lib/dtos/user/reset-password-dto';
+import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
+import { LoginDto } from '@shared/lib/dtos/user/login.dto';
 
 @Service({ global: true })
 export class AuthService {
@@ -10,12 +12,24 @@ export class AuthService {
 		private readonly apiService: ApiService
 	) {}
 
+	signup(userDto: CreateUserDto) {
+		return this.apiService.auth().post('/signup', userDto);
+	}
+
+	login(loginDto: LoginDto) {
+		return this.apiService.auth().post('/login', loginDto);
+	}
+
 	logout() {
 		return this.apiService.auth().post('/logout');
 	}
 
 	confirmSocial(completeSocialProfileDto: CompleteSocialProfileDto) {
 		return this.apiService.auth().post('/complete-social-profile', completeSocialProfileDto);
+	}
+
+	resendVerficationEmail(email: string) {
+		return this.apiService.auth().post('/resend-verification', { email });
 	}
 
 	sendForgotPasswordEmail(body) {
