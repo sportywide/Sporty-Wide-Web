@@ -1,0 +1,1 @@
+DROP TABLLE countries;
