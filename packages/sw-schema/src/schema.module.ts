@@ -11,6 +11,7 @@ import { TypeormLoggerService } from '@schema/core/logging/typeorm.logger';
 import { CoreModule } from '@core/core.module';
 import { isDevelopment } from '@shared/lib/utils/env';
 import { SchemaAuthModule } from '@schema/auth/auth.module';
+import { SchemaAddressModule } from '@schema/address/address.module';
 
 const isDev = isDevelopment();
 
@@ -18,6 +19,7 @@ const isDev = isDevelopment();
 	imports: [
 		SchemaUserModule,
 		SchemaAuthModule,
+		SchemaAddressModule,
 		CoreSchemaModule,
 		TypeOrmModule.forRootAsync({
 			inject: [SCHEMA_CONFIG, CORE_CONFIG, TypeormLoggerService],

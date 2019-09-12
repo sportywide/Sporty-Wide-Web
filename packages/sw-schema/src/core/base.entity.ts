@@ -9,7 +9,7 @@ export class BaseEntity {
 	@AfterLoad()
 	afterLoad() {
 		this._initialValues = Object.keys(this)
-			.filter(key => !key.startsWith('_') && typeof this[key] !== 'function')
+			.filter(key => !key.toString().startsWith('_') && typeof this[key] !== 'function')
 			.reduce((currentObject, key) => {
 				return { ...currentObject, [key]: this[key] };
 			}, {});
@@ -49,7 +49,7 @@ function toPlainObject(object) {
 	}
 
 	return Object.keys(object).reduce((currentObject, key) => {
-		if (key.startsWith('_')) {
+		if (key.toString().startsWith('_')) {
 			return currentObject;
 		}
 		const value = object[key];

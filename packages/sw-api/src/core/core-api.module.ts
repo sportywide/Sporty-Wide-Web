@@ -8,12 +8,14 @@ import { RequestContextService } from '@api/core/services/request/request-contex
 import { UtilController } from '@api/core/controllers/util.controller';
 import { UniqueService } from '@api/core/services/entity/unique.service';
 import { SchemaModule } from '@schema/schema.module';
+import { AddressService } from '@api/core/services/address/address.service';
+import { AddressController } from '@api/core/controllers/address.controller';
 import { ApiValidationService } from './services/validation/validation.service';
 
 @Module({
 	exports: [ApiValidationService, RequestContextService, ConfigModule],
-	controllers: [UtilController],
-	providers: [exceptionFilterProvider, ApiValidationService, RequestContextService, UniqueService],
+	controllers: [UtilController, AddressController],
+	providers: [exceptionFilterProvider, ApiValidationService, RequestContextService, UniqueService, AddressService],
 	imports: [
 		CoreModule,
 		SchemaModule,
