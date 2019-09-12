@@ -50,7 +50,7 @@ class SwLoginPage extends React.Component<IProps, any> {
 					<title>Welcome</title>
 				</Head>
 				<SwPrimaryBackGround>
-					<Container style={{ width: '100%' }}>
+					<Container style={{ width: '100%' }} className="ub-py4">
 						<Grid verticalAlign={'middle'} centered>
 							<GridColumn mobile={14} tablet={8} computer={6}>
 								<div className="ui top attached tabular menu">
