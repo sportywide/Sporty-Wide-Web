@@ -21,8 +21,7 @@ CREATE TABLE "user_profile"
     summary       TEXT,
     work          VARCHAR(30),
     education     VARCHAR(30),
-    street1       VARCHAR(30),
-    address_id    SERIAL,
+    address_id    INT NULL,
     FOREIGN KEY (address_id) REFERENCES address(id)
 );
 

@@ -1,4 +1,4 @@
-export class AddressDto {
+export class EmailAddressDto {
 	name: string;
 	address: string;
 }
@@ -13,13 +13,13 @@ export class AttachmentDto {
 }
 
 export class MailDto {
-	from?: string | AddressDto;
-	sender?: string | AddressDto;
-	to?: string | AddressDto | (string | AddressDto)[];
-	cc?: string | AddressDto | (string | AddressDto)[];
-	bcc?: string | AddressDto | (string | AddressDto)[];
-	replyTo?: string | AddressDto;
-	inReplyTo?: string | AddressDto;
+	from?: string | EmailAddressDto;
+	sender?: string | EmailAddressDto;
+	to?: string | EmailAddressDto | (string | EmailAddressDto)[];
+	cc?: string | EmailAddressDto | (string | EmailAddressDto)[];
+	bcc?: string | EmailAddressDto | (string | EmailAddressDto)[];
+	replyTo?: string | EmailAddressDto;
+	inReplyTo?: string | EmailAddressDto;
 	references?: string | string[];
 	subject?: string;
 	text?: string | Buffer | AttachmentDto;

@@ -15,7 +15,7 @@ export class BaseEntity {
 	}
 
 	changed(key) {
-		return this._initialValues[key] !== this[key];
+		return this._initialValues[key] != this[key];
 	}
 
 	getChange(key) {

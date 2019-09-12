@@ -39,11 +39,20 @@ export class BaseEntityService<T> {
 		return this.repository.findByIds(ids);
 	}
 
-	public async findById(id: number, cache?): Promise<T | undefined> {
+	public async findById({
+		id,
+		cache,
+		relations,
+	}: {
+		id: number;
+		cache: boolean;
+		relations?: string[];
+	}): Promise<T | undefined> {
 		return this.repository.findOne({
 			where: {
 				id,
 			},
+			relations,
 			cache,
 		});
 	}
