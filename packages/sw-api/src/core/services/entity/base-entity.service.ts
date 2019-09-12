@@ -1,6 +1,8 @@
-import { DeleteResult, FindConditions, FindManyOptions, Repository } from 'typeorm';
+import { DeleteResult, FindConditions, FindManyOptions, Repository, DeepPartial, SaveOptions, ObjectID } from 'typeorm';
+import { BaseEntity } from '@schema/core/base.entity';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 
-export class BaseEntityService<T> {
+export class BaseEntityService<T extends BaseEntity> {
 	constructor(private readonly repository: Repository<T>) {}
 
 	getTableName() {
@@ -15,15 +17,30 @@ export class BaseEntityService<T> {
 		return this.repository.findOne(params);
 	}
 
-	public createEntity(dtos: T[]): T[] {
+	public createEntity(dtos: DeepPartial<T>[]): T[] {
 		return this.repository.create(dtos);
 	}
 
-	public async saveOne(dto: T) {
-		return this.repository.save(dto);
+	public async saveOne(dto: DeepPartial<T>, saveOptions?: SaveOptions): Promise<T> {
+		return this.repository.save(dto, saveOptions);
 	}
 
-	public async save(dto: T[]) {
+	public async update(
+		criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindConditions<T>,
+		dto: QueryDeepPartialEntity<T>
+	) {
+		return this.repository.update(criteria, dto);
+	}
+
+	public async insertOne(dto: QueryDeepPartialEntity<T>) {
+		return this.repository.insert(dto);
+	}
+
+	public async insert(dto: QueryDeepPartialEntity<T>[]) {
+		return this.repository.insert(dto);
+	}
+
+	public async save(dto: DeepPartial<T>[]) {
 		return this.repository.save(dto);
 	}
 
@@ -31,19 +48,28 @@ export class BaseEntityService<T> {
 		return this.repository.count(findOptions);
 	}
 
-	public createOneEntity(dto: T): T {
-		return this.repository.create(dto);
+	public createOneEntity(dto: any): T {
+		return this.repository.create(dto as DeepPartial<any>);
 	}
 
 	public async findByIds(ids: number[]): Promise<T[]> {
 		return this.repository.findByIds(ids);
 	}
 
-	public async findById(id: number, cache?): Promise<T | undefined> {
+	public async findById({
+		id,
+		cache,
+		relations,
+	}: {
+		id: number;
+		cache?: boolean;
+		relations?: string[];
+	}): Promise<T | undefined> {
 		return this.repository.findOne({
 			where: {
 				id,
 			},
+			relations,
 			cache,
 		});
 	}
@@ -54,5 +80,9 @@ export class BaseEntityService<T> {
 
 	public async remove(entity: T): Promise<T> {
 		return this.repository.remove(entity);
+	}
+
+	public isResolved(entity: T, key) {
+		return entity.isResolved(key);
 	}
 }

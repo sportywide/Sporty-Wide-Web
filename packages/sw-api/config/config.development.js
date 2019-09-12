@@ -13,7 +13,7 @@ module.exports = {
 		},
 		jwt: {
 			secret_key: 'jwtsecret',
-			expiration_time: 15 * 60,
+			expiration_time: 60 * 60,
 		},
 	},
 };

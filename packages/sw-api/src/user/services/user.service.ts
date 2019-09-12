@@ -5,10 +5,17 @@ import { InjectSwRepository } from '@schema/core/repository/sql/inject-repositor
 import { SwRepository } from '@schema/core/repository/sql/base.repository';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { Token } from '@schema/auth/models/token.entity';
+import { UserProfileService } from '@api/user/services/user-profile.service';
+import { UserProfile } from '@schema/user/profile/models/user-profile.entity';
+import { plainToClass } from 'class-transformer-imp';
+import { UserProfileDto } from '@shared/lib/dtos/user/profile/user-profile.dto';
 
 @Injectable()
 export class UserService extends BaseEntityService<User> {
-	constructor(@InjectSwRepository(User) private readonly userRepository: SwRepository<User>) {
+	constructor(
+		@InjectSwRepository(User) private readonly userRepository: SwRepository<User>,
+		private readonly userProfileService: UserProfileService
+	) {
 		super(userRepository);
 	}
 
@@ -17,16 +24,19 @@ export class UserService extends BaseEntityService<User> {
 	}
 
 	async activateUser(user: number | User | undefined) {
+		let userEntity;
 		if (typeof user === 'number') {
-			user = await this.findById(user, true);
+			userEntity = await this.findById({ id: user, cache: true });
+		} else {
+			userEntity = user;
 		}
 
-		if (!user) {
+		if (!userEntity) {
 			throw new BadRequestException('Invalid user');
 		}
 
-		user.status = UserStatus.ACTIVE;
-		return this.saveOne(user);
+		userEntity.status = UserStatus.ACTIVE;
+		return this.saveOne(userEntity);
 	}
 
 	async findByToken({ token: tokenValue }: { token: string }) {
@@ -43,5 +53,12 @@ export class UserService extends BaseEntityService<User> {
 				return 'user.id IN ' + subQuery;
 			})
 			.getOne();
+	}
+
+	async createUserProfile(user: User, userProfileDto: UserProfileDto) {
+		const userProfile = await this.userProfileService.saveUserProfile(userProfileDto);
+		user.profileId = userProfile.id;
+		await this.saveOne(user);
+		return userProfile;
 	}
 }
