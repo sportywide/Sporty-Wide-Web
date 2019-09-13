@@ -1,11 +1,11 @@
-import { Service } from 'typedi';
 import { InjectSwRepository } from '@schema/core/repository/sql/inject-repository.decorator';
 import { SwRepository } from '@schema/core/repository/sql/base.repository';
 import { City } from '@schema/address/models/city.entity';
 import { State } from '@schema/address/models/state.entity';
 import { Country } from '@schema/address/models/country.entity';
+import { Injectable } from '@nestjs/common';
 
-@Service({ global: true })
+@Injectable()
 export class AddressService {
 	constructor(
 		@InjectSwRepository(City) private readonly cityRepository: SwRepository<City>,

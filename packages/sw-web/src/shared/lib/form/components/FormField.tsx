@@ -1,13 +1,22 @@
 import React, { useEffect } from 'react';
-import { Field, FieldConfig, FieldProps, getIn } from 'formik';
+import { Field, FieldConfig, FieldProps, getIn, FormikContext } from 'formik';
 import { noop } from '@shared/lib/utils/functions';
 
-export interface FormFieldProps extends FieldConfig {
-	component: string | React.ComponentType<any>;
-	componentProps: any;
+export interface FormFieldEvents {
 	onChange?: (e: React.ChangeEvent<any>, params?: { name?: string; value?: any }) => void;
 	onBlur?: (e: React.FocusEvent<any>) => void;
-	onValueChange?: (value: any) => void;
+	onValueChange?: (value: any, field?: FieldProps) => void;
+}
+
+export const defaultFormFieldEvents: FormFieldEvents = {
+	onChange: noop,
+	onBlur: noop,
+	onValueChange: noop,
+};
+
+export interface FormFieldProps extends FieldConfig, FormFieldEvents {
+	component: string | React.ComponentType<any>;
+	componentProps: any;
 	children?: any;
 }
 
@@ -15,6 +24,10 @@ export const getFormikFieldError = (form, field) => {
 	const { name } = field;
 	const touched = getIn(form.touched, name);
 	return touched && getIn(form.errors, name);
+};
+
+export const getFormikValue = (formik: FormikContext<any>, name) => {
+	return getIn(formik.values, name);
 };
 
 export const setFormikFieldValue = (form, name, value, shouldValidate) => {
@@ -52,10 +65,11 @@ export const SwFormField: React.FC<FormFieldProps> = ({
 function InnerField({ componentProps, fieldProps, onValueChange, component: Component, children, onChange, onBlur }) {
 	const { field, form } = fieldProps;
 	const { value } = field;
+	console.log(field);
 	const error = getFormikFieldError(form, field);
 	const valueProps = typeof value === 'boolean' ? { checked: value, value: '' } : { value: value || '' };
 	useEffect(() => {
-		onValueChange(value);
+		onValueChange(value, field);
 	}, [value]);
 
 	return (

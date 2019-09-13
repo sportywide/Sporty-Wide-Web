@@ -1,14 +1,19 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Form } from 'semantic-ui-react';
 import { Formik } from 'formik';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
 import { UserProfileDto } from '@shared/lib/dtos/user/profile/user-profile.dto';
+import { SwCountrySelect } from '@web/features/address/components/CountrySelect';
+import { SwStateSelect } from '@web/features/address/components/StateSelect';
+import { SwCitySelect } from '@web/features/address/components/CitySelect';
 
 interface IProps {
 	profile: UserProfileDto;
 	didSaveProfile: (user: UserProfileDto) => void;
 }
 const SwWorkProfileComponent: React.FC<IProps> = ({ profile, didSaveProfile }) => {
+	const [countryId, setCountryId] = useState<number | null>(null);
+	const [stateId, setStateId] = useState<number | null>(null);
 	return (
 		<Formik
 			initialValues={profile}
@@ -70,29 +75,29 @@ const SwWorkProfileComponent: React.FC<IProps> = ({ profile, didSaveProfile }) =
 							/>
 						</Form.Group>
 						<Form.Group widths="equal">
-							<SwFormField
+							<SwCitySelect
 								name="address.city"
-								component={Form.Input}
-								componentProps={{
-									label: 'City',
-									placeholder: 'Your city',
-								}}
+								label={'City'}
+								placeholder={'Your City'}
+								stateId={stateId}
 							/>
-							<SwFormField
-								name="address.state"
-								component={Form.Input}
-								componentProps={{
-									label: 'State',
-									placeholder: 'Your state',
+
+							<SwStateSelect
+								name={'address.state'}
+								label={'State'}
+								placeholder={'Your State'}
+								countryId={countryId}
+								onStateChange={state => {
+									setStateId((state && state.id) as number);
 								}}
 							/>
 
-							<SwFormField
-								name="address.country"
-								component={Form.Input}
-								componentProps={{
-									label: 'Country',
-									placeholder: 'Your country',
+							<SwCountrySelect
+								name={'address.country'}
+								label={'Country'}
+								placeholder={'Your country'}
+								onCountryChange={country => {
+									setCountryId(country && country.id);
 								}}
 							/>
 						</Form.Group>

@@ -1,5 +1,4 @@
 const path = require('path');
-const { importAutoDllPlugin } = require('next/dist/build/webpack/plugins/dll-import');
 const paths = require('sportywide-shared/build/paths');
 const withPlugins = require('next-compose-plugins');
 const babel = require('next-plugin-custom-babel-config');
@@ -10,7 +9,7 @@ const webpack = require('webpack');
 const { ENTRY_ORDER, default: InjectPlugin } = require('webpack-inject-plugin');
 const nextConfig = {
 	webpack: (config, options) => {
-		const { dir, dev, isServer } = options;
+		const { dir } = options;
 		config.resolve = {
 			...(config.resolve || {}),
 			alias: {
@@ -55,25 +54,6 @@ const nextConfig = {
 				entryOrder: ENTRY_ORDER.First,
 			})
 		);
-
-		if (!isServer && dev) {
-			const cacheGroups = config.optimization.splitChunks.cacheGroups;
-
-			cacheGroups.vendors = {
-				name: 'vendors',
-				test: /[\\/]node_modules[\\/].*\.js$/,
-				enforce: true,
-				priority: 20,
-				chunks: 'all',
-			};
-
-			cacheGroups.commons = {
-				name: 'commons',
-				minChunks: 2,
-				priority: 10,
-				chunks: 'all',
-			};
-		}
 
 		config.plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/));
 

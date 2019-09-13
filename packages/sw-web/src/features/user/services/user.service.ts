@@ -30,7 +30,7 @@ export class UserService {
 			.pipe(map(({ data }) => plainToClass(UserDto, data)));
 	}
 
-	getExtraProfile({ userId, relations = [] }) {
+	getExtraProfile({ userId, relations = [] }: { userId: number; relations: string[] }) {
 		return this.apiService
 			.api()
 			.get(`/user/profile/${userId}`, {
@@ -40,7 +40,7 @@ export class UserService {
 			})
 			.pipe(
 				map(({ data }) =>
-					plainToClass(UserProfileDto, data, {
+					plainToClass(UserProfileDto, data || {}, {
 						ignoreDecorators: true,
 					})
 				)
