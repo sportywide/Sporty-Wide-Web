@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { FormFieldEvents, getFormikValue, SwFormField } from '@web/shared/lib/form/components/FormField';
-import { Form } from 'semantic-ui-react';
+import { FormFieldEvents, getFormikValue } from '@web/shared/lib/form/components/FormField';
 import { connect } from 'formik';
 import { AddressService } from '@web/features/address/services/address.service';
 import { StateDto } from '@shared/lib/dtos/address/state.dto';
@@ -27,49 +26,65 @@ const SwStateSelectComponent: React.FC<IProps> = ({
 	...otherProps
 }) => {
 	const formik = (otherProps as any).formik;
-	const [stateMap, setStateMap] = useState<{ [key: string]: StateDto }>({});
+	const [stateMap, setStateMap] = useState<{ [key: string]: StateDto }>(null);
 	const container = useContext(ContainerContext);
+	const [selectedState, setSelectedState] = useState();
 	useEffect(() => {
 		if (!countryId) {
-			setStateMap({});
-			return;
+			//enter a custom country
+			if (stateMap) {
+				setStateMap({});
+				return;
+			} else {
+				const value = getFormikValue(formik, name);
+				const newStateMap = {
+					[value]: newState(value, countryId),
+				};
+				setStateMap(newStateMap);
+				return;
+			}
 		}
 		(async () => {
 			const addressService = container.get(AddressService);
 			const states = await addressService.getStatesFromCountryId(countryId).toPromise();
-			setStateMap(keyBy(states, 'name'));
+			const newStateMap = keyBy(states, 'name');
+			const value = getFormikValue(formik, name);
+			if (stateMap === null && value) {
+				if (!newStateMap[value]) {
+					newStateMap[value] = newState(value, countryId);
+				}
+			} else {
+				formik.setFieldValue(name, states.length ? states[0].name : '');
+			}
+			setStateMap(newStateMap);
 		})();
 	}, [countryId]);
 
 	const options = useMemo(() => {
-		const states = Object.values(stateMap);
-		if (states.length) {
-			formik.setFieldValue(name, states[0].name);
-		} else {
-			formik.setFieldValue(name, null);
-		}
-		return Object.values(stateMap).map(state => ({
+		return Object.values(stateMap || {}).map(state => ({
 			value: state.name,
 			text: state.name,
 			key: state.id,
 		}));
 	}, [stateMap]);
 
-	const onInputvalueChange = useCallback(
+	useEffect(() => {
+		if (!stateMap) {
+			return;
+		}
+		if (stateMap[selectedState]) {
+			onStateChange(stateMap[selectedState]);
+		} else {
+			onStateChange(newState(selectedState, countryId));
+		}
+	}, [stateMap, selectedState]);
+
+	const onInputValueChange = useCallback(
 		(...args) => {
 			// @ts-ignore
 			onValueChange(...args);
 			const value = args[0];
-			const state = stateMap[value];
-			if (state) {
-				onStateChange(state);
-			} else {
-				onStateChange({
-					id: null,
-					name: value,
-					countryId,
-				});
-			}
+			setSelectedState(value);
 		},
 		[onValueChange, onStateChange]
 	);
@@ -81,7 +96,7 @@ const SwStateSelectComponent: React.FC<IProps> = ({
 			onAddItem={handleAddition}
 			allowAdditions={true}
 			placeholder={placeholder}
-			onValueChange={onInputvalueChange}
+			onValueChange={onInputValueChange}
 			{...otherProps}
 		/>
 	);
@@ -97,5 +112,13 @@ const SwStateSelectComponent: React.FC<IProps> = ({
 		});
 	}
 };
+
+function newState(name, countryId) {
+	return {
+		id: null,
+		name: name,
+		countryId,
+	};
+}
 
 export const SwStateSelect = connect(SwStateSelectComponent);

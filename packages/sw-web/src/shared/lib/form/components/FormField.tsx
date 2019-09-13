@@ -1,11 +1,13 @@
 import React, { useEffect } from 'react';
 import { Field, FieldConfig, FieldProps, getIn, FormikContext } from 'formik';
 import { noop } from '@shared/lib/utils/functions';
+import { shouldUpdate, pure } from 'recompose';
+import { isEqual } from 'lodash';
 
 export interface FormFieldEvents {
 	onChange?: (e: React.ChangeEvent<any>, params?: { name?: string; value?: any }) => void;
 	onBlur?: (e: React.FocusEvent<any>) => void;
-	onValueChange?: (value: any, field?: FieldProps) => void;
+	onValueChange?: (value: any, name?: string) => void;
 }
 
 export const defaultFormFieldEvents: FormFieldEvents = {
@@ -35,47 +37,25 @@ export const setFormikFieldValue = (form, name, value, shouldValidate) => {
 	form.setFieldTouched(name, true, shouldValidate);
 };
 
-export const SwFormField: React.FC<FormFieldProps> = ({
-	component,
-	componentProps = {},
-	onChange = noop,
-	onBlur = noop,
-	onValueChange = noop,
-	children,
-	...fieldProps
-}) => {
-	return (
-		<Field {...fieldProps}>
-			{(props: FieldProps) => (
-				<InnerField
-					component={component}
-					componentProps={componentProps}
-					fieldProps={props}
-					onValueChange={onValueChange}
-					onChange={onChange}
-					onBlur={onBlur}
-				>
-					{children}
-				</InnerField>
-			)}
-		</Field>
-	);
-};
-
-function InnerField({ componentProps, fieldProps, onValueChange, component: Component, children, onChange, onBlur }) {
-	const { field, form } = fieldProps;
-	const { value } = field;
-	console.log(field);
-	const error = getFormikFieldError(form, field);
+function InnerFieldComponent({
+	componentProps,
+	name,
+	value,
+	error,
+	form,
+	component: Component,
+	onValueChange,
+	onChange,
+	onBlur,
+}) {
 	const valueProps = typeof value === 'boolean' ? { checked: value, value: '' } : { value: value || '' };
 	useEffect(() => {
-		onValueChange(value, field);
+		onValueChange(value, name);
 	}, [value]);
-
 	return (
 		<Component
+			name={name}
 			{...componentProps}
-			{...field}
 			{...valueProps}
 			error={error}
 			onChange={(e, { name, value, checked }) => {
@@ -95,8 +75,57 @@ function InnerField({ componentProps, fieldProps, onValueChange, component: Comp
 					onBlur(e);
 				}
 			}}
-		>
-			{children ? children({ fieldProps, componentProps, valueProps }) : null}
-		</Component>
+		/>
 	);
 }
+
+const InnerField = shouldUpdate((oldProps, newProps) => {
+	return !isEqual(
+		{
+			componentProps: oldProps.componentProps,
+			name: oldProps.name,
+			value: oldProps.value,
+			error: oldProps.error,
+		},
+		{
+			componentProps: newProps.componentProps,
+			name: newProps.name,
+			value: newProps.value,
+			error: newProps.error,
+		}
+	);
+})(InnerFieldComponent);
+
+const SwFormFieldComponent: React.FC<FormFieldProps> = ({
+	component,
+	componentProps = {},
+	onChange = noop,
+	onBlur = noop,
+	onValueChange = noop,
+	...fieldProps
+}) => {
+	return (
+		<Field {...fieldProps}>
+			{(props: FieldProps) => {
+				const { field, form } = props;
+				const { value, name } = field;
+				const error = getFormikFieldError(form, field);
+				return (
+					<InnerField
+						component={component}
+						componentProps={componentProps}
+						onValueChange={onValueChange}
+						value={value}
+						name={name}
+						form={form}
+						error={error}
+						onChange={onChange}
+						onBlur={onBlur}
+					/>
+				);
+			}}
+		</Field>
+	);
+};
+
+export const SwFormField = pure(SwFormFieldComponent);

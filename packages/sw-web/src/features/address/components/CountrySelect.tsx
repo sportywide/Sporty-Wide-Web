@@ -24,27 +24,46 @@ const SwCountrySelectComponent: React.FC<IProps> = ({
 }) => {
 	const formik: FormikContext<any> = (otherProps as any).formik;
 	const container = useContext(ContainerContext);
+	const [selectedCountry, setSelectedCountry] = useState(null);
 	const [countryMap, setCountryMap] = useState<{ [key: string]: CountryDto }>({});
 	useEffect(() => {
 		(async () => {
 			const addressService = container.get(AddressService);
-			const countryMap = await addressService.getCountries().toPromise();
-			setCountryMap(keyBy(countryMap, 'name'));
+			const countries = await addressService.getCountries().toPromise();
+			const countryMap = keyBy(countries, 'name');
+			const value = getFormikValue(formik, name);
+			if (value && !countryMap[value]) {
+				countryMap[value] = newCountry(value);
+			}
+			if (countries.length && !value) {
+				formik.setFieldValue(name, countries[0].name);
+			}
+			setCountryMap(countryMap);
 		})();
 	}, []);
 
 	const options = useMemo(() => {
-		const countries = Object.values(countryMap);
-		const value = getFormikValue(formik, name);
-		if (countries.length && !value) {
-			formik.setFieldValue(name, countries[0].name);
-		}
 		return Object.values(countryMap).map(country => ({
 			value: country.name,
 			text: country.name,
 			key: country.id,
 		}));
 	}, [countryMap]);
+
+	useEffect(() => {
+		const countries = Object.values(countryMap);
+		if (!countries.length) {
+			//hasn't loaded countries yet
+			return;
+		}
+
+		const country = countryMap[selectedCountry];
+		if (country) {
+			onCountryChange(country);
+		} else {
+			onCountryChange(newCountry(selectedCountry));
+		}
+	}, [countryMap, selectedCountry]);
 
 	return (
 		<SwDropdownField
@@ -57,17 +76,7 @@ const SwCountrySelectComponent: React.FC<IProps> = ({
 			onValueChange={(...args) => {
 				onValueChange(...args);
 				const value = args[0];
-				const country = countryMap[value];
-				if (country) {
-					onCountryChange(country);
-				} else {
-					onCountryChange({
-						id: null,
-						name: value,
-						phonecode: null,
-						sortname: null,
-					});
-				}
+				setSelectedCountry(value);
 			}}
 			{...otherProps}
 		/>
@@ -84,5 +93,14 @@ const SwCountrySelectComponent: React.FC<IProps> = ({
 		});
 	}
 };
+
+function newCountry(name) {
+	return {
+		id: null,
+		name: name,
+		phonecode: null,
+		sortname: null,
+	};
+}
 
 export const SwCountrySelect = connect(SwCountrySelectComponent);

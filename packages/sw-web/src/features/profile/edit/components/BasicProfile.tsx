@@ -28,7 +28,7 @@ const SwBasicProfileComponent: React.FC<IProps> = ({ user, didSaveProfile }) => 
 			initialValues={{ ...user, gender: user.gender || UserGender.MALE } as any}
 			enableReinitialize={true}
 			validationSchema={schema}
-			onSubmit={didSaveProfile}
+			onSubmit={saveProfile}
 			render={props => {
 				return (
 					<>
@@ -115,5 +115,17 @@ const SwBasicProfileComponent: React.FC<IProps> = ({ user, didSaveProfile }) => 
 			}}
 		/>
 	);
+
+	function saveProfile(data) {
+		const savedData = Object.assign({}, data);
+		if (savedData.password === '') {
+			delete savedData.password;
+		}
+		if (savedData.dob === '') {
+			savedData.dob = null;
+		}
+
+		didSaveProfile(savedData);
+	}
 };
 export const SwBasicProfile = SwBasicProfileComponent;

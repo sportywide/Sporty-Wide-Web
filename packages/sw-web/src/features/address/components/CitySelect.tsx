@@ -6,7 +6,7 @@ import { AddressService } from '@web/features/address/services/address.service';
 import { SwDropdownField } from '@web/shared/lib/form/components/DropdownField';
 import { CityDto } from '@shared/lib/dtos/address/city.dto';
 import { keyBy } from 'lodash';
-import { connect } from 'formik';
+import { connect, FormikContext } from 'formik';
 
 interface IProps extends FormFieldEvents {
 	name: string;
@@ -25,49 +25,66 @@ const SwCitySelectComponent: React.FC<IProps> = ({
 	onCityChange = noop,
 	...otherProps
 }) => {
-	const formik = (otherProps as any).formik;
-	const [cityMap, setCityMap] = useState<{ [key: string]: CityDto }>({});
+	const formik: FormikContext<any> = (otherProps as any).formik;
+	const [cityMap, setCityMap] = useState<{ [key: string]: CityDto }>(null);
 	const container = useContext(ContainerContext);
+	const [selectedCity, setSelectedCity] = useState();
 	useEffect(() => {
 		if (!stateId) {
-			setCityMap({});
-			return;
+			if (cityMap) {
+				//enter a custom state, so we want to clear out existing state
+				setCityMap({});
+				return;
+			} else {
+				const value = getFormikValue(formik, name);
+				const newStateMap = {
+					[value]: newCity(value, stateId),
+				};
+				setCityMap(newStateMap);
+				return;
+			}
 		}
 		(async () => {
 			const addressService = container.get(AddressService);
 			const cities = await addressService.getCititesFromStateId(stateId).toPromise();
-			setCityMap(keyBy(cities, 'name'));
+			const newCityMap = keyBy(cities, 'name');
+			const value = getFormikValue(formik, name);
+			if (cityMap === null && value) {
+				if (!newCityMap[value]) {
+					newCityMap[value] = newCity(value, stateId);
+				}
+			} else {
+				formik.setFieldValue(name, cities.length ? cities[0].name : '');
+			}
+			setCityMap(newCityMap);
 		})();
 	}, [stateId]);
 
 	const options = useMemo(() => {
-		const cities = Object.values(cityMap);
-		if (cities.length) {
-			formik.setFieldValue(name, cities[0].name);
-		} else {
-			formik.setFieldValue(name, null);
-		}
-		return Object.values(cityMap).map(city => ({
+		return Object.values(cityMap || {}).map(city => ({
 			value: city.name,
 			text: city.name,
 			key: city.id,
 		}));
 	}, [cityMap]);
-	const onInputvalueChange = useCallback(
+
+	useEffect(() => {
+		if (!cityMap) {
+			return;
+		}
+		if (cityMap[selectedCity]) {
+			onCityChange(cityMap[selectedCity]);
+		} else {
+			onCityChange(newCity(selectedCity, stateId));
+		}
+	}, [cityMap, selectedCity]);
+
+	const onInputValueChange = useCallback(
 		(...args) => {
 			// @ts-ignore
 			onValueChange(...args);
 			const value = args[0];
-			const city = cityMap[value];
-			if (city) {
-				onCityChange(city);
-			} else {
-				onCityChange({
-					id: null,
-					name: value,
-					stateId,
-				});
-			}
+			setSelectedCity(value);
 		},
 		[onValueChange, onCityChange]
 	);
@@ -80,7 +97,7 @@ const SwCitySelectComponent: React.FC<IProps> = ({
 			placeholder={placeholder}
 			allowAdditions={true}
 			onAddItem={handleAddition}
-			onValueChange={onInputvalueChange}
+			onValueChange={onInputValueChange}
 			{...otherProps}
 		/>
 	);
@@ -97,5 +114,13 @@ const SwCitySelectComponent: React.FC<IProps> = ({
 		});
 	}
 };
+
+function newCity(name, stateId) {
+	return {
+		id: null,
+		name,
+		stateId,
+	};
+}
 
 export const SwCitySelect = connect(SwCitySelectComponent);
