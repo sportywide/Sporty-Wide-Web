@@ -30,6 +30,13 @@ export const devProxy = {
 			handleAuthHeader(proxyReq, req);
 		},
 	},
+	'/maps': {
+		target: 'https://maps.googleapis.com/maps',
+		changeOrigin: true,
+		pathRewrite: {
+			'^/maps': '',
+		},
+	},
 	'/auth': {
 		target: config.get('server_url'),
 		changeOrigin: true,

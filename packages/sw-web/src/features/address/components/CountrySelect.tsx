@@ -18,29 +18,33 @@ const SwCountrySelectComponent: React.FC<IProps> = ({
 	name,
 	label,
 	placeholder,
-	onValueChange = noop,
 	onCountryChange = noop,
 	...otherProps
 }) => {
 	const formik: FormikContext<any> = (otherProps as any).formik;
+	const value = getFormikValue(formik, name);
 	const container = useContext(ContainerContext);
-	const [selectedCountry, setSelectedCountry] = useState(null);
-	const [countryMap, setCountryMap] = useState<{ [key: string]: CountryDto }>({});
+	const [loading, setLoading] = useState(false);
+	const [countryMap, setCountryMap] = useState<{ [key: string]: CountryDto }>(null);
 	useEffect(() => {
 		(async () => {
-			const addressService = container.get(AddressService);
-			const countries = await addressService.getCountries().toPromise();
-			const countryMap = keyBy(countries, 'name');
-			const value = getFormikValue(formik, name);
-			if (value && !countryMap[value]) {
-				countryMap[value] = newCountry(value);
+			setLoading(true);
+			try {
+				const addressService = container.get(AddressService);
+				const countries = await addressService.getCountries().toPromise();
+				const countryMap = keyBy(countries, 'name');
+				if (value && !countryMap[value]) {
+					countryMap[value] = newCountry(value);
+				}
+				setCountryMap(countryMap);
+			} finally {
+				setLoading(false);
 			}
-			setCountryMap(countryMap);
 		})();
 	}, []);
 
 	const options = useMemo(() => {
-		return Object.values(countryMap).map(country => ({
+		return Object.values(countryMap || {}).map(country => ({
 			value: country.name,
 			text: country.name,
 			key: country.id,
@@ -48,19 +52,17 @@ const SwCountrySelectComponent: React.FC<IProps> = ({
 	}, [countryMap]);
 
 	useEffect(() => {
-		const countries = Object.values(countryMap);
-		if (!countries.length) {
-			//hasn't loaded countries yet
+		if (!countryMap) {
 			return;
 		}
 
-		const country = countryMap[selectedCountry];
+		const country = countryMap[value];
 		if (country) {
 			onCountryChange(country);
 		} else {
-			onCountryChange(newCountry(selectedCountry));
+			onCountryChange(newCountry(value));
 		}
-	}, [countryMap, selectedCountry]);
+	}, [countryMap, value]);
 
 	return (
 		<SwDropdownField
@@ -70,11 +72,6 @@ const SwCountrySelectComponent: React.FC<IProps> = ({
 			options={options}
 			allowAdditions={true}
 			onAddItem={handleAddition}
-			onValueChange={(...args) => {
-				onValueChange(...args);
-				const value = args[0];
-				setSelectedCountry(value);
-			}}
 			{...otherProps}
 		/>
 	);

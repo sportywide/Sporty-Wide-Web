@@ -21,42 +21,41 @@ const SwStateSelectComponent: React.FC<IProps> = ({
 	name,
 	label,
 	placeholder,
-	onValueChange = noop,
 	onStateChange = noop,
 	...otherProps
 }) => {
 	const formik = (otherProps as any).formik;
 	const [stateMap, setStateMap] = useState<{ [key: string]: StateDto }>(null);
+	const [loading, setLoading] = useState<boolean>(false);
 	const container = useContext(ContainerContext);
-	const [selectedState, setSelectedState] = useState();
+	const value = getFormikValue(formik, name);
 	useEffect(() => {
 		if (!countryId) {
-			//enter a custom country
-			if (stateMap) {
-				setStateMap({});
-				return;
-			} else {
-				const value = getFormikValue(formik, name);
-				const newStateMap = {
-					[value]: newState(value, countryId),
-				};
-				setStateMap(newStateMap);
-				return;
+			const stateMap = {};
+			if (value) {
+				stateMap[value] = newState(value, countryId);
 			}
+			setStateMap(stateMap);
+			setLoading(false);
+			return;
 		}
 		(async () => {
-			const addressService = container.get(AddressService);
-			const states = await addressService.getStatesFromCountryId(countryId).toPromise();
-			const newStateMap = keyBy(states, 'name');
-			const value = getFormikValue(formik, name);
-			if (stateMap === null && value) {
-				if (!newStateMap[value]) {
-					newStateMap[value] = newState(value, countryId);
+			try {
+				const addressService = container.get(AddressService);
+				setLoading(true);
+				const states = await addressService.getStatesFromCountryId(countryId).toPromise();
+				const stateMap = keyBy(states, 'name');
+				if (value) {
+					if (!stateMap[value]) {
+						stateMap[value] = newState(value, countryId);
+					}
+				} else {
+					formik.setFieldValue(name, states.length ? states[0].name : '');
 				}
-			} else {
-				formik.setFieldValue(name, states.length ? states[0].name : '');
+				setStateMap(stateMap);
+			} finally {
+				setLoading(false);
 			}
-			setStateMap(newStateMap);
 		})();
 	}, [countryId]);
 
@@ -72,31 +71,22 @@ const SwStateSelectComponent: React.FC<IProps> = ({
 		if (!stateMap) {
 			return;
 		}
-		if (stateMap[selectedState]) {
-			onStateChange(stateMap[selectedState]);
+		if (stateMap[value]) {
+			onStateChange(stateMap[value]);
 		} else {
-			onStateChange(newState(selectedState, countryId));
+			onStateChange(newState(value, countryId));
 		}
-	}, [stateMap, selectedState]);
+	}, [stateMap, value]);
 
-	const onInputValueChange = useCallback(
-		(...args) => {
-			// @ts-ignore
-			onValueChange(...args);
-			const value = args[0];
-			setSelectedState(value);
-		},
-		[onValueChange, onStateChange]
-	);
 	return (
 		<SwDropdownField
 			name={name}
 			label={label}
 			options={options}
+			loading={loading}
 			onAddItem={handleAddition}
 			allowAdditions={true}
 			placeholder={placeholder}
-			onValueChange={onInputValueChange}
 			{...otherProps}
 		/>
 	);

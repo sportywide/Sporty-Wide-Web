@@ -1,27 +1,75 @@
-import React, { useRef } from 'react';
-import { Input } from 'semantic-ui-react';
-import { useEffect } from '@root/node_modules/@types/react';
-declare const google;
+import React, { useContext, useEffect, useState } from 'react';
+import { Form, Search } from 'semantic-ui-react';
+import { Debounce } from '@shared/lib/utils/functions/debounce';
+import { useLocation } from '@web/shared/lib/react/hooks';
+import { ContainerContext } from '@web/shared/lib/store';
+import { Container } from 'typedi';
+import { PlacesService } from '@web/features/address/services/places.service';
+import { AddressDto } from '@shared/lib/dtos/address/address.dto';
+import { noop } from '@shared/lib/utils/functions';
 
-const SwPlaceAutoCompleteFieldComponent: React.FC<any> = props => {
-	const ref = useRef<any>();
+const debounce = new Debounce(500);
+
+interface IProps {
+	onAddressSelected: (address: AddressDto) => void;
+}
+
+const SwPlaceAutoCompleteFieldComponent: React.FC<IProps> = ({ onAddressSelected = noop }) => {
+	const container: typeof Container = useContext(ContainerContext);
+	const placesService = container.get(PlacesService);
+	const [searchQuery, setSearchQuery] = useState('');
+	const [searching, setSearching] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
+	const [results, setResults] = useState([]);
+	const location = useLocation();
 	useEffect(() => {
-		if (!ref.current) {
+		if (!searchQuery || searchQuery.length < 3) {
 			return;
 		}
-		const autocomplete = new google.maps.places.Autocomplete(ref.current.inputRef.input, {
-			types: ['geocode'],
+		if (!searching) {
+			return;
+		}
+		setIsLoading(true);
+
+		debounce.run(async () => {
+			try {
+				const searchResults = await placesService.getPredictions({ searchQuery, location });
+				setResults(
+					searchResults.map(({ description, terms, place_id: placeId }) => ({
+						title: description,
+						terms,
+						placeId,
+					}))
+				);
+			} finally {
+				setIsLoading(false);
+				setSearching(false);
+			}
 		});
+	}, [searchQuery]);
+	return (
+		<Form.Field>
+			<Search
+				input={{ icon: 'search', iconPosition: 'left' }}
+				loading={isLoading}
+				onResultSelect={onResultSelect}
+				onSearchChange={(e, { value }) => {
+					setSearchQuery(value);
+					setSearching(true);
+				}}
+				value={searchQuery}
+				results={results}
+			/>
+		</Form.Field>
+	);
 
-		// Avoid paying for data that you don't need by restricting the set of
-		// place fields that are returned to just the address components.
-		autocomplete.setFields(['address_component']);
-
-		// When the user selects an address from the drop-down, populate the
-		// address fields in the form.
-		autocomplete.addListener('place_changed', console.log);
-	}, []);
-	return <Input ref={ref} />;
+	async function onResultSelect(e, { result }) {
+		const placeId = result.placeId;
+		setSearchQuery(result.title);
+		setSearching(false);
+		const address = await placesService.getPlacesDetails(placeId);
+		onAddressSelected(address);
+	}
 };
 
 export const SwPlaceAutoCompleteField = SwPlaceAutoCompleteFieldComponent;

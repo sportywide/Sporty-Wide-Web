@@ -21,42 +21,42 @@ const SwCitySelectComponent: React.FC<IProps> = ({
 	name,
 	label,
 	placeholder,
-	onValueChange = noop,
 	onCityChange = noop,
 	...otherProps
 }) => {
 	const formik: FormikContext<any> = (otherProps as any).formik;
 	const [cityMap, setCityMap] = useState<{ [key: string]: CityDto }>(null);
 	const container = useContext(ContainerContext);
-	const [selectedCity, setSelectedCity] = useState();
+	const [loading, setLoading] = useState<boolean>(false);
+	const value = getFormikValue(formik, name);
 	useEffect(() => {
 		if (!stateId) {
-			if (cityMap) {
-				//enter a custom state, so we want to clear out existing state
-				setCityMap({});
-				return;
-			} else {
-				const value = getFormikValue(formik, name);
-				const newStateMap = {
-					[value]: newCity(value, stateId),
-				};
-				setCityMap(newStateMap);
-				return;
+			const cityMap = {};
+			if (value) {
+				cityMap[value] = newCity(value, stateId);
 			}
+			setCityMap(cityMap);
+			setLoading(false);
+			return;
 		}
 		(async () => {
-			const addressService = container.get(AddressService);
-			const cities = await addressService.getCititesFromStateId(stateId).toPromise();
-			const newCityMap = keyBy(cities, 'name');
-			const value = getFormikValue(formik, name);
-			if (cityMap === null && value) {
-				if (!newCityMap[value]) {
-					newCityMap[value] = newCity(value, stateId);
+			try {
+				const addressService = container.get(AddressService);
+				setLoading(true);
+				const cities = await addressService.getCititesFromStateId(stateId).toPromise();
+				const newCityMap = keyBy(cities, 'name');
+				const value = getFormikValue(formik, name);
+				if (value) {
+					if (!newCityMap[value]) {
+						newCityMap[value] = newCity(value, stateId);
+					}
+				} else {
+					formik.setFieldValue(name, cities.length ? cities[0].name : '');
 				}
-			} else {
-				formik.setFieldValue(name, cities.length ? cities[0].name : '');
+				setCityMap(newCityMap);
+			} finally {
+				setLoading(false);
 			}
-			setCityMap(newCityMap);
 		})();
 	}, [stateId]);
 
@@ -72,22 +72,12 @@ const SwCitySelectComponent: React.FC<IProps> = ({
 		if (!cityMap) {
 			return;
 		}
-		if (cityMap[selectedCity]) {
-			onCityChange(cityMap[selectedCity]);
+		if (cityMap[value]) {
+			onCityChange(cityMap[value]);
 		} else {
-			onCityChange(newCity(selectedCity, stateId));
+			onCityChange(newCity(value, stateId));
 		}
-	}, [cityMap, selectedCity]);
-
-	const onInputValueChange = useCallback(
-		(...args) => {
-			// @ts-ignore
-			onValueChange(...args);
-			const value = args[0];
-			setSelectedCity(value);
-		},
-		[onValueChange, onCityChange]
-	);
+	}, [cityMap, value]);
 
 	return (
 		<SwDropdownField
@@ -95,9 +85,9 @@ const SwCitySelectComponent: React.FC<IProps> = ({
 			label={label}
 			options={options}
 			placeholder={placeholder}
+			loading={loading}
 			allowAdditions={true}
 			onAddItem={handleAddition}
-			onValueChange={onInputValueChange}
 			{...otherProps}
 		/>
 	);

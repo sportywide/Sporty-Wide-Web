@@ -59,7 +59,6 @@ function InnerFieldComponent({
 			{...valueProps}
 			error={error}
 			onChange={(e, { name, value, checked }) => {
-				form.handleChange(e);
 				if (checked != null && value === '') {
 					value = !!checked;
 				}

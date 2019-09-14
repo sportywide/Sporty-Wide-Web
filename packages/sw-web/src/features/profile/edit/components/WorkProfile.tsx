@@ -3,18 +3,16 @@ import { Form } from 'semantic-ui-react';
 import { Formik } from 'formik';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
 import { UserProfileDto } from '@shared/lib/dtos/user/profile/user-profile.dto';
-import { SwCountrySelect } from '@web/features/address/components/CountrySelect';
-import { SwStateSelect } from '@web/features/address/components/StateSelect';
-import { SwCitySelect } from '@web/features/address/components/CitySelect';
-import { SwPlaceAutoCompleteField } from '@web/shared/lib/form/components/address/PlaceAutoCompleteField';
+import { SwAddressForm } from '@web/shared/lib/form/components/address/AddressForm';
+import { AddressDto } from '@shared/lib/dtos/address/address.dto';
 
 interface IProps {
 	profile: UserProfileDto;
 	didSaveProfile: (user: UserProfileDto) => void;
 }
 const SwWorkProfileComponent: React.FC<IProps> = ({ profile, didSaveProfile }) => {
-	const [countryId, setCountryId] = useState<number | null | undefined>(undefined);
-	const [stateId, setStateId] = useState<number | null | undefined>(undefined);
+	const [isLookupAddress, setIsLookupAddress] = useState(false);
+
 	return (
 		profile && (
 			<Formik
@@ -42,74 +40,14 @@ const SwWorkProfileComponent: React.FC<IProps> = ({ profile, didSaveProfile }) =
 								}}
 								name="education"
 							/>
-							<SwFormField
-								component={Form.Input}
-								componentProps={{
-									label: 'Address 1',
-									placeholder: 'Address 1',
+							<SwAddressForm
+								onToggleAutoCompleteField={setIsLookupAddress}
+								isShowingAutoComplete={isLookupAddress}
+								didSelectAddress={() => {
+									setIsLookupAddress(false);
 								}}
-								name="address.street1"
 							/>
-							<SwFormField
-								component={Form.Input}
-								componentProps={{
-									label: 'Address 2',
-									placeholder: 'Address 2',
-								}}
-								name="address.street2"
-							/>
-							<Form.Group widths="equal">
-								<SwFormField
-									name="address.suburb"
-									component={Form.Input}
-									componentProps={{
-										label: 'Suburb',
-										placeholder: 'Your suburb',
-									}}
-								/>
-								<SwFormField
-									name="address.postcode"
-									component={Form.Input}
-									componentProps={{
-										label: 'Postcode',
-										placeholder: 'Your postcode',
-									}}
-								/>
-							</Form.Group>
-							<Form.Group widths="equal">
-								{stateId !== undefined && (
-									<SwCitySelect
-										name="address.city"
-										label={'City'}
-										placeholder={'Your City'}
-										stateId={stateId}
-									/>
-								)}
-
-								<SwPlaceAutoCompleteField />
-
-								{countryId !== undefined && (
-									<SwStateSelect
-										name={'address.state'}
-										label={'State'}
-										placeholder={'Your State'}
-										countryId={countryId}
-										onStateChange={state => {
-											setStateId((state && state.id) as number);
-										}}
-									/>
-								)}
-
-								<SwCountrySelect
-									name={'address.country'}
-									label={'Country'}
-									placeholder={'Your country'}
-									onCountryChange={country => {
-										setCountryId(country && country.id);
-									}}
-								/>
-							</Form.Group>
-							<Form.Button type="submit" primary disabled={!props.isValid}>
+							<Form.Button type="submit" primary disabled={!props.isValid || isLookupAddress}>
 								Save
 							</Form.Button>
 						</Form>

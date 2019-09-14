@@ -8,50 +8,50 @@ import { Expose } from 'class-transformer-imp';
 export class AddressDto {
 	@ApiModelProperty()
 	@Expose()
-	id: number;
+	id?: number;
 
 	@ApiModelProperty()
 	@Editable(UserRole.USER)
 	@is(a.string().nullable(true))
-	street1: string;
+	street1?: string;
 
 	@ApiModelProperty()
 	@Editable(UserRole.USER)
 	@is(a.string().nullable(true))
-	street2: string;
+	street2?: string;
 
 	@ApiModelProperty()
 	@Editable(UserRole.USER)
 	@is(a.string().nullable(true))
-	state: string;
+	state?: string;
 
 	@ApiModelProperty()
 	@Editable(UserRole.USER)
 	@is(a.string().nullable(true))
-	city: string;
+	city?: string;
 
 	@ApiModelProperty()
 	@Editable(UserRole.USER)
 	@is(a.string().nullable(true))
-	country: string;
+	country?: string;
 
 	@ApiModelProperty()
 	@Editable(UserRole.USER)
 	@is(a.string().nullable(true))
-	suburb: string;
+	suburb?: string;
 
 	@ApiModelProperty()
 	@Editable(UserRole.USER)
 	@is(a.string().nullable(true))
-	postcode: string;
+	postcode?: string;
 
 	@ApiModelProperty()
 	@Editable(UserRole.USER)
 	@is(a.number().nullable(true))
-	lat: number;
+	lat?: number;
 
 	@ApiModelProperty()
 	@Editable(UserRole.USER)
 	@is(a.number().nullable(true))
-	lon: number;
+	lon?: number;
 }

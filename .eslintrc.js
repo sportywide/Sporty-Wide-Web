@@ -26,6 +26,9 @@ module.exports = {
 		'import/no-unresolved': 0,
 		'react/prop-types': 0,
 	},
+	globals: {
+		google: true,
+	},
 	env: {
 		node: true,
 		es6: true,
