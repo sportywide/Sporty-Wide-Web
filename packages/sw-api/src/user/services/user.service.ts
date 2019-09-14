@@ -55,7 +55,7 @@ export class UserService extends BaseEntityService<User> {
 
 	async createUserProfile(user: User, userProfileDto: UserProfileDto) {
 		const userProfile = await this.userProfileService.saveUserProfile(userProfileDto);
-		user.profileId = userProfile.id;
+		user.profile = userProfile;
 		await this.saveOne(user);
 		return userProfile;
 	}

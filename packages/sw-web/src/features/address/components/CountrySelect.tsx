@@ -35,9 +35,6 @@ const SwCountrySelectComponent: React.FC<IProps> = ({
 			if (value && !countryMap[value]) {
 				countryMap[value] = newCountry(value);
 			}
-			if (countries.length && !value) {
-				formik.setFieldValue(name, countries[0].name);
-			}
 			setCountryMap(countryMap);
 		})();
 	}, []);

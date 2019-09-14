@@ -110,8 +110,8 @@ export class UserController {
 			objectType: CreateUserDto,
 		});
 
-		updatedUser = await this.userService.saveOne(updatedUser as User);
-
+		updatedUser = this.userService.merge(user, updatedUser);
+		updatedUser = await this.userService.saveOne(updatedUser);
 		return toDto({
 			value: updatedUser,
 			dtoType: UserDto,
@@ -158,7 +158,8 @@ export class UserController {
 				objectType: UserProfileDto,
 			});
 
-			userProfile = await this.userProfileService.saveUserProfile(validatedParams);
+			const mergedUserProfile = this.userProfileService.merge(userProfile, validatedParams);
+			userProfile = await this.userProfileService.saveUserProfile(mergedUserProfile);
 		}
 
 		return toDto({

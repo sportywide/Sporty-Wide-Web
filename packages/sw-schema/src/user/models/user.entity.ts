@@ -71,11 +71,11 @@ export class User extends TrackTimestamp(BaseEntity) {
 
 	@Column() refreshToken?: string;
 
-	@OneToOne(type => UserProfile, { cascade: true, lazy: true })
+	@OneToOne(type => UserProfile, { cascade: true })
 	@JoinColumn({
 		name: 'user_profile_id',
 	})
-	profile: Promise<UserProfile>;
+	profile: UserProfile;
 
 	@Column({
 		name: 'user_profile_id',

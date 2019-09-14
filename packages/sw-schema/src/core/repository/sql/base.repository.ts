@@ -22,16 +22,22 @@ class SwBaseRepository<T> {
 	constructor(private repository: Repository<T>) {}
 
 	async increment(conditions: FindConditions<T>, propertyPath: string, value: number | string) {
-		const updateResult = await this.repository.increment(conditions, propertyPath, value);
 		const updatedEntityIds = await this.advancedFindIds(conditions);
-		notifyUpdate(this.repository, updatedEntityIds);
+		let updateResult;
+		if (updatedEntityIds.length) {
+			updateResult = await this.repository.increment(conditions, propertyPath, value);
+			notifyUpdate(this.repository, updatedEntityIds);
+		}
 		return updateResult;
 	}
 
 	async decrement(conditions: FindConditions<T>, propertyPath: string, value: number | string) {
-		const updateResult = await this.repository.decrement(conditions, propertyPath, value);
 		const updatedEntityIds = await this.advancedFindIds(conditions);
-		notifyUpdate(this.repository, updatedEntityIds);
+		let updateResult;
+		if (updatedEntityIds.length) {
+			updateResult = await this.repository.decrement(conditions, propertyPath, value);
+			notifyUpdate(this.repository, updatedEntityIds);
+		}
 		return updateResult;
 	}
 
@@ -40,8 +46,9 @@ class SwBaseRepository<T> {
 		partialObject: QueryDeepPartialEntity<T>
 	) {
 		const updatedEntityIds = await this.advancedFindIds(conditions);
-		const updateResult = await this.repository.update(conditions, partialObject);
+		let updateResult;
 		if (updatedEntityIds.length) {
+			updateResult = await this.repository.update(conditions, partialObject);
 			notifyUpdate(this.repository, updatedEntityIds);
 		}
 		return updateResult;
@@ -74,8 +81,9 @@ class SwBaseRepository<T> {
 		conditions: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindConditions<T>
 	) {
 		const deletingEntities = await this.advancedFindIds(conditions);
-		const deleteResult = await this.repository.delete(conditions);
+		let deleteResult;
 		if (deletingEntities.length) {
+			deleteResult = await this.repository.delete(conditions);
 			notifyRemove(this.repository, deletingEntities);
 		}
 		return deleteResult;

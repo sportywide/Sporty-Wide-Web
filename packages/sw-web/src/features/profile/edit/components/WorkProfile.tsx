@@ -6,6 +6,7 @@ import { UserProfileDto } from '@shared/lib/dtos/user/profile/user-profile.dto';
 import { SwCountrySelect } from '@web/features/address/components/CountrySelect';
 import { SwStateSelect } from '@web/features/address/components/StateSelect';
 import { SwCitySelect } from '@web/features/address/components/CitySelect';
+import { SwPlaceAutoCompleteField } from '@web/shared/lib/form/components/address/PlaceAutoCompleteField';
 
 interface IProps {
 	profile: UserProfileDto;
@@ -84,6 +85,8 @@ const SwWorkProfileComponent: React.FC<IProps> = ({ profile, didSaveProfile }) =
 										stateId={stateId}
 									/>
 								)}
+
+								<SwPlaceAutoCompleteField />
 
 								{countryId !== undefined && (
 									<SwStateSelect

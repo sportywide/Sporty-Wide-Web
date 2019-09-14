@@ -32,6 +32,7 @@ export default class extends Document<IProps> {
 				<body>
 					<Main />
 					<NextScript />
+					<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA8PuZNCQdrFvDh97iRM9jVDqgrK1Wby1k&libraries=places" />
 				</body>
 			</html>
 		);

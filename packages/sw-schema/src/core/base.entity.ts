@@ -3,6 +3,7 @@ import { isPromise } from '@shared/lib/utils/promise';
 
 export class BaseEntity {
 	_initialValues: any = {};
+	_isLoaded = false;
 
 	@PrimaryGeneratedColumn() id: number;
 
@@ -13,6 +14,11 @@ export class BaseEntity {
 			.reduce((currentObject, key) => {
 				return { ...currentObject, [key]: this[key] };
 			}, {});
+		this._isLoaded = true;
+	}
+
+	isLoaded() {
+		return this._isLoaded;
 	}
 
 	changed(key) {
