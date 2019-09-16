@@ -1,7 +1,7 @@
 import { Service } from 'typedi';
 import axios from 'axios';
 import { AddressDto } from '@shared/lib/dtos/address/address.dto';
-const GOOGLE_PLACES_URL = 'https://maps.googleapis.com/maps/api/place/details/json';
+
 const API_KEY = 'AIzaSyA8PuZNCQdrFvDh97iRM9jVDqgrK1Wby1k';
 
 @Service()

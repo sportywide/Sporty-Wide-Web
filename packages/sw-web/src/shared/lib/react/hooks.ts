@@ -14,11 +14,18 @@ export function useLocation() {
 	const [location, setLocation] = useState();
 	useEffect(() => {
 		if (navigator.geolocation) {
-			navigator.geolocation.getCurrentPosition(function(position) {
-				setLocation(position);
-			});
+			navigator.geolocation.getCurrentPosition(onChange, onError);
+
+			navigator.geolocation.watchPosition(onChange, onError);
 		}
 	}, []);
 
 	return location;
+
+	function onChange(position) {
+		setLocation(position);
+	}
+	function onError() {
+		setLocation(null);
+	}
 }

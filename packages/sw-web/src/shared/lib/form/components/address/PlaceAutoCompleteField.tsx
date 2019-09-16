@@ -38,7 +38,7 @@ const SwPlaceAutoCompleteFieldComponent: React.FC<IProps> = ({ onAddressSelected
 					searchResults.map(({ description, terms, place_id: placeId }) => ({
 						title: description,
 						terms,
-						placeId,
+						placeid: placeId,
 					}))
 				);
 			} finally {
@@ -46,7 +46,7 @@ const SwPlaceAutoCompleteFieldComponent: React.FC<IProps> = ({ onAddressSelected
 				setSearching(false);
 			}
 		});
-	}, [searchQuery]);
+	}, [searchQuery, location]);
 	return (
 		<Form.Field>
 			<Search
@@ -64,7 +64,7 @@ const SwPlaceAutoCompleteFieldComponent: React.FC<IProps> = ({ onAddressSelected
 	);
 
 	async function onResultSelect(e, { result }) {
-		const placeId = result.placeId;
+		const placeId = result.placeid;
 		setSearchQuery(result.title);
 		setSearching(false);
 		const address = await placesService.getPlacesDetails(placeId);
