@@ -6,20 +6,22 @@ const bundleAnalyzer = require('@zeit/next-bundle-analyzer');
 const css = require('@zeit/next-css');
 const scss = require('@zeit/next-sass');
 const webpack = require('webpack');
+const { importAutoDllPlugin } = require('next/dist/build/webpack/plugins/dll-import');
 const { ENTRY_ORDER, default: InjectPlugin } = require('webpack-inject-plugin');
 const nextConfig = {
-	webpack: (config, options) => {
-		const { dir } = options;
-		config.resolve = {
-			...(config.resolve || {}),
+	webpack: (webpackConfig, options) => {
+		const { dir, config: nextConfig } = options;
+		const distDir = path.resolve(dir, nextConfig.distDir);
+		webpackConfig.resolve = {
+			...(webpackConfig.resolve || {}),
 			alias: {
-				...config.resolve.alias,
+				...webpackConfig.resolve.alias,
 				'@shared': paths.shared.src,
 				'@web': paths.web.src,
 				'@web-test': path.resolve(paths.web.root, 'test'),
 			},
 		};
-		config.module.rules.push({
+		webpackConfig.module.rules.push({
 			test: /\.(png|svg|eot|otf|ttf|woff|woff2)$/,
 			use: {
 				loader: 'url-loader',
@@ -32,7 +34,7 @@ const nextConfig = {
 			},
 		});
 
-		config.module.rules.push({
+		webpackConfig.module.rules.push({
 			test: /\.(ts|tsx)$/,
 			exclude: [/node_modules/, dir],
 			use: {
@@ -44,20 +46,66 @@ const nextConfig = {
 			},
 		});
 
-		config.module.rules.push({
+		webpackConfig.plugins = webpackConfig.plugins.map(plugin => {
+			if (plugin.constructor.name !== 'AutoDLLPlugin') {
+				return plugin;
+			}
+			const AutoDllPlugin = importAutoDllPlugin({ distDir });
+
+			return new AutoDllPlugin({
+				filename: '[name]_[hash].js',
+				path: './static/development/dll',
+				context: dir,
+				entry: {
+					redux: ['redux', 'redux-thunk', 'redux-observable', 'redux-devtools-extension', 'react-redux'],
+					utility: [
+						'rxjs',
+						'axios',
+						'axios-observable',
+						'typesafe-actions',
+						'typedi',
+						'recompose',
+						'lodash',
+						'formik',
+						'date-fns',
+						'yup',
+						'yup-decorator',
+						'hoist-non-react-statics',
+						'crypto-browserify',
+					],
+					ui: [
+						'react',
+						'react-dom',
+						'semantic-ui-react',
+						'styled-components',
+						'react-notification-system',
+						'react-notification-system-redux',
+						'react-redux-loading-bar',
+						'semantic-ui-calendar-react',
+					],
+				},
+				config: {
+					devtool: webpackConfig.devtool,
+					mode: webpackConfig.mode,
+					resolve: webpackConfig.resolve,
+				},
+			});
+		});
+
+		webpackConfig.module.rules.push({
 			test: /@nestjs/,
 			use: 'null-loader',
 		});
 
-		config.plugins.push(
+		webpackConfig.plugins.push(
 			new InjectPlugin(() => 'require("reflect-metadata")', {
 				entryOrder: ENTRY_ORDER.First,
 			})
 		);
 
-		config.plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/));
+		webpackConfig.plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/));
 
-		return config;
+		return webpackConfig;
 	},
 	webpackDevMiddleware: config => {
 		config.watchOptions = {
