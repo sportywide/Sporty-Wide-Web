@@ -9,7 +9,7 @@ module.exports = {
 		'plugin:import/warnings',
 		'plugin:import/typescript',
 	],
-	plugins: ['@typescript-eslint'],
+	plugins: ['@typescript-eslint', 'react-hooks'],
 	rules: {
 		'@typescript-eslint/no-parameter-properties': 0,
 		'@typescript-eslint/explicit-member-accessibility': 0,
@@ -25,6 +25,8 @@ module.exports = {
 		'import/order': 'warn',
 		'import/no-unresolved': 0,
 		'react/prop-types': 0,
+		'react-hooks/rules-of-hooks': 'error',
+		'react-hooks/exhaustive-deps': 'warn',
 	},
 	globals: {
 		google: true,

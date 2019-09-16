@@ -46,7 +46,7 @@ const SwPlaceAutoCompleteFieldComponent: React.FC<IProps> = ({ onAddressSelected
 				setSearching(false);
 			}
 		});
-	}, [searchQuery, location]);
+	}, [searchQuery, location, searching, placesService]);
 	return (
 		<Form.Field>
 			<Search

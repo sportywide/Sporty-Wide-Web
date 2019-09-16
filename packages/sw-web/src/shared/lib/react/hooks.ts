@@ -16,7 +16,11 @@ export function useLocation() {
 		if (navigator.geolocation) {
 			navigator.geolocation.getCurrentPosition(onChange, onError);
 
-			navigator.geolocation.watchPosition(onChange, onError);
+			const watchId = navigator.geolocation.watchPosition(onChange, onError);
+
+			return () => {
+				navigator.geolocation.clearWatch(watchId);
+			};
 		}
 	}, []);
 

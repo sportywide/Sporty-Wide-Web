@@ -83,30 +83,30 @@ function parseAddress(data) {
 		}
 
 		if (component.types.includes('locality')) {
-			address.suburb += component.long_name;
+			address.suburb = component.long_name;
 		}
 
 		if (component.types.includes('administrative_area_level_2')) {
-			address.city += component.short_name;
+			address.city = component.short_name;
 		}
 
 		if (component.types.includes('country')) {
-			address.country += component.long_name;
+			address.country = component.long_name;
 		}
 
 		if (component.types.includes('administrative_area_level_1')) {
-			address.state += component.long_name;
+			address.state = component.long_name;
 		}
 
 		if (component.types.includes('postal_code')) {
-			address.postcode += component.long_name;
+			address.postcode = component.long_name;
 		}
 	}
 
 	if (geometry && geometry.location) {
-		const { lat, lon } = geometry.location;
+		const { lat, lng } = geometry.location;
 		address.lat = lat;
-		address.lon = lon;
+		address.lon = lng;
 	}
 
 	return address;
