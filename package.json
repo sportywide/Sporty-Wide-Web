@@ -25,7 +25,7 @@
 		"*.{json,html,scss,yml}": [
 			"pretty-quick --staged"
 		],
-		"*.{ts,js}": [
+		"*.{ts,js,tsx,jsx}": [
 			"eslint --fix",
 			"pretty-quick --staged"
 		]
