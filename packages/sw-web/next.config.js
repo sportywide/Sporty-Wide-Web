@@ -75,8 +75,8 @@ const nextConfig = {
 					],
 					ui: [
 						'react',
-						'react-dnd',
-						'react-dnd-html5-backend',
+						'react-dnd-cjs',
+						'react-dnd-html5-backend-cjs',
 						'react-dom',
 						'react-measure',
 						'semantic-ui-react',

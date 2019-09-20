@@ -43,6 +43,11 @@ const routeMappings = [
 		pattern: '/profile/edit',
 		page: 'profile/edit',
 	},
+	{
+		name: 'player-builder',
+		pattern: '/player/builder',
+		page: 'player/builder',
+	},
 ];
 
 let routes = new Routes();

@@ -15,6 +15,11 @@ export const SwGreyBackground = styled.div`
 	background-color: ${props => props.theme.colors.grey};
 `;
 
+export const SwTransparentBackground = styled.div`
+	${swBackground};
+	background-color: ${props => props.theme.colors.transparent};
+`;
+
 export const SwContainer = styled.div`
 	width: 100%;
 `;

@@ -1,0 +1,60 @@
+{
+	"name": "4-4-2",
+	"formation": [
+		{
+			"name": "ST",
+			"top": 15,
+			"left": 35
+		},
+		{
+			"name": "ST",
+			"top": 15,
+			"left": 65
+		},
+		{
+			"name": "LM",
+			"top": 30,
+			"left": 20
+		},
+		{
+			"name": "CM",
+			"top": 50,
+			"left": 35
+		},
+		{
+			"name": "CM",
+			"top": 50,
+			"left": 65
+		},
+		{
+			"name": "RM",
+			"top": 30,
+			"left": 80
+		},
+		{
+			"name": "LB",
+			"top": 75,
+			"left": 20
+		},
+		{
+			"name": "CB",
+			"top": 85,
+			"left": 35
+		},
+		{
+			"name": "CB",
+			"top": 85,
+			"left": 65
+		},
+		{
+			"name": "RB",
+			"top": 75,
+			"left": 80
+		},
+		{
+			"name": "GK",
+			"top": 90,
+			"left": 50
+		}
+	]
+}

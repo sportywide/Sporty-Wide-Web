@@ -1,0 +1,137 @@
+[
+	{
+		"id": 1,
+		"name": "David De Gea",
+		"teamName": "Manchester United",
+		"rating": 91,
+		"shirt": 1,
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/193080@2x.webp",
+		"positions": ["GK"]
+	},
+	{
+		"id": 2,
+		"name": "Luke Shaw",
+		"teamName": "Manchester United",
+		"rating": 76,
+		"shirt": 3,
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/205988@2x.webp",
+		"positions": ["LB"]
+	},
+	{
+		"id": 3,
+		"name": "Harry Maguire",
+		"teamName": "Manchester United",
+		"rating": 77,
+		"shirt": 5,
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/203263@2x.webp",
+		"positions": ["CB"]
+	},
+	{
+		"id": 4,
+		"name": "Victor Lindelof",
+		"teamName": "Manchester United",
+		"rating": 78,
+		"shirt": 2,
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/221660@2x.webp",
+		"positions": ["CB"]
+	},
+	{
+		"id": 5,
+		"name": "Wan Bissaka",
+		"teamName": "Manchester United",
+		"rating": 99,
+		"shirt": 29,
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/229880@2x.webp",
+		"positions": ["RB"]
+	},
+	{
+		"id": 6,
+		"name": "Daniel James",
+		"teamName": "Manchester United",
+		"rating": 98,
+		"shirt": 21,
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/232104@2x.webp",
+		"positions": ["LM", "RM"]
+	},
+	{
+		"id": 7,
+		"name": "Paul Pogba",
+		"teamName": "Manchester United",
+		"rating": 95,
+		"shirt": 8,
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/195864@2x.webp",
+		"positions": ["CM", "AM"]
+	},
+	{
+		"id": 8,
+		"name": "Nemanja Matic",
+		"teamName": "Manchester United",
+		"rating": 94,
+		"shirt": 31,
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/191202@2x.webp",
+		"positions": ["CM", "DM"]
+	},
+	{
+		"id": 9,
+		"name": "Jesse Lingard",
+		"teamName": "Manchester United",
+		"rating": 92,
+		"shirt": 14,
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/207494@2x.webp",
+		"positions": ["RM", "AM"]
+	},
+	{
+		"id": 10,
+		"name": "Marcus Rashford",
+		"teamName": "Manchester United",
+		"rating": 75,
+		"shirt": 10,
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/231677@2x.webp",
+		"positions": ["ST", "LM"]
+	},
+	{
+		"id": 11,
+		"name": "Anthony Martial",
+		"teamName": "Manchester United",
+		"rating": 80,
+		"shirt": 9,
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/211300@2x.webp",
+		"positions": ["ST"]
+	},
+	{
+		"id": 12,
+		"name": "Petr Cech",
+		"teamName": "Arsenal",
+		"rating": 65,
+		"shirt": 1,
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/211300@2x.webp",
+		"positions": ["GK"]
+	},
+	{
+		"id": 13,
+		"name": "Mustafi",
+		"teamName": "Arsenal",
+		"rating": 50,
+		"shirt": 5,
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/211300@2x.webp",
+		"positions": ["CB"]
+	},
+	{
+		"id": 14,
+		"name": "Pepe",
+		"teamName": "Arsenal",
+		"rating": 60,
+		"shirt": 7,
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/211300@2x.webp",
+		"positions": ["LM"]
+	},
+	{
+		"id": 15,
+		"name": "Lacazette",
+		"teamName": "Arsenal",
+		"rating": 70,
+		"shirt": 9,
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/211300@2x.webp",
+		"positions": ["ST"]
+	}
+]

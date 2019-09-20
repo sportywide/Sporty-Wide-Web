@@ -29,6 +29,8 @@ const theme = {
 		primary: '#4da88a',
 		accent: '#ee4c50',
 		grey: '#e9ebee',
+		white: '#fff',
+		transparent: 'rgba(0, 0, 0, 0)',
 	},
 };
 

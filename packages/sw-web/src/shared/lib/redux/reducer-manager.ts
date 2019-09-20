@@ -31,6 +31,9 @@ export class ReducerManager {
 		if (!key) {
 			return;
 		}
+		if (this.reducers[key] === reducer) {
+			return;
+		}
 		this.reducers[key] = reducer;
 		this.combinedReducers = this.syncReducers();
 		this.store.dispatch({
