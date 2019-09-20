@@ -7,7 +7,7 @@ import {
 	SwPlayerCircle,
 	SwPlayerCircleAvatar,
 	SwPlayerCircleName,
-} from '@web/features/lineup/components/player-circle.styled';
+} from '@web/features/lineup/components/pitch/markers/player-circle.styled';
 
 interface IProps {
 	rect: any;

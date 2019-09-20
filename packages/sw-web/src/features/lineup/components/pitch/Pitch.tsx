@@ -4,9 +4,9 @@ import { useDrop } from 'react-dnd-cjs';
 import { PLAYER } from '@web/features/lineup/components/item.constant';
 import { FormationDto } from '@shared/lib/dtos/formation/formation.dto';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
-import { SwStyledPitch, SwStyledPitchBackground } from '@web/features/lineup/components/pitch.styled';
-import { SwPositionBox } from './PositionBox';
-import { SwPlayerBox } from './PlayerBox';
+import { SwStyledPitch, SwStyledPitchBackground } from '@web/features/lineup/components/pitch/pitch.styled';
+import { SwPositionBox } from './markers/PositionBox';
+import { SwPlayerBox } from './markers/PlayerBox';
 
 interface IProps {
 	strategy: FormationDto;

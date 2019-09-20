@@ -1,7 +1,7 @@
 import React from 'react';
 import { Header, List } from 'semantic-ui-react';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
-import { LineupContainer } from '@web/features/lineup/components/lineup.styled';
+import { LineupContainer } from '@web/features/lineup/components/pitch/lineup.styled';
 import { SwPlayerItem } from '@web/features/lineup/components/players/PlayerItem';
 
 interface IProps {
