@@ -15,53 +15,40 @@ if (noOptional) {
 	console.info('No Optional Dependencies');
 }
 
-ensureNpmInstall();
-
-// eslint-disable-next-line import/order
-import { argv } from 'yargs';
-const forceInstall = argv.f || argv.force;
 checkLatestInstall();
 
 function checkLatestInstall() {
 	console.info('Checking latest install');
+	const isFreshInstall = !fs.existsSync(path.resolve(__dirname, '..', 'node_modules', CHECKSUM_FILE));
+	if (isFreshInstall) {
+		console.info('Doing fresh installation');
+	}
 	try {
-		if (forceInstall) {
-			installSubPackagesDependencies();
+		const basePackageChanged = checkBasePackage();
+		const subPackagesChanged = checkSubPackages();
+		if (basePackageChanged || subPackagesChanged) {
+			if (allPackages.length) {
+				bootstrapDependencies();
+			}
+			if (isFreshInstall) {
+				console.info('Performing audit fix');
+				execSync('npm audit fix');
+			}
+			if (!isProduction) {
+				execSync("lerna exec 'npx sort-package-json'");
+				execSync('npx sort-package-json');
+			}
 			updateChecksum();
 		} else {
-			const basePackageChanged = checkBasePackage();
-			const subPackagesChanged = checkSubPackages();
-			if (basePackageChanged || subPackagesChanged) {
-				if (allPackages.length) {
-					installSubPackagesDependencies();
-				}
-				updateChecksum();
-				if (!isProduction) {
-					execSync("lerna exec 'npx sort-package-json'");
-					execSync('npx sort-package-json');
-				}
-			} else {
-				console.info('Up to date');
-			}
+			console.info('Up to date');
 		}
 	} catch (error) {
 		console.error(error);
 	}
 }
 
-function ensureNpmInstall() {
-	if (!fs.existsSync(path.resolve(__dirname, '..', 'node_modules', CHECKSUM_FILE))) {
-		console.log('Installing node_modules');
-		execSync(
-			isProduction ? 'npm install --production --no-optional' : `npm install ${noOptional ? '--no-optional' : ''}`
-		);
-		execSync('npm audit fix');
-		execSync('npx lerna clean -y');
-		updateChecksum();
-	}
-}
-
 function updateChecksum() {
+	console.info('Updating checksum');
 	for (const packageName of allPackages) {
 		writeCheckSum(path.resolve('packages', packageName));
 	}
@@ -97,7 +84,7 @@ function writeCheckSum(dir) {
 	});
 }
 
-function installSubPackagesDependencies() {
+function bootstrapDependencies() {
 	if (isProduction) {
 		execSync('npm run bootstrap:prod');
 	} else if (noOptional) {
