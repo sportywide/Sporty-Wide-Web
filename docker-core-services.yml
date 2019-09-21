@@ -47,7 +47,7 @@ services:
             - 'traefik.port=8025'
     traefik:
         container_name: sw_traefik
-        image: traefik
+        image: traefik:1.7.16
         command: --web --docker --logLevel=INFO
         ports:
             - 80:80
