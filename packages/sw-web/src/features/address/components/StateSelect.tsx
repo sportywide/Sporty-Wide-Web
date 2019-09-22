@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { FormFieldEvents, getFormikValue } from '@web/shared/lib/form/components/FormField';
 import { connect } from 'formik';
 import { AddressService } from '@web/features/address/services/address.service';
@@ -57,7 +57,7 @@ const SwStateSelectComponent: React.FC<IProps> = ({
 				setLoading(false);
 			}
 		})();
-	}, [countryId]);
+	}, [container, countryId, formik, name, value]);
 
 	const options = useMemo(() => {
 		return Object.values(stateMap || {}).map(state => ({
@@ -76,7 +76,7 @@ const SwStateSelectComponent: React.FC<IProps> = ({
 		} else {
 			onStateChange(newState(value, countryId));
 		}
-	}, [stateMap, value]);
+	}, [countryId, onStateChange, stateMap, value]);
 
 	return (
 		<SwDropdownField

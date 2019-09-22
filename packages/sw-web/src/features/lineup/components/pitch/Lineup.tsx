@@ -1,5 +1,5 @@
 import React from 'react';
-import { List, Loader, Dimmer, Segment } from 'semantic-ui-react';
+import { Dimmer, List, Loader } from 'semantic-ui-react';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { LineupContainer } from '@web/features/lineup/components/pitch/lineup.styled';
 import { SwPlayerItem } from '@web/features/lineup/components/players/PlayerItem';

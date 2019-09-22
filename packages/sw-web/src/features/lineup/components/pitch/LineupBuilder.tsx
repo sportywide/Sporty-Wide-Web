@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Loader, Grid, Header, Button, Dimmer } from 'semantic-ui-react';
+import { Button, Grid, Header } from 'semantic-ui-react';
 import GridColumn from 'semantic-ui-react/dist/commonjs/collections/Grid/GridColumn';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { ILineupState, lineupReducer } from '@web/features/lineup/store/reducers/lineup-reducer';
@@ -12,12 +12,12 @@ import { playerEpic } from '@web/features/players/store/epics';
 import { loadPlayers } from '@web/features/players/store/actions';
 import {
 	addPlayerToLineup,
+	clearLineup,
 	fillPositions,
 	removePlayerFromLineup,
 	substitutePlayer,
 	swapPlayers,
 	switchLineupPositions,
-	clearLineup,
 } from '@web/features/lineup/store/actions';
 import {
 	addPlayerToLineupEpic,

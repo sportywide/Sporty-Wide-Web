@@ -1,5 +1,5 @@
 import * as actions from '@web/features/players/store/actions';
-import { ActionType, createReducer, getType, PayloadAction } from 'typesafe-actions';
+import { ActionType, createReducer, PayloadAction } from 'typesafe-actions';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 
 export interface IPlayerState {

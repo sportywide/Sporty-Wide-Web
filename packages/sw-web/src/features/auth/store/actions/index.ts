@@ -1,13 +1,13 @@
 import { createSwStandardAction } from '@web/shared/lib/redux/action-creators';
 import {
-	LOGOUT,
-	LOGOUT_SUCCESS,
 	LOGIN,
 	LOGIN_SUCCESS,
-	SIGNUP,
-	SIGNUP_SUCCESS,
+	LOGOUT,
+	LOGOUT_SUCCESS,
 	RESEND_VERIFICATION_EMAIL,
 	RESEND_VERIFICATION_EMAIL_SUCCESS,
+	SIGNUP,
+	SIGNUP_SUCCESS,
 } from '@web/features/auth/store/actions/actions.constants';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { LoginDto } from '@shared/lib/dtos/user/login.dto';

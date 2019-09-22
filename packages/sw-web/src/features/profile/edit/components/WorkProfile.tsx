@@ -4,7 +4,6 @@ import { Formik } from 'formik';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
 import { UserProfileDto } from '@shared/lib/dtos/user/profile/user-profile.dto';
 import { SwAddressForm } from '@web/shared/lib/form/components/address/AddressForm';
-import { AddressDto } from '@shared/lib/dtos/address/address.dto';
 
 interface IProps {
 	profile: UserProfileDto;

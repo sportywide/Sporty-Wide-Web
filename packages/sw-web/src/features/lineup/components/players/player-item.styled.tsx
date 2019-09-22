@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Label, Image } from 'semantic-ui-react';
+import { Image, Label } from 'semantic-ui-react';
 
 export const SwDraggablePlayer = styled.div`
 	display: flex;

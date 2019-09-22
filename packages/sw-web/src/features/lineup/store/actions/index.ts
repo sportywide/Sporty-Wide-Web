@@ -2,13 +2,14 @@ import { createSwStandardAction } from '@web/shared/lib/redux/action-creators';
 import {
 	ADD_PLAYER_TO_LINEUP,
 	CHANGE_STRATEGY,
-	FILL_POSITIONS,
+	CLEAR_LINEUP,
+	CLEAR_POSITION,
 	FILL_POSITION_SUCCESS,
+	FILL_POSITIONS,
 	REMOVE_PLAYER_FROM_LINEUP,
+	SUBSTITUTE_PLAYER,
 	SWAP_PLAYERS,
 	SWITCH_LINEUP_POSITION,
-	SUBSTITUTE_PLAYER,
-	CLEAR_POSITION, CLEAR_LINEUP,
 } from '@web/features/lineup/store/actions/actions.constants';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { FormationDto } from '@shared/lib/dtos/formation/formation.dto';

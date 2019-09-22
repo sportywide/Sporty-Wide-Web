@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { FormFieldEvents, getFormikValue } from '@web/shared/lib/form/components/FormField';
 import { noop } from '@shared/lib/utils/functions';
 import { ContainerContext } from '@web/shared/lib/store';
@@ -58,7 +58,7 @@ const SwCitySelectComponent: React.FC<IProps> = ({
 				setLoading(false);
 			}
 		})();
-	}, [stateId]);
+	}, [container, formik, name, stateId, value]);
 
 	const options = useMemo(() => {
 		return Object.values(cityMap || {}).map(city => ({
@@ -77,7 +77,7 @@ const SwCitySelectComponent: React.FC<IProps> = ({
 		} else {
 			onCityChange(newCity(value, stateId));
 		}
-	}, [cityMap, value]);
+	}, [cityMap, onCityChange, stateId, value]);
 
 	return (
 		<SwDropdownField

@@ -11,7 +11,7 @@ import { compose } from '@shared/lib/utils/fp/combine';
 import { signupEpic } from '@web/features/auth/store/epics';
 import { authReducer } from '@web/features/auth/store/reducers';
 import { SwPrimaryBackGround } from '@web/shared/styled/core.styled';
-import { Container, GridColumn, Grid } from 'semantic-ui-react';
+import { Container, Grid, GridColumn } from 'semantic-ui-react';
 
 interface IProps {
 	signup: Function;

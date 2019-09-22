@@ -1,11 +1,5 @@
-import {
-	addPlayersToList,
-	loadPlayersSuccess,
-	removePlayersFromList,
-	resetPlayers,
-	setPlayers,
-} from '@web/features/players/store/actions';
-import { concatMap, map, mergeMap, mapTo } from 'rxjs/operators';
+import { addPlayersToList, removePlayersFromList, resetPlayers, setPlayers } from '@web/features/players/store/actions';
+import { concatMap, map, mapTo, mergeMap } from 'rxjs/operators';
 import {
 	ADD_PLAYER_TO_LINEUP,
 	CLEAR_LINEUP,

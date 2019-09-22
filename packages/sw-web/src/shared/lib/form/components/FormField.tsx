@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { Field, FieldConfig, FieldProps, getIn, FormikContext } from 'formik';
+import { Field, FieldConfig, FieldProps, FormikContext, getIn } from 'formik';
 import { noop } from '@shared/lib/utils/functions';
-import { shouldUpdate, pure } from 'recompose';
+import { pure, shouldUpdate } from 'recompose';
 import { isEqual } from 'lodash';
 
 export interface FormFieldEvents {
@@ -51,7 +51,7 @@ function InnerFieldComponent({
 	const valueProps = typeof value === 'boolean' ? { checked: value, value: '' } : { value: value || '' };
 	useEffect(() => {
 		onValueChange(value, name);
-	}, [value]);
+	}, [name, onValueChange, value]);
 	return (
 		<Component
 			name={name}

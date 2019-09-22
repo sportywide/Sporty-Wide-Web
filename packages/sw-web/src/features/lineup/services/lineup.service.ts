@@ -15,6 +15,9 @@ export class LineupService {
 	}) {
 		const filledPositions = [...positions];
 		const playerByPosition: { [key: string]: PlayerDto[] } = players.reduce((currentMap, player) => {
+			if (positions.includes(player)) {
+				return currentMap;
+			}
 			player.positions.forEach(position => {
 				(currentMap[position] = currentMap[position] || []).push(player);
 			});

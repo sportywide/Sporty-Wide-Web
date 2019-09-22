@@ -7,7 +7,7 @@ import { SwCountrySelect } from '@web/features/address/components/CountrySelect'
 import { Form } from 'semantic-ui-react';
 import { AddressDto } from '@shared/lib/dtos/address/address.dto';
 import { noop } from '@shared/lib/utils/functions';
-import { FormikContext, connect } from 'formik';
+import { connect, FormikContext } from 'formik';
 
 interface IProps {
 	name?: string;

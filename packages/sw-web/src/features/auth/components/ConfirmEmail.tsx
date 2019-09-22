@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Formik, FormikProps } from 'formik';
-import { Form, Header, Segment, Icon } from 'semantic-ui-react';
+import { Form, Header, Icon, Segment } from 'semantic-ui-react';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
 import { getSchemaByType } from 'yup-decorator';
 import { validateExists } from '@web/shared/lib/form/validation/validators';
@@ -31,11 +31,11 @@ const SwConfirmEmailComponent: React.FC<IProps> = props => {
 	return (
 		<Segment className={'ub-flex ub-flex-column'}>
 			<Header as={'h3'} className={'ub-align-self-center'} icon>
-				We've Sent You a Confirmation Email
+				We&apos;ve Sent You a Confirmation Email
 				<Icon name="mail" />
 				<Header.Subheader>Click the link in your email to confirm your account.</Header.Subheader>
 				<Header.Subheader>
-					If you can't find the email, check your spam folder or click the link below to resend.
+					If you can&apos;t find the email, check your spam folder or click the link below to resend.
 				</Header.Subheader>
 			</Header>
 			{isFormHidden && (
