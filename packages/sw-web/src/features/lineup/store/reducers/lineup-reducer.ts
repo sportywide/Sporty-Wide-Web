@@ -5,7 +5,7 @@ import strategy from '@shared/lib/strategy/4-4-2.json';
 import { fill } from 'lodash';
 import { FormationDto } from '@shared/lib/dtos/formation/formation.dto';
 
-const NUM_PLAYERS = 11;
+export const NUM_PLAYERS = 11;
 
 export interface ILineupState {
 	strategy: FormationDto;
@@ -34,6 +34,12 @@ export const lineupReducer = createReducer<ILineupState, LineupAction>(initialSt
 		return {
 			...state,
 			positions: [...state.positions.slice(0, payload), null, ...state.positions.slice(payload + 1)],
+		};
+	})
+	.handleAction(actions.fillPositionSuccess, (state, { payload }) => {
+		return {
+			...state,
+			positions: payload,
 		};
 	})
 	.handleAction(actions.swapPlayers, (state, { payload }) => {

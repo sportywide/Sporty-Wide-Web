@@ -5,6 +5,6 @@ export const LineupContainer = styled.div`
 	overflow-y: hidden;
 
 	&:hover {
-		overflow-y: auto;
+		overflow-y: overlay;
 	}
 `;

@@ -3,6 +3,8 @@ import {
 	ADD_PLAYER_TO_LINEUP,
 	CHANGE_STRATEGY,
 	CLEAR_LINEUP_POSITION,
+	FILL_POSITIONS,
+	FILL_POSITION_SUCCESS,
 	REMOVE_PLAYER_FROM_LINEUP,
 	SWAP_PLAYERS,
 } from '@web/features/lineup/store/actions/actions.constants';
@@ -17,3 +19,5 @@ export const removePlayerFromLineup = createSwStandardAction(REMOVE_PLAYER_FROM_
 export const changeStrategy = createSwStandardAction(CHANGE_STRATEGY)<FormationDto>();
 export const addPlayerToLineup = createSwStandardAction(ADD_PLAYER_TO_LINEUP)<{ player: PlayerDto; index: number }>();
 export const clearLineupPosition = createSwStandardAction(CLEAR_LINEUP_POSITION)<number>();
+export const fillPositions = createSwStandardAction(FILL_POSITIONS)();
+export const fillPositionSuccess = createSwStandardAction(FILL_POSITION_SUCCESS)<PlayerDto[]>();

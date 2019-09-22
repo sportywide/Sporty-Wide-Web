@@ -5,7 +5,9 @@ export const SwStyledPitch = styled.div`
 	overflow-y: auto;
 	display: inline-block;
 	float: right;
-	padding-top: var(--space-3);
+	@media (max-width: 768px) {
+		float: none;
+	}
 `;
 
 export const SwStyledPitchBackground = styled.img`
