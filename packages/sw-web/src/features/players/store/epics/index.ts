@@ -2,6 +2,7 @@ import { loadPlayersSuccess } from '@web/features/players/store/actions';
 import { map } from 'rxjs/operators';
 import { keyBy } from 'lodash';
 import { LOAD_PLAYERS } from '@web/features/players/store/actions/actions.constants';
+import { sortPlayers } from '@web/features/players/store/reducers/player-reducer';
 import players from './players.json';
 import teams from './teams.json';
 
@@ -14,7 +15,7 @@ export const playerEpic = action$ => {
 				team: teamMap[player.teamName],
 			}));
 
-			return loadPlayersSuccess(playerDtos);
+			return loadPlayersSuccess(sortPlayers(playerDtos));
 		})
 	);
 };

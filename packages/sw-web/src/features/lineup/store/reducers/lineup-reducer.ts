@@ -1,5 +1,5 @@
 import * as actions from '@web/features/lineup/store/actions';
-import { ActionType, createReducer } from 'typesafe-actions';
+import { ActionType, createReducer, PayloadAction } from 'typesafe-actions';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import strategy from '@shared/lib/strategy/4-4-2.json';
 import { fill } from 'lodash';
@@ -36,6 +36,23 @@ export const lineupReducer = createReducer<ILineupState, LineupAction>(initialSt
 			positions: [...state.positions.slice(0, payload), null, ...state.positions.slice(payload + 1)],
 		};
 	})
+	.handleAction(
+		actions.switchLineupPositions,
+		(state, { payload }: PayloadAction<string, { player: PlayerDto; index: number }>) => {
+			const player = payload.player;
+			const currentIndex = state.positions.findIndex(position => position === player);
+			if (currentIndex < 0) {
+				return state;
+			}
+			const newPositions = [...state.positions];
+			newPositions[currentIndex] = null;
+			newPositions[payload.index] = player;
+			return {
+				...state,
+				positions: newPositions,
+			};
+		}
+	)
 	.handleAction(actions.fillPositionSuccess, (state, { payload }) => {
 		return {
 			...state,
@@ -60,8 +77,8 @@ export const lineupReducer = createReducer<ILineupState, LineupAction>(initialSt
 	.handleAction(actions.removePlayerFromLineup, (state, { payload }) => {
 		return {
 			...state,
-			positions: state.positions.map((player, index) => {
-				if (index === payload.index) {
+			positions: state.positions.map(player => {
+				if (player === payload) {
 					return null;
 				}
 				return player;

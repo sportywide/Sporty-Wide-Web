@@ -1,8 +1,8 @@
 import React from 'react';
-import { Image, Label, List } from 'semantic-ui-react';
+import { Label, List } from 'semantic-ui-react';
 import { useDrag } from 'react-dnd-cjs';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
-import { PLAYER } from '@web/features/lineup/components/item.constant';
+import { PLAYER, PLAYER_ITEM_ZONE } from '@web/features/lineup/components/item.constant';
 import {
 	SwDraggablePlayer,
 	SwPlayerLogo,
@@ -16,7 +16,7 @@ interface IProps {
 
 const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 	const [{ isDragging }, drag, preview] = useDrag({
-		item: { type: PLAYER, player },
+		item: { type: PLAYER, player, zone: PLAYER_ITEM_ZONE },
 		isDragging: monitor => monitor.getItem().player === player,
 		collect: monitor => ({ isDragging: monitor.isDragging(), dropResult: monitor.getDropResult() }),
 	});

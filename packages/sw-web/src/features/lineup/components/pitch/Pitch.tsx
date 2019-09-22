@@ -13,8 +13,9 @@ interface IProps {
 	positions: (PlayerDto | null)[];
 	onAddPlayerToLineup?: (player: PlayerDto, index: number) => void;
 	onSwapPlayers?: (source: PlayerDto, dest: PlayerDto) => void;
+	onSubstitutePlayer?: (source: PlayerDto, dest: PlayerDto) => void;
 	onRemovePlayerFromLineup?: (player: PlayerDto, index: number) => void;
-	onClearPlayerPosition?: (index: number) => void;
+	onSwitchLineupPosition?: (player: PlayerDto, index: number) => void;
 }
 
 const SwPitchComponent: React.FC<IProps> = function({
@@ -23,7 +24,8 @@ const SwPitchComponent: React.FC<IProps> = function({
 	onAddPlayerToLineup,
 	onSwapPlayers,
 	onRemovePlayerFromLineup,
-	onClearPlayerPosition,
+	onSwitchLineupPosition,
+	onSubstitutePlayer,
 }) {
 	const [rect, setRect] = useState<any>({});
 	const [, drop] = useDrop({
@@ -31,7 +33,7 @@ const SwPitchComponent: React.FC<IProps> = function({
 		canDrop: () => true,
 		drop: (item, monitor) => {
 			const dropResult = monitor.getDropResult() || {};
-			return { ...dropResult, element: SwPitch };
+			return { ...dropResult };
 		},
 	});
 
@@ -55,9 +57,9 @@ const SwPitchComponent: React.FC<IProps> = function({
 								player={positions[index]}
 								position={position}
 								key={index}
+								onSubstitutePlayer={(source, dest) => onSubstitutePlayer(source, dest)}
 								onRemovePlayerFromLineup={player => onRemovePlayerFromLineup(player, index)}
 								onSwapPlayers={(source, dest) => onSwapPlayers(source, dest)}
-								onChangePlayerPosition={() => onClearPlayerPosition(index)}
 							/>
 						) : (
 							<SwPositionBox
@@ -65,6 +67,7 @@ const SwPitchComponent: React.FC<IProps> = function({
 								position={position}
 								key={index}
 								onAddPlayerToLineup={player => onAddPlayerToLineup(player, index)}
+								onSwitchLineupPosition={player => onSwitchLineupPosition(player, index)}
 							/>
 						)
 					)}

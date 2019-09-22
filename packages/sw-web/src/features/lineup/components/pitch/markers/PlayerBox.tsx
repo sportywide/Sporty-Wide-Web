@@ -1,6 +1,6 @@
 import React from 'react';
 import { useDrag, useDrop } from 'react-dnd-cjs';
-import { PLAYER } from '@web/features/lineup/components/item.constant';
+import { PLAYER, PLAYER_BOX_ZONE, PLAYER_ITEM_ZONE } from '@web/features/lineup/components/item.constant';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { PositionDto } from '@shared/lib/dtos/formation/formation.dto';
 import {
@@ -13,8 +13,8 @@ interface IProps {
 	rect: any;
 	player: PlayerDto;
 	position: PositionDto;
-	onChangePlayerPosition?: (player: PlayerDto) => void;
 	onSwapPlayers?: (source: PlayerDto, dest: PlayerDto) => void;
+	onSubstitutePlayer?: (source: PlayerDto, dest: PlayerDto) => void;
 	onRemovePlayerFromLineup?: (player: PlayerDto) => void;
 }
 
@@ -22,28 +22,18 @@ const SwPlayerBoxComponent: React.FC<IProps> = ({
 	player,
 	position,
 	rect,
-	onChangePlayerPosition,
 	onSwapPlayers,
 	onRemovePlayerFromLineup,
+	onSubstitutePlayer,
 }) => {
 	const [{ isDragging }, drag] = useDrag({
-		item: { type: PLAYER, player },
+		item: { type: PLAYER, player, position, zone: PLAYER_BOX_ZONE },
 		isDragging: monitor => {
 			return monitor.getItem().player === player;
 		},
 		collect: monitor => ({ isDragging: monitor.isDragging() }),
 		end: (item, monitor) => {
-			if (monitor.didDrop()) {
-				const { source, dest } = monitor.getDropResult();
-				if (!source && !dest) {
-					return;
-				}
-				if (!dest) {
-					onChangePlayerPosition(source);
-				} else {
-					onSwapPlayers(source, dest);
-				}
-			} else {
+			if (!monitor.didDrop()) {
 				onRemovePlayerFromLineup(player);
 			}
 		},
@@ -52,13 +42,21 @@ const SwPlayerBoxComponent: React.FC<IProps> = ({
 	const [, drop] = useDrop({
 		accept: PLAYER,
 		drop: item => {
+			if (item.zone === PLAYER_BOX_ZONE) {
+				onSwapPlayers(item.player, player);
+			} else if (item.zone === PLAYER_ITEM_ZONE) {
+				onSubstitutePlayer(item.player, player);
+			}
+
 			return {
 				source: item.player,
 				dest: player,
-				element: SwPlayerBox,
+				zone: PLAYER_BOX_ZONE,
 			};
 		},
-		canDrop: (item: any) => item.player.positions.includes(position.name),
+		canDrop: (item: any) =>
+			(!item.position || player.positions.includes(item.position.name)) &&
+			item.player.positions.includes(position.name),
 	});
 
 	const connectedRef = node => {

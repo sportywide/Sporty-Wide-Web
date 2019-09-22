@@ -1,6 +1,11 @@
 import React, { memo } from 'react';
 import { useDrop } from 'react-dnd-cjs';
-import { PLAYER } from '@web/features/lineup/components/item.constant';
+import {
+	PLAYER,
+	PLAYER_BOX_ZONE,
+	PLAYER_ITEM_ZONE,
+	POSITION_BOX_ZONE,
+} from '@web/features/lineup/components/item.constant';
 import { noop } from '@shared/lib/utils/functions';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { SwPositionCircle } from '@web/features/lineup/components/pitch/markers/position-circle.styled';
@@ -9,22 +14,33 @@ interface IProps {
 	position: any;
 	rect: any;
 	onAddPlayerToLineup?: (player: PlayerDto) => void;
+	onSwitchLineupPosition?: (player: PlayerDto) => void;
 }
 
-const SwPositionBoxComponent: React.FC<IProps> = ({ position, rect, onAddPlayerToLineup = noop }) => {
+const SwPositionBoxComponent: React.FC<IProps> = ({
+	position,
+	rect,
+	onAddPlayerToLineup = noop,
+	onSwitchLineupPosition = noop,
+}) => {
 	const [{ isActive, canDrop, isDragging }, drop] = useDrop({
 		accept: PLAYER,
 		collect: monitor => ({
 			isActive: monitor.canDrop() && monitor.isOver(),
 			canDrop: monitor.canDrop(),
 			isDragging: !!monitor.getItem(),
+			zone: POSITION_BOX_ZONE,
 		}),
 		drop: item => {
-			onAddPlayerToLineup(item.player);
+			if (item.zone === PLAYER_ITEM_ZONE) {
+				onAddPlayerToLineup(item.player);
+			} else if (item.zone === PLAYER_BOX_ZONE) {
+				onSwitchLineupPosition(item.player);
+			}
 			return {
 				source: item.player,
 				dest: null,
-				element: SwPositionBox,
+				zone: POSITION_BOX_ZONE,
 			};
 		},
 		canDrop: (item: any) => item.player.positions.includes(position.name),

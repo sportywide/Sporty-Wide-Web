@@ -12,12 +12,18 @@ import { playerEpic } from '@web/features/players/store/epics';
 import { loadPlayers } from '@web/features/players/store/actions';
 import {
 	addPlayerToLineup,
-	clearLineupPosition,
 	fillPositions,
 	removePlayerFromLineup,
+	substitutePlayer,
 	swapPlayers,
+	switchLineupPositions,
 } from '@web/features/lineup/store/actions';
-import { addPlayerToLineupEpic, fillPositionsEpic, removePlayerFromLineupEpic } from '@web/features/lineup/store/epics';
+import {
+	addPlayerToLineupEpic,
+	fillPositionsEpic,
+	removePlayerFromLineupEpic,
+	substitutePlayerEpic,
+} from '@web/features/lineup/store/epics';
 import { SwLineup } from './Lineup';
 import { SwPitch } from './Pitch';
 
@@ -27,9 +33,10 @@ interface IProps {
 	loadPlayers: typeof loadPlayers;
 	addPlayerToLineup: typeof addPlayerToLineup;
 	removePlayerFromLineup: typeof removePlayerFromLineup;
-	clearLineupPosition: typeof clearLineupPosition;
 	swapPlayers: typeof swapPlayers;
 	fillPositions: typeof fillPositions;
+	switchLineupPositions: typeof switchLineupPositions;
+	substitutePlayer: typeof substitutePlayer;
 }
 
 const SwLineupBuilderComponent: React.FC<IProps> = function({
@@ -39,8 +46,9 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 	addPlayerToLineup,
 	swapPlayers,
 	removePlayerFromLineup,
-	clearLineupPosition,
 	fillPositions,
+	switchLineupPositions,
+	substitutePlayer,
 }) {
 	useEffect(() => {
 		loadPlayers();
@@ -62,10 +70,9 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 						strategy={lineup.strategy}
 						positions={lineup.positions}
 						onAddPlayerToLineup={(player, index) => addPlayerToLineup({ player, index })}
-						onRemovePlayerFromLineup={(player, index) =>
-							removePlayerFromLineup({ removedPlayer: player, index })
-						}
-						onClearPlayerPosition={clearLineupPosition}
+						onRemovePlayerFromLineup={player => removePlayerFromLineup(player)}
+						onSubstitutePlayer={(source, dest) => substitutePlayer({ first: source, second: dest })}
+						onSwitchLineupPosition={(player, index) => switchLineupPositions({ player, index })}
 						onSwapPlayers={(source, dest) => swapPlayers({ first: source, second: dest })}
 					/>
 				</GridColumn>
@@ -76,10 +83,24 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 
 const enhance = compose(
 	registerReducer({ lineup: lineupReducer, playerList: playerReducer }),
-	registerEpic(playerEpic, addPlayerToLineupEpic, removePlayerFromLineupEpic, fillPositionsEpic),
+	registerEpic(
+		playerEpic,
+		addPlayerToLineupEpic,
+		removePlayerFromLineupEpic,
+		fillPositionsEpic,
+		substitutePlayerEpic
+	),
 	connect(
 		state => ({ players: state.playerList.players, lineup: state.lineup }),
-		{ loadPlayers, addPlayerToLineup, removePlayerFromLineup, swapPlayers, clearLineupPosition, fillPositions }
+		{
+			loadPlayers,
+			addPlayerToLineup,
+			removePlayerFromLineup,
+			substitutePlayer,
+			swapPlayers,
+			switchLineupPositions,
+			fillPositions,
+		}
 	)
 );
 export const SwLineupBuilder = enhance(SwLineupBuilderComponent);
