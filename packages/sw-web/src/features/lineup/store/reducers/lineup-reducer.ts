@@ -38,8 +38,8 @@ export const lineupReducer = createReducer<ILineupState, LineupAction>(initialSt
 	})
 	.handleAction(actions.swapPlayers, (state, { payload }) => {
 		const positions = state.positions;
-		const sourceIndex = positions.findIndex(position => position.id === payload.first.id);
-		const destinationIndex = positions.findIndex(position => position.id === payload.second.id);
+		const sourceIndex = positions.findIndex(position => position && position.id === payload.first.id);
+		const destinationIndex = positions.findIndex(position => position && position.id === payload.second.id);
 		if (!(sourceIndex >= 0 && destinationIndex >= 0)) {
 			return state;
 		}

@@ -40,7 +40,7 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 							))}
 						</div>
 					</div>
-					<div>
+					<div className={'ub-mr2'}>
 						<SwStatsLabel circular size={'small'} color={getRatingColor(player.rating)}>
 							{player.rating}
 						</SwStatsLabel>

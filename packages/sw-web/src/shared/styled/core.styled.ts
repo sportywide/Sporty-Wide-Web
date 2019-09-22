@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { Container } from 'semantic-ui-react';
 
 const swBackground = css`
 	width: 100%;
@@ -20,6 +21,14 @@ export const SwTransparentBackground = styled.div`
 	background-color: ${props => props.theme.colors.transparent};
 `;
 
-export const SwContainer = styled.div`
+export const SwFluidContainer = styled.div`
 	width: 100%;
+`;
+
+export const SwContainer = styled(Container)`
+	&&& {
+		background-color: ${props => props.theme.colors.white};
+		padding: var(--space-3);
+		margin-top: var(--space-3);
+	}
 `;

@@ -1,6 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
-import { SwTransparentBackground } from '@web/shared/styled/core.styled';
+import { SwContainer, SwGreyBackground } from '@web/shared/styled/core.styled';
 import { Container } from 'semantic-ui-react';
 import { loadPlayers } from '@web/features/players/store/actions';
 import { SwLineupBuilder } from '@web/features/lineup/components/pitch/LineupBuilder';
@@ -17,13 +17,13 @@ class SwLineupBuilderPage extends React.Component<IProps> {
 				<Head>
 					<title>Build your lineup</title>
 				</Head>
-				<SwTransparentBackground>
-					<Container style={{ width: '100%' }} className="ub-py4">
+				<SwGreyBackground style={{ paddingTop: 'var(--space-1)' }}>
+					<SwContainer>
 						<DndProvider backend={html5Backend}>
 							<SwLineupBuilder />
 						</DndProvider>
-					</Container>
-				</SwTransparentBackground>
+					</SwContainer>
+				</SwGreyBackground>
 			</>
 		);
 	}

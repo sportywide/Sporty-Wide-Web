@@ -1,6 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
-import { SwContainer, SwGreyBackground } from '@web/shared/styled/core.styled';
+import { SwFluidContainer, SwGreyBackground } from '@web/shared/styled/core.styled';
 import { SwEditProfile } from '@web/features/profile/edit/components/EditProfile';
 import { Grid, GridColumn, Loader } from 'semantic-ui-react';
 import { withContext } from '@web/shared/lib/context/providers';
@@ -39,13 +39,13 @@ class SwEditProfilePage extends React.Component<IProps> {
 				<Head>
 					<title>Edit your profile</title>
 				</Head>
-				<SwContainer>
+				<SwFluidContainer>
 					<Grid verticalAlign={'middle'} centered>
 						<GridColumn mobile={13} tablet={13} computer={13}>
 							<SwEditProfile userProfile={this.props.userProfile} />
 						</GridColumn>
 					</Grid>
-				</SwContainer>
+				</SwFluidContainer>
 			</SwGreyBackground>
 		);
 	}

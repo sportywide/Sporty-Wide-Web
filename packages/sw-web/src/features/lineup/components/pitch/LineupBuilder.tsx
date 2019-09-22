@@ -43,25 +43,23 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 		loadPlayers();
 	}, [loadPlayers]);
 	return (
-		<Container style={{ marginTop: '10px' }}>
-			<Grid stackable divided>
-				<GridColumn tablet={'7'}>
-					<SwLineup players={players} />
-				</GridColumn>
-				<GridColumn tablet={'9'}>
-					<SwPitch
-						strategy={lineup.strategy}
-						positions={lineup.positions}
-						onAddPlayerToLineup={(player, index) => addPlayerToLineup({ player, index })}
-						onRemovePlayerFromLineup={(player, index) =>
-							removePlayerFromLineup({ removedPlayer: player, index })
-						}
-						onClearPlayerPosition={clearLineupPosition}
-						onSwapPlayers={(source, dest) => swapPlayers({ first: source, second: dest })}
-					/>
-				</GridColumn>
-			</Grid>
-		</Container>
+		<Grid stackable>
+			<GridColumn tablet={'7'}>
+				<SwLineup players={players} />
+			</GridColumn>
+			<GridColumn tablet={'9'}>
+				<SwPitch
+					strategy={lineup.strategy}
+					positions={lineup.positions}
+					onAddPlayerToLineup={(player, index) => addPlayerToLineup({ player, index })}
+					onRemovePlayerFromLineup={(player, index) =>
+						removePlayerFromLineup({ removedPlayer: player, index })
+					}
+					onClearPlayerPosition={clearLineupPosition}
+					onSwapPlayers={(source, dest) => swapPlayers({ first: source, second: dest })}
+				/>
+			</GridColumn>
+		</Grid>
 	);
 };
 
