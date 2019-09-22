@@ -1,7 +1,14 @@
-import { addPlayersToList, loadPlayersSuccess, removePlayersFromList } from '@web/features/players/store/actions';
-import { concatMap, map, mergeMap } from 'rxjs/operators';
+import {
+	addPlayersToList,
+	loadPlayersSuccess,
+	removePlayersFromList,
+	resetPlayers,
+	setPlayers,
+} from '@web/features/players/store/actions';
+import { concatMap, map, mergeMap, mapTo } from 'rxjs/operators';
 import {
 	ADD_PLAYER_TO_LINEUP,
+	CLEAR_LINEUP,
 	FILL_POSITIONS,
 	REMOVE_PLAYER_FROM_LINEUP,
 	SUBSTITUTE_PLAYER,
@@ -51,7 +58,7 @@ export const fillPositionsEpic: Epic<
 				strategy,
 			});
 			const newPlayers = players.filter(player => !filledPositions.includes(player));
-			return of(fillPositionSuccess(filledPositions), loadPlayersSuccess(newPlayers));
+			return of(fillPositionSuccess(filledPositions), setPlayers(newPlayers));
 		})
 	);
 };
@@ -86,4 +93,8 @@ export const removePlayerFromLineupEpic: Epic<
 			return addPlayersToList([player]);
 		})
 	);
+};
+
+export const clearLineupEpic = action$ => {
+	return action$.ofType(CLEAR_LINEUP as any).pipe(mapTo(resetPlayers()));
 };

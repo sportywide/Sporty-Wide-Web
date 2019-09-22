@@ -90,4 +90,10 @@ export const lineupReducer = createReducer<ILineupState, LineupAction>(initialSt
 			...state,
 			strategy: payload,
 		};
+	})
+	.handleAction(actions.clearLineup, state => {
+		return {
+			...state,
+			positions: [],
+		};
 	});

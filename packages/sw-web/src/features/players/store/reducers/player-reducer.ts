@@ -4,12 +4,14 @@ import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 
 export interface IPlayerState {
 	players: PlayerDto[];
+	originalPlayers: PlayerDto[];
 }
 
 export type PlayerActions = ActionType<typeof actions>;
 
 const initialState: IPlayerState = {
-	players: [],
+	players: undefined,
+	originalPlayers: undefined,
 };
 
 export const playerReducer = createReducer<IPlayerState, PlayerActions>(initialState)
@@ -28,6 +30,15 @@ export const playerReducer = createReducer<IPlayerState, PlayerActions>(initialS
 	.handleAction([actions.loadPlayersSuccess], (state, { payload = [] }: PayloadAction<string, PlayerDto[]>) => ({
 		...state,
 		players: payload,
+		originalPlayers: payload,
+	}))
+	.handleAction([actions.setPlayers], (state, { payload = [] }: PayloadAction<string, PlayerDto[]>) => ({
+		...state,
+		players: payload,
+	}))
+	.handleAction([actions.resetPlayers], state => ({
+		...state,
+		players: state.originalPlayers || [],
 	}));
 
 const ordering = {

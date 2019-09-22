@@ -11,7 +11,8 @@ export const SwStyledPitch = styled.div`
 `;
 
 export const SwStyledPitchBackground = styled.img`
-	max-height: 600px;
-	min-height: calc(100vh - 15px);
+	max-height: 750px;
+	min-height: 500px;
+	height: calc(100vh - 15px);
 	max-width: 100%;
 `;

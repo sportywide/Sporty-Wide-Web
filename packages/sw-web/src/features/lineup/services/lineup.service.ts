@@ -20,6 +20,11 @@ export class LineupService {
 			});
 			return currentMap;
 		}, {});
+		Object.keys(playerByPosition).forEach(position => {
+			playerByPosition[position] = playerByPosition[position].sort((a, b) => {
+				return b.rating - a.rating;
+			});
+		});
 		strategy.formation.forEach((desiredPosition, index) => {
 			//position already filled
 			if (positions[index]) {

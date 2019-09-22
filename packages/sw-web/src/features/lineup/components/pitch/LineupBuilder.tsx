@@ -17,9 +17,11 @@ import {
 	substitutePlayer,
 	swapPlayers,
 	switchLineupPositions,
+	clearLineup,
 } from '@web/features/lineup/store/actions';
 import {
 	addPlayerToLineupEpic,
+	clearLineupEpic,
 	fillPositionsEpic,
 	removePlayerFromLineupEpic,
 	substitutePlayerEpic,
@@ -37,6 +39,7 @@ interface IProps {
 	fillPositions: typeof fillPositions;
 	switchLineupPositions: typeof switchLineupPositions;
 	substitutePlayer: typeof substitutePlayer;
+	clearLineup: typeof clearLineup;
 }
 
 const SwLineupBuilderComponent: React.FC<IProps> = function({
@@ -49,6 +52,7 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 	fillPositions,
 	switchLineupPositions,
 	substitutePlayer,
+	clearLineup,
 }) {
 	useEffect(() => {
 		loadPlayers();
@@ -59,6 +63,9 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 			<div className={'ub-mb3'}>
 				<Button primary onClick={() => fillPositions()}>
 					Fill
+				</Button>
+				<Button negative onClick={() => clearLineup()}>
+					Clear
 				</Button>
 			</div>
 			<Grid stackable>
@@ -86,6 +93,7 @@ const enhance = compose(
 	registerEpic(
 		playerEpic,
 		addPlayerToLineupEpic,
+		clearLineupEpic,
 		removePlayerFromLineupEpic,
 		fillPositionsEpic,
 		substitutePlayerEpic
@@ -98,6 +106,7 @@ const enhance = compose(
 			removePlayerFromLineup,
 			substitutePlayer,
 			swapPlayers,
+			clearLineup,
 			switchLineupPositions,
 			fillPositions,
 		}

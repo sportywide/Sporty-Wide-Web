@@ -9,7 +9,7 @@ interface IProps {
 }
 
 const SwLineupBuilder: React.FC<IProps> = function({ players }) {
-	if (!(players && players.length)) {
+	if (players === undefined) {
 		return (
 			<Dimmer active inverted>
 				<Loader active />
