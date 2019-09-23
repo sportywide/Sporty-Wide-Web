@@ -142,21 +142,22 @@ function setCookies(proxyRes, request, response, redirectUrl) {
 }
 
 function redirectOnError(proxyRes, req, res) {
-	if (proxyRes.statusCode < 400 || req.method !== 'GET') {
+	if (proxyRes.statusCode < 400) {
 		return;
 	}
 	modifyResponse(res, proxyRes, function(error) {
-		if (error && error.message && proxyRes.statusCode !== NOT_FOUND) {
+		if (error && error.message && (proxyRes.statusCode !== NOT_FOUND || req.method !== 'GET')) {
 			res.flash('error', error.message);
 		}
-
-		res.status(TEMPORARY_REDIRECT);
-		if ([NOT_FOUND, UNAUTHORIZED, BAD_REQUEST].includes(proxyRes.statusCode)) {
-			res.location('/');
-		} else if (proxyRes.statusCode === UNAUTHENTICATED) {
-			res.location('/login');
-		} else {
-			res.location('/error');
+		if (req.method === 'GET') {
+			res.status(TEMPORARY_REDIRECT);
+			if ([NOT_FOUND, UNAUTHORIZED, BAD_REQUEST].includes(proxyRes.statusCode)) {
+				res.location('/');
+			} else if (proxyRes.statusCode === UNAUTHENTICATED) {
+				res.location('/login');
+			} else {
+				res.location('/error');
+			}
 		}
 		return error;
 	});

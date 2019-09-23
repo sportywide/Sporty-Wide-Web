@@ -11,7 +11,7 @@ interface IProps {
 }
 
 const SwSignupFormComponent: React.FC<IProps> = props => {
-	const handleSignup = (values) => {
+	const handleSignup = values => {
 		props.onSignup(values);
 	};
 
@@ -24,7 +24,7 @@ const SwSignupFormComponent: React.FC<IProps> = props => {
 	function renderForm(props: FormikProps<any>) {
 		return (
 			<div className="ub-mb2">
-				<Form className="ui form">
+				<Form className="ui form" onSubmit={props.handleSubmit}>
 					<div className="two fields">
 						<SwFormField
 							name="firstName"

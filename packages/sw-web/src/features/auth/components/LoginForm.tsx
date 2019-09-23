@@ -11,7 +11,7 @@ interface IProps {
 }
 
 const SwLoginFormComponent: React.FC<IProps> = props => {
-	const handleLogin = (values) => {
+	const handleLogin = values => {
 		props.onLogin(values);
 	};
 
@@ -24,7 +24,7 @@ const SwLoginFormComponent: React.FC<IProps> = props => {
 	function renderForm(props: FormikProps<any>) {
 		return (
 			<div className={'ub-mb2'}>
-				<Form className="ui form">
+				<Form className="ui form" onSubmit={props.handleSubmit}>
 					<div className="field">
 						<SwFormField
 							name="username"
@@ -52,7 +52,7 @@ const SwLoginFormComponent: React.FC<IProps> = props => {
 						</Link>
 					</div>
 
-					<button className="ui primary button" disabled={!props.isValid} onClick={props.submitForm}>
+					<button className="ui primary button" disabled={!props.isValid} type="submit">
 						Login
 					</button>
 				</Form>

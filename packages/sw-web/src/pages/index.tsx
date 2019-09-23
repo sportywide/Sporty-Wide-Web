@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import React from 'react';
 import { Link } from '@web/routes';
 import { connect } from 'react-redux';
