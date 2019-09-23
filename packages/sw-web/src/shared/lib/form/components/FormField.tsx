@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { Field, FieldConfig, FieldProps, FormikContext, getIn } from 'formik';
+import { Field, FieldProps, FormikContext, getIn } from 'formik';
 import { noop } from '@shared/lib/utils/functions';
-import { pure, shouldUpdate } from 'recompose';
+import { shouldUpdate } from 'recompose';
 import { isEqual } from 'lodash';
 
 export interface FormFieldEvents {
@@ -16,10 +16,13 @@ export const defaultFormFieldEvents: FormFieldEvents = {
 	onValueChange: noop,
 };
 
-export interface FormFieldProps extends FieldConfig, FormFieldEvents {
-	component: string | React.ComponentType<any>;
-	componentProps: any;
+export interface FormFieldProps<P> extends FormFieldEvents {
+	component: React.FunctionComponent<P>;
+	componentProps: P;
+	name: string;
+	type?: string;
 	children?: any;
+	validate?: (value: any) => string | Promise<void> | undefined;
 }
 
 export const getFormikFieldError = (form, field) => {
@@ -78,7 +81,7 @@ function InnerFieldComponent({
 	);
 }
 
-const InnerField = shouldUpdate((oldProps, newProps) => {
+const InnerField = shouldUpdate((oldProps: any, newProps: any) => {
 	return !isEqual(
 		{
 			componentProps: oldProps.componentProps,
@@ -95,14 +98,14 @@ const InnerField = shouldUpdate((oldProps, newProps) => {
 	);
 })(InnerFieldComponent);
 
-const SwFormFieldComponent: React.FC<FormFieldProps> = ({
+const SwFormFieldComponent = <T extends object>({
 	component,
-	componentProps = {},
+	componentProps = {} as T,
 	onChange = noop,
 	onBlur = noop,
 	onValueChange = noop,
 	...fieldProps
-}) => {
+}: FormFieldProps<T>) => {
 	return (
 		<Field {...fieldProps}>
 			{(props: FieldProps) => {
@@ -127,4 +130,4 @@ const SwFormFieldComponent: React.FC<FormFieldProps> = ({
 	);
 };
 
-export const SwFormField = pure(SwFormFieldComponent);
+export const SwFormField = SwFormFieldComponent;
