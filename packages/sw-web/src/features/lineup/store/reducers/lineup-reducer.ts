@@ -14,8 +14,9 @@ export interface ILineupState {
 
 export type LineupAction = ActionType<typeof actions>;
 
+const EMPTY_LINEUP = fill(Array(NUM_PLAYERS), null);
 const initialState: ILineupState = {
-	positions: fill(Array(NUM_PLAYERS), null),
+	positions: EMPTY_LINEUP,
 	strategy,
 };
 
@@ -94,6 +95,6 @@ export const lineupReducer = createReducer<ILineupState, LineupAction>(initialSt
 	.handleAction(actions.clearLineup, state => {
 		return {
 			...state,
-			positions: [],
+			positions: EMPTY_LINEUP,
 		};
 	});
