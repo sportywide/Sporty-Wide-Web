@@ -10,6 +10,12 @@ const paths = {
 			get dist() {
 				return path.resolve(this.root, 'dist');
 			},
+			get clientPolyfill() {
+				return path.resolve(this.root, 'src', 'client-polyfill.js');
+			},
+			get serverPolyfill() {
+				return path.resolve(this.root, 'src', 'server-polyfill.js');
+			},
 		};
 	},
 	get shared() {

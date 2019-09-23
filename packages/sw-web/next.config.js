@@ -7,10 +7,9 @@ const css = require('@zeit/next-css');
 const scss = require('@zeit/next-sass');
 const webpack = require('webpack');
 const { importAutoDllPlugin } = require('next/dist/build/webpack/plugins/dll-import');
-const { ENTRY_ORDER, default: InjectPlugin } = require('webpack-inject-plugin');
 const nextConfig = {
 	webpack: (webpackConfig, options) => {
-		const { dir, config: nextConfig } = options;
+		const { dir, config: nextConfig, isServer } = options;
 		const distDir = path.resolve(dir, nextConfig.distDir);
 		webpackConfig.resolve = {
 			...(webpackConfig.resolve || {}),
@@ -45,6 +44,18 @@ const nextConfig = {
 				},
 			},
 		});
+
+		const originalEntry = webpackConfig.entry;
+		webpackConfig.entry = async () => {
+			let entries = await originalEntry();
+
+			if (isServer) {
+				entries = injectPolyfill(entries, paths.web.serverPolyfill);
+			} else {
+				entries['main.js'] = injectPolyfill(entries['main.js'], paths.web.clientPolyfill);
+			}
+			return entries;
+		};
 
 		webpackConfig.plugins = webpackConfig.plugins.map(plugin => {
 			if (plugin.constructor.name !== 'AutoDLLPlugin') {
@@ -99,12 +110,6 @@ const nextConfig = {
 			test: /@nestjs/,
 			use: 'null-loader',
 		});
-
-		webpackConfig.plugins.push(
-			new InjectPlugin(() => 'require("reflect-metadata")', {
-				entryOrder: ENTRY_ORDER.First,
-			})
-		);
 
 		webpackConfig.plugins.push(new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/));
 
@@ -165,3 +170,25 @@ module.exports = withPlugins(
 	],
 	nextConfig
 );
+
+function injectPolyfill(entry, polyfillFile) {
+	if (!entry) {
+		return entry;
+	}
+	if (typeof entry === 'string') {
+		return [polyfillFile, entry];
+	}
+	if (Array.isArray(entry) && !entry.includes(polyfillFile)) {
+		return [polyfillFile, ...entry];
+	}
+
+	if (typeof entry === 'object') {
+		return Object.keys(entry).reduce((currentMap, entryName) => {
+			return {
+				...currentMap,
+				[entryName]: injectPolyfill(entry[entryName], polyfillFile),
+			};
+		}, {});
+	}
+	return entry;
+}
