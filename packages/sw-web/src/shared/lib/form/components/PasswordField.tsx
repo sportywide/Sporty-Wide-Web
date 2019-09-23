@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { FormFieldProps, SwFormField } from '@web/shared/lib/form/components/FormField';
 import { Form, Icon, Progress } from 'semantic-ui-react';
 
@@ -17,6 +17,16 @@ export const SwPasswordField: React.FC<PasswordFieldProps> = ({
 	const [password, setPassword] = useState('');
 	const [feedback, setFeedback] = useState<any>({});
 	const [isShowingPassword, setIsShowingPassword] = useState<boolean>(false);
+	const handlePasswordChange = useCallback(
+		async (value = '') => {
+			setPassword(value);
+			const { default: zxcvbn } = await import(/* webpackChunkName: "zxcvbn" */ 'zxcvbn/dist/zxcvbn.js');
+			const { score, feedback } = zxcvbn(value);
+			setScore(score);
+			setFeedback(feedback);
+		},
+		[setPassword, setFeedback, setScore]
+	);
 	return (
 		<div className={`ub-flex ub-flex-column ${className}`}>
 			<SwFormField
@@ -52,14 +62,6 @@ export const SwPasswordField: React.FC<PasswordFieldProps> = ({
 			)}
 		</div>
 	);
-
-	async function handlePasswordChange(value = '') {
-		setPassword(value);
-		const { default: zxcvbn } = await import(/* webpackChunkName: "zxcvbn" */ 'zxcvbn/dist/zxcvbn.js');
-		const { score, feedback } = zxcvbn(value);
-		setScore(score);
-		setFeedback(feedback);
-	}
 
 	function getColor(score) {
 		return {
