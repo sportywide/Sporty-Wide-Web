@@ -2,6 +2,7 @@ import { addPlayersToList, removePlayersFromList, resetPlayers, setPlayers } fro
 import { concatMap, map, mapTo, mergeMap } from 'rxjs/operators';
 import {
 	ADD_PLAYER_TO_LINEUP,
+	CHANGE_STRATEGY,
 	CLEAR_LINEUP,
 	FILL_POSITIONS,
 	REMOVE_PLAYER_FROM_LINEUP,
@@ -9,6 +10,8 @@ import {
 } from '@web/features/lineup/store/actions/actions.constants';
 import {
 	addPlayerToLineup,
+	changeStrategy,
+	changeStrategySuccess,
 	fillPositions,
 	fillPositionSuccess,
 	removePlayerFromLineup,
@@ -85,6 +88,16 @@ export const removePlayerFromLineupEpic: Epic<
 	return action$.ofType(REMOVE_PLAYER_FROM_LINEUP as any).pipe(
 		map(({ payload: player }) => {
 			return addPlayersToList([player]);
+		})
+	);
+};
+
+export const changeStrategyEpic = (action$, $state, { container }) => {
+	const lineupService = container.get(LineupService);
+	return action$.ofType(CHANGE_STRATEGY as any).pipe(
+		mergeMap(({ payload: formationName }) => {
+			const formation = lineupService.getFormation(formationName);
+			return of(changeStrategySuccess(formation), resetPlayers());
 		})
 	);
 };

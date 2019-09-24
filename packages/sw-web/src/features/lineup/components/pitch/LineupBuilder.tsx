@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Grid, Header } from 'semantic-ui-react';
+import { Button, Grid, Header, Form, Select } from 'semantic-ui-react';
 import GridColumn from 'semantic-ui-react/dist/commonjs/collections/Grid/GridColumn';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { ILineupState, lineupReducer } from '@web/features/lineup/store/reducers/lineup-reducer';
@@ -12,6 +12,7 @@ import { playerEpic } from '@web/features/players/store/epics';
 import { loadPlayers } from '@web/features/players/store/actions';
 import {
 	addPlayerToLineup,
+	changeStrategy,
 	clearLineup,
 	fillPositions,
 	removePlayerFromLineup,
@@ -21,6 +22,7 @@ import {
 } from '@web/features/lineup/store/actions';
 import {
 	addPlayerToLineupEpic,
+	changeStrategyEpic,
 	clearLineupEpic,
 	fillPositionsEpic,
 	removePlayerFromLineupEpic,
@@ -40,6 +42,7 @@ interface IProps {
 	switchLineupPositions: typeof switchLineupPositions;
 	substitutePlayer: typeof substitutePlayer;
 	clearLineup: typeof clearLineup;
+	changeStrategy: typeof changeStrategy;
 }
 
 const SwLineupBuilderComponent: React.FC<IProps> = function({
@@ -53,6 +56,7 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 	switchLineupPositions,
 	substitutePlayer,
 	clearLineup,
+	changeStrategy,
 }) {
 	useEffect(() => {
 		loadPlayers();
@@ -61,6 +65,21 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 		<>
 			<Header as={'h2'}>Manchester United</Header>
 			<div className={'ub-mb3'}>
+				<Select
+					className={'ub-mr2'}
+					defaultValue={'4-4-2'}
+					options={[
+						{
+							text: '4-4-2',
+							value: '4-4-2',
+						},
+						{
+							text: '4-3-3',
+							value: '4-3-3',
+						},
+					]}
+					onChange={(e, { value }) => changeStrategy(value as string)}
+				/>
 				<Button primary onClick={() => fillPositions()}>
 					Fill
 				</Button>
@@ -96,7 +115,8 @@ const enhance = compose(
 		clearLineupEpic,
 		removePlayerFromLineupEpic,
 		fillPositionsEpic,
-		substitutePlayerEpic
+		substitutePlayerEpic,
+		changeStrategyEpic
 	),
 	connect(
 		state => ({ players: state.playerList.players, lineup: state.lineup }),
@@ -109,6 +129,7 @@ const enhance = compose(
 			clearLineup,
 			switchLineupPositions,
 			fillPositions,
+			changeStrategy,
 		}
 	)
 );

@@ -2,6 +2,10 @@ import { Service } from 'typedi';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { FormationDto } from '@shared/lib/dtos/formation/formation.dto';
 
+const formationMap = {
+	'4-4-2': require('@shared/lib/strategy/4-4-2.json'),
+	'4-3-3': require('@shared/lib/strategy/4-3-3.json'),
+};
 @Service({ global: true })
 export class LineupService {
 	fillPositions({
@@ -46,6 +50,16 @@ export class LineupService {
 				}
 				let bestFit = true;
 				for (const capablePosition of capablePositions) {
+					let isNeeded = false;
+					for (let j = index + 1; j < strategy.formation.length; j++) {
+						if (!positions[j] && strategy.formation[j].name === capablePosition) {
+							isNeeded = true;
+							break;
+						}
+					}
+					if (!isNeeded) {
+						continue;
+					}
 					if (playerByPosition[capablePosition].length <= 1) {
 						bestFit = false;
 						break;
@@ -70,5 +84,9 @@ export class LineupService {
 				);
 			});
 		}
+	}
+
+	getFormation(name): FormationDto {
+		return formationMap[name];
 	}
 }

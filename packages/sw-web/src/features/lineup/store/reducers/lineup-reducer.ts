@@ -1,7 +1,7 @@
 import * as actions from '@web/features/lineup/store/actions';
 import { ActionType, createReducer, PayloadAction } from 'typesafe-actions';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
-import strategy from '@shared/lib/strategy/4-4-2.json';
+import strategy from '@shared/lib/strategy/4-3-3.json';
 import { fill } from 'lodash';
 import { FormationDto } from '@shared/lib/dtos/formation/formation.dto';
 
@@ -86,10 +86,11 @@ export const lineupReducer = createReducer<ILineupState, LineupAction>(initialSt
 			}),
 		};
 	})
-	.handleAction(actions.changeStrategy, (state, { payload }) => {
+	.handleAction(actions.changeStrategySuccess, (state, { payload }) => {
 		return {
 			...state,
 			strategy: payload,
+			positions: EMPTY_LINEUP,
 		};
 	})
 	.handleAction(actions.clearLineup, state => {

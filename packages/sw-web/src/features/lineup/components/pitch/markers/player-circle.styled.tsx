@@ -23,6 +23,6 @@ export const SwPlayerCircleAvatar = styled(Image)`
 `;
 
 export const SwPlayerCircleName = styled.div`
-	color: white;
+	color: black;
 	font-weight: 700;
 `;

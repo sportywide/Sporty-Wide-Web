@@ -78,7 +78,7 @@
 		"rating": 92,
 		"shirt": 14,
 		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/207494@2x.webp",
-		"positions": ["RM", "AM"]
+		"positions": ["RM", "AM", "CM"]
 	},
 	{
 		"id": 10,
@@ -87,7 +87,7 @@
 		"rating": 75,
 		"shirt": 10,
 		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/231677@2x.webp",
-		"positions": ["ST", "LM"]
+		"positions": ["ST", "LM", "LW"]
 	},
 	{
 		"id": 11,
@@ -96,15 +96,15 @@
 		"rating": 80,
 		"shirt": 9,
 		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/211300@2x.webp",
-		"positions": ["ST"]
+		"positions": ["ST", "LW"]
 	},
 	{
 		"id": 12,
-		"name": "Petr Cech",
+		"name": "Bend Lerno",
 		"teamName": "Arsenal",
 		"rating": 65,
 		"shirt": 1,
-		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/211300@2x.webp",
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/192563@2x.webp",
 		"positions": ["GK"]
 	},
 	{
@@ -113,7 +113,7 @@
 		"teamName": "Arsenal",
 		"rating": 50,
 		"shirt": 5,
-		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/211300@2x.webp",
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/192227@2x.webp",
 		"positions": ["CB"]
 	},
 	{
@@ -122,8 +122,8 @@
 		"teamName": "Arsenal",
 		"rating": 60,
 		"shirt": 7,
-		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/211300@2x.webp",
-		"positions": ["LM"]
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/226110@2x.webp",
+		"positions": ["RM", "RW"]
 	},
 	{
 		"id": 15,
@@ -131,7 +131,7 @@
 		"teamName": "Arsenal",
 		"rating": 70,
 		"shirt": 9,
-		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/211300@2x.webp",
+		"image": "https://www.fifaindex.com/static/FIFA20/images/players/5/193301@2x.webp",
 		"positions": ["ST"]
 	}
 ]
