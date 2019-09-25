@@ -67,7 +67,7 @@ export class ApiService {
 				error => {
 					this.apiErrorSubscription.next(error);
 					this.apiCallSubscription.next(this.apiCallSubscription.getValue() - 1);
-					return error;
+					throw error;
 				}
 			);
 		});

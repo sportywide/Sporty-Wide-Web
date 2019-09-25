@@ -142,11 +142,11 @@ function setCookies(proxyRes, request, response, redirectUrl) {
 }
 
 function redirectOnError(proxyRes, req, res) {
-	if (proxyRes.statusCode < 400) {
+	if (proxyRes.statusCode < 400 || req.method !== 'GET') {
 		return;
 	}
 	modifyResponse(res, proxyRes, function(error) {
-		if (error && error.message && (proxyRes.statusCode !== NOT_FOUND || req.method !== 'GET')) {
+		if (error && error.message && proxyRes.statusCode !== NOT_FOUND) {
 			res.flash('error', error.message);
 		}
 		if (req.method === 'GET') {

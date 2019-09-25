@@ -12,7 +12,7 @@ export function getFriendlyErrorMessage(err: QueryFailedError) {
 			}
 			const [, keys] = matches;
 			const fieldNames = keys.split('.');
-			return ucfirst(fieldNames.join(' and ') + ' already ' + (fieldNames.length > 1 ? 'exists' : 'exist'));
+			return ucfirst(fieldNames.join(' and ') + ' already ' + (fieldNames.length > 1 ? 'exist' : 'exists'));
 		default:
 			return err.message;
 	}

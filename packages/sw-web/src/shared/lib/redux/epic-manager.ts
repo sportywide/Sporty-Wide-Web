@@ -1,7 +1,9 @@
 import { ActionsObservable, combineEpics, StateObservable } from 'redux-observable';
-import { mergeMap } from 'rxjs/operators';
-import { BehaviorSubject, EMPTY, Observable } from 'rxjs';
+import { mergeMap, catchError } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, Observable, of, merge } from 'rxjs';
 import { AnyAction } from 'redux';
+import { epicError } from '@web/shared/lib/redux/core.actions';
+import { safeGet } from '@shared/lib/utils/object/get';
 
 export interface IEpicManager {
 	add: (...epics: any[]) => void;
@@ -28,7 +30,19 @@ export function createEpicManager(...initialEpics): IEpicManager {
 					if (!epic) {
 						return EMPTY;
 					}
-					return epic(action$, state$, dependencies);
+					return epic(action$, state$, dependencies).pipe(
+						catchError((error, source) => {
+							setTimeout(() => {
+								//http error
+								const statusCode = safeGet(() => error.response.status);
+								// we dont want to capture 4xx errors
+								if (!statusCode || statusCode >= 500) {
+									throw error;
+								}
+							}, 0);
+							return merge(source, of(epicError(error)));
+						})
+					);
 				})
 			),
 	};

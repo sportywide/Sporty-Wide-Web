@@ -55,9 +55,7 @@ export const resendVerificationEpic = (action$, state$, { container }: IDependen
 	return action$.ofType(RESEND_VERIFICATION_EMAIL).pipe(
 		mergeMap(({ payload }) => {
 			const authService = container.get(AuthService);
-			return authService.resendVerficationEmail(payload).pipe(
-				mapTo(resendVerificationEmailSuccess)
-			);
+			return authService.resendVerficationEmail(payload).pipe(mapTo(resendVerificationEmailSuccess));
 		})
 	);
 };

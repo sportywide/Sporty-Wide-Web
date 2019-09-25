@@ -49,6 +49,10 @@ export class CreateUserDto {
 	password: string;
 
 	@ApiModelProperty()
+	@is(a.string().oneOf([undefined, a.ref('password')], 'Password do not match'))
+	confirmPassword: string;
+
+	@ApiModelProperty()
 	@Editable(UserRole.USER)
 	@is(date({ nullable: true }))
 	dob: string;
@@ -60,6 +64,11 @@ export class CreateUserDto {
 
 	@ApiModelProperty({ enum: ['male', 'female', 'other'] })
 	@Editable(UserRole.USER)
-	@is(a.string().oneOf(Object.values(UserGender)))
+	@is(
+		a
+			.string()
+			.nullable(true)
+			.oneOf(Object.values(UserGender))
+	)
 	gender: UserGender;
 }

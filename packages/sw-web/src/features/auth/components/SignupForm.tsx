@@ -92,7 +92,7 @@ const SwSignupFormComponent: React.FC<IProps> = props => {
 						/>
 					</div>
 
-					<button className="ui primary button" disabled={!props.isValid} onClick={props.submitForm}>
+					<button className="ui primary button" disabled={!props.isValid} type="submit">
 						Signup
 					</button>
 				</Form>
