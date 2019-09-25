@@ -1,15 +1,16 @@
 import * as actions from '@web/features/lineup/store/actions';
 import { ActionType, createReducer, PayloadAction } from 'typesafe-actions';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
-import strategy from '@shared/lib/strategy/4-3-3.json';
+import strategy from '@shared/lib/strategy/4-4-2.json';
 import { fill } from 'lodash';
 import { FormationDto } from '@shared/lib/dtos/formation/formation.dto';
-
-export const NUM_PLAYERS = 11;
+import { NUM_PLAYERS, sortPlayers } from '@web/features/players/utility/player';
 
 export interface ILineupState {
 	strategy: FormationDto;
 	positions: (PlayerDto | null)[];
+	players: PlayerDto[];
+	originalPlayers: PlayerDto[];
 }
 
 export type LineupAction = ActionType<typeof actions>;
@@ -18,6 +19,8 @@ const EMPTY_LINEUP = fill(Array(NUM_PLAYERS), null);
 const initialState: ILineupState = {
 	positions: EMPTY_LINEUP,
 	strategy,
+	players: undefined,
+	originalPlayers: undefined,
 };
 
 export const lineupReducer = createReducer<ILineupState, LineupAction>(initialState)
@@ -29,6 +32,7 @@ export const lineupReducer = createReducer<ILineupState, LineupAction>(initialSt
 				payload.player,
 				...state.positions.slice(payload.index + 1),
 			],
+			players: state.players.filter(player => payload.player !== player),
 		};
 	})
 	.handleAction(actions.clearLineupPosition, (state, { payload }) => {
@@ -54,12 +58,21 @@ export const lineupReducer = createReducer<ILineupState, LineupAction>(initialSt
 			};
 		}
 	)
-	.handleAction(actions.fillPositionSuccess, (state, { payload }) => {
-		return {
-			...state,
-			positions: payload,
-		};
-	})
+	.handleAction(actions.loadPlayersSuccess, (state, { payload = [] }: PayloadAction<string, PlayerDto[]>) => ({
+		...state,
+		players: payload,
+		originalPlayers: payload,
+	}))
+	.handleAction(
+		actions.fillPositionSuccess,
+		(state, { payload: filledPositions = [] }: PayloadAction<string, PlayerDto[]>) => {
+			return {
+				...state,
+				positions: filledPositions,
+				players: state.players.filter(player => !filledPositions.includes(player)),
+			};
+		}
+	)
 	.handleAction(actions.swapPlayers, (state, { payload }) => {
 		const positions = state.positions;
 		const sourceIndex = positions.findIndex(position => position && position.id === payload.first.id);
@@ -75,15 +88,16 @@ export const lineupReducer = createReducer<ILineupState, LineupAction>(initialSt
 			positions: newLineup,
 		};
 	})
-	.handleAction(actions.removePlayerFromLineup, (state, { payload }) => {
+	.handleAction(actions.removePlayerFromLineup, (state, { payload: removedPlayer }) => {
 		return {
 			...state,
 			positions: state.positions.map(player => {
-				if (player === payload) {
+				if (player === removedPlayer) {
 					return null;
 				}
 				return player;
 			}),
+			players: sortPlayers(state.players.concat(removedPlayer)),
 		};
 	})
 	.handleAction(actions.changeStrategySuccess, (state, { payload }) => {
@@ -91,11 +105,13 @@ export const lineupReducer = createReducer<ILineupState, LineupAction>(initialSt
 			...state,
 			strategy: payload,
 			positions: EMPTY_LINEUP,
+			players: state.originalPlayers || [],
 		};
 	})
 	.handleAction(actions.clearLineup, state => {
 		return {
 			...state,
 			positions: EMPTY_LINEUP,
+			players: state.originalPlayers || [],
 		};
 	});

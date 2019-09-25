@@ -1,9 +1,9 @@
 import { LineupService } from '@web/features/lineup/services/lineup.service';
-import players from '@web/features/players/store/epics/players.json';
 import { fill } from 'lodash';
+import players from '@web/features/lineup/store/epics/players.json';
 import strategy from '@shared/lib/strategy/4-4-2.json';
 import { isUnique } from '@shared/lib/utils/array/set';
-import { NUM_PLAYERS } from '../store/reducers/lineup-reducer';
+import { NUM_PLAYERS } from '@web/features/players/utility/player';
 
 describe('Testing LineupService', () => {
 	let lineupService: LineupService;

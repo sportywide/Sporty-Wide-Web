@@ -3,7 +3,7 @@ import { Header } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { SwBasicProfile } from '@web/features/profile/edit/components/BasicProfile';
 import { SwWorkProfile } from '@web/features/profile/edit/components/WorkProfile';
-import { SwFormSegment } from '@web/features/profile/edit/styled/edit.styled';
+import { SwFormSegment } from '@web/features/profile/edit/components/edit.styled';
 import { SwSummaryProfile } from '@web/features/profile/edit/components/SummaryProfile';
 import { IUserProfile } from '@web/features/profile/store/reducers';
 import { saveBasicUserProfile, saveExtraUserProfile } from '@web/features/profile/store/actions';

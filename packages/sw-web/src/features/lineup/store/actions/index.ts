@@ -8,15 +8,17 @@ import {
 	FILL_POSITION_SUCCESS,
 	FILL_POSITIONS,
 	REMOVE_PLAYER_FROM_LINEUP,
-	SUBSTITUTE_PLAYER,
+	SUBSTITUTE_PLAYERS,
 	SWAP_PLAYERS,
 	SWITCH_LINEUP_POSITION,
+	LOAD_PLAYER_SUCCESS,
+	LOAD_PLAYERS,
 } from '@web/features/lineup/store/actions/actions.constants';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { FormationDto } from '@shared/lib/dtos/formation/formation.dto';
 
 export const swapPlayers = createSwStandardAction(SWAP_PLAYERS)<{ first: PlayerDto; second: PlayerDto }>();
-export const substitutePlayer = createSwStandardAction(SUBSTITUTE_PLAYER)<{
+export const substitutePlayers = createSwStandardAction(SUBSTITUTE_PLAYERS)<{
 	first: PlayerDto;
 	second: PlayerDto;
 }>();
@@ -32,3 +34,6 @@ export const switchLineupPositions = createSwStandardAction(SWITCH_LINEUP_POSITI
 export const fillPositions = createSwStandardAction(FILL_POSITIONS)();
 export const clearLineup = createSwStandardAction(CLEAR_LINEUP)();
 export const fillPositionSuccess = createSwStandardAction(FILL_POSITION_SUCCESS)<PlayerDto[]>();
+
+export const loadPlayersSuccess = createSwStandardAction(LOAD_PLAYER_SUCCESS)<PlayerDto[]>();
+export const loadPlayers = createSwStandardAction(LOAD_PLAYERS)();

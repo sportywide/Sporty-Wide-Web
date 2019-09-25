@@ -1,60 +1,53 @@
 import React, { useEffect } from 'react';
-import { Button, Grid, Header, Form, Select } from 'semantic-ui-react';
+import { Button, Grid, Header, Select } from 'semantic-ui-react';
 import GridColumn from 'semantic-ui-react/dist/commonjs/collections/Grid/GridColumn';
-import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { ILineupState, lineupReducer } from '@web/features/lineup/store/reducers/lineup-reducer';
 import { connect } from 'react-redux';
 import { compose } from '@shared/lib/utils/fp/combine';
 import { registerReducer } from '@web/shared/lib/redux/register-reducer';
-import { playerReducer } from '@web/features/players/store/reducers/player-reducer';
 import { registerEpic } from '@web/shared/lib/redux/register-epic';
-import { playerEpic } from '@web/features/players/store/epics';
-import { loadPlayers } from '@web/features/players/store/actions';
 import {
 	addPlayerToLineup,
 	changeStrategy,
 	clearLineup,
 	fillPositions,
+	loadPlayers,
 	removePlayerFromLineup,
-	substitutePlayer,
+	substitutePlayers,
 	swapPlayers,
 	switchLineupPositions,
 } from '@web/features/lineup/store/actions';
 import {
-	addPlayerToLineupEpic,
 	changeStrategyEpic,
-	clearLineupEpic,
 	fillPositionsEpic,
-	removePlayerFromLineupEpic,
-	substitutePlayerEpic,
+	playerEpic,
+	substitutePlayersEpic,
 } from '@web/features/lineup/store/epics';
 import { SwLineup } from './Lineup';
 import { SwPitch } from './Pitch';
 
 interface IProps {
-	players: PlayerDto[];
-	lineup: ILineupState;
+	lineupBuilder: ILineupState;
 	loadPlayers: typeof loadPlayers;
 	addPlayerToLineup: typeof addPlayerToLineup;
 	removePlayerFromLineup: typeof removePlayerFromLineup;
 	swapPlayers: typeof swapPlayers;
 	fillPositions: typeof fillPositions;
 	switchLineupPositions: typeof switchLineupPositions;
-	substitutePlayer: typeof substitutePlayer;
+	substitutePlayers: typeof substitutePlayers;
 	clearLineup: typeof clearLineup;
 	changeStrategy: typeof changeStrategy;
 }
 
 const SwLineupBuilderComponent: React.FC<IProps> = function({
-	players,
-	lineup,
+	lineupBuilder,
 	loadPlayers,
 	addPlayerToLineup,
 	swapPlayers,
 	removePlayerFromLineup,
 	fillPositions,
 	switchLineupPositions,
-	substitutePlayer,
+	substitutePlayers,
 	clearLineup,
 	changeStrategy,
 }) {
@@ -89,15 +82,15 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 			</div>
 			<Grid stackable>
 				<GridColumn tablet={'7'}>
-					<SwLineup players={players} />
+					<SwLineup players={lineupBuilder.players} />
 				</GridColumn>
 				<GridColumn tablet={'9'}>
 					<SwPitch
-						strategy={lineup.strategy}
-						positions={lineup.positions}
+						strategy={lineupBuilder.strategy}
+						positions={lineupBuilder.positions}
 						onAddPlayerToLineup={(player, index) => addPlayerToLineup({ player, index })}
 						onRemovePlayerFromLineup={player => removePlayerFromLineup(player)}
-						onSubstitutePlayer={(source, dest) => substitutePlayer({ first: source, second: dest })}
+						onSubstitutePlayer={(source, dest) => substitutePlayers({ first: source, second: dest })}
 						onSwitchLineupPosition={(player, index) => switchLineupPositions({ player, index })}
 						onSwapPlayers={(source, dest) => swapPlayers({ first: source, second: dest })}
 					/>
@@ -108,23 +101,15 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 };
 
 const enhance = compose(
-	registerReducer({ lineup: lineupReducer, playerList: playerReducer }),
-	registerEpic(
-		playerEpic,
-		addPlayerToLineupEpic,
-		clearLineupEpic,
-		removePlayerFromLineupEpic,
-		fillPositionsEpic,
-		substitutePlayerEpic,
-		changeStrategyEpic
-	),
+	registerReducer({ lineupBuilder: lineupReducer }),
+	registerEpic(playerEpic, fillPositionsEpic, changeStrategyEpic, substitutePlayersEpic),
 	connect(
-		state => ({ players: state.playerList.players, lineup: state.lineup }),
+		state => ({ lineupBuilder: state.lineupBuilder }),
 		{
 			loadPlayers,
 			addPlayerToLineup,
 			removePlayerFromLineup,
-			substitutePlayer,
+			substitutePlayers,
 			swapPlayers,
 			clearLineup,
 			switchLineupPositions,

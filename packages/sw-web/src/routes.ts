@@ -44,9 +44,9 @@ const routeMappings = [
 		page: 'profile/edit',
 	},
 	{
-		name: 'player-builder',
-		pattern: '/player/builder',
-		page: 'player/builder',
+		name: 'lineup-builder',
+		pattern: '/lineup-builder',
+		page: 'lineup/builder',
 	},
 ];
 
