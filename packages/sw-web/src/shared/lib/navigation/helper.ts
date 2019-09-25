@@ -8,7 +8,7 @@ export async function redirect({
 	params = undefined,
 }: {
 	context?: any;
-	route: string;
+	route?: string;
 	replace?: boolean;
 	refresh?: boolean;
 	params?: any;

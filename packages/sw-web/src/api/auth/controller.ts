@@ -14,7 +14,7 @@ export function redirect(req, res) {
 	if (url === cookies[COOKIE_REFERRER]) {
 		res.clearCookie(COOKIE_REFERRER);
 	}
-	if (url.startsWith('/') || new URL(url).host === currentHost) {
+	if (url && (url.startsWith('/') || new URL(url).host === currentHost)) {
 		res.redirect(url);
 	} else {
 		res.redirect('/');

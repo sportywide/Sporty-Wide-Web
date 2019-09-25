@@ -8,6 +8,7 @@ import {
 	signupSuccess,
 } from '@web/features/auth/store/actions';
 import { IDependencies } from '@web/shared/lib/store';
+import { redirect } from '@web/shared/lib/navigation/helper';
 
 export const logoutEpic = (action$, state$, { container }: IDependencies) => {
 	return action$.ofType(LOGOUT).pipe(
@@ -30,7 +31,9 @@ export const signupEpic = (action$, state$, { container }: IDependencies) => {
 			return authService.signup(payload).pipe(
 				mapTo(signupSuccess),
 				tap(() => {
-					window.location.href = '/home';
+					redirect({
+						refresh: true,
+					});
 				})
 			);
 		})
@@ -44,7 +47,9 @@ export const loginEpic = (action$, state$, { container }: IDependencies) => {
 			return authService.login(payload).pipe(
 				mapTo(loginSuccess),
 				tap(() => {
-					window.location.href = '/home';
+					redirect({
+						refresh: true,
+					});
 				})
 			);
 		})

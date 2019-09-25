@@ -61,6 +61,9 @@ export const Link = routes.Link;
 export const Router = routes.Router;
 
 export function findPathForRoute(routeName) {
+	if (!routeName) {
+		return routeName;
+	}
 	const routeMapping = routeMappings.find(route => route.name === routeName);
 	return (routeMapping && routeMapping.pattern) || `/${routeName}`;
 }

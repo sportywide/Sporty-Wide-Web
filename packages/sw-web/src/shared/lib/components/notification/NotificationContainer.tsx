@@ -37,7 +37,7 @@ const NotificationContainer: React.FC<IProps> = function({ notifications }) {
 				);
 			}
 		});
-	}, []);
+	}, [apiService, store]);
 	return <Notifications notifications={notifications} />;
 };
 
