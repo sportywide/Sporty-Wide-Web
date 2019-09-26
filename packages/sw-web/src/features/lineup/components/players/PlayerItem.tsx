@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Label, List } from 'semantic-ui-react';
 import { useDrag } from 'react-dnd-cjs';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
@@ -21,11 +21,25 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 		collect: monitor => ({ isDragging: monitor.isDragging(), dropResult: monitor.getDropResult() }),
 	});
 
+	useEffect(() => {
+		const img = new Image();
+		img.src = player.image;
+		img.onload = () => {
+			const ctx = document.createElement('canvas').getContext('2d');
+			ctx.canvas.width = 50;
+			ctx.canvas.height = 50;
+			img.style.opacity = '1';
+
+			ctx.drawImage(img, 0, 0, img.width, img.height);
+			preview(ctx.canvas);
+		};
+	}, [player.image, preview]);
+
 	return (
 		<List.Item>
 			<List.Content>
 				<SwDraggablePlayer ref={drag} isDragging={isDragging}>
-					<div ref={preview}>
+					<div>
 						<SwPlayerLogo circular avatar src={player.image} />
 					</div>
 					<div className={'ub-flex-grow'}>

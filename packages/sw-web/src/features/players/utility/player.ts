@@ -29,4 +29,3 @@ export function sortPlayers(players) {
 		return aPosition - bPosition;
 	});
 }
-
