@@ -48,6 +48,11 @@ const routeMappings = [
 		pattern: '/lineup-builder',
 		page: 'lineup/builder',
 	},
+	{
+		name: 'user-leagues',
+		pattern: '/user-leagues',
+		page: 'league/user-leagues',
+	},
 ];
 
 let routes = new Routes();

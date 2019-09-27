@@ -6,7 +6,7 @@ import {
 	FETCH_USER_PROFILE,
 	SAVE_BASIC_USER_PROFILE,
 	SAVE_EXTRA_USER_PROFILE,
-} from '@web/features/profile/store/actions/actions.constants';
+} from '@web/features/profile/edit/store/actions/actions.constants';
 import { Container } from 'typedi';
 import { UserService } from '@web/features/user/services/user.service';
 import {
@@ -16,7 +16,7 @@ import {
 	fetchExtraUserProfileSuccess,
 	saveBasicUserProfile,
 	saveExtraUserProfile,
-} from '@web/features/profile/store/actions';
+} from '@web/features/profile/edit/store/actions';
 import { success } from 'react-notification-system-redux';
 import { ActionType } from 'typesafe-actions';
 
@@ -34,7 +34,7 @@ export const fetchBasicUserProfileEpic = (action$, state$, { container }: { cont
 		.ofType(FETCH_BASIC_USER_PROFILE)
 		.pipe(
 			switchMap((action: any) =>
-				userService.getBasicProfile(action.payload).pipe(map(fetchBasicUserProfileSuccess))
+				userService.getBasicProfile(action.payload).pipe(map(userDto => fetchBasicUserProfileSuccess(userDto)))
 			)
 		);
 };

@@ -15,9 +15,9 @@ import {
 	fetchUserProfileEpic,
 	saveBasicUserProfileEpic,
 	saveExtraUserProfileEpic,
-} from '@web/features/profile/store/epics';
-import { fetchUserProfile } from '@web/features/profile/store/actions';
-import { IUserProfile, userProfileReducer } from '@web/features/profile/store/reducers';
+} from '@web/features/profile/edit/store/epics';
+import { fetchUserProfile } from '@web/features/profile/edit/store/actions';
+import { IUserProfile, userProfileReducer } from '@web/features/profile/edit/store/reducers';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 
 interface IProps {

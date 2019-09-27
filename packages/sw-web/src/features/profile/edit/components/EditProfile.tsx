@@ -5,8 +5,8 @@ import { SwBasicProfile } from '@web/features/profile/edit/components/BasicProfi
 import { SwWorkProfile } from '@web/features/profile/edit/components/WorkProfile';
 import { SwFormSegment } from '@web/features/profile/edit/components/edit.styled';
 import { SwSummaryProfile } from '@web/features/profile/edit/components/SummaryProfile';
-import { IUserProfile } from '@web/features/profile/store/reducers';
-import { saveBasicUserProfile, saveExtraUserProfile } from '@web/features/profile/store/actions';
+import { IUserProfile } from '@web/features/profile/edit/store/reducers';
+import { saveBasicUserProfile, saveExtraUserProfile } from '@web/features/profile/edit/store/actions';
 
 interface IProps {
 	userProfile: IUserProfile;
