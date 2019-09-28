@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from '@web/routes';
 import { connect } from 'react-redux';
-import { Button, Flag, Segment } from 'semantic-ui-react';
+import { Button, Flag, Segment, Icon, Sidebar, Input, Menu } from 'semantic-ui-react';
 import { CharacterInfo } from '@web/features/home/components';
 import { fetchCharacter } from '@web/features/home/services/character.service';
 import { startFetchingCharacters, stopFetchingCharacters } from '@web/features/home/store/actions';
@@ -16,6 +16,47 @@ import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { allowActiveOnly, checkUser } from '@web/shared/lib/auth/check-user';
 import { redirect } from '@web/shared/lib/navigation/helper';
 
+function NavBar(props) {
+	return (
+		<Menu secondary>
+			<Menu.Item onClick={props.handleSidebarClick()}>
+				<Icon name="th" />
+			</Menu.Item>
+			<Menu.Item>
+				<Icon name="soccer" />
+				Sporty-wide
+			</Menu.Item>
+			<Menu.Item>
+				<Input icon="search" placeholder="Search..." style={{ width: '300px' }} />
+			</Menu.Item>
+
+			<Menu.Menu position="right">
+				<Menu.Item active={props.activeItem === 'profile'} onClick={props.handleItemClick('profile')}>
+					<Icon name="user circle" />
+				</Menu.Item>
+				<Menu.Item active={props.activeItem === 'home'} onClick={props.handleItemClick('home')}>
+					<Icon name="home" />
+				</Menu.Item>
+				<Menu.Item active={props.activeItem === 'messages'} onClick={props.handleItemClick('messages')}>
+					<Icon name="conversation" />
+				</Menu.Item>
+				<Menu.Item
+					active={props.activeItem === 'notifications'}
+					onClick={props.handleItemClick('notifications')}
+				>
+					<Icon name="bell" />
+				</Menu.Item>
+				<Menu.Item active={props.activeItem === 'help'} onClick={e => props.handleItemClick('help')}>
+					<Icon name="help" />
+				</Menu.Item>
+				<Menu.Item active={props.activeItem === 'logout'} onClick={() => props.logout()}>
+					<Icon name="log out" />
+				</Menu.Item>
+			</Menu.Menu>
+		</Menu>
+	);
+}
+
 interface IProps {
 	startFetchingCharacters: Function;
 	stopFetchingCharacters: Function;
@@ -23,13 +64,20 @@ interface IProps {
 	user: IUser;
 }
 
-class SwHomePage extends React.Component<IProps, any> {
-	static async getInitialProps({ store, isServer }) {
-		const resultAction = await fetchCharacter(1, isServer).toPromise(); // we need to convert observable to Promise
-		store.dispatch(resultAction);
-
-		return { isServer };
+class SwIndex extends React.Component<IProps, any> {
+	constructor(props: Readonly<IProps>) {
+		super(props);
+		this.state = { activeItem: 'home', sidebarVisible: false };
 	}
+
+	static async getInitialProps({ store, isServer }) {
+		// const resultAction = await fetchCharacter(1, isServer).toPromise(); // we need to convert observable to Promise
+		// store.dispatch(resultAction);
+		// return { isServer };
+	}
+
+	handleItemClick = (e, { name }) => (this.setState({ activeItem: name }), console.log(this.state.activeItem));
+	handleSidebarClick = () => this.setState({ sidebarVisible: !this.state.sidebar_visible });
 
 	componentDidMount() {
 		this.props.startFetchingCharacters();
@@ -41,35 +89,40 @@ class SwHomePage extends React.Component<IProps, any> {
 
 	render() {
 		return (
-			<div className="ub-p4">
-				<Head>
-					<title>SportyWide</title>
-				</Head>
-				{this.props.user && (
-					<div className="ub-mb1">
-						<h5>Current user</h5>
-						<div>Email: {this.props.user.email}</div>
-						<div>Name: {this.props.user.name}</div>
-						<div>Username: {this.props.user.username}</div>
-					</div>
-				)}
-				<Button onClick={() => this.props.logout()}>Logout</Button>
-				<h1>Index Page</h1>
-				<CharacterInfo />
-				<Button onClick={() => redirect({ route: 'confirm-email', replace: true })}>Go to other</Button>
-				<Segment>
-					<Flag name="ae" />
-					<Flag name="france" />
-					<Flag name="myanmar" />
-					<Button primary>Test semantic</Button>
-				</Segment>
-				<br />
-				<nav>
-					<Link route="/other">
-						<a>Navigates to &quot;/other&quot;</a>
-					</Link>
-				</nav>
-			</div>
+			<Sidebar.Pushable as={Segment} style={{ margin: 0, 'min-height': '100vh' }}>
+				<Sidebar
+					as={Menu}
+					animation="push"
+					icon="labeled"
+					inverted
+					vertical
+					visible={this.state.sidebar_visible}
+					width="thin"
+				>
+					<Menu.Item as="a">
+						<Icon name="home" />
+						Home
+					</Menu.Item>
+					<Menu.Item as="a">
+						<Icon name="line graph" />
+						Trending
+					</Menu.Item>
+					<Menu.Item as="a">
+						<Icon name="soccer" />
+						Teams
+					</Menu.Item>
+				</Sidebar>
+				<Sidebar.Pusher>
+					<Segment basic>
+						<NavBar
+							handleItemClick={name => this.handleItemClick}
+							handleSidebarClick={() => this.handleSidebarClick}
+							activeItem={this.state.activeItem}
+							logout={() => this.props.logout()}
+						/>
+					</Segment>
+				</Sidebar.Pusher>
+			</Sidebar.Pushable>
 		);
 	}
 }
@@ -88,4 +141,4 @@ const enhance = compose(
 	)
 );
 
-export default enhance(SwHomePage);
+export default enhance(SwIndex);
