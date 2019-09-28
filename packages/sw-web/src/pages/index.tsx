@@ -31,22 +31,35 @@ function NavBar(props) {
 			</Menu.Item>
 
 			<Menu.Menu position="right">
-				<Menu.Item name="profile" active={props.activeItem === 'profile'} onClick={props.handleItemClick('profile')}>
+				<Menu.Item
+					name="profile"
+					active={props.activeItem === 'profile'}
+					onClick={props.handleItemClick('profile')}
+				>
 					<Icon name="user circle" />
 				</Menu.Item>
 				<Menu.Item name="home" active={props.activeItem === 'home'} onClick={props.handleItemClick('home')}>
 					<Icon name="home" />
 				</Menu.Item>
-				<Menu.Item name="messages" active={props.activeItem === 'messages'} onClick={props.handleItemClick('messages')}>
+				<Menu.Item
+					name="messages"
+					active={props.activeItem === 'messages'}
+					onClick={props.handleItemClick('messages')}
+				>
 					<Icon name="conversation" />
 				</Menu.Item>
-				<Menu.Item name="notifications"
-						   active={props.activeItem === 'notifications'}
+				<Menu.Item
+					name="notifications"
+					active={props.activeItem === 'notifications'}
 					onClick={props.handleItemClick('notifications')}
 				>
 					<Icon name="bell" />
 				</Menu.Item>
-				<Menu.Item name="help"  active={props.activeItem === 'help'} onClick={e => props.handleItemClick('help')}>
+				<Menu.Item
+					name="help"
+					active={props.activeItem === 'help'}
+					onClick={e => props.handleItemClick('help')}
+				>
 					<Icon name="help" />
 				</Menu.Item>
 				<Menu.Item name="logout" active={props.activeItem === 'logout'} onClick={() => props.logout()}>
@@ -77,7 +90,7 @@ class SwIndex extends React.Component<IProps, any> {
 	}
 
 	handleItemClick = (e, { name }) => this.setState({ activeItem: name });
-	handleSidebarClick = () => this.setState({ sidebarVisible: !this.state.sidebar_visible });
+	handleSidebarClick = () => this.setState({ sidebarVisible: !this.state.sidebarVisible });
 
 	componentDidMount() {
 		this.props.startFetchingCharacters();
@@ -96,7 +109,7 @@ class SwIndex extends React.Component<IProps, any> {
 					icon="labeled"
 					inverted
 					vertical
-					visible={this.state.sidebar_visible}
+					visible={this.state.sidebarVisible}
 					width="thin"
 				>
 					<Menu.Item as="a">
