@@ -2,9 +2,9 @@ import React, { useContext, useEffect } from 'react';
 import Notifications, { error, warning } from 'react-notification-system-redux';
 import { connect, ReactReduxContext } from 'react-redux';
 import { ApiService } from '@web/shared/lib/http/api.service';
-import { Container } from 'typedi';
 import { UNAUTHENTICATED } from '@web/shared/lib/http/status-codes';
 import { safeGet } from '@shared/lib/utils/object/get';
+import { ContainerInstance } from 'typedi';
 
 interface IProps {
 	notifications: any[];
@@ -12,7 +12,7 @@ interface IProps {
 
 const NotificationContainer: React.FC<IProps> = function({ notifications }) {
 	const { store } = useContext(ReactReduxContext);
-	const container: typeof Container = store.container;
+	const container: ContainerInstance = store.container;
 	const apiService = container.get(ApiService);
 
 	useEffect(() => {

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { FormFieldProps, SwFormField } from '@web/shared/lib/form/components/FormField';
 import { Form, Icon, Progress } from 'semantic-ui-react';
 

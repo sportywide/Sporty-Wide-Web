@@ -5,7 +5,7 @@ import { Grid, GridColumn } from 'semantic-ui-react';
 import { allowAnonymousOnly, checkUser } from '@web/shared/lib/auth/check-user';
 import { SwResetPassword } from '@web/features/auth/components/ResetPassword';
 import { redirect } from '@web/shared/lib/navigation/helper';
-import { Container } from 'typedi';
+import { ContainerInstance } from 'typedi';
 import { UserService } from '@web/features/user/services/user.service';
 
 class SwResetPasswordPage extends React.Component<any> {
@@ -17,7 +17,7 @@ class SwResetPasswordPage extends React.Component<any> {
 				await redirect({ context, route: 'login', replace: true });
 			}
 
-			const container: typeof Container = context.store.container;
+			const container: ContainerInstance = context.store.container;
 			const userService = container.get(UserService);
 
 			const user = await userService.getUserFromToken(token).toPromise();

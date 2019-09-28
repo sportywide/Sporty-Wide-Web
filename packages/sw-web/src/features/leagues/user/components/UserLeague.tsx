@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { Grid, GridColumn } from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
 import { LeagueDto } from '@shared/lib/dtos/leagues/league.dto';
 import { connect } from 'react-redux';
 import { UserContext } from '@web/shared/lib/store';
@@ -8,21 +8,24 @@ import { registerEpic } from '@web/shared/lib/redux/register-epic';
 import { loadUserLeagueEpic } from '@web/features/leagues/user/store/epics';
 import { registerReducer } from '@web/shared/lib/redux/register-reducer';
 import { userLeagueReducer } from '@web/features/leagues/user/store/reducers/user-league-reducer';
-import { SwLeague } from '@web/features/leagues/components/League';
+import { SwLeague } from '@web/features/leagues/base/components/League';
+import { SwLeagueContainer } from '@web/features/leagues/base/components/league.styled';
+import { loadLeagues } from '@web/features/leagues/base/store/actions';
 import { loadUserLeagues } from '../store/actions';
-import { SwLeagueContainer } from '@web/features/leagues/components/league.styled';
 
 interface IProps {
 	userLeagueMap?: { [key: number]: LeagueDto[] };
 	loadUserLeagues: typeof loadUserLeagues;
+	loadLeagues: typeof loadLeagues;
 }
 
-const SwUserLeaguesComponent: React.FC<IProps> = ({ userLeagueMap = {}, loadUserLeagues }) => {
+const SwUserLeaguesComponent: React.FC<IProps> = ({ userLeagueMap = {}, loadUserLeagues, loadLeagues }) => {
 	const user = useContext(UserContext);
 	const leagues = userLeagueMap[user.id] || [];
 	useEffect(() => {
 		loadUserLeagues(user.id);
-	}, [loadUserLeagues, user.id]);
+		loadLeagues();
+	}, [loadLeagues, loadUserLeagues, user.id]);
 	return (
 		<Grid verticalAlign={'middle'} centered>
 			{leagues.map(league => (
@@ -43,6 +46,7 @@ const enhancer = compose(
 		}),
 		{
 			loadUserLeagues,
+			loadLeagues,
 		}
 	)
 );

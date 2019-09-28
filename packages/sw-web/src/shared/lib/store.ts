@@ -7,16 +7,23 @@ import { createEpicManager, IEpicManager } from '@web/shared/lib/redux/epic-mana
 import { isDevelopment } from '@shared/lib/utils/env';
 import { parseContext } from '@web/shared/lib/auth/helper';
 import { reducer as notifications } from 'react-notification-system-redux';
-import { Container } from 'typedi';
+import { Container, ContainerInstance } from 'typedi';
 import { authReducer } from '@web/features/auth/store/reducers';
 import { logoutEpic } from '@web/features/auth/store/epics';
 import React from 'react';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
+import { leagueReducer } from '@web/features/leagues/base/store/reducers/league-reducer';
+import { loadLeaguesEpic } from '@web/features/leagues/base/store/epics';
+import { Sw } from '@web/shared/lib/sw';
 import { createReducerManager, ReducerManager } from './redux/reducer-manager';
 
 export interface IDependencies {
-	container: typeof Container;
+	container: ContainerInstance;
 }
+
+export const ContainerContext = React.createContext(null);
+
+export const UserContext = React.createContext<IUser>(null);
 
 export function initStore(initialState = {}, context) {
 	if (context && context.store) {
@@ -25,17 +32,19 @@ export function initStore(initialState = {}, context) {
 	const auth = parseContext(context) || {};
 
 	const container = registerContainer({ auth, context });
+	Sw.container = container;
 	const initialReducers = getInitialReducers(initialState, {
 		auth: authReducer,
 		notifications,
 		loadingBar: loadingBarReducer,
+		leagues: leagueReducer,
 	});
 	const reducerManager = createReducerManager(initialReducers);
 	const epicMiddleware = createEpicMiddleware({
 		dependencies: { container },
 	});
 	const reduxMiddleware = applyMiddleware(thunkMiddleware.withExtraArgument({ container }), epicMiddleware);
-	const epicManager = createEpicManager(logoutEpic);
+	const epicManager = createEpicManager(logoutEpic, loadLeaguesEpic);
 	const enhancers = isDevelopment() ? composeWithDevTools({ serialize: true })(reduxMiddleware) : reduxMiddleware;
 	const store = createStore(reducerManager.reduce, { ...initialState, auth }, enhancers) as ISportyWideStore;
 	store.reducerManager = reducerManager;
@@ -46,27 +55,25 @@ export function initStore(initialState = {}, context) {
 	return store;
 }
 
-export const ContainerContext = React.createContext(Container);
-
-export const UserContext = React.createContext<IUser>(null);
-
 export interface ISportyWideStore extends Store {
 	reducerManager: ReducerManager;
 	epicManager: IEpicManager;
-	container: typeof Container;
+	container: ContainerInstance;
 }
 
 function registerContainer({ auth, context }) {
 	const user = auth.user;
 	const csrfToken = auth.csrfToken;
-	Container.set('currentUser', user || null);
-	Container.set('csrfToken', csrfToken || null);
+	const appContainer = Container.of(context.req);
+	appContainer.set('currentUser', user || null);
+	appContainer.set('csrfToken', csrfToken || null);
+	appContainer.set('context', context);
 	if (context.req) {
-		Container.set('baseUrl', `https://${context.req.get('host')}`);
+		appContainer.set('baseUrl', `https://${context.req.get('host')}`);
 	} else {
-		Container.set('baseUrl', window.location.origin);
+		appContainer.set('baseUrl', window.location.origin);
 	}
-	return Container;
+	return appContainer;
 }
 
 function getInitialReducers(initialState, initialReducer) {

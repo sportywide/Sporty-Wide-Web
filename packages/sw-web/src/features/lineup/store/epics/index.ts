@@ -1,4 +1,4 @@
-import { map, concatMap } from 'rxjs/operators';
+import { concatMap, map } from 'rxjs/operators';
 import {
 	CHANGE_STRATEGY,
 	FILL_POSITIONS,

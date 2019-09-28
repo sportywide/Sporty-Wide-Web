@@ -1,6 +1,6 @@
 import React from 'react';
 import { LeagueDto } from '@shared/lib/dtos/leagues/league.dto';
-import { SwLeagueImage, SwLeagueTitle } from '@web/features/leagues/components/league.styled';
+import { SwLeagueImage, SwLeagueTitle } from '@web/features/leagues/base/components/league.styled';
 
 interface IProps {
 	league: LeagueDto;

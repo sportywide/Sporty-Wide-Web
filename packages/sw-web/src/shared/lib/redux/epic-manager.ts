@@ -1,6 +1,6 @@
 import { ActionsObservable, combineEpics, StateObservable } from 'redux-observable';
-import { mergeMap, catchError } from 'rxjs/operators';
-import { BehaviorSubject, EMPTY, Observable, of, merge } from 'rxjs';
+import { catchError, mergeMap } from 'rxjs/operators';
+import { BehaviorSubject, EMPTY, merge, Observable, of } from 'rxjs';
 import { AnyAction } from 'redux';
 import { epicError } from '@web/shared/lib/redux/core.actions';
 import { safeGet } from '@shared/lib/utils/object/get';

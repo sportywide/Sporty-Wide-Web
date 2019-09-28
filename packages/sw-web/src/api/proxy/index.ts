@@ -18,6 +18,7 @@ import {
 	UNAUTHENTICATED,
 	UNAUTHORIZED,
 } from '@web/shared/lib/http/status-codes';
+import { getHeaders } from '@web/shared/lib/auth/helper';
 
 export const devProxy = {
 	'/api': {
@@ -86,16 +87,13 @@ function setReferrerHeader(proxyReq, req: Request, path?: string) {
 
 function handleAuthHeader(proxyReq, req: Request) {
 	req.cookies = req.cookies || {};
-	const jwtPayload = req.cookies[COOKIE_JWT_PAYLOAD];
-	const jwtSignature = req.cookies[COOKIE_JWT_SIGNATURE];
-	const refreshToken = req.cookies[COOKIE_REFRESH_TOKEN];
+	const headers = getHeaders(req);
 
-	if (jwtPayload && jwtSignature) {
-		proxyReq.setHeader('Authorization', `Bearer ${jwtPayload}.${jwtSignature}`);
+	if (!req.get('Authorization')) {
+		proxyReq.setHeader('Authorization', headers.Authorization);
 	}
-
-	if (refreshToken) {
-		proxyReq.setHeader('Refresh-Token', refreshToken);
+	if (!req.get('Refresh-Token')) {
+		proxyReq.setHeader('Refresh-Token', headers['Refresh-Token']);
 	}
 }
 

@@ -1,16 +1,9 @@
-import { Inject, Service } from 'typedi';
-import { IUser } from '@web/shared/lib/interfaces/auth/user';
-import { Observable, of } from 'rxjs';
-import { LeagueDto } from '@shared/lib/dtos/leagues/league.dto';
+import { Injectable } from '@nestjs/common';
 
-@Service({
-	global: true,
-})
-export class UserLeagueService {
-	constructor(@Inject('currentUser') private readonly currentUser: IUser) {}
-
-	loadUserLeagues(userId: number): Observable<LeagueDto[]> {
-		return of([
+@Injectable()
+export class LeagueService {
+	public findAll() {
+		return [
 			{
 				name: 'premier-league',
 				title: 'Premier League',
@@ -36,6 +29,6 @@ export class UserLeagueService {
 				title: 'League One',
 				image: '/static/leagues/serie-a.svg',
 			},
-		]);
+		];
 	}
 }

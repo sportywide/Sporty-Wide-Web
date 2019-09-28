@@ -3,7 +3,7 @@ import { Form, Search } from 'semantic-ui-react';
 import { Debounce } from '@shared/lib/utils/functions/debounce';
 import { useLocation } from '@web/shared/lib/react/hooks';
 import { ContainerContext } from '@web/shared/lib/store';
-import { Container } from 'typedi';
+import { ContainerInstance } from 'typedi';
 import { PlacesService } from '@web/features/address/services/places.service';
 import { AddressDto } from '@shared/lib/dtos/address/address.dto';
 import { noop } from '@shared/lib/utils/functions';
@@ -15,7 +15,7 @@ interface IProps {
 }
 
 const SwPlaceAutoCompleteFieldComponent: React.FC<IProps> = ({ onAddressSelected = noop }) => {
-	const container: typeof Container = useContext(ContainerContext);
+	const container: ContainerInstance = useContext(ContainerContext);
 	const placesService = container.get(PlacesService);
 	const [searchQuery, setSearchQuery] = useState('');
 	const [searching, setSearching] = useState(false);

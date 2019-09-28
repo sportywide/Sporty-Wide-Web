@@ -7,7 +7,7 @@ import {
 	SAVE_BASIC_USER_PROFILE,
 	SAVE_EXTRA_USER_PROFILE,
 } from '@web/features/profile/edit/store/actions/actions.constants';
-import { Container } from 'typedi';
+import { ContainerInstance } from 'typedi';
 import { UserService } from '@web/features/user/services/user.service';
 import {
 	fetchBasicUserProfile,
@@ -28,7 +28,7 @@ export const fetchUserProfileEpic = action$ => {
 	);
 };
 
-export const fetchBasicUserProfileEpic = (action$, state$, { container }: { container: typeof Container }) => {
+export const fetchBasicUserProfileEpic = (action$, state$, { container }: { container: ContainerInstance }) => {
 	const userService = container.get(UserService);
 	return action$
 		.ofType(FETCH_BASIC_USER_PROFILE)
@@ -39,7 +39,7 @@ export const fetchBasicUserProfileEpic = (action$, state$, { container }: { cont
 		);
 };
 
-export const fetchExtraUserProfileEpic = (action$, state$, { container }: { container: typeof Container }) => {
+export const fetchExtraUserProfileEpic = (action$, state$, { container }: { container: ContainerInstance }) => {
 	const userService = container.get(UserService);
 	return action$
 		.ofType(FETCH_EXTRA_USER_PROFILE)
@@ -52,7 +52,7 @@ export const fetchExtraUserProfileEpic = (action$, state$, { container }: { cont
 		);
 };
 
-export const saveBasicUserProfileEpic = (action$, state$, { container }: { container: typeof Container }) => {
+export const saveBasicUserProfileEpic = (action$, state$, { container }: { container: ContainerInstance }) => {
 	const userService = container.get(UserService);
 	return action$.ofType(SAVE_BASIC_USER_PROFILE).pipe(
 		switchMap((action: ActionType<typeof saveBasicUserProfile>) =>
@@ -71,7 +71,7 @@ export const saveBasicUserProfileEpic = (action$, state$, { container }: { conta
 	);
 };
 
-export const saveExtraUserProfileEpic = (action$, state$, { container }: { container: typeof Container }) => {
+export const saveExtraUserProfileEpic = (action$, state$, { container }: { container: ContainerInstance }) => {
 	const userService = container.get(UserService);
 	return action$.ofType(SAVE_EXTRA_USER_PROFILE).pipe(
 		switchMap((action: ActionType<typeof saveExtraUserProfile>) =>

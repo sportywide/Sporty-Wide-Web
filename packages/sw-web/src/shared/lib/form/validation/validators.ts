@@ -1,12 +1,13 @@
 import { UtilService } from '@web/shared/lib/http/util.service';
 import { ucfirst } from '@shared/lib/utils/string/conversion';
-import { Container } from 'typedi';
 import { Debounce } from '@shared/lib/utils/functions/debounce';
+import { Sw } from '@web/shared/lib/sw';
 
 export function validateUnique({ table, field, debounceMs = 500 }) {
 	const debounce = new Debounce(debounceMs);
 	return function(value) {
-		const utilService = Container.get(UtilService);
+		const container = Sw.container;
+		const utilService = container.get(UtilService);
 		if (!value) {
 			return;
 		}
@@ -26,7 +27,8 @@ export function validateUnique({ table, field, debounceMs = 500 }) {
 export function validateExists({ table, field, debounceMs = 500 }) {
 	const debounce = new Debounce(debounceMs);
 	return function(value) {
-		const utilService = Container.get(UtilService);
+		const container = Sw.container;
+		const utilService = container.get(UtilService);
 		if (!value) {
 			return;
 		}

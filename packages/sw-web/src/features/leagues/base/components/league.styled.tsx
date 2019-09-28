@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { Image, GridColumn } from 'semantic-ui-react';
+import { GridColumn, Image } from 'semantic-ui-react';
 
 export const SwLeagueImage = styled(Image)`
 	&&& {

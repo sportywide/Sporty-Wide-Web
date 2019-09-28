@@ -56,7 +56,7 @@ class SwHomePage extends React.Component<IProps, any> {
 				<Button onClick={() => this.props.logout()}>Logout</Button>
 				<h1>Index Page</h1>
 				<CharacterInfo />
-				<Button onClick={() => redirect({ route: 'confirm-email', replace: true })}>Go to other</Button>
+				<Button onClick={() => redirect({ route: 'other', replace: true })}>Go to other</Button>
 				<Segment>
 					<Flag name="ae" />
 					<Flag name="france" />

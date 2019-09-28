@@ -7,12 +7,12 @@ import {
 	CLEAR_POSITION,
 	FILL_POSITION_SUCCESS,
 	FILL_POSITIONS,
+	LOAD_PLAYER_SUCCESS,
+	LOAD_PLAYERS,
 	REMOVE_PLAYER_FROM_LINEUP,
 	SUBSTITUTE_PLAYERS,
 	SWAP_PLAYERS,
 	SWITCH_LINEUP_POSITION,
-	LOAD_PLAYER_SUCCESS,
-	LOAD_PLAYERS,
 } from '@web/features/lineup/store/actions/actions.constants';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { FormationDto } from '@shared/lib/dtos/formation/formation.dto';
