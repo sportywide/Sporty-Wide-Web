@@ -31,25 +31,25 @@ function NavBar(props) {
 			</Menu.Item>
 
 			<Menu.Menu position="right">
-				<Menu.Item active={props.activeItem === 'profile'} onClick={props.handleItemClick('profile')}>
+				<Menu.Item name="profile" active={props.activeItem === 'profile'} onClick={props.handleItemClick('profile')}>
 					<Icon name="user circle" />
 				</Menu.Item>
-				<Menu.Item active={props.activeItem === 'home'} onClick={props.handleItemClick('home')}>
+				<Menu.Item name="home" active={props.activeItem === 'home'} onClick={props.handleItemClick('home')}>
 					<Icon name="home" />
 				</Menu.Item>
-				<Menu.Item active={props.activeItem === 'messages'} onClick={props.handleItemClick('messages')}>
+				<Menu.Item name="messages" active={props.activeItem === 'messages'} onClick={props.handleItemClick('messages')}>
 					<Icon name="conversation" />
 				</Menu.Item>
-				<Menu.Item
-					active={props.activeItem === 'notifications'}
+				<Menu.Item name="notifications"
+						   active={props.activeItem === 'notifications'}
 					onClick={props.handleItemClick('notifications')}
 				>
 					<Icon name="bell" />
 				</Menu.Item>
-				<Menu.Item active={props.activeItem === 'help'} onClick={e => props.handleItemClick('help')}>
+				<Menu.Item name="help"  active={props.activeItem === 'help'} onClick={e => props.handleItemClick('help')}>
 					<Icon name="help" />
 				</Menu.Item>
-				<Menu.Item active={props.activeItem === 'logout'} onClick={() => props.logout()}>
+				<Menu.Item name="logout" active={props.activeItem === 'logout'} onClick={() => props.logout()}>
 					<Icon name="log out" />
 				</Menu.Item>
 			</Menu.Menu>
@@ -76,7 +76,7 @@ class SwIndex extends React.Component<IProps, any> {
 		// return { isServer };
 	}
 
-	handleItemClick = (e, { name }) => (this.setState({ activeItem: name }), console.log(this.state.activeItem));
+	handleItemClick = (e, { name }) => this.setState({ activeItem: name });
 	handleSidebarClick = () => this.setState({ sidebarVisible: !this.state.sidebar_visible });
 
 	componentDidMount() {
