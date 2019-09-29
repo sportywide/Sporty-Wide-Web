@@ -22,7 +22,6 @@ import { AuthorizedApiOperation, NotFoundResponse } from '@api/core/decorators/a
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { ApiValidationService } from '@api/core/services/validation/validation.service';
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
-import { User } from '@schema/user/models/user.entity';
 import { EnvGuard } from '@api/auth/guards/environment.guard';
 import { UserProfileDto } from '@shared/lib/dtos/user/profile/user-profile.dto';
 import { UserProfileService } from '@api/user/services/user-profile.service';

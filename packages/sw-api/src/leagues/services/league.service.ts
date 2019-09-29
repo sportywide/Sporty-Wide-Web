@@ -23,6 +23,30 @@ export class LeagueService extends BaseEntityService<League> {
 			where: {
 				userId,
 			},
+			relations: ['league'],
+		});
+	}
+
+	leaveLeague(userId, leagueId) {
+		return this.userLeagueRepository.delete({
+			userId,
+			leagueId,
+		});
+	}
+
+	async joinLeague(userId, leagueId) {
+		const userLeague = await this.userLeagueRepository.findOne({
+			where: {
+				userId,
+				leagueId,
+			},
+		});
+		if (userLeague) {
+			return userLeague;
+		}
+		return this.userLeagueRepository.insert({
+			userId,
+			leagueId,
 		});
 	}
 }

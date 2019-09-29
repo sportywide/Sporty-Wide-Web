@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Put, UseGuards } from '@nestjs/common';
 import { LeagueService } from '@api/leagues/services/league.service';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { toDto } from '@api/shared/dto/transform';
@@ -17,17 +17,35 @@ export class LeagueController {
 	}
 
 	@UseGuards(JwtAuthGuard)
-	@Get('/:userId')
+	@Get('/user/:userId')
 	public async getUserLeagues(@Param('userId', new ParseIntPipe()) userId: number) {
 		const userLeagues = await this.leagueService.findUserLeagues(userId);
-		return userLeagues.map(userLeague => {
+		return userLeagues.map(userLeague =>
 			toDto({
 				value: {
 					...toDto({ value: userLeague.league, dtoType: LeagueDto }),
 					createdAt: userLeague.createdAt,
 				},
 				dtoType: UserLeagueDto,
-			});
-		});
+			})
+		);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Put('/:leagueId/user/:userId/join')
+	public async joinLeague(
+		@Param('userId', new ParseIntPipe()) userId: number,
+		@Param('leagueId', new ParseIntPipe()) leagueId: number
+	) {
+		await this.leagueService.joinLeague(userId, leagueId);
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@Put('/:leagueId/user/:userId/leave')
+	public async leaveLeague(
+		@Param('userId', new ParseIntPipe()) userId: number,
+		@Param('leagueId', new ParseIntPipe()) leagueId: number
+	) {
+		await this.leagueService.leaveLeague(userId, leagueId);
 	}
 }

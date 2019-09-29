@@ -11,7 +11,7 @@ CREATE TABLE "user_league"
     id         SERIAL PRIMARY KEY,
     user_id    SERIAL REFERENCES public.user (id),
     league_id  SERIAL REFERENCES league (id),
-    created_at date
+    created_at timestamptz DEFAULT CURRENT_TIMESTAMP
 );
 
 INSERT INTO league(name, title, image)

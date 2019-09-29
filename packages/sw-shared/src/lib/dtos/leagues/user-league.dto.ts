@@ -6,3 +6,7 @@ export class UserLeagueDto extends LeagueDto {
 	@Type(type => Date)
 	createdAt: Date;
 }
+
+export class SelectableLeagueDto extends UserLeagueDto {
+	selected: boolean;
+}

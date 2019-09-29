@@ -18,7 +18,7 @@ import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { LocalAuthGuard } from '@api/auth/guards/local.guard';
 import { AuthenticatedGuard } from '@api/auth/guards/authenticated.guard';
 import { RefreshTokenGuard } from '@api/auth/guards/refresh-token.guard';
-import { ApiCreatedResponse, ApiOkResponse, ApiOperation, ApiUseTags, ApiImplicitBody } from '@nestjs/swagger';
+import { ApiCreatedResponse, ApiImplicitBody, ApiOkResponse, ApiOperation, ApiUseTags } from '@nestjs/swagger';
 import { AuthorizedApiOperation } from '@api/core/decorators/api-doc';
 import { getValidationPipe } from '@api/core/pipe/validation';
 import passport from 'passport';

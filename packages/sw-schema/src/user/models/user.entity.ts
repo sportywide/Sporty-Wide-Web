@@ -1,7 +1,7 @@
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { hashPassword } from '@shared/lib/utils/crypto';
-import { BeforeInsert, BeforeUpdate, Column, Entity, Index, JoinColumn, OneToOne, OneToMany } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, Index, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { SocialProvider } from '@shared/lib/dtos/user/enum/social-provider.enum';
 import { BaseEntity } from '@schema/core/base.entity';
 import { TrackTimestamp } from '@schema/core/timestamp/track-timestamp.mixin';
@@ -78,8 +78,8 @@ export class User extends TrackTimestamp(BaseEntity) {
 	})
 	profile: UserProfile;
 
-	@OneToMany('League', (userLeague: any) => userLeague.user)
-	leagues: UserLeague;
+	@OneToMany(type => UserLeague, userLeague => userLeague.user)
+	leagues: UserLeague[];
 
 	@Column({
 		name: 'user_profile_id',

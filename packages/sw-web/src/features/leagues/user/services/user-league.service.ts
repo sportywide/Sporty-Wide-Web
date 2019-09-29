@@ -18,7 +18,15 @@ export class UserLeagueService {
 	loadUserLeagues(userId: number): Observable<UserLeagueDto[]> {
 		return this.apiService
 			.api()
-			.get(`/leagues/${userId}`)
+			.get(`/leagues/user/${userId}`)
 			.pipe(map(({ data: payload }) => payload.map(league => plainToClass(UserLeagueDto, league))));
+	}
+
+	joinLeague({ userId, leagueId }: { userId: number; leagueId: number }) {
+		return this.apiService.api().put(`/leagues/${leagueId}/user/${userId}/join`);
+	}
+
+	leaveLeague({ userId, leagueId }: { userId: number; leagueId: number }) {
+		return this.apiService.api().put(`/leagues/${leagueId}/user/${userId}/leave`);
 	}
 }

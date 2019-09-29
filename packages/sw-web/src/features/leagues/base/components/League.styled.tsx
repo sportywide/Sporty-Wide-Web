@@ -27,4 +27,7 @@ export const SwLeagueTitle = styled.div`
 	text-align: center;
 	font-weight: 700;
 	margin-top: var(--space-2);
+	display: flex;
+	align-items: center;
+	justify-content: center;
 `;

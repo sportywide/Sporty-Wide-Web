@@ -1,6 +1,6 @@
 import { BaseEntity } from '@schema/core/base.entity';
 import { TrackCreated } from '@schema/core/timestamp/track-created.mixin';
-import { Column, Entity, OneToOne, JoinColumn, ManyToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from '@schema/user/models/user.entity';
 import { League } from '@schema/league/models/league.entity';
 
