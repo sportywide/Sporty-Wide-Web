@@ -11,17 +11,18 @@ import { userLeagueReducer } from '@web/features/leagues/user/store/reducers/use
 import { SwLeague } from '@web/features/leagues/base/components/League';
 import { SwLeagueContainer } from '@web/features/leagues/base/components/League.styled';
 import { loadLeagues } from '@web/features/leagues/base/store/actions';
+import { UserLeagueDto } from '@shared/lib/dtos/leagues/user-league.dto';
+import { userLeagueSelector } from '@web/features/leagues/user/store/store/league.selectors';
 import { loadUserLeagues } from '../store/actions';
 
 interface IProps {
-	userLeagueMap?: { [key: number]: LeagueDto[] };
+	leagues: (UserLeagueDto & { selected: boolean })[];
 	loadUserLeagues: typeof loadUserLeagues;
 	loadLeagues: typeof loadLeagues;
 }
 
-const SwUserLeaguesComponent: React.FC<IProps> = ({ userLeagueMap = {}, loadUserLeagues, loadLeagues }) => {
+const SwUserLeaguesComponent: React.FC<IProps> = ({ leagues = [], loadUserLeagues, loadLeagues }) => {
 	const user = useContext(UserContext);
-	const leagues = userLeagueMap[user.id] || [];
 	useEffect(() => {
 		loadUserLeagues(user.id);
 		loadLeagues();
@@ -36,13 +37,13 @@ const SwUserLeaguesComponent: React.FC<IProps> = ({ userLeagueMap = {}, loadUser
 		</Grid>
 	);
 };
-
+const leagueSelector = userLeagueSelector();
 const enhancer = compose(
 	registerEpic(loadUserLeagueEpic),
 	registerReducer({ userLeagues: userLeagueReducer }),
 	connect(
 		state => ({
-			userLeagueMap: state.userLeagues,
+			leagues: leagueSelector(state)(state.auth.user && state.auth.user.id),
 		}),
 		{
 			loadUserLeagues,

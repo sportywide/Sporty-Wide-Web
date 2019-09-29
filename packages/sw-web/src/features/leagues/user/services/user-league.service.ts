@@ -1,41 +1,24 @@
 import { Inject, Service } from 'typedi';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
-import { Observable, of } from 'rxjs';
-import { LeagueDto } from '@shared/lib/dtos/leagues/league.dto';
+import { Observable } from 'rxjs';
+import { ApiService } from '@web/shared/lib/http/api.service';
+import { map } from 'rxjs/operators';
+import { UserLeagueDto } from '@shared/lib/dtos/leagues/user-league.dto';
+import { plainToClass } from 'class-transformer-imp';
 
 @Service({
 	global: true,
 })
 export class UserLeagueService {
-	constructor(@Inject('currentUser') private readonly currentUser: IUser) {}
+	constructor(
+		@Inject('currentUser') private readonly currentUser: IUser,
+		@Inject(type => ApiService) private readonly apiService: ApiService
+	) {}
 
-	loadUserLeagues(userId: number): Observable<LeagueDto[]> {
-		return of([
-			{
-				name: 'premier-league',
-				title: 'Premier League',
-				image: '/static/leagues/premier-league.svg',
-			},
-			{
-				name: 'la-liga',
-				title: 'La Liga',
-				image: '/static/leagues/laliga.svg',
-			},
-			{
-				name: 'bundesliga',
-				title: 'Bundesliga',
-				image: '/static/leagues/bundesliga.svg',
-			},
-			{
-				name: 'serie-a',
-				title: 'Serie A',
-				image: '/static/leagues/serie-a.svg',
-			},
-			{
-				name: 'ligue-one',
-				title: 'League One',
-				image: '/static/leagues/serie-a.svg',
-			},
-		]);
+	loadUserLeagues(userId: number): Observable<UserLeagueDto[]> {
+		return this.apiService
+			.api()
+			.get(`/leagues/${userId}`)
+			.pipe(map(({ data: payload }) => payload.map(league => plainToClass(UserLeagueDto, league))));
 	}
 }

@@ -12,6 +12,7 @@ import { CoreModule } from '@core/core.module';
 import { isDevelopment } from '@shared/lib/utils/env';
 import { SchemaAuthModule } from '@schema/auth/auth.module';
 import { SchemaAddressModule } from '@schema/address/address.module';
+import { SchemaLeagueModule } from '@schema/league/league.module';
 
 const isDev = isDevelopment();
 
@@ -20,6 +21,7 @@ const isDev = isDevelopment();
 		SchemaUserModule,
 		SchemaAuthModule,
 		SchemaAddressModule,
+		SchemaLeagueModule,
 		CoreSchemaModule,
 		TypeOrmModule.forRootAsync({
 			inject: [SCHEMA_CONFIG, CORE_CONFIG, TypeormLoggerService],

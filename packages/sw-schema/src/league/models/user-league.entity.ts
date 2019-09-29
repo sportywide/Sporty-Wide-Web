@@ -12,9 +12,15 @@ export class UserLeague extends TrackCreated(BaseEntity) {
 	})
 	user: User;
 
+	@Column()
+	userId: number;
+
 	@ManyToOne(type => League, { cascade: ['remove'] })
 	@JoinColumn({
 		name: 'league_id',
 	})
 	league: League;
+
+	@Column()
+	leagueId: number;
 }

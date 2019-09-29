@@ -3,7 +3,15 @@ import { GridColumn, Image } from 'semantic-ui-react';
 
 export const SwLeagueImage = styled(Image)`
 	&&& {
-		min-height: 150px;
+		min-height: 200px;
+	}
+`;
+
+export const SwLeagueWrapper = styled.div`
+	padding: 20px;
+	border: 1px solid rgba(0, 0, 0, 0);
+	:hover {
+		border: 1px solid black;
 	}
 `;
 
