@@ -12,7 +12,7 @@ import { authReducer } from '@web/features/auth/store/reducers';
 import { registerEpic } from '@web/shared/lib/redux/register-epic';
 import { loginEpic } from '@web/features/auth/store/epics';
 import { login } from '@web/features/auth/store/actions';
-import { SwPrimaryBackGround } from '@web/shared/styled/core.styled';
+import { SwPrimaryBackGround } from '@web/shared/styled/Background.styled';
 import { Container, Grid, GridColumn } from 'semantic-ui-react';
 
 interface IProps {

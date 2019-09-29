@@ -8,7 +8,7 @@ import {
 } from '@web/features/lineup/components/item.constant';
 import { noop } from '@shared/lib/utils/functions';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
-import { SwPositionCircle } from '@web/features/lineup/components/pitch/markers/position-circle.styled';
+import { SwPositionCircle } from '@web/features/lineup/components/pitch/markers/PositionBox.styled';
 
 interface IProps {
 	position: any;

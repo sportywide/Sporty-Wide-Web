@@ -8,7 +8,7 @@ import {
 	SwPlayerLogo,
 	SwStatsLabel,
 	SwTeamLogo,
-} from '@web/features/lineup/components/players/player-item.styled';
+} from '@web/features/lineup/components/players/PlayerItem.styled';
 
 interface IProps {
 	player: PlayerDto;

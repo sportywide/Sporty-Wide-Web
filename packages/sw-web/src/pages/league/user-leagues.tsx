@@ -1,6 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
-import { SwContainer, SwGreyBackground } from '@web/shared/styled/core.styled';
+import { SwContainer, SwGreyBackground } from '@web/shared/styled/Background.styled';
 import { SwUserLeagues } from '@web/features/leagues/user/components/UserLeague';
 import { Header } from 'semantic-ui-react';
 

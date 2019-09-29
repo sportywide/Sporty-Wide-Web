@@ -10,7 +10,7 @@ import { signup } from '@web/features/auth/store/actions';
 import { compose } from '@shared/lib/utils/fp/combine';
 import { signupEpic } from '@web/features/auth/store/epics';
 import { authReducer } from '@web/features/auth/store/reducers';
-import { SwPrimaryBackGround } from '@web/shared/styled/core.styled';
+import { SwPrimaryBackGround } from '@web/shared/styled/Background.styled';
 import { Container, Grid, GridColumn } from 'semantic-ui-react';
 
 interface IProps {

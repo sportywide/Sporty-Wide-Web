@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { checkUser, notAllowActive } from '@web/shared/lib/auth/check-user';
 import Head from 'next/head';
-import { SwPrimaryBackGround } from '@web/shared/styled/core.styled';
+import { SwPrimaryBackGround } from '@web/shared/styled/Background.styled';
 import { Container, Grid, GridColumn } from 'semantic-ui-react';
 import { SwConfirmEmail } from '@web/features/auth/components/ConfirmEmail';
 import { compose } from '@shared/lib/utils/fp/combine';

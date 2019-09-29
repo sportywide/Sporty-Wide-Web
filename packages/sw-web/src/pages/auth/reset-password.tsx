@@ -1,5 +1,5 @@
 import React from 'react';
-import { SwFluidContainer, SwPrimaryBackGround } from '@web/shared/styled/core.styled';
+import { SwFluidContainer, SwPrimaryBackGround } from '@web/shared/styled/Background.styled';
 import Head from 'next/head';
 import { Grid, GridColumn } from 'semantic-ui-react';
 import { allowAnonymousOnly, checkUser } from '@web/shared/lib/auth/check-user';

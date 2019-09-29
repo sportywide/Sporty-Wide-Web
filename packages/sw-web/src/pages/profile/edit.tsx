@@ -1,6 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
-import { SwFluidContainer, SwGreyBackground } from '@web/shared/styled/core.styled';
+import { SwFluidContainer, SwGreyBackground } from '@web/shared/styled/Background.styled';
 import { SwEditProfile } from '@web/features/profile/edit/components/EditProfile';
 import { Grid, GridColumn, Loader } from 'semantic-ui-react';
 import { withContext } from '@web/shared/lib/context/providers';
