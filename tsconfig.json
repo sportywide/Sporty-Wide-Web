@@ -13,7 +13,7 @@
 		"strict": true,
 		"jsx": "react",
 		"strictPropertyInitialization": false,
-		"forceConsistentCasingInFileNames": true,
+		"forceConsistentCasingInFileNames": false,
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
 		"diagnostics": false,

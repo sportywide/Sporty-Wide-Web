@@ -89,10 +89,10 @@ function handleAuthHeader(proxyReq, req: Request) {
 	req.cookies = req.cookies || {};
 	const headers = getHeaders(req);
 
-	if (!req.get('Authorization')) {
+	if (!req.get('Authorization') && headers.Authorization) {
 		proxyReq.setHeader('Authorization', headers.Authorization);
 	}
-	if (!req.get('Refresh-Token')) {
+	if (!req.get('Refresh-Token') && headers['Refresh-Token']) {
 		proxyReq.setHeader('Refresh-Token', headers['Refresh-Token']);
 	}
 }

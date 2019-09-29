@@ -9,7 +9,7 @@ import { loadUserLeagueEpic } from '@web/features/leagues/user/store/epics';
 import { registerReducer } from '@web/shared/lib/redux/register-reducer';
 import { userLeagueReducer } from '@web/features/leagues/user/store/reducers/user-league-reducer';
 import { SwLeague } from '@web/features/leagues/base/components/League';
-import { SwLeagueContainer } from '@web/features/leagues/base/components/league.styled';
+import { SwLeagueContainer } from '@web/features/leagues/base/components/League.styled';
 import { loadLeagues } from '@web/features/leagues/base/store/actions';
 import { loadUserLeagues } from '../store/actions';
 

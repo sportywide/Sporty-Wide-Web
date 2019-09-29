@@ -1,8 +1,8 @@
 import React from 'react';
 import { Dimmer, List, Loader } from 'semantic-ui-react';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
-import { LineupContainer } from '@web/features/lineup/components/pitch/Lineup.styled';
 import { SwPlayerItem } from '@web/features/lineup/components/players/PlayerItem';
+import { LineupContainer } from './Lineup.styled';
 
 interface IProps {
 	players: PlayerDto[];

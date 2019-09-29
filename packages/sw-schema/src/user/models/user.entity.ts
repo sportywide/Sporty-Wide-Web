@@ -1,13 +1,14 @@
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { hashPassword } from '@shared/lib/utils/crypto';
-import { BeforeInsert, BeforeUpdate, Column, Entity, Index, JoinColumn, OneToOne } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, Index, JoinColumn, OneToOne, OneToMany } from 'typeorm';
 import { SocialProvider } from '@shared/lib/dtos/user/enum/social-provider.enum';
 import { BaseEntity } from '@schema/core/base.entity';
 import { TrackTimestamp } from '@schema/core/timestamp/track-timestamp.mixin';
 import { BadRequestException } from '@nestjs/common';
 import { UserGender } from '@shared/lib/dtos/user/enum/user-gender.enum';
 import { UserProfile } from '@schema/user/profile/models/user-profile.entity';
+import { UserLeague } from '@schema/league/models/user-league.entity';
 
 @Entity()
 export class User extends TrackTimestamp(BaseEntity) {
@@ -76,6 +77,9 @@ export class User extends TrackTimestamp(BaseEntity) {
 		name: 'user_profile_id',
 	})
 	profile: UserProfile;
+
+	@OneToMany('League', (userLeague: any) => userLeague.user)
+	leagues: UserLeague;
 
 	@Column({
 		name: 'user_profile_id',
