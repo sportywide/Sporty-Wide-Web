@@ -72,19 +72,11 @@ export class User extends TrackTimestamp(BaseEntity) {
 
 	@Column() refreshToken?: string;
 
-	@OneToOne(type => UserProfile, { cascade: true })
-	@JoinColumn({
-		name: 'user_profile_id',
-	})
-	profile: UserProfile;
-
 	@OneToMany(type => UserLeague, userLeague => userLeague.user)
 	leagues: UserLeague[];
 
-	@Column({
-		name: 'user_profile_id',
-	})
-	profileId: number;
+	@OneToOne(type => UserProfile, userProfile => userProfile.user, { cascade: true })
+	profile: UserProfile;
 
 	get name() {
 		return [this.firstName, this.lastName].filter(value => value).join(' ');

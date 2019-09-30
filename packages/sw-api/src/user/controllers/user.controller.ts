@@ -180,15 +180,16 @@ export class UserController {
 		@Query() query: any
 	): Promise<UserProfileDto> {
 		const allowedRelations = ['address'];
-		const relations = (query.relations || []).filter(relation => allowedRelations.includes(relation));
-		const user = await this.userService.findById({ id });
+		const relations = (query.relations || [])
+			.filter(relation => allowedRelations.includes(relation))
+			.map(relation => `profile.${relation}`);
+		const user = await this.userService.findById({ id, relations: ['profile', ...relations] });
 		if (!user) {
 			throw new NotFoundException(`User with id ${id} cannot be found`);
 		}
-		const userProfileId = user.profileId;
-		const userProfile = await this.userProfileService.findById({ id: userProfileId, relations });
+
 		return toDto({
-			value: userProfile,
+			value: user.profile || {},
 			dtoType: UserProfileDto,
 			options: {
 				ignoreDecorators: true,
