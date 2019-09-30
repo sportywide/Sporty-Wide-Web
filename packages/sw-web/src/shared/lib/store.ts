@@ -21,9 +21,9 @@ export interface IDependencies {
 	container: ContainerInstance;
 }
 
-export const ContainerContext = React.createContext(null);
+export const ContainerContext = React.createContext<ContainerInstance>(null as any);
 
-export const UserContext = React.createContext<IUser>(null);
+export const UserContext = React.createContext<IUser>(null as any);
 
 export function initStore(initialState = {}, context) {
 	if (context && context.store) {

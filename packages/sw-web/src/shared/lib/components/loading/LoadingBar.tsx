@@ -1,11 +1,11 @@
 import React, { useContext, useEffect } from 'react';
-import { ReactReduxContext } from 'react-redux';
+import { useStore } from 'react-redux';
 import ReactLoadingBar, { hideLoading, showLoading } from 'react-redux-loading-bar';
 import { ContainerInstance } from 'typedi';
 import { ApiService } from '@web/shared/lib/http/api.service';
 
 const LoadingBarComponent: React.FC<any> = () => {
-	const { store } = useContext(ReactReduxContext);
+	const store = useStore();
 	const container: ContainerInstance = store.container;
 	const apiService = container.get(ApiService);
 

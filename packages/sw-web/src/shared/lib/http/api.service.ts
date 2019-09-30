@@ -6,6 +6,7 @@ import { createRefreshTokenInterceptor } from '@web/shared/lib/http/refresh-toke
 import { BehaviorSubject, Subject } from 'rxjs';
 import { getHeaders } from '@web/shared/lib/auth/helper';
 import { isBrowser } from '@web/shared/lib/environment';
+import { filterValues } from '@shared/lib/utils/object/filter';
 
 @Service({ global: true })
 export class ApiService {
@@ -17,7 +18,9 @@ export class ApiService {
 	constructor(@Inject('baseUrl') private readonly baseUrl: string, @Inject('context') private readonly context) {
 		const headers = getHeaders(context.req);
 		if (headers) {
-			axios.defaults.headers = headers;
+			axios.defaults.headers = filterValues(headers, value => {
+				return value != undefined;
+			});
 		}
 		this.apiBase = axios.create({
 			baseURL: `${baseUrl}/api`,

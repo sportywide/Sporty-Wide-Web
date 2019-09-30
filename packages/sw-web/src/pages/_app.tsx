@@ -18,7 +18,7 @@ import { LoadingBar } from '@web/shared/lib/components/loading/LoadingBar';
 
 interface IProps {
 	store: ISportyWideStore;
-	user?: IUser;
+	user: IUser;
 	flashMessages: {};
 }
 

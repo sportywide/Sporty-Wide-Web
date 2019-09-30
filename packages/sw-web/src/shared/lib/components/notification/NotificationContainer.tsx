@@ -1,6 +1,6 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import Notifications, { error, warning } from 'react-notification-system-redux';
-import { connect, ReactReduxContext } from 'react-redux';
+import { connect, useStore } from 'react-redux';
 import { ApiService } from '@web/shared/lib/http/api.service';
 import { UNAUTHENTICATED } from '@web/shared/lib/http/status-codes';
 import { safeGet } from '@shared/lib/utils/object/get';
@@ -11,7 +11,7 @@ interface IProps {
 }
 
 const NotificationContainer: React.FC<IProps> = function({ notifications }) {
-	const { store } = useContext(ReactReduxContext);
+	const store = useStore();
 	const container: ContainerInstance = store.container;
 	const apiService = container.get(ApiService);
 

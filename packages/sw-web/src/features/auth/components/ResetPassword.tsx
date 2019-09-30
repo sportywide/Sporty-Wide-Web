@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { ReactReduxContext } from 'react-redux';
+import { useStore } from 'react-redux';
 import { Formik, FormikProps } from 'formik';
 import { Divider, Form, Header, Image, Segment } from 'semantic-ui-react';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
@@ -18,7 +18,7 @@ interface IProps {
 	token: string;
 }
 const SwResetPasswordComponent: React.FC<IProps> = ({ user, token }) => {
-	const { store } = useContext(ReactReduxContext);
+	const store = useStore();
 	const container = useContext(ContainerContext);
 	const MarginDivider = styled(Divider)`
 		&&& {

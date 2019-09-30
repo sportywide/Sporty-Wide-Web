@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { ReactReduxContext } from 'react-redux';
+import { useStore } from 'react-redux';
 import { Formik, FormikProps } from 'formik';
 import { Divider, Form, Header, Image, Segment } from 'semantic-ui-react';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
@@ -17,7 +17,7 @@ const schema = yup.object().shape({
 
 const SwForgotPasswordComponent: React.FC<any> = () => {
 	const [sendingRequest, setSendingRequest] = useState(false);
-	const { store } = useContext(ReactReduxContext);
+	const store = useStore();
 	const container = useContext(ContainerContext);
 	const MarginDivider = styled(Divider)`
 		&&& {
