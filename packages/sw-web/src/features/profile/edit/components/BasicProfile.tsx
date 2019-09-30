@@ -32,9 +32,9 @@ const SwBasicProfileComponent: React.FC<IProps> = ({ user, didSaveProfile }) => 
 			render={props => {
 				return (
 					<>
-						<div className={'ub-flex ub-flex-center ub-mb4'}>
+						<div className={'sw-flex sw-flex-center sw-mb4'}>
 							<Image src={user.profileUrl || gravatar(user.email)} size={'small'} circular />
-							<span className={'ub-ml4'}>
+							<span className={'sw-ml4'}>
 								<Header as={'h4'}>{user.username}</Header>
 							</span>
 						</div>

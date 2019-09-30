@@ -39,7 +39,7 @@ const SwPitchComponent: React.FC<IProps> = function({
 
 	return (
 		<SwStyledPitch ref={drop}>
-			<div className={'ub-relative'}>
+			<div className={'sw-relative'}>
 				<Measure
 					onResize={contentRef => {
 						setRect(contentRef.entry || {});

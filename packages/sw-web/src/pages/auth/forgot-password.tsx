@@ -12,7 +12,7 @@ class SwForgotPasswordPage extends React.Component<any> {
 				<Head>
 					<title>Forgot your password</title>
 				</Head>
-				<SwPrimaryBackGround className={'ub-flex ub-flex-center'}>
+				<SwPrimaryBackGround className={'sw-flex sw-flex-center'}>
 					<SwFluidContainer>
 						<Grid verticalAlign={'middle'} centered>
 							<GridColumn mobile={14} tablet={8} computer={6}>

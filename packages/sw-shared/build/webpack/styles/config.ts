@@ -25,7 +25,7 @@ export function makeConfig({ entries, output }: { entries: any; output: string }
 				}),
 				css({
 					styleLoader: false,
-					sourceMap: false,
+					sourceMap: isDevelopment(),
 				}),
 				isDevelopment()
 					? none()
@@ -70,7 +70,7 @@ export function makeConfig({ entries, output }: { entries: any; output: string }
 				[
 					{
 						from: {
-							glob: '*.min.css',
+							glob: 'semantic.min.css',
 						},
 						to: path.resolve(output),
 						context: path.resolve(paths.project.root, 'node_modules', 'sporty-wide-style', 'dist'),

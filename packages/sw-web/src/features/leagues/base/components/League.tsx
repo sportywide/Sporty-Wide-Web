@@ -13,7 +13,7 @@ const SwLeagueComponent: React.FC<IProps> = ({ league, onSelect }) => {
 		<SwLeagueWrapper onClick={() => onSelect(league)}>
 			<SwLeagueImage size={'small'} src={league.image} />
 			<SwLeagueTitle>
-				<span className={'ub-mr1'}>{league.title}</span>
+				<span className={'sw-mr1'}>{league.title}</span>
 				{league.selected && <Icon color={'green'} size={'small'} name={'check circle'} />}
 			</SwLeagueTitle>
 		</SwLeagueWrapper>

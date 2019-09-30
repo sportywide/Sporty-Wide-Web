@@ -23,7 +23,7 @@ const SwLoginFormComponent: React.FC<IProps> = props => {
 
 	function renderForm(props: FormikProps<any>) {
 		return (
-			<div className={'ub-mb2'}>
+			<div className={'sw-mb2'}>
 				<Form className="ui form" onSubmit={props.handleSubmit}>
 					<div className="field">
 						<SwFormField
@@ -48,7 +48,7 @@ const SwLoginFormComponent: React.FC<IProps> = props => {
 							}}
 						/>
 						<Link route={'forgot-password'}>
-							<a className="ub-flex ub-flex-column ub-mb2 ub-right">Forgot your password?</a>
+							<a className="sw-flex sw-flex-column sw-mb2 sw-right">Forgot your password?</a>
 						</Link>
 					</div>
 

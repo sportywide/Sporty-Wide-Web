@@ -23,7 +23,7 @@ const SwSignupFormComponent: React.FC<IProps> = props => {
 
 	function renderForm(props: FormikProps<any>) {
 		return (
-			<div className="ub-mb2">
+			<div className="sw-mb2">
 				<Form className="ui form" onSubmit={props.handleSubmit}>
 					<div className="two fields">
 						<SwFormField

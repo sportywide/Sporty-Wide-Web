@@ -41,12 +41,12 @@ class SwHomePage extends React.Component<IProps, any> {
 
 	render() {
 		return (
-			<div className="ub-p4">
+			<div className="sw-p4">
 				<Head>
 					<title>SportyWide</title>
 				</Head>
 				{this.props.user && (
-					<div className="ub-mb1">
+					<div className="sw-mb1">
 						<h5>Current user</h5>
 						<div>Email: {this.props.user.email}</div>
 						<div>Name: {this.props.user.name}</div>

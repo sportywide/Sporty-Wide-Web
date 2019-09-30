@@ -1,0 +1,55 @@
+@import '../defaults';
+
+.sw-flex {
+	display: flex;
+}
+
+.sw-flex-column {
+	flex-direction: column;
+}
+.sw-flex-wrap {
+	flex-wrap: wrap;
+}
+
+.sw-flex-center {
+	align-items: center;
+}
+.sw-flex-baseline {
+	align-items: baseline;
+}
+.sw-flex-stretch {
+	align-items: stretch;
+}
+.sw-flex-start {
+	align-items: flex-start;
+}
+.sw-flex-end {
+	align-items: flex-end;
+}
+
+.sw-flex-justify {
+	justify-content: space-between;
+}
+
+/*
+ * 1.sw- Fix for Chrome 44 bug. https://code.google.com/p/chromium/issues/detail?id=506893
+ */
+
+.sw-flex-auto {
+	flex: 1 1 auto;
+	min-width: 0; /* 1 */
+	min-height: 0; /* 1 */
+}
+.sw-flex-grow {
+	flex: 1 0 auto;
+}
+.sw-flex-none {
+	flex: none;
+}
+
+.sw-flex-first {
+	order: -1;
+}
+.sw-flex-last {
+	order: 99999;
+}

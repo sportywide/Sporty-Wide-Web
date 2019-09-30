@@ -29,8 +29,8 @@ const SwConfirmEmailComponent: React.FC<IProps> = props => {
 	};
 
 	return (
-		<Segment className={'ub-flex ub-flex-column'}>
-			<Header as={'h3'} className={'ub-align-self-center'} icon>
+		<Segment className={'sw-flex sw-flex-column'}>
+			<Header as={'h3'} className={'sw-align-self-center'} icon>
 				We&apos;ve Sent You a Confirmation Email
 				<Icon name="mail" />
 				<Header.Subheader>Click the link in your email to confirm your account.</Header.Subheader>
@@ -39,7 +39,7 @@ const SwConfirmEmailComponent: React.FC<IProps> = props => {
 				</Header.Subheader>
 			</Header>
 			{isFormHidden && (
-				<a style={{ cursor: 'pointer' }} className={'ub-align-self-center'} onClick={showForm}>
+				<a className={'sw-align-self-center sw-cursor-pointer'} onClick={showForm}>
 					Resend verfication email
 				</a>
 			)}
@@ -53,7 +53,7 @@ const SwConfirmEmailComponent: React.FC<IProps> = props => {
 
 	function renderForm(props: FormikProps<any>) {
 		return (
-			<Form className={'ub-mt3'} onSubmit={props.handleSubmit}>
+			<Form className={'sw-mt3'} onSubmit={props.handleSubmit}>
 				<SwFormField
 					name="email"
 					component={Form.Input}

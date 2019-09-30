@@ -24,7 +24,7 @@ class SwConfirmEmailPage extends React.Component<any> {
 					<title>Verify your email</title>
 				</Head>
 				<SwPrimaryBackGround>
-					<Container style={{ width: '100%' }} className="ub-py4">
+					<Container style={{ width: '100%' }} className="sw-py4">
 						<Grid verticalAlign={'middle'} centered>
 							<GridColumn mobile={14} tablet={8} computer={6}>
 								<SwConfirmEmail onResend={email => this.props.resendVerificationEmail(email)} />

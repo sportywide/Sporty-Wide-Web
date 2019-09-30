@@ -18,7 +18,6 @@ import { EMAIL_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import { Token } from '@schema/auth/models/token.entity';
 import { TokenType } from '@schema/auth/models/enums/token-type.token';
-import { StylesheetService } from '@email/core/email/styles/styles.service';
 import { TemplateService } from '@email/core/email/template/template.service';
 
 @Queue({
@@ -32,7 +31,6 @@ export class UserEmailProcessor extends SwQueueProcessor {
 		@Inject(EMAIL_LOGGER) logger: Logger,
 		@InjectSwRepository(User) private readonly userRepository: SwRepository<User>,
 		@InjectSwRepository(Token) private readonly tokenRepository: SwRepository<Token>,
-		private readonly stylesheetService: StylesheetService,
 		private readonly templateService: TemplateService
 	) {
 		super(logger);
@@ -54,13 +52,13 @@ export class UserEmailProcessor extends SwQueueProcessor {
 		if (!token) {
 			throw new Error('Token does not exist');
 		}
-		const { template, css } = await this.getEmailContent({
+		const { template, css } = await this.emailService.getEmailContent({
 			templateFile: 'auth/verify-email.pug',
 			cssFile: 'verify-email.min.css',
 		});
 		const mailData: MailDto = {
-			from: this.getSupportUserEmail(),
-			to: this.getUserEmail(user),
+			from: this.emailService.getSupportUserEmail(),
+			to: this.emailService.getUserEmail(user),
 			subject: 'You have signed up for sportywide',
 			html: this.templateService.injectCss(
 				template({
@@ -92,13 +90,13 @@ export class UserEmailProcessor extends SwQueueProcessor {
 		if (!token) {
 			throw new Error('Token does not exist');
 		}
-		const { template, css } = await this.getEmailContent({
+		const { template, css } = await this.emailService.getEmailContent({
 			templateFile: 'auth/forgot-password.pug',
 			cssFile: 'forgot-password.min.css',
 		});
 		const mailData: MailDto = {
-			from: this.getSupportUserEmail(),
-			to: this.getUserEmail(user),
+			from: this.emailService.getSupportUserEmail(),
+			to: this.emailService.getUserEmail(user),
 			subject: 'Reset your password',
 			html: this.templateService.injectCss(
 				template({
@@ -111,32 +109,5 @@ export class UserEmailProcessor extends SwQueueProcessor {
 		};
 
 		return this.emailService.sendMail(mailData);
-	}
-
-	private getSupportUserEmail() {
-		return {
-			address: this.coreConfig.get('support_user:email'),
-			name: this.coreConfig.get('support_user:name'),
-		};
-	}
-
-	private getUserEmail(user: User) {
-		return {
-			address: user.email,
-			name: user.name,
-		};
-	}
-
-	private async getEmailContent({ templateFile, cssFile }: { templateFile: string; cssFile: string }) {
-		const [compiledTemplate, baseCss, emailCss] = await Promise.all([
-			this.templateService.compile(templateFile),
-			this.stylesheetService.css('basscss.min.css'),
-			cssFile ? this.stylesheetService.css(cssFile) : Promise.resolve(''),
-		]);
-
-		return {
-			template: compiledTemplate,
-			css: baseCss + emailCss,
-		};
 	}
 }

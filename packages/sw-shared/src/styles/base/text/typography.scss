@@ -1,0 +1,76 @@
+.sw-font-family-inherit {
+	font-family: inherit;
+}
+.sw-font-size-inherit {
+	font-size: inherit;
+}
+.sw-text-decoration-none {
+	text-decoration: none;
+}
+
+.sw-bold {
+	font-weight: var(--bold-font-weight, bold);
+}
+.sw-regular {
+	font-weight: normal;
+}
+.sw-italic {
+	font-style: italic;
+}
+.sw-caps {
+	text-transform: uppercase;
+	letter-spacing: var(--caps-letter-spacing);
+}
+
+.sw-left-align {
+	text-align: left;
+}
+
+.sw-center {
+	text-align: center;
+}
+.sw-right-align {
+	text-align: right;
+}
+.sw-justify {
+	text-align: justify;
+}
+
+.sw-nowrap {
+	white-space: nowrap;
+}
+.sw-break-word {
+	word-wrap: break-word;
+}
+
+.sw-line-height-1 {
+	line-height: var(--line-height-1);
+}
+.sw-line-height-2 {
+	line-height: var(--line-height-2);
+}
+.sw-line-height-3 {
+	line-height: var(--line-height-3);
+}
+.sw-line-height-4 {
+	line-height: var(--line-height-4);
+}
+
+.sw-list-style-none {
+	list-style: none;
+}
+.sw-underline {
+	text-decoration: underline;
+}
+
+.sw-truncate {
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.sw-list-reset {
+	list-style: none;
+	padding-left: 0;
+}

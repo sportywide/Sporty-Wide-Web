@@ -26,12 +26,12 @@ const SwForgotPasswordComponent: React.FC<any> = () => {
 		}
 	`;
 	return (
-		<Segment className={'ub-flex ub-flex-column'}>
-			<Image className={'ub-align-self-center'} circular size={'tiny'} src={require('@web/static/logo.svg')} />
-			<Header as={'h3'} className={'ub-align-self-center'}>
+		<Segment className={'sw-flex sw-flex-column'}>
+			<Image className={'sw-align-self-center'} circular size={'tiny'} src={require('@web/static/logo.svg')} />
+			<Header as={'h3'} className={'sw-align-self-center'}>
 				Reset your password
 			</Header>
-			<span className={'ub-center ub-mt2'}>Please enter your email to reset your password</span>
+			<span className={'sw-center sw-mt2'}>Please enter your email to reset your password</span>
 			<MarginDivider />
 			<Formik initialValues={{}} onSubmit={sendForgotPasswordEmail} validationSchema={schema}>
 				{renderForm}
@@ -57,8 +57,8 @@ const SwForgotPasswordComponent: React.FC<any> = () => {
 
 	function renderForm(props: FormikProps<any>) {
 		return (
-			<div className={'ub-px3'}>
-				<Form className={'ub-mt2'} onSubmit={props.handleSubmit}>
+			<div className={'sw-px3'}>
+				<Form className={'sw-mt2'} onSubmit={props.handleSubmit}>
 					<SwFormField
 						name="email"
 						component={Form.Input}

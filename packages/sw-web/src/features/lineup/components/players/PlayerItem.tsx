@@ -28,7 +28,7 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 					<div ref={preview}>
 						<SwPlayerLogo circular avatar src={player.image} />
 					</div>
-					<div className={'ub-flex-grow'}>
+					<div className={'sw-flex-grow'}>
 						<span>
 							{player.shirt}. {player.name}
 						</span>
@@ -40,7 +40,7 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 							))}
 						</div>
 					</div>
-					<div className={'ub-mr2'}>
+					<div className={'sw-mr2'}>
 						<SwStatsLabel circular size={'small'} color={getRatingColor(player.rating)}>
 							{player.rating}
 						</SwStatsLabel>

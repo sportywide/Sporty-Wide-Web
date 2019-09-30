@@ -1,0 +1,49 @@
+.sw-inline {
+	display: inline;
+}
+.sw-block {
+	display: block;
+}
+.sw-inline-block {
+	display: inline-block;
+}
+.sw-table {
+	display: table;
+}
+.sw-table-cell {
+	display: table-cell;
+}
+
+.sw-overflow-hidden {
+	overflow: hidden;
+}
+.sw-overflow-scroll {
+	overflow: scroll;
+}
+.sw-overflow-auto {
+	overflow: auto;
+}
+
+.sw-clearfix:before,
+.sw-clearfix:after {
+	content: ' ';
+	display: table;
+}
+.sw-clearfix:after {
+	clear: both;
+}
+
+.sw-left {
+	float: left;
+}
+.sw-right {
+	float: right;
+}
+
+.sw-fit {
+	max-width: 100%;
+}
+
+.sw-border-box {
+	box-sizing: border-box;
+}

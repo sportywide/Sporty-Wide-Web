@@ -16,7 +16,7 @@ interface IProps {
 
 const SwEditProfileComponent: React.FC<IProps> = ({ userProfile, saveBasicUserProfile, saveExtraUserProfile }) => {
 	return (
-		<div className={'ub-mt4'}>
+		<div className={'sw-mt4'}>
 			<SwFormSegment>
 				<Header as={'h3'}> Basic Profile </Header>
 				<SwBasicProfile

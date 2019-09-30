@@ -28,12 +28,12 @@ const SwResetPasswordComponent: React.FC<IProps> = ({ user, token }) => {
 	`;
 
 	return (
-		<Segment className={'ub-flex ub-flex-column'}>
-			<Image className={'ub-align-self-center'} circular size={'tiny'} src={require('@web/static/logo.svg')} />
-			<Header as={'h3'} className={'ub-align-self-center'}>
+		<Segment className={'sw-flex sw-flex-column'}>
+			<Image className={'sw-align-self-center'} circular size={'tiny'} src={require('@web/static/logo.svg')} />
+			<Header as={'h3'} className={'sw-align-self-center'}>
 				Hello {user.firstName}
 			</Header>
-			<span className={'ub-center ub-mt2'}>Please enter your new password</span>
+			<span className={'sw-center sw-mt2'}>Please enter your new password</span>
 			<MarginDivider />
 			<Formik initialValues={{}} onSubmit={resetPassword} validationSchema={getSchemaByType(ResetPasswordDto)}>
 				{renderForm}
@@ -66,7 +66,7 @@ const SwResetPasswordComponent: React.FC<IProps> = ({ user, token }) => {
 
 	function renderForm(props: FormikProps<any>) {
 		return (
-			<div className={'ub-px3'}>
+			<div className={'sw-px3'}>
 				<Form onSubmit={props.handleSubmit}>
 					<SwPasswordField
 						name="password"
