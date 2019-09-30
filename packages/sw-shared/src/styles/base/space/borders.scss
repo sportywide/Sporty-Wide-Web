@@ -1,0 +1,57 @@
+.sw-border {
+	border-style: solid;
+	border-width: var(--border-width);
+	border-color: var(--border-color);
+}
+
+.sw-border-top {
+	border-top-style: solid;
+	border-top-width: var(--border-width);
+	border-top-color: var(--border-color);
+}
+
+.sw-border-right {
+	border-right-style: solid;
+	border-right-width: var(--border-width);
+	border-right-color: var(--border-color);
+}
+
+.sw-border-bottom {
+	border-bottom-style: solid;
+	border-bottom-width: var(--border-width);
+	border-bottom-color: var(--border-color);
+}
+
+.sw-border-left {
+	border-left-style: solid;
+	border-left-width: var(--border-width);
+	border-left-color: var(--border-color);
+}
+
+.sw-border-none {
+	border: 0;
+}
+
+.sw-rounded {
+	border-radius: var(--border-radius);
+}
+.sw-circle {
+	border-radius: 50%;
+}
+
+.sw-rounded-top {
+	border-radius: var(--border-radius) var(--border-radius) 0 0;
+}
+.sw-rounded-right {
+	border-radius: 0 var(--border-radius) var(--border-radius) 0;
+}
+.sw-rounded-bottom {
+	border-radius: 0 0 var(--border-radius) var(--border-radius);
+}
+.sw-rounded-left {
+	border-radius: var(--border-radius) 0 0 var(--border-radius);
+}
+
+.sw-not-rounded {
+	border-radius: 0;
+}

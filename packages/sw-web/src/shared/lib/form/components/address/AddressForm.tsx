@@ -28,7 +28,7 @@ const SwAddressFormComponent: React.FC<IProps> = ({
 	const [stateId, setStateId] = useState<number | null | undefined>(undefined);
 	return (
 		<>
-			<div className={'ub-mb1'}>
+			<div className={'sw-mb1'}>
 				<a
 					onClick={() => {
 						onToggleAutoCompleteField(!isShowingAutoComplete);

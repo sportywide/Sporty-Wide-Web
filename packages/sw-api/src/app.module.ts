@@ -7,9 +7,10 @@ import { SharedModule } from '@api/shared/shared.module';
 import { UserModule } from '@api/user/user.module';
 import { CoreApiModule } from '@api/core/core-api.module';
 import { CoreModule } from '@core/core.module';
+import { LeagueModule } from '@api/leagues/league.module';
 
 @Module({
-	imports: [AuthModule, SharedModule, SchemaModule, UserModule, CoreApiModule, CoreModule],
+	imports: [AuthModule, SharedModule, SchemaModule, UserModule, LeagueModule, CoreApiModule, CoreModule],
 	controllers: [AppController],
 	providers: [AppService],
 })

@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState, useMemo } from 'react';
 import { FormFieldProps, SwFormField } from '@web/shared/lib/form/components/FormField';
 import { Form, Icon, Progress } from 'semantic-ui-react';
 
@@ -27,19 +27,22 @@ export const SwPasswordField: React.FC<PasswordFieldProps> = ({
 		},
 		[setPassword, setFeedback, setScore]
 	);
+	const icon = useMemo(() => {
+		return (
+			<Icon
+				onClick={() => setIsShowingPassword(!isShowingPassword)}
+				name={isShowingPassword ? 'eye' : 'eye slash'}
+				link
+			/>
+		);
+	}, [setIsShowingPassword, isShowingPassword]);
 	return (
-		<div className={`ub-flex ub-flex-column ${className}`}>
+		<div className={`sw-flex sw-flex-column ${className}`}>
 			<SwFormField
 				componentProps={{
 					...componentProps,
 					type: isShowingPassword ? 'text' : 'password',
-					icon: (
-						<Icon
-							onClick={() => setIsShowingPassword(!isShowingPassword)}
-							name={isShowingPassword ? 'eye' : 'eye slash'}
-							link
-						/>
-					),
+					icon,
 				}}
 				component={Form.Input}
 				onValueChange={handlePasswordChange}
@@ -56,7 +59,7 @@ export const SwPasswordField: React.FC<PasswordFieldProps> = ({
 				percent={password ? (Math.max(score, 1) * 100) / 4 : 0}
 			/>
 			{password && (
-				<span className={'ub-right-align ub-bold'} style={{ color: getColor(score) }}>
+				<span className={'sw-right-align sw-bold'} style={{ color: getColor(score) }}>
 					{getText(score)}
 				</span>
 			)}

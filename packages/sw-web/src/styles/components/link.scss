@@ -1,3 +1,3 @@
-a.link {
-	@include map-modifiers($colors, 'color');
+a.sw-link {
+	@include map-modifiers($colors, 'color', '--');
 }

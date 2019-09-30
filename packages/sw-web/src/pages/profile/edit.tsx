@@ -1,6 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
-import { SwFluidContainer, SwGreyBackground } from '@web/shared/styled/core.styled';
+import { SwFluidContainer, SwGreyBackground } from '@web/shared/styled/Background.styled';
 import { SwEditProfile } from '@web/features/profile/edit/components/EditProfile';
 import { Grid, GridColumn, Loader } from 'semantic-ui-react';
 import { withContext } from '@web/shared/lib/context/providers';
@@ -15,9 +15,9 @@ import {
 	fetchUserProfileEpic,
 	saveBasicUserProfileEpic,
 	saveExtraUserProfileEpic,
-} from '@web/features/profile/store/epics';
-import { fetchUserProfile } from '@web/features/profile/store/actions';
-import { IUserProfile, userProfileReducer } from '@web/features/profile/store/reducers';
+} from '@web/features/profile/edit/store/epics';
+import { fetchUserProfile } from '@web/features/profile/edit/store/actions';
+import { IUserProfile, userProfileReducer } from '@web/features/profile/edit/store/reducers';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 
 interface IProps {

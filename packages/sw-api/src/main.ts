@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
-import * as cors from 'cors';
-import * as helmet from 'helmet';
-import * as cookieParser from 'cookie-parser';
+import cors from 'cors';
+import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import { LOG4J_PROVIDER } from '@core/logging/logging.constant';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { API_CONFIG } from '@core/config/config.constants';

@@ -1,6 +1,6 @@
 import { UserDto } from '@shared/lib/dtos/user/user.dto';
 import { ActionType, createReducer } from 'typesafe-actions';
-import * as actions from '@web/features/profile/store/actions';
+import * as actions from '@web/features/profile/edit/store/actions';
 import { UserProfileDto } from '@shared/lib/dtos/user/profile/user-profile.dto';
 
 export type UserProfileAction = ActionType<typeof actions>;

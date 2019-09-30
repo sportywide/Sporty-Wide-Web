@@ -1,12 +1,12 @@
 import React, { useContext, useEffect } from 'react';
-import { ReactReduxContext } from 'react-redux';
+import { useStore } from 'react-redux';
 import ReactLoadingBar, { hideLoading, showLoading } from 'react-redux-loading-bar';
-import { Container } from 'typedi';
+import { ContainerInstance } from 'typedi';
 import { ApiService } from '@web/shared/lib/http/api.service';
 
 const LoadingBarComponent: React.FC<any> = () => {
-	const { store } = useContext(ReactReduxContext);
-	const container: typeof Container = store.container;
+	const store = useStore();
+	const container: ContainerInstance = store.container;
 	const apiService = container.get(ApiService);
 
 	useEffect(() => {
@@ -20,7 +20,7 @@ const LoadingBarComponent: React.FC<any> = () => {
 
 			lastNumApiCalls = numApiCalls;
 		});
-	}, []);
+	}, [apiService, store]);
 	return (
 		<header>
 			<ReactLoadingBar />

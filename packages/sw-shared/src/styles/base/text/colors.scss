@@ -25,6 +25,6 @@ $colors: (
 	),
 );
 
-.bg {
-	@include map-modifiers($colors, 'background-color');
+.sw-bg {
+	@include map-modifiers($colors, 'background-color', '--');
 }

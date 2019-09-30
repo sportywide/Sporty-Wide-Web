@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Label, List } from 'semantic-ui-react';
 import { useDrag } from 'react-dnd-cjs';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
@@ -8,7 +8,7 @@ import {
 	SwPlayerLogo,
 	SwStatsLabel,
 	SwTeamLogo,
-} from '@web/features/lineup/components/players/player-item.styled';
+} from '@web/features/lineup/components/players/PlayerItem.styled';
 
 interface IProps {
 	player: PlayerDto;
@@ -21,28 +21,14 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 		collect: monitor => ({ isDragging: monitor.isDragging(), dropResult: monitor.getDropResult() }),
 	});
 
-	useEffect(() => {
-		const img = new Image();
-		img.src = player.image;
-		img.onload = () => {
-			const ctx = document.createElement('canvas').getContext('2d');
-			ctx.canvas.width = 50;
-			ctx.canvas.height = 50;
-			img.style.opacity = '1';
-
-			ctx.drawImage(img, 0, 0, img.width, img.height);
-			preview(ctx.canvas);
-		};
-	}, [player.image, preview]);
-
 	return (
 		<List.Item>
 			<List.Content>
 				<SwDraggablePlayer ref={drag} isDragging={isDragging}>
-					<div>
+					<div ref={preview}>
 						<SwPlayerLogo circular avatar src={player.image} />
 					</div>
-					<div className={'ub-flex-grow'}>
+					<div className={'sw-flex-grow'}>
 						<span>
 							{player.shirt}. {player.name}
 						</span>
@@ -54,7 +40,7 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 							))}
 						</div>
 					</div>
-					<div className={'ub-mr2'}>
+					<div className={'sw-mr2'}>
 						<SwStatsLabel circular size={'small'} color={getRatingColor(player.rating)}>
 							{player.rating}
 						</SwStatsLabel>

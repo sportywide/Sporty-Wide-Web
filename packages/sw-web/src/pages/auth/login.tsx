@@ -12,7 +12,7 @@ import { authReducer } from '@web/features/auth/store/reducers';
 import { registerEpic } from '@web/shared/lib/redux/register-epic';
 import { loginEpic } from '@web/features/auth/store/epics';
 import { login } from '@web/features/auth/store/actions';
-import { SwPrimaryBackGround } from '@web/shared/styled/core.styled';
+import { SwPrimaryBackGround } from '@web/shared/styled/Background.styled';
 import { Container, Grid, GridColumn } from 'semantic-ui-react';
 
 interface IProps {
@@ -50,7 +50,7 @@ class SwLoginPage extends React.Component<IProps, any> {
 					<title>Welcome</title>
 				</Head>
 				<SwPrimaryBackGround>
-					<Container style={{ width: '100%' }} className="ub-py4">
+					<Container style={{ width: '100%' }} className="sw-py4">
 						<Grid verticalAlign={'middle'} centered>
 							<GridColumn mobile={14} tablet={8} computer={6}>
 								<div className="ui top attached tabular menu">
@@ -69,13 +69,13 @@ class SwLoginPage extends React.Component<IProps, any> {
 									<SwLoginForm onLogin={userDto => this.props.login(userDto)} />
 									<div className="ui horizontal divider">or</div>
 									<button className="ui facebook button">
-										<a className="link-white" href="/auth/facebook">
+										<a className="sw-link sw-link--white" href="/auth/facebook">
 											<i className="facebook icon" />
 											Facebook
 										</a>
 									</button>
 									<button className="ui google plus button">
-										<a className="link-white" href="/auth/google">
+										<a className="sw-link sw-link--white" href="/auth/google">
 											<i className="google plus icon" />
 											Google Plus
 										</a>

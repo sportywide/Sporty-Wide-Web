@@ -14,9 +14,9 @@ const validateUsername = validateUnique({ table: 'user', field: 'username' });
 const SwConfirmSocialComponent: React.FC<any> = () => {
 	const container = useContext(ContainerContext);
 	return (
-		<Segment className={'ub-flex ub-flex-column'}>
-			<Image className={'ub-align-self-center'} circular size={'tiny'} src={require('@web/static/logo.svg')} />
-			<Header as={'h3'} className={'ub-align-self-center'}>
+		<Segment className={'sw-flex sw-flex-column'}>
+			<Image className={'sw-align-self-center'} circular size={'tiny'} src={require('@web/static/logo.svg')} />
+			<Header as={'h3'} className={'sw-align-self-center'}>
 				Complete your profiles
 			</Header>
 			<Formik
@@ -40,7 +40,7 @@ const SwConfirmSocialComponent: React.FC<any> = () => {
 
 	function renderForm(props: FormikProps<any>) {
 		return (
-			<Form className={'ub-mt3'} onSubmit={props.handleSubmit}>
+			<Form className={'sw-mt3'} onSubmit={props.handleSubmit}>
 				<SwFormField
 					name="username"
 					component={Form.Input}

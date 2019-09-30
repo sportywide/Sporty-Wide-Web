@@ -6,8 +6,8 @@ import {
 	FETCH_USER_PROFILE,
 	SAVE_BASIC_USER_PROFILE,
 	SAVE_EXTRA_USER_PROFILE,
-} from '@web/features/profile/store/actions/actions.constants';
-import { Container } from 'typedi';
+} from '@web/features/profile/edit/store/actions/actions.constants';
+import { ContainerInstance } from 'typedi';
 import { UserService } from '@web/features/user/services/user.service';
 import {
 	fetchBasicUserProfile,
@@ -16,7 +16,7 @@ import {
 	fetchExtraUserProfileSuccess,
 	saveBasicUserProfile,
 	saveExtraUserProfile,
-} from '@web/features/profile/store/actions';
+} from '@web/features/profile/edit/store/actions';
 import { success } from 'react-notification-system-redux';
 import { ActionType } from 'typesafe-actions';
 
@@ -28,18 +28,18 @@ export const fetchUserProfileEpic = action$ => {
 	);
 };
 
-export const fetchBasicUserProfileEpic = (action$, state$, { container }: { container: typeof Container }) => {
+export const fetchBasicUserProfileEpic = (action$, state$, { container }: { container: ContainerInstance }) => {
 	const userService = container.get(UserService);
 	return action$
 		.ofType(FETCH_BASIC_USER_PROFILE)
 		.pipe(
 			switchMap((action: any) =>
-				userService.getBasicProfile(action.payload).pipe(map(fetchBasicUserProfileSuccess))
+				userService.getBasicProfile(action.payload).pipe(map(userDto => fetchBasicUserProfileSuccess(userDto)))
 			)
 		);
 };
 
-export const fetchExtraUserProfileEpic = (action$, state$, { container }: { container: typeof Container }) => {
+export const fetchExtraUserProfileEpic = (action$, state$, { container }: { container: ContainerInstance }) => {
 	const userService = container.get(UserService);
 	return action$
 		.ofType(FETCH_EXTRA_USER_PROFILE)
@@ -52,7 +52,7 @@ export const fetchExtraUserProfileEpic = (action$, state$, { container }: { cont
 		);
 };
 
-export const saveBasicUserProfileEpic = (action$, state$, { container }: { container: typeof Container }) => {
+export const saveBasicUserProfileEpic = (action$, state$, { container }: { container: ContainerInstance }) => {
 	const userService = container.get(UserService);
 	return action$.ofType(SAVE_BASIC_USER_PROFILE).pipe(
 		switchMap((action: ActionType<typeof saveBasicUserProfile>) =>
@@ -71,7 +71,7 @@ export const saveBasicUserProfileEpic = (action$, state$, { container }: { conta
 	);
 };
 
-export const saveExtraUserProfileEpic = (action$, state$, { container }: { container: typeof Container }) => {
+export const saveExtraUserProfileEpic = (action$, state$, { container }: { container: ContainerInstance }) => {
 	const userService = container.get(UserService);
 	return action$.ofType(SAVE_EXTRA_USER_PROFILE).pipe(
 		switchMap((action: ActionType<typeof saveExtraUserProfile>) =>

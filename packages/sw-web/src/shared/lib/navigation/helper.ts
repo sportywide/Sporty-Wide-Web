@@ -29,11 +29,10 @@ export async function redirect({
 			}
 		} else {
 			const path = findPathForRoute(route);
-			route = path ? route : `/${route}`;
 			if (replace) {
-				return Router.replaceRoute(route, params);
+				return Router.replaceRoute(path, params);
 			} else {
-				return Router.pushRoute(route, params);
+				return Router.pushRoute(path, params);
 			}
 		}
 	}

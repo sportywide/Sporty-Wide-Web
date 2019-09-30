@@ -9,6 +9,7 @@ module.exports = function(api) {
 					targets: {
 						node: '10.16',
 					},
+					modules: 'commonjs',
 				},
 			],
 			['@babel/typescript'],

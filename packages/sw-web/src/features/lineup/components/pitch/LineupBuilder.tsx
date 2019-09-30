@@ -57,9 +57,9 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 	return (
 		<>
 			<Header as={'h2'}>Manchester United</Header>
-			<div className={'ub-mb3'}>
+			<div className={'sw-mb3'}>
 				<Select
-					className={'ub-mr2'}
+					className={'sw-mr2'}
 					defaultValue={'4-4-2'}
 					options={[
 						{

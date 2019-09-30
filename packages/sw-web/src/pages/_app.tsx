@@ -1,13 +1,11 @@
-import 'sporty-wide-style/dist/basscss.min.css';
 import 'sporty-wide-style/dist/semantic.min.css';
 import '@web/styles/styles.scss';
 import 'reflect-metadata';
 import App from 'next/app';
 import React from 'react';
-import { Store } from 'redux';
 import { Provider } from 'react-redux';
 import withRedux from 'next-store-wrapper';
-import { initStore, ISportyWideStore, UserContext } from '@web/shared/lib/store';
+import { ContainerContext, initStore, ISportyWideStore, UserContext } from '@web/shared/lib/store';
 import { redirect } from '@web/shared/lib/navigation/helper';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { allowActiveOnly } from '@web/shared/lib/auth/check-user';
@@ -19,8 +17,8 @@ import { ucfirst } from '@shared/lib/utils/string/conversion';
 import { LoadingBar } from '@web/shared/lib/components/loading/LoadingBar';
 
 interface IProps {
-	store: Store;
-	user?: IUser;
+	store: ISportyWideStore;
+	user: IUser;
 	flashMessages: {};
 }
 
@@ -94,11 +92,13 @@ class SwApp extends App<IProps> {
 		return (
 			<ThemeProvider theme={theme}>
 				<Provider store={store}>
-					<UserContext.Provider value={user}>
-						<LoadingBar />
-						<Component {...pageProps} />
-					</UserContext.Provider>
-					<NotificationContainer />
+					<ContainerContext.Provider value={store.container}>
+						<UserContext.Provider value={user}>
+							<LoadingBar />
+							<Component {...pageProps} />
+						</UserContext.Provider>
+						<NotificationContainer />
+					</ContainerContext.Provider>
 				</Provider>
 			</ThemeProvider>
 		);

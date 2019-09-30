@@ -1,4 +1,4 @@
-a.link {
+a.sw-link {
 	text-decoration: none;
-	@include map-modifiers($colors, 'color');
+	@include map-modifiers($colors, 'color', '--');
 }

@@ -28,7 +28,7 @@ export interface FormFieldProps<P> extends FormFieldEvents {
 export const getFormikFieldError = (form, field) => {
 	const { name } = field;
 	const touched = getIn(form.touched, name);
-	return touched && getIn(form.errors, name);
+	return (touched || form.submitCount > 0) && getIn(form.errors, name);
 };
 
 export const getFormikValue = (formik: FormikContext<any>, name) => {
@@ -54,7 +54,8 @@ function InnerFieldComponent({
 	const valueProps = typeof value === 'boolean' ? { checked: value, value: '' } : { value: value || '' };
 	useEffect(() => {
 		onValueChange(value, name);
-	}, [name, onValueChange, value]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [name, value]);
 	return (
 		<Component
 			name={name}
@@ -62,7 +63,7 @@ function InnerFieldComponent({
 			{...valueProps}
 			error={error}
 			onChange={(e, { name, value, checked }) => {
-				if (checked != null && value === '') {
+				if (checked != null && (value === '' || value == undefined)) {
 					value = !!checked;
 				}
 

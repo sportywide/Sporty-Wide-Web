@@ -1,6 +1,6 @@
 import React from 'react';
 import { SwConfirmSocial } from '@web/features/auth/components/ConfirmSocial';
-import { SwFluidContainer, SwPrimaryBackGround } from '@web/shared/styled/core.styled';
+import { SwFluidContainer, SwPrimaryBackGround } from '@web/shared/styled/Background.styled';
 import Head from 'next/head';
 import { Grid, GridColumn } from 'semantic-ui-react';
 import { allowPendingSocialOnly, checkUser } from '@web/shared/lib/auth/check-user';
@@ -12,7 +12,7 @@ class SwConfirmSocialPage extends React.Component<any> {
 				<Head>
 					<title>Complete your profile</title>
 				</Head>
-				<SwPrimaryBackGround className={'ub-flex ub-flex-center'}>
+				<SwPrimaryBackGround className={'sw-flex sw-flex-center'}>
 					<SwFluidContainer>
 						<Grid verticalAlign={'middle'} centered>
 							<GridColumn mobile={14} tablet={8} computer={6}>

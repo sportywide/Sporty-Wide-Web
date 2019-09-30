@@ -1,7 +1,5 @@
 import Routes from 'next-routes';
 
-declare const module: any;
-
 const routeMappings = [
 	{
 		name: 'login',
@@ -47,6 +45,11 @@ const routeMappings = [
 		name: 'lineup-builder',
 		pattern: '/lineup-builder',
 		page: 'lineup/builder',
+	},
+	{
+		name: 'user-leagues',
+		pattern: '/user-leagues',
+		page: 'league/user-leagues',
 	},
 ];
 

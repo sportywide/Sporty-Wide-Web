@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path from 'path';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@core/config/config.module';
 import { SCHEMA_CONFIG } from '@core/config/config.constants';

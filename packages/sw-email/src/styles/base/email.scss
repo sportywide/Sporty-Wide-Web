@@ -1,9 +1,9 @@
-.email-content {
+.sw-email-content {
 	padding: 10px 0 30px 0;
 }
-.email-table {
+.sw-email-table {
 	border-collapse: collapse;
-	width: 600px;
+	width: 100vw;
 	border: 1px solid get($colors, 'grey');
 
 	&__logo {

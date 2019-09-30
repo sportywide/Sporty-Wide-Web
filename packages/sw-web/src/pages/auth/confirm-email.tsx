@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { checkUser, notAllowActive } from '@web/shared/lib/auth/check-user';
 import Head from 'next/head';
-import { SwPrimaryBackGround } from '@web/shared/styled/core.styled';
+import { SwPrimaryBackGround } from '@web/shared/styled/Background.styled';
 import { Container, Grid, GridColumn } from 'semantic-ui-react';
 import { SwConfirmEmail } from '@web/features/auth/components/ConfirmEmail';
 import { compose } from '@shared/lib/utils/fp/combine';
@@ -24,7 +24,7 @@ class SwConfirmEmailPage extends React.Component<any> {
 					<title>Verify your email</title>
 				</Head>
 				<SwPrimaryBackGround>
-					<Container style={{ width: '100%' }} className="ub-py4">
+					<Container style={{ width: '100%' }} className="sw-py4">
 						<Grid verticalAlign={'middle'} centered>
 							<GridColumn mobile={14} tablet={8} computer={6}>
 								<SwConfirmEmail onResend={email => this.props.resendVerificationEmail(email)} />

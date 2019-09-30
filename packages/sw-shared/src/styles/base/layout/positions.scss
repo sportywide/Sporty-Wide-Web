@@ -1,0 +1,37 @@
+/* Basscss Positions */
+
+.sw-relative {
+	position: relative;
+}
+.sw-absolute {
+	position: absolute;
+}
+.sw-fixed {
+	position: fixed;
+}
+
+.sw-top-0 {
+	top: 0;
+}
+.sw-right-0 {
+	right: 0;
+}
+.sw-bottom-0 {
+	bottom: 0;
+}
+.sw-left-0 {
+	left: 0;
+}
+
+.sw-z1 {
+	z-index: var(--z1);
+}
+.sw-z2 {
+	z-index: var(--z2);
+}
+.sw-z3 {
+	z-index: var(--z3);
+}
+.sw-z4 {
+	z-index: var(--z4);
+}

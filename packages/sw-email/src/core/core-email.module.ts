@@ -1,4 +1,4 @@
-import * as path from 'path';
+import path from 'path';
 import { Module } from '@nestjs/common';
 import { CoreModule } from '@core/core.module';
 import { ConfigModule } from '@core/config/config.module';

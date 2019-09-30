@@ -4,7 +4,9 @@ import axios, { Axios } from 'axios-observable';
 import { COOKIE_CSRF } from '@web/api/auth/constants';
 import { createRefreshTokenInterceptor } from '@web/shared/lib/http/refresh-token';
 import { BehaviorSubject, Subject } from 'rxjs';
+import { getHeaders } from '@web/shared/lib/auth/helper';
 import { isBrowser } from '@web/shared/lib/environment';
+import { filterValues } from '@shared/lib/utils/object/filter';
 
 @Service({ global: true })
 export class ApiService {
@@ -13,7 +15,13 @@ export class ApiService {
 	private apiCallSubscription = new BehaviorSubject<number>(0);
 	private apiErrorSubscription = new Subject<Error>();
 
-	constructor(@Inject('baseUrl') private baseUrl: string) {
+	constructor(@Inject('baseUrl') private readonly baseUrl: string, @Inject('context') private readonly context) {
+		const headers = getHeaders(context.req);
+		if (headers) {
+			axios.defaults.headers = filterValues(headers, value => {
+				return value != undefined;
+			});
+		}
 		this.apiBase = axios.create({
 			baseURL: `${baseUrl}/api`,
 			xsrfCookieName: COOKIE_CSRF,
