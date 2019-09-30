@@ -22,7 +22,7 @@
 		"supertest": "4.0.2",
 		"uuid": "3.3.3",
 		"yup": "0.27.0",
-		"yup-decorator": "2.0.0"
+		"yup-decorator": "2.1.0"
 	},
 	"devDependencies": {
 		"identity-obj-proxy": "3.0.0",
