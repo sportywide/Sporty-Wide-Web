@@ -5,7 +5,7 @@ import { isDevelopment } from '@shared/lib/utils/env';
 import { addPlugins, createConfig, env, setMode, setOutput } from '@webpack-blocks/webpack';
 import { match } from '@webpack-blocks/core';
 import { css, extractCss, postcss, sass } from '@build/webpack/plugins/styles';
-import { none, setEntry, watch } from '@build/webpack/plugins/core';
+import { setEntry, watch } from '@build/webpack/plugins/core';
 import FixStyleOnlyEntriesPlugin from 'webpack-fix-style-only-entries';
 
 export function makeConfig({ entries, output }: { entries: any; output: string }) {
@@ -27,14 +27,12 @@ export function makeConfig({ entries, output }: { entries: any; output: string }
 					styleLoader: false,
 					sourceMap: isDevelopment(),
 				}),
-				isDevelopment()
-					? none()
-					: postcss({
-							config: {
-								path: paths.project.root,
-							},
-							sourceMap: isDevelopment(),
-					  }),
+				postcss({
+					config: {
+						path: paths.project.root,
+					},
+					sourceMap: isDevelopment(),
+				}),
 			]
 		),
 		match(
@@ -47,14 +45,12 @@ export function makeConfig({ entries, output }: { entries: any; output: string }
 					styleLoader: false,
 					sourceMap: isDevelopment(),
 				}),
-				isDevelopment()
-					? none()
-					: postcss({
-							config: {
-								path: paths.project.root,
-							},
-							sourceMap: isDevelopment(),
-					  }),
+				postcss({
+					config: {
+						path: paths.project.root,
+					},
+					sourceMap: isDevelopment(),
+				}),
 				sass({
 					sourceMap: isDevelopment(),
 				}),
@@ -65,21 +61,5 @@ export function makeConfig({ entries, output }: { entries: any; output: string }
 			filename: '[name].js',
 		}),
 		addPlugins([new FixStyleOnlyEntriesPlugin()]),
-		addPlugins([
-			new CopyWebpackPlugin(
-				[
-					{
-						from: {
-							glob: 'semantic.min.css',
-						},
-						to: path.resolve(output),
-						context: path.resolve(paths.project.root, 'node_modules', 'sporty-wide-style', 'dist'),
-					},
-				],
-				{
-					copyUnmodified: true,
-				}
-			),
-		]),
 	]);
 }

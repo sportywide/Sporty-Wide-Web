@@ -1,5 +1,3 @@
-@import '../defaults';
-
 .sw-flex {
 	display: flex;
 }
@@ -52,4 +50,22 @@
 }
 .sw-flex-last {
 	order: 99999;
+}
+
+@media (--breakpoint-lg) {
+	.sw-lg-flex {
+		display: flex;
+	}
+}
+
+@media (--breakpoint-md) {
+	.sw-md-flex {
+		display: flex;
+	}
+}
+
+@media (--breakpoint-sm) {
+	.sw-sm-flex {
+		display: flex;
+	}
 }

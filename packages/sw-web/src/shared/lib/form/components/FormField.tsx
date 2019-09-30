@@ -54,7 +54,8 @@ function InnerFieldComponent({
 	const valueProps = typeof value === 'boolean' ? { checked: value, value: '' } : { value: value || '' };
 	useEffect(() => {
 		onValueChange(value, name);
-	}, [name, onValueChange, value]);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [name, value]);
 	return (
 		<Component
 			name={name}
