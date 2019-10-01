@@ -4,11 +4,12 @@ import { SchemaModule } from '@schema/schema.module';
 import { UserController } from '@api/user/controllers/user.controller';
 import { CoreApiModule } from '@api/core/core-api.module';
 import { UserProfileService } from '@api/user/services/user-profile.service';
+import { UsersResolver } from '@api/user/resolvers/user.resolver';
 
 @Module({
 	imports: [SchemaModule, CoreApiModule],
 	controllers: [UserController],
-	providers: [UserService, UserProfileService],
+	providers: [UserService, UserProfileService, UsersResolver],
 	exports: [UserService, UserProfileService],
 })
 export class UserModule {}

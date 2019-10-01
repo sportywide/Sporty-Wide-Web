@@ -1,8 +1,7 @@
 import { CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Type } from '@nestjs/common';
 
-type Constructor<T> = { new (...args: any[]): T };
-
-export function TrackTimestamp<TBase extends Constructor<{}>>(Base: TBase) {
+export function TrackTimestamp<TBase extends Type<{}>>(Base: TBase) {
 	class TrackTimestampEntity extends Base implements HasTimestamp {
 		@CreateDateColumn({ type: 'timestamptz' })
 		createdAt: Date;

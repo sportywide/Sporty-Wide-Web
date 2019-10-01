@@ -7,6 +7,13 @@ export const nothing = function() {
 	//do nothing
 };
 
+export const wrapDecorator = function(fn) {
+	if (fn) {
+		return fn;
+	}
+	return () => noop;
+};
+
 export const getArguments = function(func) {
 	const args = func.toString().match(/([^(])*\(([^)]*)\)/)[2];
 

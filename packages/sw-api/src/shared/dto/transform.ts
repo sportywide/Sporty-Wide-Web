@@ -1,19 +1,20 @@
 import { BaseEntity } from '@schema/core/base.entity';
 import { ClassTransformOptions, plainToClass } from 'class-transformer-imp';
 import { filterValues } from '@shared/lib/utils/object/filter';
+import { Type } from '@nestjs/common';
 
 const defaultOptions = {
 	excludeExtraneousValues: true,
 };
-export function toDto({
+export function toDto<T>({
 	value,
 	dtoType,
 	options = defaultOptions,
 }: {
 	value: any;
-	dtoType: any;
+	dtoType: Type<T>;
 	options?: ClassTransformOptions;
-}): typeof dtoType {
+}): T {
 	let plain = value;
 	if (value instanceof BaseEntity) {
 		plain = value.toPlain();

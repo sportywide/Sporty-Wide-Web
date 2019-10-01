@@ -107,7 +107,7 @@ const nextConfig = {
 		});
 
 		webpackConfig.module.rules.push({
-			test: /@nestjs/,
+			test: /(@nestjs|type-graphql)/,
 			use: 'null-loader',
 		});
 
