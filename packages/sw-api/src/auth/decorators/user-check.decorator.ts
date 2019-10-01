@@ -16,3 +16,5 @@ export const Role = (role: UserRole) => UserCheck((user: User) => user && compar
 
 export const PendingSocialUser = () =>
 	UserCheck((user: User) => user && user.status === UserStatus.PENDING && !!user.socialProvider);
+
+export const ActiveUser = () => UserCheck((user: User) => user && user.status === UserStatus.ACTIVE);

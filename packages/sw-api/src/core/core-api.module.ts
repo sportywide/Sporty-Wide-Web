@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { exceptionFilterProvider } from '@api/core/error/exception.provider';
 import { CoreModule } from '@core/core.module';
 import { GraphQLModule } from '@nestjs/graphql';
+import { GraphQLError } from 'graphql';
 import { ConfigModule } from '@core/config/config.module';
 import { API_CONFIG } from '@core/config/config.constants';
 import { RequestContextService } from '@api/core/services/request/request-context.service';
@@ -28,6 +29,8 @@ import { ApiValidationService } from './services/validation/validation.service';
 		GraphQLModule.forRoot({
 			autoSchemaFile: 'schema.gql',
 			playground: isDevelopment(),
+			debug: isDevelopment(),
+			context: ({ req, res }) => ({ req, res }),
 		}),
 	],
 })

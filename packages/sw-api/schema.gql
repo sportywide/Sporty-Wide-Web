@@ -27,7 +27,6 @@ type UserDto {
 	createdAt: DateTime!
 	updatedAt: DateTime!
 	profileUrl: String
-	profileId: Int
 }
 
 enum UserGender {

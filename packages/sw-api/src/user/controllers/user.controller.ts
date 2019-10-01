@@ -25,7 +25,8 @@ import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { EnvGuard } from '@api/auth/guards/environment.guard';
 import { UserProfileDto } from '@shared/lib/dtos/user/profile/user-profile.dto';
 import { UserProfileService } from '@api/user/services/user-profile.service';
-import { toDto } from '@api/shared/dto/transform';
+import { toDto } from '@api/utils/dto/transform';
+import { ActiveUser } from '@api/auth/decorators/user-check.decorator';
 
 @ApiUseTags('users')
 @Controller('user')
@@ -63,6 +64,7 @@ export class UserController {
 	@ApiOkResponse({ description: 'Return the user with specified id', type: UserDto })
 	@NotFoundResponse('user')
 	@UseGuards(JwtAuthGuard)
+	@ActiveUser()
 	@Get(':id')
 	public async getUser(@Param('id') id: number): Promise<UserDto> {
 		const user = await this.userService.findById({ id });
@@ -88,6 +90,7 @@ export class UserController {
 	@ApiOkResponse({ description: 'Update an user', type: UserDto })
 	@NotFoundResponse('user')
 	@UseGuards(JwtAuthGuard)
+	@ActiveUser()
 	@Put(':id')
 	public async updateUser(
 		@Param('id', new ParseIntPipe())
@@ -121,6 +124,7 @@ export class UserController {
 	@ApiOkResponse({ description: 'Update an user profile', type: UserProfileDto })
 	@NotFoundResponse('user')
 	@UseGuards(JwtAuthGuard)
+	@ActiveUser()
 	@Put('profile/:id')
 	public async updateUserProfile(
 		@Param('id', new ParseIntPipe())
@@ -174,6 +178,7 @@ export class UserController {
 	@ApiOkResponse({ description: 'User profile has been retrieved', type: UserProfileDto })
 	@NotFoundResponse('user')
 	@UseGuards(JwtAuthGuard)
+	@ActiveUser()
 	@Get('profile/:id')
 	public async getUserProfile(
 		@Param('id', new ParseIntPipe()) id: number,

@@ -3,11 +3,16 @@ import { Reflector } from '@nestjs/core';
 import { AuthGuard } from '@nestjs/passport';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { CHECK_METADATA, CheckFunction } from '@api/auth/decorators/user-check.decorator';
+import { getRequest } from '@api/utils/context';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
 	constructor(private readonly reflector: Reflector) {
 		super();
+	}
+
+	getRequest(context: ExecutionContext) {
+		return getRequest(context);
 	}
 
 	handleRequest(err, user, info, context: ExecutionContext) {
