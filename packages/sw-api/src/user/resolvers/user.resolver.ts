@@ -47,9 +47,6 @@ export class UsersResolver {
 		return toDto({
 			value: userProfile,
 			dtoType: UserProfileDto,
-			options: {
-				ignoreDecorators: true,
-			},
 		});
 	}
 }

@@ -3,8 +3,9 @@ import { ClassTransformOptions, plainToClass } from 'class-transformer-imp';
 import { filterValues } from '@shared/lib/utils/object/filter';
 import { Type } from '@nestjs/common';
 
-const defaultOptions = {
+const defaultOptions: ClassTransformOptions = {
 	excludeExtraneousValues: true,
+	ignoreGroupDecorators: true,
 };
 export function toDto<T>({
 	value,

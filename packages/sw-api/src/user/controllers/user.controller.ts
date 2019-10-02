@@ -168,9 +168,6 @@ export class UserController {
 		return toDto({
 			value: userProfile,
 			dtoType: UserProfileDto,
-			options: {
-				ignoreDecorators: true,
-			},
 		});
 	}
 
@@ -196,9 +193,6 @@ export class UserController {
 		return toDto({
 			value: user.profile || {},
 			dtoType: UserProfileDto,
-			options: {
-				ignoreDecorators: true,
-			},
 		});
 	}
 }
