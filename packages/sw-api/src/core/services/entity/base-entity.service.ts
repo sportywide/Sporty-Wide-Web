@@ -49,11 +49,7 @@ export class BaseEntityService<T extends BaseEntity> {
 	}
 
 	public createOneEntity(dto: any): T {
-		const entity = this.repository.create(dto as DeepPartial<any>);
-		if (entity instanceof BaseEntity && !entity.isLoaded) {
-			entity.afterLoad();
-		}
-		return entity;
+		return this.repository.create(dto as DeepPartial<any>);
 	}
 
 	public merge(entity: T, ...updatedDtos) {

@@ -12,7 +12,7 @@ export interface DropdownFieldProps extends FormFieldEvents, FieldConfig {
 
 const SwDropdownFieldComponent: React.FC<DropdownFieldProps> = ({ name, ...props }) => {
 	const fieldProps = mergeProps(defaultFormFieldEvents, props);
-	const componentProps = omit(props, Object.keys(fieldProps));
+	const componentProps: any = omit(props, Object.keys(fieldProps));
 	return (
 		<SwFormField
 			name={name}

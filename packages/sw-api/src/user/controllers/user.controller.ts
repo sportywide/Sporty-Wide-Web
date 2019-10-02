@@ -162,7 +162,7 @@ export class UserController {
 			});
 
 			const mergedUserProfile = this.userProfileService.merge(userProfile, validatedParams);
-			userProfile = await this.userProfileService.saveUserProfile(mergedUserProfile);
+			userProfile = await this.userProfileService.saveOne(mergedUserProfile);
 		}
 
 		return toDto({
