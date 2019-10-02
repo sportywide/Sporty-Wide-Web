@@ -5,7 +5,7 @@ import App from 'next/app';
 import React from 'react';
 import { Provider } from 'react-redux';
 import withRedux from 'next-store-wrapper';
-import { ContainerContext, IAuth, initStore, ISportyWideStore } from '@web/shared/lib/store';
+import { ContainerContext, getUser, initStore, ISportyWideStore } from '@web/shared/lib/store';
 import { redirect } from '@web/shared/lib/navigation/helper';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { allowActiveOnly } from '@web/shared/lib/auth/check-user';
@@ -15,7 +15,6 @@ import Notifications from 'react-notification-system-redux';
 import NotificationContainer from '@web/shared/lib/components/notification/NotificationContainer';
 import { ucfirst } from '@shared/lib/utils/string/conversion';
 import { LoadingBar } from '@web/shared/lib/components/loading/LoadingBar';
-import { safeGet } from '@shared/lib/utils/object/get';
 
 interface IProps {
 	store: ISportyWideStore;
@@ -106,10 +105,8 @@ class SwApp extends App<IProps> {
 
 function validateUser(context: any, Component) {
 	const store = context.store;
-	const container = store.container;
-	const auth: IAuth = container.get('auth');
 
-	const user: IUser | undefined = safeGet(() => auth.ref.user);
+	const user = getUser(store);
 	const checkUser = Component.checkUser || allowActiveOnly;
 	const allowUser = checkUser(user);
 

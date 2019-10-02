@@ -14,6 +14,7 @@ import { loginEpic } from '@web/features/auth/store/epics';
 import { login } from '@web/features/auth/store/actions';
 import { SwPrimaryBackGround } from '@web/shared/styled/Background.styled';
 import { Container, Grid, GridColumn } from 'semantic-ui-react';
+import { getUser } from '@web/shared/lib/store';
 
 interface IProps {
 	login: Function;
@@ -23,10 +24,8 @@ class SwLoginPage extends React.Component<IProps, any> {
 	static async getInitialProps(context) {
 		const { store } = context;
 		const pageProps = {};
-		const container = store.container;
-		const auth = container.get('auth');
 
-		const currentUser = auth && auth.user;
+		const currentUser = getUser(store);
 		if (!currentUser) {
 			return pageProps;
 		}

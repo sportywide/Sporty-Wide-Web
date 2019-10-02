@@ -28,7 +28,7 @@ export function initStore(initialState = {}, context) {
 	}
 	const auth = parseContext(context) || {};
 
-	const container = registerContainer({ auth, context });
+	const container = registerContainer({ context });
 	const initialReducers = getInitialReducers(initialState, {
 		auth: authReducer,
 		notifications,
@@ -58,16 +58,13 @@ export interface ISportyWideStore extends Store {
 	container: ContainerInstance;
 }
 
-export interface IAuth {
-	ref: {
-		csrfToken?: string;
-		user?: IUser;
-	};
+export function getUser(store) {
+	const state = store.getState();
+	return state.auth && state.auth.user;
 }
 
-function registerContainer({ auth, context }) {
+function registerContainer({ context }) {
 	const appContainer = Container.of(context.req);
-	appContainer.set('auth', { ref: auth });
 	appContainer.set('context', context);
 	if (context.req) {
 		appContainer.set('baseUrl', `https://${context.req.get('host')}`);
