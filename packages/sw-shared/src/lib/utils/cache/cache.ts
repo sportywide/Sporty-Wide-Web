@@ -1,3 +1,5 @@
+import { serialize } from 'class-transformer-imp';
+
 export class CacheEntry<T> {
 	item: T;
 	metadata: any;
@@ -6,27 +8,36 @@ export class SwCache<T> {
 	protected cache: Map<string, CacheEntry<T>>;
 	readonly capacity: number;
 
-	constructor({ capacity = 10 }) {
+	constructor({ capacity = 10 } = {}) {
 		this.cache = new Map<string, CacheEntry<T>>();
 		this.capacity = capacity;
 	}
 
-	put(key, item) {
-		this.cache.set(key, this.getEntry(key, item));
+	put(key: string | object, item: T) {
+		this.cache.set(this.getHashKey(key), this.getEntry(key, item));
 		this.ensureCapacity();
 	}
 
-	get(key) {
-		const foundEntry = this.cache.get(key);
+	get(key: string | object) {
+		const hashKey = this.getHashKey(key);
+		const foundEntry = this.cache.get(hashKey);
 		if (!foundEntry) {
 			return foundEntry;
 		}
 		const newEntry = this.cacheHit(foundEntry);
-		this.cache.set(key, newEntry);
+		this.cache.set(hashKey, newEntry);
 		return newEntry;
 	}
 
-	findRemovedKey() {
+	protected getHashKey(key: string | object): string {
+		let hashKey: any = key;
+		if (typeof key === 'object') {
+			hashKey = serialize(key);
+		}
+		return hashKey;
+	}
+
+	protected findRemovedKey() {
 		const keys = Array.from(this.cache.keys());
 		if (!keys.length) {
 			return null;
@@ -34,14 +45,14 @@ export class SwCache<T> {
 		return keys[Math.floor(Math.random() * keys.length)];
 	}
 
-	getEntry(key, item): CacheEntry<T> {
+	protected getEntry(key, item): CacheEntry<T> {
 		return {
 			item,
 			metadata: {},
 		};
 	}
 
-	cacheHit(cacheEntry: CacheEntry<T>): CacheEntry<T> {
+	protected cacheHit(cacheEntry: CacheEntry<T>): CacheEntry<T> {
 		return cacheEntry;
 	}
 

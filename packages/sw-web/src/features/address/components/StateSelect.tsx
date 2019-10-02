@@ -4,7 +4,7 @@ import { StateDto } from '@shared/lib/dtos/address/state.dto';
 import { ContainerContext } from '@web/shared/lib/store';
 import { noop } from '@shared/lib/utils/functions';
 import { Form } from 'semantic-ui-react';
-import { useCurrentRef, useKeyMap, usePrevious } from '@web/shared/lib/react/hooks';
+import { useCurrentRef, useKeyMap } from '@web/shared/lib/react/hooks';
 
 interface IProps {
 	value: string;

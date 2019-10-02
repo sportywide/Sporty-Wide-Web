@@ -4,9 +4,8 @@ import { ContainerContext } from '@web/shared/lib/store';
 import { AddressService } from '@web/features/address/services/address.service';
 import { CityDto } from '@shared/lib/dtos/address/city.dto';
 import { connect } from 'formik';
-import { useCurrentRef, useKeyMap, usePrevious } from '@web/shared/lib/react/hooks';
+import { useCurrentRef, useKeyMap } from '@web/shared/lib/react/hooks';
 import { Form } from 'semantic-ui-react';
-import { CountryDto } from '@shared/lib/dtos/address/country.dto';
 
 interface IProps {
 	label?: string;

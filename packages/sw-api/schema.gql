@@ -3,6 +3,19 @@
 # !!!   DO NOT MODIFY THIS FILE BY YOURSELF   !!!
 # -----------------------------------------------
 
+type AddressDto {
+	id: Int!
+	street1: String
+	street2: String
+	state: String
+	city: String
+	country: String
+	suburb: String
+	postcode: String
+	lat: Int
+	lon: Int
+}
+
 """
 The javascript `Date` as string. Type represents date and time as the ISO Date string.
 """
@@ -14,7 +27,7 @@ type Query {
 }
 
 type UserDto {
-	id: ID!
+	id: Int!
 	firstName: String!
 	lastName: String
 	email: String!
@@ -27,12 +40,22 @@ type UserDto {
 	createdAt: DateTime!
 	updatedAt: DateTime!
 	profileUrl: String
+	profile: UserProfileDto
 }
 
 enum UserGender {
 	MALE
 	FEMALE
 	OTHER
+}
+
+type UserProfileDto {
+	id: Int!
+	work: String
+	education: String
+	summary: String
+	address: AddressDto
+	addressId: Float
 }
 
 enum UserRole {

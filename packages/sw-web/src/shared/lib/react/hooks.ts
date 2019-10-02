@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, MutableRefObject, useCallback } from 'react';
+import { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { keyBy } from 'lodash';
 
 export function usePrevious<T>(value) {

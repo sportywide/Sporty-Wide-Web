@@ -4,7 +4,6 @@ import { map } from 'rxjs/operators';
 import { CountryDto } from '@shared/lib/dtos/address/country.dto';
 import { Observable } from 'rxjs';
 import { StateDto } from '@shared/lib/dtos/address/state.dto';
-import { City } from '@schema/address/models/city.entity';
 import { CityDto } from '@shared/lib/dtos/address/city.dto';
 
 @Service({ global: true })

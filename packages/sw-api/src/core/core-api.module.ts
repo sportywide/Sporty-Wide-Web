@@ -3,7 +3,6 @@ import { Module } from '@nestjs/common';
 import { exceptionFilterProvider } from '@api/core/error/exception.provider';
 import { CoreModule } from '@core/core.module';
 import { GraphQLModule } from '@nestjs/graphql';
-import { GraphQLError } from 'graphql';
 import { ConfigModule } from '@core/config/config.module';
 import { API_CONFIG } from '@core/config/config.constants';
 import { RequestContextService } from '@api/core/services/request/request-context.service';
@@ -16,7 +15,7 @@ import { isDevelopment } from '@shared/lib/utils/env';
 import { ApiValidationService } from './services/validation/validation.service';
 
 @Module({
-	exports: [ApiValidationService, RequestContextService, ConfigModule],
+	exports: [ApiValidationService, RequestContextService, ConfigModule, AddressService],
 	controllers: [UtilController, AddressController],
 	providers: [exceptionFilterProvider, ApiValidationService, RequestContextService, UniqueService, AddressService],
 	imports: [

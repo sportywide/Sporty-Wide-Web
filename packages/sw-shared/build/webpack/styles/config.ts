@@ -1,6 +1,4 @@
-import path from 'path';
 import paths from '@build/paths';
-import CopyWebpackPlugin from 'copy-webpack-plugin';
 import { isDevelopment } from '@shared/lib/utils/env';
 import { addPlugins, createConfig, env, setMode, setOutput } from '@webpack-blocks/webpack';
 import { match } from '@webpack-blocks/core';

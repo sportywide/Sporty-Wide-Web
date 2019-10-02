@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { getFormikValue, SwFormField } from '@web/shared/lib/form/components/FormField';
 import { SwPlaceAutoCompleteField } from '@web/shared/lib/form/components/address/PlaceAutoCompleteField';
 import { SwCitySelect } from '@web/features/address/components/CitySelect';

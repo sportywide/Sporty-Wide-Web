@@ -4,7 +4,7 @@ import { minBy } from 'lodash';
 export class SwLRUCache<T> extends SwCache<T> {
 	cacheHit(cacheEntry): CacheEntry<T> {
 		return {
-			item: cacheEntry,
+			item: cacheEntry.item,
 			metadata: {
 				...cacheEntry.metadata,
 				hits: (cacheEntry.metadata.hits || 0) + 1,

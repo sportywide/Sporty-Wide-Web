@@ -3,11 +3,12 @@ import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { Expose, Type } from 'class-transformer-imp';
 import { ApiModelProperty } from '@shared/lib/utils/api/decorators';
 import { UserGender } from '@shared/lib/dtos/user/enum/user-gender.enum';
-import { ObjectType, Field, Int, ID } from '@shared/lib/utils/api/graphql';
+import { Field, Int, ObjectType } from '@shared/lib/utils/api/graphql';
+import { UserProfileDto } from '@shared/lib/dtos/user/profile/user-profile.dto';
 
 @ObjectType()
 export class UserDto {
-	@Field(() => ID)
+	@Field(() => Int)
 	@ApiModelProperty()
 	@Expose()
 	id: number;
@@ -68,4 +69,8 @@ export class UserDto {
 	@Field({ nullable: true })
 	@Expose()
 	profileUrl: string;
+
+	@Field(type => UserProfileDto, { nullable: true })
+	@Type(() => UserProfileDto)
+	profile: UserProfileDto;
 }
