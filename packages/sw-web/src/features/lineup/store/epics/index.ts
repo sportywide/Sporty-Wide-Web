@@ -2,7 +2,7 @@ import { concatMap, map } from 'rxjs/operators';
 import {
 	CHANGE_STRATEGY,
 	FILL_POSITIONS,
-	LOAD_PLAYERS,
+	FETCH_PLAYERS,
 	SUBSTITUTE_PLAYERS,
 } from '@web/features/lineup/store/actions/actions.constants';
 import {
@@ -10,7 +10,7 @@ import {
 	changeStrategySuccess,
 	fillPositions,
 	fillPositionSuccess,
-	loadPlayersSuccess,
+	fetchPlayersSuccess,
 	removePlayerFromLineup,
 	substitutePlayers,
 } from '@web/features/lineup/store/actions';
@@ -26,7 +26,7 @@ import { ILineupState } from '@web/features/lineup/store/reducers/lineup-reducer
 import { EMPTY } from 'rxjs';
 
 export const playerEpic = action$ => {
-	return action$.ofType(LOAD_PLAYERS).pipe(
+	return action$.ofType(FETCH_PLAYERS).pipe(
 		map(() => {
 			const teamMap = keyBy(teams, 'name');
 			const playerDtos = players.map(player => ({
@@ -34,7 +34,7 @@ export const playerEpic = action$ => {
 				team: teamMap[player.teamName],
 			}));
 
-			return loadPlayersSuccess(sortPlayers(playerDtos));
+			return fetchPlayersSuccess(sortPlayers(playerDtos));
 		})
 	);
 };

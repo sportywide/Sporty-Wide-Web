@@ -58,7 +58,7 @@ export const lineupReducer = createReducer<ILineupState, LineupAction>(initialSt
 			};
 		}
 	)
-	.handleAction(actions.loadPlayersSuccess, (state, { payload = [] }: PayloadAction<string, PlayerDto[]>) => ({
+	.handleAction(actions.fetchPlayersSuccess, (state, { payload = [] }: PayloadAction<string, PlayerDto[]>) => ({
 		...state,
 		players: payload,
 		originalPlayers: payload,

@@ -11,7 +11,7 @@ import {
 	changeStrategy,
 	clearLineup,
 	fillPositions,
-	loadPlayers,
+	fetchPlayers,
 	removePlayerFromLineup,
 	substitutePlayers,
 	swapPlayers,
@@ -28,7 +28,7 @@ import { SwPitch } from './Pitch';
 
 interface IProps {
 	lineupBuilder: ILineupState;
-	loadPlayers: typeof loadPlayers;
+	fetchPlayers: typeof fetchPlayers;
 	addPlayerToLineup: typeof addPlayerToLineup;
 	removePlayerFromLineup: typeof removePlayerFromLineup;
 	swapPlayers: typeof swapPlayers;
@@ -41,7 +41,7 @@ interface IProps {
 
 const SwLineupBuilderComponent: React.FC<IProps> = function({
 	lineupBuilder,
-	loadPlayers,
+	fetchPlayers,
 	addPlayerToLineup,
 	swapPlayers,
 	removePlayerFromLineup,
@@ -52,8 +52,8 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 	changeStrategy,
 }) {
 	useEffect(() => {
-		loadPlayers();
-	}, [loadPlayers]);
+		fetchPlayers();
+	}, [fetchPlayers]);
 	return (
 		<>
 			<Header as={'h2'}>Manchester United</Header>
@@ -106,7 +106,7 @@ const enhance = compose(
 	connect(
 		state => ({ lineupBuilder: state.lineupBuilder }),
 		{
-			loadPlayers,
+			fetchPlayers,
 			addPlayerToLineup,
 			removePlayerFromLineup,
 			substitutePlayers,

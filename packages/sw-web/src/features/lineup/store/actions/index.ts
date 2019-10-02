@@ -7,8 +7,8 @@ import {
 	CLEAR_POSITION,
 	FILL_POSITION_SUCCESS,
 	FILL_POSITIONS,
-	LOAD_PLAYER_SUCCESS,
-	LOAD_PLAYERS,
+	FETCH_PLAYER_SUCCESS,
+	FETCH_PLAYERS,
 	REMOVE_PLAYER_FROM_LINEUP,
 	SUBSTITUTE_PLAYERS,
 	SWAP_PLAYERS,
@@ -35,5 +35,5 @@ export const fillPositions = createSwStandardAction(FILL_POSITIONS)();
 export const clearLineup = createSwStandardAction(CLEAR_LINEUP)();
 export const fillPositionSuccess = createSwStandardAction(FILL_POSITION_SUCCESS)<PlayerDto[]>();
 
-export const loadPlayersSuccess = createSwStandardAction(LOAD_PLAYER_SUCCESS)<PlayerDto[]>();
-export const loadPlayers = createSwStandardAction(LOAD_PLAYERS)();
+export const fetchPlayersSuccess = createSwStandardAction(FETCH_PLAYER_SUCCESS)<PlayerDto[]>();
+export const fetchPlayers = createSwStandardAction(FETCH_PLAYERS)();

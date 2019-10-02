@@ -1,2 +1,2 @@
-export const LOAD_LEAGUES = Symbol('LOAD_LEAGUES');
-export const LOAD_LEAGUES_SUCCESS = Symbol('LOAD_LEAGUES_SUCCESS');
+export const FETCH_LEAGUES = Symbol('FETCH_LEAGUES');
+export const FETCH_LEAGUES_SUCCESS = Symbol('FETCH_LEAGUES_SUCCESS');
