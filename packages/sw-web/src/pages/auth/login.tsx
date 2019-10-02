@@ -24,8 +24,9 @@ class SwLoginPage extends React.Component<IProps, any> {
 		const { store } = context;
 		const pageProps = {};
 		const container = store.container;
-		const currentUser = container.get('currentUser');
+		const auth = container.get('auth');
 
+		const currentUser = auth && auth.user;
 		if (!currentUser) {
 			return pageProps;
 		}

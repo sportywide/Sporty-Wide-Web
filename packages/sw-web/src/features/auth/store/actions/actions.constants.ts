@@ -1,6 +1,8 @@
 export const LOGOUT = Symbol('LOGOUT');
 export const LOGOUT_SUCCESS = Symbol('LOGOUT_SUCCESS');
 
+export const SET_AUTH = Symbol('SET_AUTH');
+
 export const LOGIN = Symbol('LOGIN');
 export const LOGIN_SUCCESS = Symbol('LOGIN_SUCCESS');
 

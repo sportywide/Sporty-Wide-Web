@@ -2,7 +2,7 @@ import { Inject, Service } from 'typedi';
 import { ApiService } from '@web/shared/lib/http/api.service';
 import { map } from 'rxjs/operators';
 
-@Service({ global: true })
+@Service()
 export class UtilService {
 	constructor(
 		@Inject(type => ApiService)

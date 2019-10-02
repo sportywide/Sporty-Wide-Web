@@ -16,6 +16,8 @@ import { TokenService } from '@api/auth/services/token.service';
 import { CompleteSocialProfileDto } from '@shared/lib/dtos/user/complete-social-profile.dto';
 import { TokenType } from '@schema/auth/models/enums/token-type.token';
 import { ResetPasswordDto } from '@shared/lib/dtos/user/reset-password-dto';
+import { isBefore } from 'date-fns';
+import { TokenExpiredError } from 'jsonwebtoken';
 
 export class Tokens {
 	@ApiModelProperty() accessToken: string;
@@ -109,6 +111,10 @@ export class AuthService {
 		const user = await this.userService.findById({ id: payload.user.id, cache: true });
 		if (!user) {
 			throw new UnauthorizedException('Invalid token');
+		}
+		//if token is created before the user is updated, mark it as invalid
+		if (user.updatedAt.getTime() - payload.iat * 1000 > 1000) {
+			throw new TokenExpiredError('Token expired', user.updatedAt.getTime() / 1000);
 		}
 		return user;
 	}

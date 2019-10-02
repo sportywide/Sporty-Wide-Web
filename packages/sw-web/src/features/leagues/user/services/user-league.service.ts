@@ -1,19 +1,13 @@
 import { Inject, Service } from 'typedi';
-import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { Observable } from 'rxjs';
 import { ApiService } from '@web/shared/lib/http/api.service';
 import { map } from 'rxjs/operators';
 import { UserLeagueDto } from '@shared/lib/dtos/leagues/user-league.dto';
 import { plainToClass } from 'class-transformer-imp';
 
-@Service({
-	global: true,
-})
+@Service()
 export class UserLeagueService {
-	constructor(
-		@Inject('currentUser') private readonly currentUser: IUser,
-		@Inject(type => ApiService) private readonly apiService: ApiService
-	) {}
+	constructor(@Inject(type => ApiService) private readonly apiService: ApiService) {}
 
 	loadUserLeagues(userId: number): Observable<UserLeagueDto[]> {
 		return this.apiService

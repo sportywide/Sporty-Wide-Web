@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 import { StateDto } from '@shared/lib/dtos/address/state.dto';
 import { CityDto } from '@shared/lib/dtos/address/city.dto';
 
-@Service({ global: true })
+@Service()
 export class AddressService {
 	constructor(
 		@Inject(type => ApiService)

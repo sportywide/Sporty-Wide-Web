@@ -6,7 +6,7 @@ const formationMap = {
 	'4-4-2': require('@shared/lib/strategy/4-4-2.json'),
 	'4-3-3': require('@shared/lib/strategy/4-3-3.json'),
 };
-@Service({ global: true })
+@Service()
 export class LineupService {
 	fillPositions({
 		positions,

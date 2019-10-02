@@ -1,5 +1,7 @@
 import { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
 import { keyBy } from 'lodash';
+import { useSelector } from 'react-redux';
+import { IUser } from '@web/shared/lib/interfaces/auth/user';
 
 export function usePrevious<T>(value) {
 	const ref = useRef<T>();
@@ -9,6 +11,10 @@ export function usePrevious<T>(value) {
 	}, [value]);
 
 	return ref.current;
+}
+
+export function useUser(): IUser {
+	return useSelector(state => state.auth && state.auth.user);
 }
 
 export function useLocation() {

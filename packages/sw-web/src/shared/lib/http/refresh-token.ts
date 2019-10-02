@@ -2,8 +2,6 @@ import path from 'path';
 import { Axios } from 'axios-observable';
 import { UNAUTHENTICATED } from '@web/shared/lib/http/status-codes';
 
-let refreshCall;
-
 export function createRefreshTokenInterceptor(axios: Axios, refreshTokenCall) {
 	const id = axios.interceptors.response.use(
 		res => res,
@@ -16,7 +14,7 @@ export function createRefreshTokenInterceptor(axios: Axios, refreshTokenCall) {
 			// Remove the interceptor to prevent a loop
 			axios.interceptors.response.eject(id);
 
-			refreshCall = refreshCall || refreshTokenCall();
+			const refreshCall = refreshTokenCall();
 
 			const requestQueueInterceptorId = axios.interceptors.request.use(request =>
 				refreshCall.then(() => request)
@@ -45,7 +43,6 @@ export function createRefreshTokenInterceptor(axios: Axios, refreshTokenCall) {
 					return Promise.reject(error);
 				})
 				.finally(() => {
-					refreshCall = null;
 					createRefreshTokenInterceptor(axios, refreshTokenCall);
 				});
 		}

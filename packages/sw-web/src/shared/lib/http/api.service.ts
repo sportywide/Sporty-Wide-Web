@@ -4,19 +4,26 @@ import axios, { Axios } from 'axios-observable';
 import { COOKIE_CSRF } from '@web/api/auth/constants';
 import { createRefreshTokenInterceptor } from '@web/shared/lib/http/refresh-token';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { getHeaders } from '@web/shared/lib/auth/helper';
+import { getHeaders, parseContext } from '@web/shared/lib/auth/helper';
 import { isBrowser } from '@web/shared/lib/environment';
 import { filterValues } from '@shared/lib/utils/object/filter';
+import { setAuth } from '@web/features/auth/store/actions';
 
-@Service({ global: true })
+@Service()
 export class ApiService {
 	private readonly apiBase: Axios;
 	private readonly authBase: Axios;
 	private apiCallSubscription = new BehaviorSubject<number>(0);
 	private apiErrorSubscription = new Subject<Error>();
+	private refreshTokenCall: any;
 
-	constructor(@Inject('baseUrl') private readonly baseUrl: string, @Inject('context') private readonly context) {
+	constructor(
+		@Inject('baseUrl') private readonly baseUrl: string,
+		@Inject('context') private readonly context,
+		@Inject('store') private readonly store
+	) {
 		const headers = getHeaders(context.req);
+		this.refreshTokenCall = null;
 		if (headers) {
 			axios.defaults.headers = filterValues(headers, value => {
 				return value != undefined;
@@ -35,7 +42,19 @@ export class ApiService {
 		});
 
 		const retryCall = () => {
-			return this.authBase.post('/refresh-token').toPromise();
+			if (this.refreshTokenCall) {
+				return this.refreshTokenCall;
+			}
+			this.refreshTokenCall = this.authBase
+				.post('/refresh-token')
+				.toPromise()
+				.then(() => {
+					store.dispatch(setAuth(parseContext(context)));
+				})
+				.finally(() => {
+					this.refreshTokenCall = null;
+				});
+			return this.refreshTokenCall;
 		};
 
 		this.apiBase = createRefreshTokenInterceptor(this.apiBase, retryCall);

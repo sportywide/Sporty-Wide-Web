@@ -14,7 +14,6 @@ import React from 'react';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { leagueReducer } from '@web/features/leagues/base/store/reducers/league-reducer';
 import { loadLeaguesEpic } from '@web/features/leagues/base/store/epics';
-import { Sw } from '@web/shared/lib/sw';
 import { createReducerManager, ReducerManager } from './redux/reducer-manager';
 
 export interface IDependencies {
@@ -23,8 +22,6 @@ export interface IDependencies {
 
 export const ContainerContext = React.createContext<ContainerInstance>(null as any);
 
-export const UserContext = React.createContext<IUser>(null as any);
-
 export function initStore(initialState = {}, context) {
 	if (context && context.store) {
 		return context.store;
@@ -32,7 +29,6 @@ export function initStore(initialState = {}, context) {
 	const auth = parseContext(context) || {};
 
 	const container = registerContainer({ auth, context });
-	Sw.container = container;
 	const initialReducers = getInitialReducers(initialState, {
 		auth: authReducer,
 		notifications,
@@ -51,6 +47,7 @@ export function initStore(initialState = {}, context) {
 	reducerManager.store = store;
 	store.epicManager = epicManager;
 	store.container = container;
+	container.set('store', store);
 	epicMiddleware.run(epicManager.rootEpic);
 	return store;
 }
@@ -61,12 +58,16 @@ export interface ISportyWideStore extends Store {
 	container: ContainerInstance;
 }
 
+export interface IAuth {
+	ref: {
+		csrfToken?: string;
+		user?: IUser;
+	};
+}
+
 function registerContainer({ auth, context }) {
-	const user = auth.user;
-	const csrfToken = auth.csrfToken;
 	const appContainer = Container.of(context.req);
-	appContainer.set('currentUser', user || null);
-	appContainer.set('csrfToken', csrfToken || null);
+	appContainer.set('auth', { ref: auth });
 	appContainer.set('context', context);
 	if (context.req) {
 		appContainer.set('baseUrl', `https://${context.req.get('host')}`);
