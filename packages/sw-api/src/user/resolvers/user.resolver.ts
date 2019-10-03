@@ -1,4 +1,4 @@
-import { Args, Info, Parent, Query, ResolveProperty, Resolver } from '@nestjs/graphql';
+import { Args, Parent, Query, ResolveProperty, Resolver } from '@nestjs/graphql';
 import { UserDto } from '@shared/lib/dtos/user/user.dto';
 import { UserService } from '@api/user/services/user.service';
 import { toDto } from '@api/utils/dto/transform';
@@ -7,6 +7,7 @@ import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { ActiveUser } from '@api/auth/decorators/user-check.decorator';
 import { UserProfileDto } from '@shared/lib/dtos/user/profile/user-profile.dto';
 import { UserProfileService } from '@api/user/services/user-profile.service';
+import { defaultPagination, PaginationArgs } from '@api/core/graphql/pagination.args';
 
 @Resolver(() => UserDto)
 export class UsersResolver {
@@ -15,8 +16,12 @@ export class UsersResolver {
 	@UseGuards(JwtAuthGuard)
 	@ActiveUser()
 	@Query(() => [UserDto])
-	async users() {
-		const users = await this.userService.findAll();
+	async users(@Args() pagination: PaginationArgs) {
+		pagination = { ...defaultPagination, ...(pagination || {}) };
+		const users = await this.userService.find({
+			take: pagination.limit,
+			skip: pagination.skip,
+		});
 		return users.map(user =>
 			toDto({
 				value: user,
