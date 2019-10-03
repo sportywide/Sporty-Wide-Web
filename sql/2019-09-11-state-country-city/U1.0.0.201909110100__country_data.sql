@@ -1,1 +1,1 @@
-DROP TABLLE countries;
+DROP TABLE countries;
