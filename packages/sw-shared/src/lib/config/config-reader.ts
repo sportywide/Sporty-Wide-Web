@@ -1,8 +1,5 @@
-import path from 'path';
 import nconf from 'nconf';
-import JsFormat from 'nconf-js-improved';
-
-(nconf.formats as any).js = new JsFormat();
+import { merge } from 'lodash';
 
 export function getConfigProvider() {
 	//@ts-ignore
@@ -21,22 +18,13 @@ export function getConfigProvider() {
 	return provider;
 }
 
-export function readConfig(configPath, env = 'development') {
-	const dotenv = require('dotenv');
-	dotenv.config({ path: path.resolve(configPath, `.env`) });
-	dotenv.config({ path: path.resolve(configPath, `.env.${env}`) });
-
+export function createConfig(config, env = 'development') {
 	const nconf = getConfigProvider();
 
-	nconf.file('environments', {
-		file: path.resolve(configPath, `config.${env}.js`),
-		format: nconf.formats.js,
-	});
+	const envConfig = config[env] || {};
+	const defaultConfig = config['default'] || {};
+	const mergedConfig = merge(defaultConfig, envConfig);
 
-	nconf.file('defaults', {
-		file: path.resolve(configPath, `config.default.js`),
-		format: nconf.formats.js,
-	});
-
+	nconf.defaults(mergedConfig);
 	return nconf;
 }

@@ -12,6 +12,7 @@ import { SchemaModule } from '@schema/schema.module';
 import { AddressService } from '@api/core/services/address/address.service';
 import { AddressController } from '@api/core/controllers/address.controller';
 import { isDevelopment } from '@shared/lib/utils/env';
+import { config } from '@api/config';
 import { ApiValidationService } from './services/validation/validation.service';
 
 @Module({
@@ -23,7 +24,7 @@ import { ApiValidationService } from './services/validation/validation.service';
 		SchemaModule,
 		ConfigModule.forRoot({
 			exportAs: API_CONFIG,
-			configFile: path.resolve(__dirname, 'sw-api', 'config'),
+			config,
 		}),
 		GraphQLModule.forRoot({
 			autoSchemaFile: isDevelopment() ? '../../schema.graphql' : 'schema.graphql',

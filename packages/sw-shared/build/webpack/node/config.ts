@@ -70,43 +70,37 @@ export function makeConfig({
 			filename: '[name].js',
 			path: output,
 		}),
-		addPlugins(
-			[].concat(
-				//@ts-ignore
-				...dependencies.map(dependency => [
-					new CopyWebpackPlugin(
-						[
-							{
-								from: {
-									glob: '**/*',
-									dot: true,
-								},
-								to: path.resolve(output, dependency, 'config'),
-								context: path.resolve(paths.project.root, 'packages', dependency, 'config'),
-							},
-						],
-						{
-							copyUnmodified: true,
-						}
-					),
-					new CopyWebpackPlugin(
-						[
-							{
-								from: {
-									glob: '**/*',
-									dot: true,
-								},
-								to: path.resolve(output, dependency, 'assets'),
-								context: path.resolve(paths.project.root, 'packages', dependency, 'assets'),
-							},
-						],
-						{
-							copyUnmodified: true,
-						}
-					),
-				])
-			)
-		),
+		addPlugins([
+			new CopyWebpackPlugin(
+				[
+					{
+						from: {
+							glob: '.env',
+						},
+						to: path.resolve(output),
+						context: path.resolve(paths.project.root, 'packages', packageName),
+					},
+				],
+				{
+					copyUnmodified: true,
+				}
+			),
+			new CopyWebpackPlugin(
+				[
+					{
+						from: {
+							glob: '**/*',
+							dot: true,
+						},
+						to: path.resolve(output, 'assets'),
+						context: path.resolve(paths.project.root, 'packages', packageName, 'assets'),
+					},
+				],
+				{
+					copyUnmodified: true,
+				}
+			),
+		]),
 		node(),
 	]);
 }

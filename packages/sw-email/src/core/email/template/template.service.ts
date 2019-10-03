@@ -18,9 +18,7 @@ export class TemplateService {
 			return this.templateCache[cacheKey];
 		}
 
-		this.templateCache[cacheKey] = pug.compileFile(
-			path.resolve(__dirname, 'sw-email', 'assets', 'templates', ...templatePath)
-		);
+		this.templateCache[cacheKey] = pug.compileFile(path.resolve(__dirname, 'assets', 'templates', ...templatePath));
 		return this.templateCache[cacheKey];
 	}
 

@@ -1,4 +1,12 @@
-import path from 'path';
-import { readConfig } from '@shared/lib/config/config-reader';
-
-export default readConfig(path.resolve(__dirname, 'sw-web', 'config'), process.env.NODE_ENV);
+require('dotenv').config();
+/* eslint-disable */
+export const config = {
+	default: {
+		port: 3000,
+		server_url: 'http://api:5000',
+	},
+	development: {
+		cookie_secret: 'testsecret',
+		a: process.env.A,
+	},
+};
