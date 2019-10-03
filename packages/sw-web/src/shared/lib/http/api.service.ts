@@ -1,6 +1,8 @@
 import https from 'https';
 import { Inject, Service } from 'typedi';
+import { ApolloClient } from 'apollo-client';
 import axios, { Axios } from 'axios-observable';
+import { createHttpLink } from 'apollo-link-http';
 import { COOKIE_CSRF } from '@web/api/auth/constants';
 import { createRefreshTokenInterceptor } from '@web/shared/lib/http/refresh-token';
 import { BehaviorSubject, Subject } from 'rxjs';
@@ -8,6 +10,9 @@ import { getHeaders, parseContext } from '@web/shared/lib/auth/helper';
 import { isBrowser } from '@web/shared/lib/environment';
 import { filterValues } from '@shared/lib/utils/object/filter';
 import { setAuth } from '@web/features/auth/store/actions';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { autobind } from 'core-decorators';
+import { axiosFetch } from '@web/shared/lib/http/axios-fetch';
 
 @Service()
 export class ApiService {
@@ -16,6 +21,8 @@ export class ApiService {
 	private apiCallSubscription = new BehaviorSubject<number>(0);
 	private apiErrorSubscription = new Subject<Error>();
 	private refreshTokenCall: any;
+	private readonly apolloClient: ApolloClient<any>;
+	private readonly headers: any = {};
 
 	constructor(
 		@Inject('baseUrl') private readonly baseUrl: string,
@@ -23,45 +30,14 @@ export class ApiService {
 		@Inject('store') private readonly store
 	) {
 		const headers = getHeaders(context.req);
-		this.refreshTokenCall = null;
 		if (headers) {
-			axios.defaults.headers = filterValues(headers, value => {
+			this.headers = axios.defaults.headers = filterValues(headers, value => {
 				return value != undefined;
 			});
 		}
-		this.apiBase = axios.create({
-			baseURL: `${baseUrl}/api`,
-			xsrfCookieName: COOKIE_CSRF,
-			httpsAgent: new https.Agent({ rejectUnauthorized: false }),
-		});
-
-		this.authBase = axios.create({
-			baseURL: `${baseUrl}/auth`,
-			xsrfCookieName: COOKIE_CSRF,
-			httpsAgent: new https.Agent({ rejectUnauthorized: false }),
-		});
-
-		const retryCall = () => {
-			if (this.refreshTokenCall) {
-				return this.refreshTokenCall;
-			}
-			this.refreshTokenCall = this.authBase
-				.post('/refresh-token')
-				.toPromise()
-				.then(() => {
-					store.dispatch(setAuth(parseContext(context)));
-				})
-				.finally(() => {
-					this.refreshTokenCall = null;
-				});
-			return this.refreshTokenCall;
-		};
-
-		this.apiBase = createRefreshTokenInterceptor(this.apiBase, retryCall);
-		this.authBase = createRefreshTokenInterceptor(this.authBase, retryCall);
-		if (isBrowser()) {
-			this.registerApiSubscriptions();
-		}
+		this.apiBase = this.restClient(`${baseUrl}/api`);
+		this.authBase = this.restClient(`${baseUrl}/auth`);
+		this.apolloClient = this.graphqlClient(this.apiBase);
 	}
 
 	subscribeToApiCalls() {
@@ -80,8 +56,38 @@ export class ApiService {
 		return this.authBase;
 	}
 
-	private registerApiSubscriptions() {
-		[this.apiBase, this.authBase].forEach((axiosInstance: Axios) => {
+	graphql() {
+		return this.apolloClient;
+	}
+
+	@autobind
+	private retryCall() {
+		return () => {
+			if (this.refreshTokenCall) {
+				return this.refreshTokenCall;
+			}
+			this.refreshTokenCall = this.authBase
+				.post('/refresh-token')
+				.toPromise()
+				.then(() => {
+					this.store.dispatch(setAuth(parseContext(this.context)));
+				})
+				.finally(() => {
+					this.refreshTokenCall = null;
+				});
+			return this.refreshTokenCall;
+		};
+	}
+
+	private restClient(url) {
+		let axiosInstance = axios.create({
+			baseURL: url,
+			xsrfCookieName: COOKIE_CSRF,
+			httpsAgent: new https.Agent({ rejectUnauthorized: false }),
+		});
+		axiosInstance = createRefreshTokenInterceptor(axiosInstance, this.retryCall());
+
+		if (isBrowser()) {
 			axiosInstance.interceptors.request.use(config => {
 				this.apiCallSubscription.next(this.apiCallSubscription.getValue() + 1);
 				return config;
@@ -97,6 +103,19 @@ export class ApiService {
 					throw error;
 				}
 			);
+		}
+		return axiosInstance;
+	}
+
+	private graphqlClient(axiosInstance) {
+		return new ApolloClient({
+			ssrMode: this.context.req,
+			link: createHttpLink({
+				uri: `${this.baseUrl}/api/graphql`,
+				headers: this.headers,
+				fetch: axiosFetch(axiosInstance),
+			}),
+			cache: new InMemoryCache(),
 		});
 	}
 }

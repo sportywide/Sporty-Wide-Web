@@ -15,12 +15,15 @@ import { logout } from '@web/features/auth/store/actions';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { allowActiveOnly, checkUser } from '@web/shared/lib/auth/check-user';
 import { redirect } from '@web/shared/lib/navigation/helper';
+import { GraphQlTest } from '@web/features/user/components/GraphqlTest';
+import { isBrowser } from '@web/shared/lib/environment';
 
 interface IProps {
 	startFetchingCharacters: Function;
 	stopFetchingCharacters: Function;
 	logout: Function;
 	user: IUser;
+	isServer: boolean;
 }
 
 class SwHomePage extends React.Component<IProps, any> {
@@ -56,6 +59,7 @@ class SwHomePage extends React.Component<IProps, any> {
 				<Button onClick={() => this.props.logout()}>Logout</Button>
 				<h1>Index Page</h1>
 				<CharacterInfo />
+				<GraphQlTest />
 				<Button onClick={() => redirect({ route: 'other', replace: true })}>Go to other</Button>
 				<Segment>
 					<Flag name="ae" />

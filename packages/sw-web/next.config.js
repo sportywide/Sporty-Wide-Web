@@ -83,8 +83,11 @@ const nextConfig = {
 						'yup-decorator',
 						'hoist-non-react-statics',
 						'crypto-browserify',
+						'apollo-boost',
+						'graphql',
 					],
-					ui: [
+					react: [
+						'@apollo/react-hooks',
 						'react',
 						'react-dnd-cjs',
 						'react-dnd-html5-backend-cjs',
