@@ -1,0 +1,8 @@
+query getUsers($limit: Int, $skip: Int) {
+	users(limit: $limit, skip: $skip) {
+		id
+		firstName
+		lastName
+		email
+	}
+}
