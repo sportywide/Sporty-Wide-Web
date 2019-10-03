@@ -1,6 +1,6 @@
 CREATE TABLE "league"
 (
-    id    SERIAL PRIMARY KEY,
+    id    INTEGER PRIMARY KEY,
     name  VARCHAR(20) NOT NULL,
     title VARCHAR(30) NOT NULL,
     image VARCHAR(60) NOT NULL
@@ -10,23 +10,28 @@ CREATE TABLE "user_league"
 (
     id         SERIAL PRIMARY KEY,
     user_id    SERIAL REFERENCES public.user (id),
-    league_id  SERIAL REFERENCES league (id),
+    league_id  INTEGER REFERENCES league (id),
     created_at timestamptz DEFAULT CURRENT_TIMESTAMP
 );
 
-INSERT INTO league(name, title, image)
-VALUES ('premier-league',
+INSERT INTO league(id, name, title, image)
+VALUES (13,
+        'premier-league',
         'Premier League',
         '/static/leagues/premier-league.svg'),
-       ('la-liga',
-        'La Liga',
+       (53,
+        'la-liga',
+        'La Liga Santander',
         '/static/leagues/laliga.svg'),
-       ('bundesliga',
+       (19,
+        'bundesliga',
         'Bundesliga',
         '/static/leagues/bundesliga.svg'),
-       ('serie-a',
-        'Serie A',
+       (31,
+        'serie-a',
+        'Serie A TIM',
         '/static/leagues/serie-a.svg'),
-       ('ligue-one',
-        'League One',
+       (16,
+        'ligue-one',
+        'Ligue 1 Conforama',
         '/static/leagues/ligue-1.svg');
