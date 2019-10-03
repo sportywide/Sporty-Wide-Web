@@ -16,7 +16,6 @@ import { TokenService } from '@api/auth/services/token.service';
 import { CompleteSocialProfileDto } from '@shared/lib/dtos/user/complete-social-profile.dto';
 import { TokenType } from '@schema/auth/models/enums/token-type.token';
 import { ResetPasswordDto } from '@shared/lib/dtos/user/reset-password-dto';
-import { isBefore } from 'date-fns';
 import { TokenExpiredError } from 'jsonwebtoken';
 
 export class Tokens {

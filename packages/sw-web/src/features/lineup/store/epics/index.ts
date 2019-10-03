@@ -1,16 +1,16 @@
 import { concatMap, map } from 'rxjs/operators';
 import {
 	CHANGE_STRATEGY,
-	FILL_POSITIONS,
 	FETCH_PLAYERS,
+	FILL_POSITIONS,
 	SUBSTITUTE_PLAYERS,
 } from '@web/features/lineup/store/actions/actions.constants';
 import {
 	addPlayerToLineup,
 	changeStrategySuccess,
+	fetchPlayersSuccess,
 	fillPositions,
 	fillPositionSuccess,
-	fetchPlayersSuccess,
 	removePlayerFromLineup,
 	substitutePlayers,
 } from '@web/features/lineup/store/actions';

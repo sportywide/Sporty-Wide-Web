@@ -1,4 +1,3 @@
-import path from 'path';
 import { Module } from '@nestjs/common';
 import { exceptionFilterProvider } from '@api/core/error/exception.provider';
 import { CoreModule } from '@core/core.module';

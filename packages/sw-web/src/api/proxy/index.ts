@@ -19,6 +19,7 @@ import {
 	UNAUTHORIZED,
 } from '@web/shared/lib/http/status-codes';
 import { getHeaders } from '@web/shared/lib/auth/helper';
+
 const config = getConfig();
 
 export const devProxy = {

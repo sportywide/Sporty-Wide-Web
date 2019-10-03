@@ -16,7 +16,6 @@ import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { allowActiveOnly, checkUser } from '@web/shared/lib/auth/check-user';
 import { redirect } from '@web/shared/lib/navigation/helper';
 import { GraphQlTest } from '@web/features/user/components/GraphqlTest';
-import { isBrowser } from '@web/shared/lib/environment';
 
 interface IProps {
 	startFetchingCharacters: Function;

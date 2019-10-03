@@ -8,6 +8,7 @@ import csurf from 'csurf';
 import flash from 'express-cookie-flash';
 import { getConfig } from '@web/config.provider';
 import { COOKIE_CSRF } from '@web/api/auth/constants';
+
 const config = getConfig();
 
 const CSRF_WHITE_LIST = ['login', 'signup'];

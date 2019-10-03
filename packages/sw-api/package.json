@@ -7,7 +7,7 @@
 	"scripts": {
 		"build": "NODE_ENV=production TS_NODE_TYPE_CHECK=false TS_NODE_TRANSPILE_ONLY=true webpack -r tsconfig-paths/register",
 		"dev": "rm -rf dist/ && run-p dev:*",
-		"dev:server": "wait-on dist/main.js && nodemon",
+		"dev:server": "wait-on dist/main.js && node --inspect=0.0.0.0 dist/main.js",
 		"dev:webpack": "TS_NODE_TRANSPILE_ONLY=true TS_NODE_TYPE_CHECK=false webpack -r tsconfig-paths/register"
 	},
 	"dependencies": {

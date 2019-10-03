@@ -11,7 +11,6 @@ import { Container, ContainerInstance } from 'typedi';
 import { authReducer } from '@web/features/auth/store/reducers';
 import { logoutEpic } from '@web/features/auth/store/epics';
 import React from 'react';
-import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { leagueReducer } from '@web/features/leagues/base/store/reducers/league-reducer';
 import { loadLeaguesEpic } from '@web/features/leagues/base/store/epics';
 import { createReducerManager, ReducerManager } from './redux/reducer-manager';

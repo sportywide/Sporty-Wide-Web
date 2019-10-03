@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { Formik, FormikProps } from 'formik';
 import { Form, Header, Icon, Segment } from 'semantic-ui-react';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';

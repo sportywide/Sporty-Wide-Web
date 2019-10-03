@@ -1,8 +1,8 @@
 import { map, mapTo, mergeMap } from 'rxjs/operators';
 import {
+	FETCH_USER_LEAGUES,
 	JOIN_USER_LEAGUE,
 	LEAVE_USER_LEAGUE,
-	FETCH_USER_LEAGUES,
 } from '@web/features/leagues/user/store/actions/actions.constants';
 import { IDependencies } from '@web/shared/lib/store';
 import { UserLeagueService } from '@web/features/leagues/user/services/user-league.service';
