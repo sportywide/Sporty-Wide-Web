@@ -26,7 +26,7 @@ import { ApiValidationService } from './services/validation/validation.service';
 			configFile: path.resolve(__dirname, 'sw-api', 'config'),
 		}),
 		GraphQLModule.forRoot({
-			autoSchemaFile: 'schema.gql',
+			autoSchemaFile: isDevelopment() ? '../../schema.graphql' : 'schema.graphql',
 			playground: isDevelopment(),
 			debug: isDevelopment(),
 			context: ({ req, res }) => ({ req, res }),
