@@ -4,7 +4,12 @@ import fsExtra from 'fs-extra';
 import { Injectable } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 import cheerio from 'cheerio';
+import { range } from '@shared/lib/utils/array/range';
+import { sleep } from '@shared/lib/utils/sleep';
+import { flattenDeep } from 'lodash';
+
 const resourcesPath = path.resolve(process.cwd(), 'resources');
+const DEFAULT_PLAYER_PAGES = 5;
 
 @Injectable()
 export class CrawlerService {
@@ -26,7 +31,7 @@ export class CrawlerService {
 	}
 
 	// region Crawl teams
-	async crawlTeamFiFa(leagueId): Promise<any> {
+	async crawlFiFaTeam(leagueId): Promise<any> {
 		console.info(`Fetching league id ${leagueId}`);
 		const url = `/teams?league=${leagueId}&order=desc`;
 		const result = await this.getParsedResponse(url);
@@ -81,44 +86,48 @@ export class CrawlerService {
 	// endregion Crawl teams
 
 	// region Crawl from listing page
-	async crawlPlayerFiFaBatch(leagueId, first, last): Promise<any> {
-		let index = first;
+	async crawlFiFaPlayers(leagueId): Promise<any> {
+		console.info(`Fetching players for league id ${leagueId}`);
 		const result: any[] = [];
-		const promises: Promise<any>[] = [];
-		while (index <= last) {
-			promises.push(
-				this.delayBatchPlayer(leagueId, index, first)
-					.then(() => {
-						console.info(`Finished page ${index}`);
-					})
-					.catch(e => console.error(`Failed to fetch player page ${index}`, e))
-			);
-			index++;
-		}
+		let shouldContinue = true;
+		let currentPage = 1;
+		do {
+			const responses = await this.crawlPlayersFiFaBatchPages(leagueId, currentPage, DEFAULT_PLAYER_PAGES);
+			shouldContinue = responses.every(({ error, response }) => !error || response.status !== 404);
+			result.push(...flattenDeep(responses.filter(({ error }) => !error).map(({ response }) => response)));
+			currentPage += DEFAULT_PLAYER_PAGES;
+			await sleep(1000);
+		} while (shouldContinue);
 
-		const batches = (await Promise.all(promises)).filter(result => !(result instanceof Error));
-		batches.forEach(batch => {
-			result.push(...batch);
-		});
-
-		await this.writeResult(`player.l${leagueId}.p${first}-${last}.json`, result);
+		await this.writeResult(`player.l${leagueId}.json`, result);
 		return result;
 	}
 
-	private delayBatchPlayer(leagueId: string, i: number, first: number) {
-		console.info(`Fetching player page ${i} for league id ${leagueId}`);
-		return new Promise((resolve, reject) =>
-			setTimeout(async () => {
-				try {
-					const url = `/players/${i}/?league=${leagueId}&order=desc`;
-					const result = await this.getParsedResponse(url);
-					const batchPlayers = this.parseInfoFiFaBulk(result);
-					resolve(batchPlayers);
-				} catch (e) {
-					reject(e);
-				}
-			}, (i - first + 1) * 1000)
+	private async crawlPlayersFiFaBatchPages(leagueId, start, count): Promise<{ error: boolean; response: any }[]> {
+		console.info(`Fetching ${count} players page for league ${leagueId} starting from ${start}`);
+		return Promise.all(
+			range(start, start + count).map(page =>
+				this.crawlPlayerFiFaPage(leagueId, page)
+					.then(playerData => {
+						console.info(`Successfully fetched player page ${page} for league id ${leagueId}`);
+						return { error: false, response: playerData };
+					})
+					.catch(error => {
+						console.error(
+							`Failed to fetch player page ${page} for league id ${leagueId}`,
+							error.response.status
+						);
+						return { error: true, response: error.response };
+					})
+			)
 		);
+	}
+
+	private async crawlPlayerFiFaPage(leagueId: string, page: number) {
+		console.info(`Fetching player page ${page} for league id ${leagueId}`);
+		const url = `/players/${page}/?league=${leagueId}&order=desc`;
+		const result = await this.getParsedResponse(url);
+		return this.parseInfoFiFaBulk(result);
 	}
 
 	private parseInfoFiFaBulk($: CheerioStatic): any {
@@ -172,7 +181,7 @@ export class CrawlerService {
 	// endregion Crawl from listing page
 
 	// region Crawl from detail page
-	async crawlPlayerPageFiFa(url): Promise<any> {
+	async crawlFiFaPlayerDetail(url): Promise<any> {
 		const result = await this.getParsedResponse(url);
 		return this.parseInfoFiFa(result);
 	}

@@ -7,7 +7,7 @@ export function createRefreshTokenInterceptor(axios: Axios, refreshTokenCall) {
 	const id = axios.interceptors.response.use(
 		async res => {
 			if (
-				!res.config.url.endsWith('/api/graphql') ||
+				!(res.config.url || '').endsWith('/api/graphql') ||
 				res.data.data ||
 				!(res.data.errors && res.data.errors.length)
 			) {
