@@ -2,11 +2,11 @@ export const config = {
 	development: {
 		postgres: {
 			url: 'localhost',
-			username: 'sw-user',
-			password: 'sw-password',
+			username: process.env.SW_POSTGRES_USER,
+			password: process.env.SW_POSTGRES_PASSWORD,
 			host: 'postgres',
 			port: 5432,
-			database: 'sportywide',
+			database: process.env.SW_POSTGRES_DB,
 		},
 	},
 };

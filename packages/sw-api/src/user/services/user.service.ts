@@ -33,6 +33,10 @@ export class UserService extends BaseEntityService<User> {
 			throw new BadRequestException('Invalid user');
 		}
 
+		if (userEntity.status !== UserStatus.PENDING) {
+			throw new BadRequestException('User is not pending');
+		}
+
 		userEntity.status = UserStatus.ACTIVE;
 		return this.saveOne(userEntity);
 	}
