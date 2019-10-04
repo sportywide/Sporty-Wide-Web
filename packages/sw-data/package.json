@@ -1,0 +1,18 @@
+{
+	"name": "sportywide-data",
+	"version": "1.0.0",
+	"description": "Data Crawler service for SportyWide",
+	"license": "ISC",
+	"scripts": {
+		"exec": "ts-node -r tsconfig-paths/register src/${npm_config_script}"
+	},
+	"dependencies": {
+		"cheerio": "0.22.0",
+		"nodemailer": "6.3.0",
+		"sportywide-core": "1.0.0",
+		"sportywide-shared": "1.0.0"
+	},
+	"devDependencies": {
+		"@types/cheerio": "0.22.13"
+	}
+}

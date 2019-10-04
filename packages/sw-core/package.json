@@ -12,7 +12,8 @@
 		"nest-bull": "0.8.3",
 		"redis": "2.8.0",
 		"rxjs": "6.5.2",
-		"sportywide-shared": "1.0.0"
+		"sportywide-shared": "1.0.0",
+		"url": "0.11.0"
 	},
 	"devDependencies": {
 		"@nestjs/testing": "6.5.3",
