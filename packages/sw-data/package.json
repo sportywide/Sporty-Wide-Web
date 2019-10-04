@@ -4,11 +4,12 @@
 	"description": "Data Crawler service for SportyWide",
 	"license": "ISC",
 	"scripts": {
-		"exec": "ts-node -r tsconfig-paths/register src/${npm_config_script}"
+		"exec": "TS_NODE_TYPE_CHECK=false TS_NODE_TRANSPILE_ONLY=true ts-node -r tsconfig-paths/register src/${npm_config_script}"
 	},
 	"dependencies": {
 		"cheerio": "0.22.0",
 		"sportywide-core": "1.0.0",
+		"sportywide-schema": "1.0.0",
 		"sportywide-shared": "1.0.0"
 	},
 	"devDependencies": {

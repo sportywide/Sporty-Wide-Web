@@ -31,6 +31,23 @@ end
 $app_name = "sportywidedev.com"
 $vbox_ip = "192.168.50.10"
 $vbox_memory = 4096
+$script = <<SCRIPT
+sudo apt-get update
+sudo apt-get -y install python-software-properties python g++ make
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+echo 'deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist 10gen' | sudo tee /etc/apt/sources.list.d/mongodb.list
+
+sudo add-apt-repository -y ppa:chris-lea/node.js
+sudo add-apt-repository -y ppa:git-core/ppa
+sudo apt-get update
+
+#git
+sudo apt-get -y install git
+# node
+sudo apt-get -y install nodejs
+# npm modules
+sudo npm install -g npm # update npm
+SCRIPT
 
 Vagrant.configure(2) do |config|
 	config.ssh.extra_args = ["-t", "cd /vagrant; bash --login"]
@@ -48,7 +65,9 @@ Vagrant.configure(2) do |config|
   	end
   
 	config.vm.synced_folder ".", "/vagrant", type: "nfs", mount_options: ["rw","async","fsc","nolock","vers=3","udp","rsize=32768","wsize=32768","hard","noatime","actimeo=2"]
-	
+
+	config.vm.provision "shell", path: "vagrant/scripts/node.sh"
+
 	config.vm.provision :docker
 	
 	config.vm.provision :docker_compose,
