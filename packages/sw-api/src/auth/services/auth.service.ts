@@ -86,8 +86,8 @@ export class AuthService {
 	}
 
 	public async createTokens(user: User): Promise<Tokens> {
-		const accessToken = this.createAccessToken(user);
 		const refreshToken = await this.createRefreshToken(user);
+		const accessToken = this.createAccessToken(user);
 
 		return { accessToken, refreshToken };
 	}
