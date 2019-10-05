@@ -48,6 +48,20 @@ const paths = {
 			},
 		};
 	},
+	get data() {
+		return {
+			root: path.resolve(paths.project.root, 'packages', 'sw-data'),
+			get src() {
+				return path.resolve(this.root, 'src');
+			},
+			get scripts() {
+				return path.resolve(this.root, 'src', 'scripts');
+			},
+			get dist() {
+				return path.resolve(this.root, 'dist');
+			},
+		};
+	},
 	get api() {
 		return {
 			root: path.resolve(paths.project.root, 'packages', 'sw-api'),

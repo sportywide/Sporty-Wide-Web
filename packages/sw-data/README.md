@@ -7,5 +7,5 @@ This package contains scripts to fetch external data and save them into SportyWi
 Use the npm script:
 
 ```bash
-npm run exec --script=<script>
+npm run dev:exec --script=<script>
 ```
