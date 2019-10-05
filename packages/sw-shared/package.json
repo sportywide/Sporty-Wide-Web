@@ -19,6 +19,7 @@
 		"nock": "11.3.3",
 		"pug": "2.0.4",
 		"reflect-metadata": "0.1.13",
+		"rxjs": "6.5.3",
 		"source-map-support": "0.5.13",
 		"supertest": "4.0.2",
 		"type-graphql": "0.17.5",

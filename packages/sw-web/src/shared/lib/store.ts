@@ -12,7 +12,7 @@ import { authReducer } from '@web/features/auth/store/reducers';
 import { logoutEpic } from '@web/features/auth/store/epics';
 import React from 'react';
 import { leagueReducer } from '@web/features/leagues/base/store/reducers/league-reducer';
-import { loadLeaguesEpic } from '@web/features/leagues/base/store/epics';
+import { fetchLeaguesEpic } from '@web/features/leagues/base/store/epics';
 import { createReducerManager, ReducerManager } from './redux/reducer-manager';
 
 export interface IDependencies {
@@ -39,7 +39,7 @@ export function initStore(initialState = {}, context) {
 		dependencies: { container },
 	});
 	const reduxMiddleware = applyMiddleware(thunkMiddleware.withExtraArgument({ container }), epicMiddleware);
-	const epicManager = createEpicManager(logoutEpic, loadLeaguesEpic);
+	const epicManager = createEpicManager(logoutEpic, fetchLeaguesEpic);
 	const enhancers = isDevelopment() ? composeWithDevTools({ serialize: true })(reduxMiddleware) : reduxMiddleware;
 	const store = createStore(reducerManager.reduce, { ...initialState, auth }, enhancers) as ISportyWideStore;
 	store.reducerManager = reducerManager;

@@ -7,7 +7,7 @@ export type LeagueActions = ActionType<typeof actions>;
 const initialState: LeagueDto[] = [];
 
 export const leagueReducer = createReducer<LeagueDto[], LeagueActions>(initialState).handleAction(
-	actions.loadLeaguesSuccess,
+	actions.fetchLeaguesSuccess,
 	(state, { payload: leagues }) => {
 		return leagues;
 	}

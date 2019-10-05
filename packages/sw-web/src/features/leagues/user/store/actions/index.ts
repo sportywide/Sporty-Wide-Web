@@ -7,8 +7,8 @@ import {
 } from '@web/features/leagues/user/store/actions/actions.constants';
 import { LeagueDto } from '@shared/lib/dtos/leagues/league.dto';
 
-export const loadUserLeagues = createSwStandardAction(FETCH_USER_LEAGUES)<number>();
-export const loadUserLeaguesSuccess = createSwStandardAction(FETCH_USER_LEAGUE_SUCCESS)<{
+export const fetchUserLeagues = createSwStandardAction(FETCH_USER_LEAGUES)<number>();
+export const fetchUserLeaguesSuccess = createSwStandardAction(FETCH_USER_LEAGUE_SUCCESS)<{
 	leagues: LeagueDto[];
 	userId: number;
 }>();

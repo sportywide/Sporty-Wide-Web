@@ -9,7 +9,7 @@ import { plainToClass } from 'class-transformer-imp';
 export class UserLeagueService {
 	constructor(@Inject(type => ApiService) private readonly apiService: ApiService) {}
 
-	loadUserLeagues(userId: number): Observable<UserLeagueDto[]> {
+	fetchUserLeagues(userId: number): Observable<UserLeagueDto[]> {
 		return this.apiService
 			.api()
 			.get(`/leagues/user/${userId}`)
