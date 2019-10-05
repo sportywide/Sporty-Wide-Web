@@ -34,7 +34,6 @@ end
 ## Variables
 $app_name = "sportywidedev.com"
 $vbox_ip = "192.168.50.10"
-$vbox_memory = 4096
 
 print ENV['SW_POSTGRES_USER']
 
@@ -46,11 +45,11 @@ Vagrant.configure(2) do |config|
 	config.vm.network :private_network, ip: $vbox_ip
   
 	config.vm.provider "virtualbox" do |vb|
-		vb.memory = $vbox_memory
+		vb.memory = ENV['SW_RAM'] || 4096
 		vb.customize ["modifyvm", :id, "--name", "Sportywide"]
 		vb.customize ["modifyvm", :id, "--natdnshostresolver1", "on"]
 		vb.customize ["modifyvm", :id, "--natdnsproxy1", "on"]
-		vb.cpus = "2"
+		vb.cpus = ENV['SW_CPU'] || 2
 		vb.gui                   = true
   	end
   
