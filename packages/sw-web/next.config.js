@@ -4,6 +4,7 @@ const withPlugins = require('next-compose-plugins');
 const babel = require('next-plugin-custom-babel-config');
 const bundleAnalyzer = require('@zeit/next-bundle-analyzer');
 const webpack = require('webpack');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { importAutoDllPlugin } = require('next/dist/build/webpack/plugins/dll-import');
 const scss = require('./src/build/plugins/with-sass');
 const css = require('./src/build/plugins/with-css');

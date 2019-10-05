@@ -15,7 +15,7 @@
 		"dev": "rm -rf dist/ && run-p dev:*",
 		"dev:codegen": "graphql-codegen --config codegen.yml --watch",
 		"dev:server": "wait-on dist/main.js && node dist/main.js",
-		"dev:webpack": "TS_NODE_TRANSPILE_ONLY=true TS_NODE_TYPE_CHECK=false webpack -r tsconfig-paths/register",
+		"dev:webpack": "TS_NODE_TRANSPILE_ONLY=true TS_NODE_TYPE_CHECK=false TSC_WATCHFILE=UseFsEvents webpack -r tsconfig-paths/register",
 		"start": "NODE_ENV=production node dist/main.js"
 	},
 	"dependencies": {
@@ -35,7 +35,7 @@
 		"formik": "1.5.8",
 		"hoist-non-react-statics": "3.3.0",
 		"http-proxy-middleware": "0.19.1",
-		"next": "9.0.3",
+		"next": "9.0.7",
 		"next-cookies": "1.1.2",
 		"next-routes": "1.4.2",
 		"next-store-wrapper": "3.0.0-alpha.5",
