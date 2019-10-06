@@ -1,4 +1,5 @@
 import path from 'path';
+import https from 'https';
 import { fsPromise } from '@shared/lib/utils/promisify/fs';
 import fsExtra from 'fs-extra';
 import { Injectable } from '@nestjs/common';
@@ -27,6 +28,7 @@ export class CrawlerService {
 				}
 				return data;
 			},
+			httpsAgent: new https.Agent({ rejectUnauthorized: false }),
 		});
 	}
 
