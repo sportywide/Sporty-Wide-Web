@@ -48,7 +48,7 @@ const SwConfirmSocialComponent: React.FC<any> = () => {
 						label: 'Username',
 						placeholder: 'Your username',
 					}}
-					validate={validateUsername}
+					validate={value => validateUsername(container, value)}
 				/>
 
 				<SwPasswordField

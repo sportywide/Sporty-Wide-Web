@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { SwFormField } from '@web/shared/lib/form/components/FormField';
+import React, { useCallback, useState } from 'react';
+import { getFormikValue, SwFormField } from '@web/shared/lib/form/components/FormField';
 import { SwPlaceAutoCompleteField } from '@web/shared/lib/form/components/address/PlaceAutoCompleteField';
 import { SwCitySelect } from '@web/features/address/components/CitySelect';
 import { SwStateSelect } from '@web/features/address/components/StateSelect';
@@ -26,11 +26,19 @@ const SwAddressFormComponent: React.FC<IProps> = ({
 	const formik: FormikContext<any> = (otherProps as any).formik;
 	const [countryId, setCountryId] = useState<number | null | undefined>(undefined);
 	const [stateId, setStateId] = useState<number | null | undefined>(undefined);
+	const onCountryChangeCallback = useCallback(onCountryChange, []);
+	const onCountrySetCallback = useCallback(onCountrySet, []);
+	const onStateChangeCallback = useCallback(onStateChange, []);
+	const onStateSetCallback = useCallback(onStateSet, []);
+	const onCityChangeCallback = useCallback(onCityChange, []);
+
 	return (
 		<>
 			<div className={'sw-mb1'}>
 				<a
 					onClick={() => {
+						setCountryId(null);
+						setStateId(null);
 						onToggleAutoCompleteField(!isShowingAutoComplete);
 					}}
 				>
@@ -77,45 +85,65 @@ const SwAddressFormComponent: React.FC<IProps> = ({
 					<Form.Group widths="equal">
 						{stateId !== undefined && (
 							<SwCitySelect
-								name={`${name}.city`}
+								value={getFormikValue(formik, `${name}.city`)}
 								label={'City'}
 								placeholder={'Your City'}
 								stateId={stateId}
+								onCityChange={onCityChangeCallback}
 							/>
 						)}
 
 						{countryId !== undefined && (
 							<SwStateSelect
-								name={`${name}.state`}
+								value={getFormikValue(formik, `${name}.state`)}
 								label={'State'}
 								placeholder={'Your State'}
 								countryId={countryId}
-								onStateChange={state => {
-									setStateId((state && state.id) as number);
-								}}
-								onChange={() => {
-									formik.setFieldValue(`${name}.city`, '');
-								}}
+								onStateChange={onStateChangeCallback}
+								onStateLoaded={onStateSetCallback}
 							/>
 						)}
 
 						<SwCountrySelect
-							name={`${name}.country`}
+							value={getFormikValue(formik, `${name}.country`)}
 							label={'Country'}
 							placeholder={'Your country'}
-							onCountryChange={country => {
-								setCountryId(country && country.id);
-							}}
-							onChange={() => {
-								formik.setFieldValue(`${name}.state`, '');
-								formik.setFieldValue(`${name}.city`, '');
-							}}
+							onCountryChange={onCountryChangeCallback}
+							onCountryLoaded={onCountrySetCallback}
 						/>
 					</Form.Group>
 				</>
 			)}
 		</>
 	);
+
+	function onCountryChange(country) {
+		formik.setFieldValue(`${name}.state`, '');
+		formik.setFieldValue(`${name}.city`, '');
+		formik.setFieldValue(`${name}.country`, (country && country.name) || '');
+		setCountryId(country && country.id);
+		setStateId(null);
+	}
+
+	function onCountrySet(country) {
+		setCountryId(country && country.id);
+		formik.setFieldValue(`${name}.country`, (country && country.name) || '');
+	}
+
+	function onStateChange(state) {
+		formik.setFieldValue(`${name}.city`, '');
+		formik.setFieldValue(`${name}.state`, state && state.name);
+		setStateId(state && state.id);
+	}
+
+	function onStateSet(state) {
+		setStateId(state && state.id);
+		formik.setFieldValue(`${name}.state`, (state && state.name) || '');
+	}
+
+	function onCityChange(city) {
+		formik.setFieldValue(`${name}.city`, city && city.name);
+	}
 
 	function setAddress(address: AddressDto) {
 		Object.keys(address).forEach(key => {

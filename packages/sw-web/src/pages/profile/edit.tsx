@@ -3,9 +3,7 @@ import Head from 'next/head';
 import { SwFluidContainer, SwGreyBackground } from '@web/shared/styled/Background.styled';
 import { SwEditProfile } from '@web/features/profile/edit/components/EditProfile';
 import { Grid, GridColumn, Loader } from 'semantic-ui-react';
-import { withContext } from '@web/shared/lib/context/providers';
 import { compose } from 'recompose';
-import { UserContext } from '@web/shared/lib/store';
 import { registerReducer } from '@web/shared/lib/redux/register-reducer';
 import { registerEpic } from '@web/shared/lib/redux/register-epic';
 import { connect } from 'react-redux';
@@ -52,7 +50,6 @@ class SwEditProfilePage extends React.Component<IProps> {
 }
 
 const enhancer = compose(
-	withContext(UserContext, 'user'),
 	registerReducer({ userProfile: userProfileReducer }),
 	registerEpic(
 		fetchBasicUserProfileEpic,
@@ -62,7 +59,7 @@ const enhancer = compose(
 		saveExtraUserProfileEpic
 	),
 	connect(
-		state => ({ userProfile: state.userProfile }),
+		state => ({ userProfile: state.userProfile, user: state.auth && state.auth.user }),
 		{
 			fetchUserProfile,
 		}

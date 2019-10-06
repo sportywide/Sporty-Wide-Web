@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { Formik, FormikProps } from 'formik';
 import { Form, Header, Icon, Segment } from 'semantic-ui-react';
 import { SwFormField } from '@web/shared/lib/form/components/FormField';
 import { getSchemaByType } from 'yup-decorator';
 import { validateExists } from '@web/shared/lib/form/validation/validators';
 import * as yup from 'yup';
+import { ContainerContext } from '@web/shared/lib/store';
 
 const validateEmail = validateExists({ table: 'user', field: 'email' });
 
@@ -18,6 +19,7 @@ interface IProps {
 
 const SwConfirmEmailComponent: React.FC<IProps> = props => {
 	const [isFormHidden, setIsFormHidden] = useState(true);
+	const container = useContext(ContainerContext);
 
 	const handleResend = values => {
 		props.onResend(values.email);
@@ -63,7 +65,7 @@ const SwConfirmEmailComponent: React.FC<IProps> = props => {
 						type: 'email',
 						placeholder: 'Your email',
 					}}
-					validate={validateEmail}
+					validate={value => validateEmail(container, value)}
 				/>
 
 				<Form.Button type={'submit'} primary disabled={!props.isValid}>

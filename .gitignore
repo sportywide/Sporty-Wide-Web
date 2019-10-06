@@ -197,6 +197,6 @@ $RECYCLE.BIN/
 
 .env*
 
-offline.parameters
+packages/sw-data/resources
 
 # End of https://www.gitignore.io/api/node,linux,macos,windows,intellij+all

@@ -17,6 +17,7 @@
 		"moduleResolution": "node",
 		"resolveJsonModule": true,
 		"diagnostics": false,
+		"downlevelIteration": true,
 		"noEmit": true,
 		"noImplicitAny": false,
 		"experimentalDecorators": true,
@@ -33,7 +34,8 @@
 			"@schema/*": ["./packages/sw-schema/src/*"],
 			"@schema-test/*": ["./packages/sw-schema/test/*"],
 			"@core/*": ["./packages/sw-core/src/*"],
-			"@email/*": ["./packages/sw-email/src/*"]
+			"@email/*": ["./packages/sw-email/src/*"],
+			"@data/*": ["./packages/sw-data/src/*"]
 		}
 	},
 	"exclude": ["node_modules"]

@@ -10,6 +10,7 @@ module.exports = makeConfig({
 	entries: path.resolve(paths.web.src, 'next-server'),
 	output: paths.web.dist,
 	alias: {
+		'@root': paths.project.root,
 		'@shared': paths.shared.src,
 		'@web': paths.web.src,
 		'@web-test': path.resolve(paths.web.root, 'test'),

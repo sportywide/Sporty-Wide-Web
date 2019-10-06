@@ -5,7 +5,7 @@ import { ResetPasswordDto } from '@shared/lib/dtos/user/reset-password-dto';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { LoginDto } from '@shared/lib/dtos/user/login.dto';
 
-@Service({ global: true })
+@Service()
 export class AuthService {
 	constructor(
 		@Inject(type => ApiService)

@@ -1,4 +1,4 @@
-import config from '@web/config';
+import { getConfig } from '@web/config.provider';
 import { Request } from 'express';
 import modifyResponse from 'node-http-proxy-json';
 import {
@@ -19,6 +19,8 @@ import {
 	UNAUTHORIZED,
 } from '@web/shared/lib/http/status-codes';
 import { getHeaders } from '@web/shared/lib/auth/helper';
+
+const config = getConfig();
 
 export const devProxy = {
 	'/api': {

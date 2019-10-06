@@ -11,7 +11,6 @@ export type AuthAction = ActionType<typeof actions>;
 
 const initialState: IAuthState = {};
 
-export const authReducer = createReducer<IAuthState, AuthAction>(initialState).handleAction(
-	actions.logoutSuccess,
-	() => initialState
-);
+export const authReducer = createReducer<IAuthState, AuthAction>(initialState)
+	.handleAction(actions.setAuth, (state, { payload = {} }) => ({ ...state, ...payload }))
+	.handleAction(actions.logoutSuccess, () => initialState);

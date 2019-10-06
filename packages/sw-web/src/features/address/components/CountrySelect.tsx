@@ -1,90 +1,93 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { FormFieldEvents, getFormikValue } from '@web/shared/lib/form/components/FormField';
 import { ContainerContext } from '@web/shared/lib/store';
 import { AddressService } from '@web/features/address/services/address.service';
 import { CountryDto } from '@shared/lib/dtos/address/country.dto';
-import { connect, FormikContext } from 'formik';
-import { keyBy } from 'lodash';
 import { noop } from '@shared/lib/utils/functions';
-import { SwDropdownField } from '@web/shared/lib/form/components/DropdownField';
+import { Form } from 'semantic-ui-react';
+import { useCurrentRef, useKeyMap } from '@web/shared/lib/react/hooks';
 
-interface IProps extends FormFieldEvents {
-	name: string;
+interface IProps {
 	label?: string;
+	value: string;
 	placeholder?: string;
 	onCountryChange?: (country: CountryDto | null) => void;
+	onCountryLoaded: (country: CountryDto) => void;
 }
 const SwCountrySelectComponent: React.FC<IProps> = ({
-	name,
 	label,
+	value,
 	placeholder,
 	onCountryChange = noop,
-	...otherProps
+	onCountryLoaded,
 }) => {
-	const formik: FormikContext<any> = (otherProps as any).formik;
-	const value = getFormikValue(formik, name);
 	const container = useContext(ContainerContext);
-	const [loading, setLoading] = useState(false);
-	const [countryMap, setCountryMap] = useState<{ [key: string]: CountryDto }>(null);
+	const [init, setInit] = useState(true);
+	const [countryData, countryDataRef, setCountryData] = useCurrentRef<{ countries: CountryDto[]; loaded: boolean }>({
+		countries: [],
+		loaded: false,
+	});
 	useEffect(() => {
 		(async () => {
-			setLoading(true);
+			setCountryData({ countries: [], loaded: false });
 			try {
 				const addressService = container.get(AddressService);
 				const countries = await addressService.getCountries().toPromise();
-				const countryMap = keyBy(countries, 'name');
-				if (value && !countryMap[value]) {
-					countryMap[value] = newCountry(value);
-				}
-				setCountryMap(countryMap);
-			} finally {
-				setLoading(false);
+				setCountryData({ countries, loaded: true });
+			} catch {
+				setCountryData({ countries: [], loaded: true });
 			}
 		})();
-	}, []);
+	}, [container, setCountryData]);
+
+	useEffect(() => {
+		if (!countryDataRef.current.loaded) {
+			return;
+		}
+		const countries = countryDataRef.current.countries;
+		let currentCountry = countries && countries.find(country => country.name === value);
+		if (value && !currentCountry) {
+			currentCountry = newCountry(value);
+			setCountryData({ countries: countries.concat(currentCountry), loaded: true });
+		}
+		if (init && currentCountry) {
+			onCountryLoaded(currentCountry);
+			setInit(false);
+		}
+	}, [countryData, countryDataRef, init, onCountryLoaded, setCountryData, value]);
+
+	const countryMap = useKeyMap(countryData.countries, 'name');
 
 	const options = useMemo(() => {
-		return Object.values(countryMap || {}).map(country => ({
+		return countryData.countries.map(country => ({
 			value: country.name,
 			text: country.name,
 			key: country.id,
 		}));
-	}, [countryMap]);
-
-	useEffect(() => {
-		if (!countryMap) {
-			return;
-		}
-
-		const country = countryMap[value];
-		if (country) {
-			onCountryChange(country);
-		} else {
-			onCountryChange(newCountry(value));
-		}
-	}, [countryMap, value]);
+	}, [countryData.countries]);
 
 	return (
-		<SwDropdownField
-			name={name}
+		<Form.Dropdown
+			search={true}
+			fluid={true}
+			selection={true}
+			value={value}
 			label={label}
+			name={'country'}
 			placeholder={placeholder}
 			options={options}
 			allowAdditions={true}
+			loading={!countryData.loaded}
 			onAddItem={handleAddition}
-			{...otherProps}
+			onChange={handleChange}
 		/>
 	);
 
 	function handleAddition(e, { value }) {
-		formik.setFieldValue(name, value);
-		setCountryMap({
-			...countryMap,
-			[value]: {
-				id: null,
-				name: value,
-			},
-		});
+		onCountryChange(newCountry(value));
+	}
+
+	function handleChange(e, { value }) {
+		onCountryChange(countryMap[value]);
 	}
 };
 
@@ -97,4 +100,4 @@ function newCountry(name) {
 	};
 }
 
-export const SwCountrySelect = connect(SwCountrySelectComponent);
+export const SwCountrySelect = SwCountrySelectComponent;

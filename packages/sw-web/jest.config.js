@@ -3,7 +3,7 @@ const baseConfig = require('../../jest.config.base');
 module.exports = {
 	...baseConfig,
 	displayName: 'sw-web',
-	setupFilesAfterEnv: [require.resolve('./test/setup-test-framework.js')],
+	setupFilesAfterEnv: [require.resolve('./test/setup-test-framework.ts')],
 	moduleNameMapper: {
 		...baseConfig.moduleNameMapper,
 		'\\.svg$': '<rootDir>/test/svg-file-mock.js',

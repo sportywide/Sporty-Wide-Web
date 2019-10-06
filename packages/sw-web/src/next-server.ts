@@ -2,10 +2,12 @@ import 'reflect-metadata';
 import http from 'http';
 import next from 'next';
 import { isDevelopment } from '@shared/lib/utils/env';
-import config from '@web/config';
+import { getConfig } from '@web/config.provider';
 import { bootstrap } from './app';
 
 declare const module: any;
+
+const config = getConfig();
 const env = process.env.NODE_ENV;
 const nextApp = next({
 	dir: './src',

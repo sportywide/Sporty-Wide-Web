@@ -1,6 +1,6 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { AddressService } from '@api/core/services/address/address.service';
-import { toPlain } from '@api/shared/dto/transform';
+import { toPlain } from '@api/utils/dto/transform';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { StateDto } from '@shared/lib/dtos/address/state.dto';
 import { CityDto } from '@shared/lib/dtos/address/city.dto';

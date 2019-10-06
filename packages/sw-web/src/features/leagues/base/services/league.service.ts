@@ -5,13 +5,11 @@ import { ApiService } from '@web/shared/lib/http/api.service';
 import { map } from 'rxjs/operators';
 import { plainToClass } from 'class-transformer-imp';
 
-@Service({
-	global: true,
-})
+@Service()
 export class LeagueService {
 	constructor(@Inject(type => ApiService) private readonly apiService: ApiService) {}
 
-	loadLeagues(): Observable<LeagueDto[]> {
+	fetchLeagues(): Observable<LeagueDto[]> {
 		return this.apiService
 			.api()
 			.get('/leagues')

@@ -1,9 +1,24 @@
-import { DeepPartial, DeleteResult, FindConditions, FindManyOptions, ObjectID, Repository, SaveOptions } from 'typeorm';
+import {
+	DeepPartial,
+	DeleteResult,
+	FindConditions,
+	FindManyOptions,
+	In,
+	ObjectID,
+	Repository,
+	SaveOptions,
+} from 'typeorm';
 import { BaseEntity } from '@schema/core/base.entity';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
+import { SwLRUCache } from '@shared/lib/utils/cache/lru-cache';
+import DataLoader from 'dataloader';
+import { keyBy, omit } from 'lodash';
 
 export class BaseEntityService<T extends BaseEntity> {
-	constructor(private readonly repository: Repository<T>) {}
+	private cache: SwLRUCache<DataLoader<number, T>>;
+	constructor(private readonly repository: Repository<T>) {
+		this.cache = new SwLRUCache();
+	}
 
 	getTableName() {
 		return this.repository.metadata.tableName;
@@ -11,6 +26,54 @@ export class BaseEntityService<T extends BaseEntity> {
 
 	public async findAll(): Promise<T[]> {
 		return this.repository.find();
+	}
+
+	find(conditions: FindManyOptions<T>) {
+		return this.repository.find(conditions);
+	}
+
+	public async findIdsByDataLoader({
+		ids = [],
+		options = { property: 'id' },
+	}: {
+		ids: number[];
+		options?: FindManyOptions<T> & { property: keyof T };
+	}) {
+		const cacheEntry = this.cache.get(options);
+		let dataLoader: DataLoader<number, T>;
+		if (cacheEntry) {
+			dataLoader = cacheEntry.item;
+		} else {
+			dataLoader = new DataLoader<number, T>(
+				async ids => {
+					const entities = await this.find({
+						where: {
+							[options.property]: In(ids),
+						},
+						...omit(options, ['property']),
+					});
+					const entityMap = keyBy(entities, options.property);
+					return ids.map(id => entityMap[id]);
+				},
+				{ cache: false }
+			);
+			this.cache.put(options, dataLoader);
+		}
+
+		return dataLoader.loadMany(ids);
+	}
+
+	public async findIdByDataLoader({
+		id,
+		options,
+	}: {
+		id: number;
+		options?: FindManyOptions<T> & { property: keyof T };
+	}) {
+		return (await this.findIdsByDataLoader({
+			ids: [id],
+			options,
+		}))[0];
 	}
 
 	public async findOne(params: FindConditions<T>): Promise<T | undefined> {
@@ -49,19 +112,15 @@ export class BaseEntityService<T extends BaseEntity> {
 	}
 
 	public createOneEntity(dto: any): T {
-		const entity = this.repository.create(dto as DeepPartial<any>);
-		if (entity instanceof BaseEntity && !entity.isLoaded) {
-			entity.afterLoad();
-		}
-		return entity;
+		return this.repository.create(dto as DeepPartial<any>);
 	}
 
 	public merge(entity: T, ...updatedDtos) {
 		return this.repository.merge(entity, ...updatedDtos);
 	}
 
-	public async findByIds(ids: number[]): Promise<T[]> {
-		return this.repository.findByIds(ids);
+	public async findByIds(ids: number[], options: FindManyOptions<T> = {}): Promise<T[]> {
+		return this.repository.findByIds(ids, options);
 	}
 
 	public async findById({

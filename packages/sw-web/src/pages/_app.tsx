@@ -1,11 +1,12 @@
 import 'sporty-wide-style/dist/semantic.min.css';
 import '@web/styles/styles.scss';
 import 'reflect-metadata';
+import { ApolloProvider } from '@apollo/react-common';
 import App from 'next/app';
 import React from 'react';
 import { Provider } from 'react-redux';
 import withRedux from 'next-store-wrapper';
-import { ContainerContext, initStore, ISportyWideStore, UserContext } from '@web/shared/lib/store';
+import { ContainerContext, getUser, initStore, ISportyWideStore } from '@web/shared/lib/store';
 import { redirect } from '@web/shared/lib/navigation/helper';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { allowActiveOnly } from '@web/shared/lib/auth/check-user';
@@ -15,6 +16,7 @@ import Notifications from 'react-notification-system-redux';
 import NotificationContainer from '@web/shared/lib/components/notification/NotificationContainer';
 import { ucfirst } from '@shared/lib/utils/string/conversion';
 import { LoadingBar } from '@web/shared/lib/components/loading/LoadingBar';
+import { ApiService } from '@web/shared/lib/http/api.service';
 
 interface IProps {
 	store: ISportyWideStore;
@@ -88,17 +90,19 @@ class SwApp extends App<IProps> {
 	}
 
 	render() {
-		const { Component, pageProps, store, user } = this.props;
+		const { Component, pageProps, store } = this.props;
+		const container = store.container;
+		const apiService = container.get(ApiService);
 		return (
 			<ThemeProvider theme={theme}>
 				<Provider store={store}>
-					<ContainerContext.Provider value={store.container}>
-						<UserContext.Provider value={user}>
+					<ApolloProvider client={apiService.graphql()}>
+						<ContainerContext.Provider value={store.container}>
 							<LoadingBar />
 							<Component {...pageProps} />
-						</UserContext.Provider>
-						<NotificationContainer />
-					</ContainerContext.Provider>
+							<NotificationContainer />
+						</ContainerContext.Provider>
+					</ApolloProvider>
 				</Provider>
 			</ThemeProvider>
 		);
@@ -107,9 +111,8 @@ class SwApp extends App<IProps> {
 
 function validateUser(context: any, Component) {
 	const store = context.store;
-	const container = store.container;
-	const user: IUser = container.get('currentUser');
 
+	const user = getUser(store);
 	const checkUser = Component.checkUser || allowActiveOnly;
 	const allowUser = checkUser(user);
 

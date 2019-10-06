@@ -15,6 +15,7 @@ import { logout } from '@web/features/auth/store/actions';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { allowActiveOnly, checkUser } from '@web/shared/lib/auth/check-user';
 import { redirect } from '@web/shared/lib/navigation/helper';
+import { GraphQlTest } from '@web/features/user/components/GraphqlTest';
 
 function NavBar(props) {
 	return (
@@ -75,6 +76,7 @@ interface IProps {
 	stopFetchingCharacters: Function;
 	logout: Function;
 	user: IUser;
+	isServer: boolean;
 }
 
 class SwIndex extends React.Component<IProps, any> {
@@ -84,9 +86,10 @@ class SwIndex extends React.Component<IProps, any> {
 	}
 
 	static async getInitialProps({ store, isServer }) {
-		// const resultAction = await fetchCharacter(1, isServer).toPromise(); // we need to convert observable to Promise
-		// store.dispatch(resultAction);
-		// return { isServer };
+		const resultAction = await fetchCharacter(1, isServer).toPromise(); // we need to convert observable to Promise
+		store.dispatch(resultAction);
+
+		return { isServer };
 	}
 
 	handleItemClick = (e, { name }) => this.setState({ activeItem: name });

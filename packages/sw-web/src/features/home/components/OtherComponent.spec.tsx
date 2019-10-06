@@ -1,5 +1,4 @@
 import { render } from '@testing-library/react';
-import '@web-test/test-setup';
 
 import React from 'react';
 import { SwOther } from './OtherComponent';

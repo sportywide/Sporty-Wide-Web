@@ -33,6 +33,10 @@ export class UserService extends BaseEntityService<User> {
 			throw new BadRequestException('Invalid user');
 		}
 
+		if (userEntity.status !== UserStatus.PENDING) {
+			throw new BadRequestException('User is not pending');
+		}
+
 		userEntity.status = UserStatus.ACTIVE;
 		return this.saveOne(userEntity);
 	}
@@ -45,16 +49,19 @@ export class UserService extends BaseEntityService<User> {
 					.subQuery()
 					.select('token.engagementId')
 					.from(Token, 'token')
-					.where('token.engagementTable = :table', { table: this.userRepository.getTableName() })
-					.andWhere('token.content = :content', { content: tokenValue })
+					.where('token.engagementTable = :engagementTable')
+					.andWhere('token.content = :content')
 					.getQuery();
 				return 'user.id IN ' + subQuery;
 			})
+			.setParameter('engagementTable', this.userRepository.getTableName())
+			.setParameter('content', tokenValue)
 			.getOne();
 	}
 
 	async createUserProfile(user: User, userProfileDto: UserProfileDto) {
-		const userProfile = await this.userProfileService.saveUserProfile(userProfileDto);
+		let userProfile = await this.userProfileService.createOneEntity(userProfileDto);
+		userProfile = await this.userProfileService.saveOne(userProfile);
 		user.profile = userProfile;
 		await this.saveOne(user);
 		return userProfile;

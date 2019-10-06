@@ -66,7 +66,7 @@ const SwForgotPasswordComponent: React.FC<any> = () => {
 							label: 'Email',
 							placeholder: 'Your email',
 						}}
-						validate={validateEmail}
+						validate={value => validateEmail(container, value)}
 					/>
 
 					<Form.Button type={'submit'} primary disabled={!props.isValid || sendingRequest}>

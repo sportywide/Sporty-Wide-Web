@@ -1,11 +1,4 @@
-import { noop } from '@shared/lib/utils/functions';
+import { wrapDecorator } from '@shared/lib/utils/functions';
+import * as swagger from '@nestjs/swagger';
 
-export function ApiModelProperty(...args) {
-	const { ApiModelProperty: SwaggerApiModelProperty } = require('@nestjs/swagger');
-
-	if (!SwaggerApiModelProperty) {
-		return noop;
-	}
-
-	return SwaggerApiModelProperty(...args);
-}
+export const ApiModelProperty = wrapDecorator(swagger.ApiModelProperty);

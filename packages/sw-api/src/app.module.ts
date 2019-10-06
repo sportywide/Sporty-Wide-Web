@@ -3,7 +3,7 @@ import { AuthModule } from '@api/auth/auth.module';
 import { Module } from '@nestjs/common';
 import { AppController } from '@api/app.controller';
 import { AppService } from '@api/app.service';
-import { SharedModule } from '@api/shared/shared.module';
+import { SharedModule } from '@api/utils/shared.module';
 import { UserModule } from '@api/user/user.module';
 import { CoreApiModule } from '@api/core/core-api.module';
 import { CoreModule } from '@core/core.module';

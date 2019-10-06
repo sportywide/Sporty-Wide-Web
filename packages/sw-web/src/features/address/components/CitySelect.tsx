@@ -1,107 +1,106 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react';
-import { FormFieldEvents, getFormikValue } from '@web/shared/lib/form/components/FormField';
 import { noop } from '@shared/lib/utils/functions';
 import { ContainerContext } from '@web/shared/lib/store';
 import { AddressService } from '@web/features/address/services/address.service';
-import { SwDropdownField } from '@web/shared/lib/form/components/DropdownField';
 import { CityDto } from '@shared/lib/dtos/address/city.dto';
-import { keyBy } from 'lodash';
-import { connect, FormikContext } from 'formik';
+import { connect } from 'formik';
+import { useCurrentRef, useKeyMap } from '@web/shared/lib/react/hooks';
+import { Form } from 'semantic-ui-react';
 
-interface IProps extends FormFieldEvents {
-	name: string;
+interface IProps {
 	label?: string;
+	value: string;
 	stateId: number | null;
 	placeholder?: string;
 	onCityChange?: (cityDto?: CityDto) => void;
+	onCityLoaded?: (cityDto?: CityDto) => void;
 }
 
 const SwCitySelectComponent: React.FC<IProps> = ({
 	stateId,
-	name,
 	label,
 	placeholder,
 	onCityChange = noop,
-	...otherProps
+	onCityLoaded = noop,
+	value,
 }) => {
-	const formik: FormikContext<any> = (otherProps as any).formik;
-	const [cityMap, setCityMap] = useState<{ [key: string]: CityDto }>(null);
 	const container = useContext(ContainerContext);
-	const [loading, setLoading] = useState<boolean>(false);
-	const value = getFormikValue(formik, name);
+	const [cityData, cityDataRef, setCityData] = useCurrentRef<{ cities: CityDto[]; loaded: boolean }>({
+		cities: [],
+		loaded: false,
+	});
+	const [init, setInit] = useState(true);
 	useEffect(() => {
 		if (!stateId) {
-			const cityMap = {};
-			if (value) {
-				cityMap[value] = newCity(value, stateId);
-			}
-			setCityMap(cityMap);
-			setLoading(false);
+			setCityData({ cities: [], loaded: true });
 			return;
 		}
 		(async () => {
+			setCityData({ cities: [], loaded: false });
 			try {
 				const addressService = container.get(AddressService);
-				setLoading(true);
 				const cities = await addressService.getCititesFromStateId(stateId).toPromise();
-				const newCityMap = keyBy(cities, 'name');
-				const value = getFormikValue(formik, name);
-				if (value) {
-					if (!newCityMap[value]) {
-						newCityMap[value] = newCity(value, stateId);
-					}
-				} else {
-					formik.setFieldValue(name, cities.length ? cities[0].name : '');
-				}
-				setCityMap(newCityMap);
-			} finally {
-				setLoading(false);
+				setCityData({ cities, loaded: true });
+			} catch {
+				setCityData({ cities: [], loaded: true });
 			}
 		})();
-	}, [container, formik, name, stateId, value]);
+	}, [container, setCityData, stateId]);
 
 	const options = useMemo(() => {
-		return Object.values(cityMap || {}).map(city => ({
+		return Object.values(cityData.cities).map(city => ({
 			value: city.name,
 			text: city.name,
 			key: city.id,
 		}));
-	}, [cityMap]);
+	}, [cityData]);
 
 	useEffect(() => {
-		if (!cityMap) {
+		if (!cityDataRef.current.loaded) {
 			return;
 		}
-		if (cityMap[value]) {
-			onCityChange(cityMap[value]);
-		} else {
-			onCityChange(newCity(value, stateId));
+		const cities = cityDataRef.current.cities;
+		let currentCity = cities && cities.find(country => country.name === value);
+		let newCities = cities;
+		if (value && !currentCity) {
+			currentCity = newCity(value, stateId);
+			newCities = newCities.concat(currentCity);
+			setCityData({ cities: newCities, loaded: true });
 		}
-	}, [cityMap, onCityChange, stateId, value]);
+		if (!value && newCities.length) {
+			onCityChange(newCities[0]);
+		}
+		if (init && currentCity) {
+			onCityLoaded(currentCity);
+			setInit(false);
+		}
+	}, [cityData, cityDataRef, init, onCityChange, onCityLoaded, setCityData, stateId, value]);
+
+	const cityMap = useKeyMap(cityData.cities, 'name');
 
 	return (
-		<SwDropdownField
-			name={name}
+		<Form.Dropdown
+			search={true}
+			fluid={true}
+			selection={true}
+			name={'city'}
 			label={label}
+			value={value}
 			options={options}
 			placeholder={placeholder}
-			loading={loading}
+			loading={!cityData.loaded}
 			allowAdditions={true}
 			onAddItem={handleAddition}
-			{...otherProps}
+			onChange={handleChange}
 		/>
 	);
 
 	function handleAddition(e, { value }) {
-		formik.setFieldValue(name, value);
-		setCityMap({
-			...cityMap,
-			[value]: {
-				id: null,
-				name: value,
-				stateId,
-			},
-		});
+		onCityChange(newCity(value, stateId));
+	}
+
+	function handleChange(e, { value }) {
+		onCityChange(cityMap[value]);
 	}
 };
 

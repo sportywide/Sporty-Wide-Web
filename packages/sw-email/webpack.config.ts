@@ -9,6 +9,7 @@ module.exports = [
 		entries: path.resolve(paths.email.src, 'main'),
 		output: paths.email.dist,
 		alias: {
+			'@root': paths.project.root,
 			'@shared': paths.shared.src,
 			'@core': paths.core.src,
 			'@email': paths.email.src,

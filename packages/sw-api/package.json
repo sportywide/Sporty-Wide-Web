@@ -1,22 +1,25 @@
 {
 	"name": "sportywide-api",
 	"version": "1.0.0",
-	"description": "This package contains all API related code",
+	"description": "This package contains all related API code",
 	"keywords": [],
 	"license": "ISC",
 	"scripts": {
 		"build": "NODE_ENV=production TS_NODE_TYPE_CHECK=false TS_NODE_TRANSPILE_ONLY=true webpack -r tsconfig-paths/register",
 		"dev": "rm -rf dist/ && run-p dev:*",
-		"dev:server": "wait-on dist/main.js && nodemon",
+		"dev:server": "wait-on dist/main.js && node --inspect=0.0.0.0 dist/main.js",
 		"dev:webpack": "TS_NODE_TRANSPILE_ONLY=true TS_NODE_TYPE_CHECK=false webpack -r tsconfig-paths/register"
 	},
 	"dependencies": {
+		"@nestjs/graphql": "6.5.3",
 		"@nestjs/jwt": "6.1.1",
 		"@nestjs/passport": "6.1.0",
 		"@nestjs/platform-express": "6.5.3",
+		"apollo-server-express": "2.9.4",
 		"cookie-parser": "1.4.4",
 		"cors": "2.8.5",
 		"express-rate-limit": "5.0.0",
+		"graphql-tools": "4.0.5",
 		"helmet": "3.20.0",
 		"jsonwebtoken": "8.5.1",
 		"passport": "0.4.0",

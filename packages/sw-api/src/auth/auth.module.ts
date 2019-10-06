@@ -7,7 +7,7 @@ import { UserModule } from '@api/user/user.module';
 import { AuthController } from '@api/auth/controllers/auth.controller';
 import { JwtStrategy } from '@api/auth/strategy/jwt.strategy';
 import { LocalStrategy } from '@api/auth/strategy/local.strategy';
-import { SharedModule } from '@api/shared/shared.module';
+import { SharedModule } from '@api/utils/shared.module';
 import { CoreApiModule } from '@api/core/core-api.module';
 import { EmailModule } from '@api/email/email.module';
 import { API_CONFIG } from '@core/config/config.constants';

@@ -1,15 +1,17 @@
 import { Controller, Get, Param, ParseIntPipe, Put, UseGuards } from '@nestjs/common';
 import { LeagueService } from '@api/leagues/services/league.service';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
-import { toDto } from '@api/shared/dto/transform';
+import { toDto } from '@api/utils/dto/transform';
 import { LeagueDto } from '@shared/lib/dtos/leagues/league.dto';
 import { UserLeagueDto } from '@shared/lib/dtos/leagues/user-league.dto';
+import { ActiveUser } from '@api/auth/decorators/user-check.decorator';
 
 @Controller('/leagues')
 export class LeagueController {
 	constructor(private readonly leagueService: LeagueService) {}
 
 	@UseGuards(JwtAuthGuard)
+	@ActiveUser()
 	@Get('/')
 	public async getLeagues() {
 		const leagues = await this.leagueService.findAll();
@@ -17,6 +19,7 @@ export class LeagueController {
 	}
 
 	@UseGuards(JwtAuthGuard)
+	@ActiveUser()
 	@Get('/user/:userId')
 	public async getUserLeagues(@Param('userId', new ParseIntPipe()) userId: number) {
 		const userLeagues = await this.leagueService.findUserLeagues(userId);
@@ -32,6 +35,7 @@ export class LeagueController {
 	}
 
 	@UseGuards(JwtAuthGuard)
+	@ActiveUser()
 	@Put('/:leagueId/user/:userId/join')
 	public async joinLeague(
 		@Param('userId', new ParseIntPipe()) userId: number,
@@ -41,6 +45,7 @@ export class LeagueController {
 	}
 
 	@UseGuards(JwtAuthGuard)
+	@ActiveUser()
 	@Put('/:leagueId/user/:userId/leave')
 	public async leaveLeague(
 		@Param('userId', new ParseIntPipe()) userId: number,

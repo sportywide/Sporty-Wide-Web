@@ -4,6 +4,7 @@ const withPlugins = require('next-compose-plugins');
 const babel = require('next-plugin-custom-babel-config');
 const bundleAnalyzer = require('@zeit/next-bundle-analyzer');
 const webpack = require('webpack');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { importAutoDllPlugin } = require('next/dist/build/webpack/plugins/dll-import');
 const scss = require('./src/build/plugins/with-sass');
 const css = require('./src/build/plugins/with-css');
@@ -83,8 +84,11 @@ const nextConfig = {
 						'yup-decorator',
 						'hoist-non-react-statics',
 						'crypto-browserify',
+						'apollo-boost',
+						'graphql',
 					],
-					ui: [
+					react: [
+						'@apollo/react-hooks',
 						'react',
 						'react-dnd-cjs',
 						'react-dnd-html5-backend-cjs',
@@ -107,7 +111,7 @@ const nextConfig = {
 		});
 
 		webpackConfig.module.rules.push({
-			test: /@nestjs/,
+			test: /(@nestjs|type-graphql)/,
 			use: 'null-loader',
 		});
 

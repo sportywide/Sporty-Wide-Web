@@ -4,9 +4,9 @@ import { map } from 'rxjs/operators';
 import { CountryDto } from '@shared/lib/dtos/address/country.dto';
 import { Observable } from 'rxjs';
 import { StateDto } from '@shared/lib/dtos/address/state.dto';
-import { City } from '@schema/address/models/city.entity';
+import { CityDto } from '@shared/lib/dtos/address/city.dto';
 
-@Service({ global: true })
+@Service()
 export class AddressService {
 	constructor(
 		@Inject(type => ApiService)
@@ -27,7 +27,7 @@ export class AddressService {
 			.pipe(map(({ data }) => data));
 	}
 
-	getCititesFromStateId(stateId: number): Observable<City[]> {
+	getCititesFromStateId(stateId: number): Observable<CityDto[]> {
 		return this.apiService
 			.api()
 			.get(`/address/states/${stateId}/cities`)

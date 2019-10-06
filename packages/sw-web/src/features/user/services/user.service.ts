@@ -5,7 +5,7 @@ import { plainToClass } from 'class-transformer-imp';
 import { UserDto } from '@shared/lib/dtos/user/user.dto';
 import { UserProfileDto } from '@shared/lib/dtos/user/profile/user-profile.dto';
 
-@Service({ global: true })
+@Service()
 export class UserService {
 	constructor(
 		@Inject(type => ApiService)

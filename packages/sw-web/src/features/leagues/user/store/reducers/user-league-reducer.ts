@@ -11,7 +11,7 @@ export type UserLeagueActions = ActionType<typeof actions>;
 const initialState: ILeagueState = {};
 
 export const userLeagueReducer = createReducer<ILeagueState, UserLeagueActions>(initialState).handleAction(
-	actions.loadUserLeaguesSuccess,
+	actions.fetchUserLeaguesSuccess,
 	(state, { payload: { leagues, userId } }) => {
 		return {
 			...state,

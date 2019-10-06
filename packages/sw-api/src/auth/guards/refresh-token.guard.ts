@@ -5,6 +5,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UserService } from '@api/user/services/user.service';
 import { JwtStrategy } from '@api/auth/strategy/jwt.strategy';
 import { TokenExpiredError } from 'jsonwebtoken';
+import { getRequest } from '@api/utils/context';
 
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {
@@ -15,9 +16,7 @@ export class RefreshTokenGuard implements CanActivate {
 	) {}
 
 	canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
-		const request = context.switchToHttp().getRequest();
-		const response = context.switchToHttp().getResponse();
-
+		const request = getRequest(context);
 		const refreshToken = this.jwtStrategy.getRefreshToken(request);
 		if (!refreshToken) {
 			return false;
@@ -40,7 +39,7 @@ export class RefreshTokenGuard implements CanActivate {
 				}
 				request.user = user;
 				return resolve(true);
-			})(request, response);
+			})(request);
 		});
 	}
 }

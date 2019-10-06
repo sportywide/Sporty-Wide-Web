@@ -63,11 +63,11 @@ services:
             - 'traefik.port=5000'
         environment:
             WAIT_HOSTS: postgres:5432,redis:6379
-            POSTGRES_USER: ${POSTGRES_USER}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-            POSTGRES_DATABASE: ${POSTGRES_DB}
-            FACEBOOK_CLIENT_SECRET: ${FACEBOOK_CLIENT_SECRET}
-            GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
+            SW_POSTGRES_USER: ${SW_POSTGRES_USER}
+            SW_POSTGRES_PASSWORD: ${SW_POSTGRES_PASSWORD}
+            SW_POSTGRES_DB: ${SW_POSTGRES_DB}
+            SW_FACEBOOK_CLIENT_SECRET: ${SW_FACEBOOK_CLIENT_SECRET}
+            SW_GOOGLE_CLIENT_SECRET: ${SW_GOOGLE_CLIENT_SECRET}
         depends_on:
             - base
         volumes:
@@ -85,9 +85,9 @@ services:
         command: dev
         environment:
             WAIT_HOSTS: redis:6379
-            POSTGRES_USER: ${POSTGRES_USER}
-            POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-            POSTGRES_DATABASE: ${POSTGRES_DB}
+            SW_POSTGRES_USER: ${SW_POSTGRES_USER}
+            SW_POSTGRES_PASSWORD: ${SW_POSTGRES_PASSWORD}
+            SW_POSTGRES_DB: ${SW_POSTGRES_DB}
         depends_on:
             - base
         ports:

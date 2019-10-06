@@ -5,6 +5,7 @@ import { AuthService } from '@api/auth/services/auth.service';
 import { Provider } from 'nconf';
 import { API_CONFIG } from '@core/config/config.constants';
 import { Request } from 'express';
+import { TokenExpiredError } from 'jsonwebtoken';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -24,7 +25,15 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		return req.get('Refresh-Token');
 	}
 
-	validate(payload) {
-		return this.authService.verify(payload);
+	async validate(payload, verified) {
+		try {
+			return await this.authService.verify(payload);
+		} catch (e) {
+			if (e.constructor === TokenExpiredError) {
+				verified(null, null, e);
+				return;
+			}
+			verified(e);
+		}
 	}
 }

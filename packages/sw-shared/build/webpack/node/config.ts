@@ -13,7 +13,6 @@ import {
 	setOutput,
 	sourceMaps,
 } from '@webpack-blocks/webpack';
-import { getDependencies } from '@root/helpers/package';
 import { isDevelopment } from '@shared/lib/utils/env';
 import paths from '@build/paths';
 import { babelHelper } from '../plugins/transpile';
@@ -24,16 +23,22 @@ export function makeConfig({
 	output,
 	alias,
 	hot,
+	envFile,
+	watchMode,
 }: {
 	entries: any;
 	output: string;
 	alias: any;
 	hot?: boolean;
+	envFile?: string;
+	watchMode?: boolean;
 }) {
 	// @ts-ignore
 	process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+	watchMode = isDevelopment() ? (watchMode === undefined ? true : watchMode) : false;
 	const packageName = path.basename(path.dirname(output));
-	const dependencies = [...getDependencies({ packageName, rootDir: paths.project.root }), packageName];
+
+	envFile = envFile || path.resolve(paths.project.root, 'packages', packageName, '.env');
 
 	return createConfig([
 		setOutput(output),
@@ -54,7 +59,7 @@ export function makeConfig({
 			NODE_ENV: process.env.NODE_ENV,
 		}),
 		env('development', [
-			watch(),
+			watchMode ? watch() : none(),
 			sourceMaps('inline-source-map'),
 			hot ? addPlugins([new webpack.HotModuleReplacementPlugin()]) : none(),
 		]),
@@ -71,41 +76,36 @@ export function makeConfig({
 			path: output,
 		}),
 		addPlugins(
-			[].concat(
-				//@ts-ignore
-				...dependencies.map(dependency => [
-					new CopyWebpackPlugin(
-						[
-							{
-								from: {
-									glob: '**/*',
-									dot: true,
+			[
+				fs.existsSync(envFile)
+					? new CopyWebpackPlugin(
+							[
+								{
+									from: envFile,
+									to: path.resolve(output),
 								},
-								to: path.resolve(output, dependency, 'config'),
-								context: path.resolve(paths.project.root, 'packages', dependency, 'config'),
-							},
-						],
-						{
-							copyUnmodified: true,
-						}
-					),
-					new CopyWebpackPlugin(
-						[
+							],
 							{
-								from: {
-									glob: '**/*',
-									dot: true,
-								},
-								to: path.resolve(output, dependency, 'assets'),
-								context: path.resolve(paths.project.root, 'packages', dependency, 'assets'),
-							},
-						],
+								copyUnmodified: true,
+							}
+					  )
+					: null,
+				new CopyWebpackPlugin(
+					[
 						{
-							copyUnmodified: true,
-						}
-					),
-				])
-			)
+							from: {
+								glob: '**/*',
+								dot: true,
+							},
+							to: path.resolve(output, 'assets'),
+							context: path.resolve(paths.project.root, 'packages', packageName, 'assets'),
+						},
+					],
+					{
+						copyUnmodified: true,
+					}
+				),
+			].filter(plugin => plugin)
 		),
 		node(),
 	]);

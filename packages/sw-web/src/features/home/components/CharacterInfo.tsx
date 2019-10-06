@@ -1,14 +1,14 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
-import { UserContext } from '@web/shared/lib/store';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
+import { useUser } from '@web/shared/lib/react/hooks';
 import { IHomeState } from '../store/reducers/';
 
 const SwCharacterInfo: React.FC<IHomeState> = ({ character, error, isFetchedOnServer = false }: IHomeState) => {
+	const user: IUser = useUser();
 	if (!character) {
 		return <div>Loading</div>;
 	}
-	const user: IUser = useContext(UserContext);
 	return (
 		<div className="CharacterInfo">
 			{error ? (

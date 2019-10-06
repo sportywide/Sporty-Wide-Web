@@ -1,7 +1,6 @@
-import React, { memo, useCallback, useContext, useEffect } from 'react';
+import React, { memo, useCallback, useEffect } from 'react';
 import { Grid } from 'semantic-ui-react';
 import { connect } from 'react-redux';
-import { UserContext } from '@web/shared/lib/store';
 import { compose } from '@shared/lib/utils/fp/combine';
 import { registerEpic } from '@web/shared/lib/redux/register-epic';
 import { joinUserLeagueEpic, leaveUserLeagueEpic, loadUserLeagueEpic } from '@web/features/leagues/user/store/epics';
@@ -12,6 +11,7 @@ import { SwLeagueContainer } from '@web/features/leagues/base/components/League.
 import { loadLeagues } from '@web/features/leagues/base/store/actions';
 import { SelectableLeagueDto } from '@shared/lib/dtos/leagues/user-league.dto';
 import { userLeagueSelector } from '@web/features/leagues/user/store/store/league.selectors';
+import { useUser } from '@web/shared/lib/react/hooks';
 import { joinUserLeague, leaveUserLeague, loadUserLeagues } from '../store/actions';
 
 interface IProps {
@@ -29,7 +29,7 @@ const SwUserLeaguesComponent: React.FC<IProps> = ({
 	joinUserLeague,
 	leaveUserLeague,
 }) => {
-	const user = useContext(UserContext);
+	const user = useUser();
 	useEffect(() => {
 		loadUserLeagues(user.id);
 		loadLeagues();

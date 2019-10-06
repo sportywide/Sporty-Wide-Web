@@ -4,19 +4,19 @@ services:
         container_name: sw_postgres
         image: sportywide/sportywide-postgres
         environment:
-            - POSTGRES_DB=${POSTGRES_DB}
-            - POSTGRES_USER=${POSTGRES_USER}
-            - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+            - POSTGRES_DB=${SW_POSTGRES_DB}
+            - POSTGRES_USER=${SW_POSTGRES_USER}
+            - POSTGRES_PASSWORD=${SW_POSTGRES_PASSWORD}
         volumes:
             - postgres:/var/lib/postgres/data
         ports:
-            - '${POSTGRES_PORT}:5432'
+            - '${SW_POSTGRES_PORT}:5432'
         networks:
             - sw_net_backend
     flyway:
         container_name: sw_flyway
         image: sportywide/sportywide-flyway
-        command: -url=jdbc:postgresql://postgres:5432/${POSTGRES_DB} -user=${POSTGRES_USER} -password=${POSTGRES_PASSWORD} -outOfOrder=true -mixed=true migrate
+        command: -url=jdbc:postgresql://postgres:5432/${SW_POSTGRES_DB} -user=${SW_POSTGRES_USER} -password=${SW_POSTGRES_PASSWORD} -outOfOrder=true -mixed=true migrate
         volumes:
             - './sql:/flyway/sql'
         environment:
@@ -31,15 +31,15 @@ services:
         volumes:
             - redis:/data
         ports:
-            - '${REDIS_PORT}:6379'
+            - '${SW_REDIS_PORT}:6379'
         networks:
             - sw_net_backend
     mailhog:
         container_name: sw_mailhog
         image: sportywide/sportywide-mailhog
         ports:
-            - '${MAILHOG_TRANSPORT_PORT}:1025'
-            - '${MAILHOG_UI_PORT}:8025'
+            - '${SW_MAILHOG_TRANSPORT_PORT}:1025'
+            - '${SW_MAILHOG_UI_PORT}:8025'
         networks:
             - sw_net_backend
         labels:
