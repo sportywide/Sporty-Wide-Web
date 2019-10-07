@@ -1,6 +1,7 @@
 import path from 'path';
 import crypto from 'crypto';
 import fs from 'fs';
+import childProcess from 'child_process';
 import { getAllPackages } from '../helpers/package';
 import { execSync } from '../helpers/process';
 const allPackages = getAllPackages();
@@ -58,8 +59,14 @@ function checkLatestInstall() {
 function ensureNpmInstall() {
 	if (!fs.existsSync(path.resolve(__dirname, '..', 'node_modules', CHECKSUM_FILE))) {
 		console.log('Installing node_modules');
-		execSync(
-			isProduction ? 'npm install --production --no-optional' : `npm install ${noOptional ? '--no-optional' : ''}`
+		childProcess.execSync(
+			isProduction
+				? 'npm install --production --no-optional'
+				: `npm install ${noOptional ? '--no-optional' : ''}`,
+			{
+				stdio: 'inherit',
+				encoding: 'utf-8',
+			}
 		);
 		execSync('npm audit fix');
 		execSync('npx lerna clean -y');

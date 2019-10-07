@@ -27,6 +27,11 @@ export class Gulpfile {
 		return spawn('git add . && git-cz');
 	}
 
+	@Task('dev:exec')
+	exec() {
+		return spawn(`lerna run dev:exec --stream --scope ${argv.scope} -- -- --entry ${argv.entry}`);
+	}
+
 	@Task('generate:migration')
 	generateMigration() {
 		return spawn('ts-node -T bin/migration.ts');
@@ -51,7 +56,6 @@ export class Gulpfile {
 	}
 
 	/** CI tasks **/
-
 	@Task('ci:validate')
 	validateCi() {
 		return spawn(

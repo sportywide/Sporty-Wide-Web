@@ -1,8 +1,5 @@
 import childProcess from 'child_process';
 import path from 'path';
-import crossSpawn from 'cross-spawn';
-
-const findup = require('find-up');
 
 export function execSync(command, options = {}) {
 	console.info('Executing command synchronously', command);
@@ -29,6 +26,7 @@ export function exec(command, options = {}) {
 }
 
 export function spawnSync(command, options = {}) {
+	const crossSpawn = require('cross-spawn');
 	console.info('Spawning command', command);
 	const spawnOptions = {
 		...getDefaultOptions(),
@@ -42,6 +40,7 @@ export function spawnSync(command, options = {}) {
 }
 
 export function spawn(command, options = {}) {
+	const crossSpawn = require('cross-spawn');
 	console.info('Spawning command', command);
 	return new Promise((resolve, reject) => {
 		const spawnOptions = {
@@ -59,6 +58,7 @@ export function spawn(command, options = {}) {
 }
 
 function getDefaultOptions(): any {
+	const findup = require('find-up');
 	return {
 		stdio: 'inherit',
 		encoding: 'utf-8',

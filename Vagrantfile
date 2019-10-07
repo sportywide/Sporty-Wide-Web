@@ -55,7 +55,6 @@ Vagrant.configure(2) do |config|
   
 	config.vm.synced_folder ".", "/vagrant", type: "nfs", mount_options: ["rw","async","fsc","nolock","vers=3","udp","rsize=32768","wsize=32768","hard","noatime","actimeo=2"]
 
-	config.vm.provision "shell", path: "vagrant/scripts/set-env.sh", env: ENV.to_hash
 	config.vm.provision "shell", inline: "sudo yum clean all && sudo yum makecache fast"
 	config.vm.provision "shell", path: "vagrant/scripts/node.sh"
 

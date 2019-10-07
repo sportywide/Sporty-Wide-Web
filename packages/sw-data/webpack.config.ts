@@ -3,6 +3,7 @@ import { makeConfig } from 'sportywide-shared/build/webpack/node/config';
 import paths from 'sportywide-shared/build/paths';
 import glob = require('glob');
 const findup = require('find-up');
+const argv = require('yargs').argv;
 
 //@ts-ignore
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';
@@ -21,10 +22,10 @@ module.exports = makeConfig({
 });
 
 function getEntries() {
-	if (process.env.npm_config_script) {
-		const entryName = process.env.npm_config_script.replace(/\.(js|ts)x?$/, '');
+	if (process.env.SCRIPT) {
+		const entryName = process.env.SCRIPT.replace(/\.(js|ts)x?$/, '');
 		return {
-			[entryName]: path.resolve(paths.data.scripts, process.env.npm_config_script),
+			[entryName]: path.resolve(paths.data.scripts, process.env.SCRIPT),
 		};
 	} else {
 		return glob

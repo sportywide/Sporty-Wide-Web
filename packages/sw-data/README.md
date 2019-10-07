@@ -4,8 +4,14 @@ This package contains scripts to fetch external data and save them into SportyWi
 
 ### Running scripts
 
-Use the npm script:
+-   From the root:
 
 ```bash
-npm run dev:exec --script=<script>
+gulp dev:exec --scope sportywide-data --entry crawler
+```
+
+-   Inside the package
+
+```bash
+gulp dev:exec --entry crawler
 ```
