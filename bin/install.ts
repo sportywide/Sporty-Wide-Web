@@ -105,11 +105,11 @@ function writeCheckSum(dir) {
 
 function installSubPackagesDependencies() {
 	if (isProduction) {
-		execSync('npm run bootstrap:prod');
+		execSync('npx gulp bootstrap --production');
 	} else if (noOptional) {
-		execSync('npm run bootstrap:no-optional');
+		execSync('npx gulp bootstrap');
 	} else {
-		execSync('npm run bootstrap');
+		execSync('npx gulp bootstrap --optional');
 	}
 
 	if (!savePackageLock && packageLock !== '') {

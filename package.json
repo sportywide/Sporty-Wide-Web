@@ -4,18 +4,7 @@
 	"description": "A Social network for Sports",
 	"author": "Sporty Wide",
 	"scripts": {
-		"api-test": "ts-node e2e/api/api-test.ts",
-		"bootstrap": "lerna bootstrap && link-parent-bin",
-		"bootstrap:ci": "lerna bootstrap -- --ci --no-optional && link-parent-bin",
-		"bootstrap:no-optional": "lerna bootstrap -- --no-optional && link-parent-bin",
-		"bootstrap:prod": "lerna bootstrap -- --production --no-optional --ci && link-parent-bin -s true -d false -o false",
-		"cz": "git add . && git-cz",
-		"generate:migration": "ts-node -T bin/migration.ts",
-		"install:dependencies": "ts-node -T bin/install.ts",
-		"test": "jest",
-		"test:coverage": "npm test -- --coverage",
-		"test:watch": "npm test -- --watch",
-		"validate:ci": "cat .gitlab-ci.yml | curl --header \"Content-Type: application/json\" https://gitlab.com/api/v4/ci/lint --data @-"
+		"install:dependencies": "ts-node -T bin/install.ts"
 	},
 	"husky": {
 		"hooks": {
@@ -70,6 +59,8 @@
 		"babel-plugin-styled-components": "1.10.6",
 		"babel-plugin-transform-typescript-metadata": "0.2.2",
 		"copy-webpack-plugin": "5.0.4",
+		"cross-env": "6.0.3",
+		"cross-spawn": "7.0.1",
 		"css-loader": "3.2.0",
 		"cssnano": "4.1.10",
 		"eslint-plugin-react-hooks": "2.0.1",
@@ -78,6 +69,10 @@
 		"find-up": "4.1.0",
 		"fs-extra": "8.1.0",
 		"glob": "7.1.4",
+		"gulp": "4.0.2",
+		"gulp-cli": "2.2.0",
+		"gulp-shell": "0.7.1",
+		"gulpclass": "0.2.0",
 		"ignore-loader": "0.1.2",
 		"lerna": "3.16.4",
 		"mini-css-extract-plugin": "0.8.0",
@@ -85,7 +80,6 @@
 		"next-plugin-custom-babel-config": "1.0.2",
 		"node-sass": "4.12.0",
 		"nodemon": "1.19.1",
-		"npm-run-all": "4.1.5",
 		"null-loader": "3.0.0",
 		"postcss-loader": "3.0.0",
 		"postcss-preset-env": "6.7.0",
