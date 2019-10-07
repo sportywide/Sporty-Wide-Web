@@ -18,6 +18,7 @@ export class GenericWebpackTasks {
 	buildDev() {
 		process.env.TS_NODE_TRANSPILE_ONLY = 'true';
 		process.env.TS_NODE_TYPE_CHECK = 'false';
+		process.env.TSC_WATCHFILE = 'UseFsEvents';
 		return spawn('webpack -r tsconfig-paths/register');
 	}
 
