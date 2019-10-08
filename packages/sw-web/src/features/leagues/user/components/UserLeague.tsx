@@ -3,37 +3,37 @@ import { Grid } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { compose } from '@shared/lib/utils/fp/combine';
 import { registerEpic } from '@web/shared/lib/redux/register-epic';
-import { joinUserLeagueEpic, leaveUserLeagueEpic, loadUserLeagueEpic } from '@web/features/leagues/user/store/epics';
+import { joinUserLeagueEpic, leaveUserLeagueEpic, fetchUserLeagueEpic } from '@web/features/leagues/user/store/epics';
 import { registerReducer } from '@web/shared/lib/redux/register-reducer';
 import { userLeagueReducer } from '@web/features/leagues/user/store/reducers/user-league-reducer';
 import { SwLeague } from '@web/features/leagues/base/components/League';
 import { SwLeagueContainer } from '@web/features/leagues/base/components/League.styled';
-import { loadLeagues } from '@web/features/leagues/base/store/actions';
+import { fetchLeagues } from '@web/features/leagues/base/store/actions';
 import { SelectableLeagueDto } from '@shared/lib/dtos/leagues/user-league.dto';
 import { userLeagueSelector } from '@web/features/leagues/user/store/store/league.selectors';
 import { useUser } from '@web/shared/lib/react/hooks';
-import { joinUserLeague, leaveUserLeague, loadUserLeagues } from '../store/actions';
+import { joinUserLeague, leaveUserLeague, fetchUserLeagues } from '../store/actions';
 
 interface IProps {
 	leagues: SelectableLeagueDto[];
-	loadUserLeagues: typeof loadUserLeagues;
-	loadLeagues: typeof loadLeagues;
+	fetchUserLeagues: typeof fetchUserLeagues;
+	fetchLeagues: typeof fetchLeagues;
 	joinUserLeague: typeof joinUserLeague;
 	leaveUserLeague: typeof leaveUserLeague;
 }
 
 const SwUserLeaguesComponent: React.FC<IProps> = ({
 	leagues = [],
-	loadUserLeagues,
-	loadLeagues,
+	fetchUserLeagues,
+	fetchLeagues,
 	joinUserLeague,
 	leaveUserLeague,
 }) => {
 	const user = useUser();
 	useEffect(() => {
-		loadUserLeagues(user.id);
-		loadLeagues();
-	}, [loadLeagues, loadUserLeagues, user.id]);
+		fetchUserLeagues(user.id);
+		fetchLeagues();
+	}, [fetchLeagues, fetchUserLeagues, user.id]);
 	const onSelectCallback = useCallback(onSelect, []);
 	return (
 		<Grid verticalAlign={'middle'} centered>
@@ -55,15 +55,15 @@ const SwUserLeaguesComponent: React.FC<IProps> = ({
 };
 const leagueSelector = userLeagueSelector();
 const enhancer = compose(
-	registerEpic(loadUserLeagueEpic, leaveUserLeagueEpic, joinUserLeagueEpic),
+	registerEpic(fetchUserLeagueEpic, leaveUserLeagueEpic, joinUserLeagueEpic),
 	registerReducer({ userLeagues: userLeagueReducer }),
 	connect(
 		state => ({
 			leagues: leagueSelector(state)(state.auth.user && state.auth.user.id),
 		}),
 		{
-			loadUserLeagues,
-			loadLeagues,
+			fetchUserLeagues,
+			fetchLeagues,
 			leaveUserLeague,
 			joinUserLeague,
 		}
