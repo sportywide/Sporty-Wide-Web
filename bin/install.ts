@@ -44,7 +44,7 @@ function checkLatestInstall() {
 				}
 				updateChecksum();
 				if (!isProduction) {
-					execSync("npx lerna exec sort-package-json");
+					execSync('npx lerna exec sort-package-json');
 					execSync('npx sort-package-json');
 				}
 			} else {
