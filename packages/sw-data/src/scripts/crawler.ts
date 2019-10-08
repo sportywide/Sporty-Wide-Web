@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { DataModule } from '@data/data.module';
 import { INestApplicationContext } from '@nestjs/common';
 import { CrawlerService } from '@data/crawler/crawler.service';
+import { CrawlerModule } from '@data/crawler/crawler.module';
 
 const leagues = [
 	{
@@ -27,7 +28,7 @@ const leagues = [
 ];
 
 async function bootstrap() {
-	const context: INestApplicationContext = await NestFactory.createApplicationContext(DataModule);
+	const context: INestApplicationContext = await NestFactory.createApplicationContext(CrawlerModule);
 	const crawlerService = context.get(CrawlerService);
 	// we are fine with fetching each league sequentially
 
