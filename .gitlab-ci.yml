@@ -17,7 +17,7 @@ install_dependencies:
     stage: install_dependencies
     script:
         - npm cache clear --force
-        - npm run bootstrap:ci
+        - npx gulp bootstrap --ci
     cache:
         key: $CI_COMMIT_REF_SLUG-$CI_PROJECT_DIR
         paths:
