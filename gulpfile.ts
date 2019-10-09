@@ -45,6 +45,8 @@ export class Gulpfile {
 			return spawn('jest --watch');
 		} else if (argv.coverage) {
 			return spawn('jest --coverage');
+		} else if (argv.e2e) {
+			return spawn('jest --testRegex=\\.e2e-spec\\.ts$');
 		} else {
 			return spawn('jest');
 		}

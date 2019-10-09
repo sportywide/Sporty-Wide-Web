@@ -2,7 +2,7 @@ const { pathsToModuleNameMapper } = require('ts-jest/utils');
 const { compilerOptions } = require('./tsconfig.json');
 
 module.exports = {
-	roots: ['<rootDir>/src'],
+	roots: ['<rootDir>/src', '<rootDir>/e2e', '<rootDir>/integrations'],
 	clearMocks: true,
 	preset: 'ts-jest',
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
