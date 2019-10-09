@@ -41,15 +41,25 @@ export class Gulpfile {
 
 	@Task('test')
 	test() {
+		const args = ['--runInBand'];
 		if (argv.watch) {
-			return spawn('jest --watch');
-		} else if (argv.coverage) {
-			return spawn('jest --coverage');
-		} else if (argv.e2e) {
-			return spawn('jest --testRegex=\\.e2e-spec\\.ts$');
-		} else {
-			return spawn('jest');
+			args.push('--watch');
 		}
+
+		if (argv.coverage) {
+			args.push('--coverage');
+		}
+
+		if (argv.e2e) {
+			args.push('--testRegex=\\.e2e-spec\\.ts$');
+		}
+
+		if (argv.full) {
+			args.push('--testRegex=\\.e2e-spec\\.tsx?$');
+			args.push('--testRegex=\\.spec\\.tsx?$');
+		}
+
+		return spawn(`jest ${args.join(' ')}`);
 	}
 
 	@Task('test:api')
