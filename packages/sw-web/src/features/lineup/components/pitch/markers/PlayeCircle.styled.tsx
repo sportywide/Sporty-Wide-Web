@@ -11,7 +11,7 @@ export const SwPlayerCircle = styled.div`
 	${({ isDragging }) =>
 		isDragging &&
 		`
-			 opacity: 0.4,
+			 opacity: 0.4;
 		`}
 `;
 

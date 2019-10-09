@@ -2,6 +2,7 @@ import { MutableRefObject, useCallback, useEffect, useRef, useState } from 'reac
 import { keyBy } from 'lodash';
 import { useSelector } from 'react-redux';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
+import { getEmptyImage } from 'react-dnd-html5-backend-cjs';
 
 export function usePrevious<T>(value) {
 	const ref = useRef<T>();
@@ -66,4 +67,11 @@ export function useCurrentRef<T>(initialValue: T): [T, MutableRefObject<T>, Func
 		setValue(updater);
 	}, []);
 	return [value, valueRef, setValueCallback, previous];
+}
+
+export function useEmptyPreviewImage(preview) {
+	useEffect(() => {
+		preview(getEmptyImage(), { captureDraggingState: true });
+		// eslint-disable-next-line
+	}, []);
 }

@@ -13,11 +13,13 @@
 	},
 	"lint-staged": {
 		"*.{json,html,scss,yml}": [
-			"pretty-quick --staged"
+			"pretty-quick --staged",
+			"git add"
 		],
 		"*.{ts,js,tsx,jsx}": [
 			"eslint --fix",
-			"pretty-quick --staged"
+			"pretty-quick --staged",
+			"git add"
 		]
 	},
 	"config": {

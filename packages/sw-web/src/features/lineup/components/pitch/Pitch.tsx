@@ -46,7 +46,12 @@ const SwPitchComponent: React.FC<IProps> = function({
 					}}
 				>
 					{({ measureRef }) => (
-						<SwStyledPitchBackground ref={measureRef} src={'/static/pitch.svg'} alt="Pitch outlines" />
+						<SwStyledPitchBackground
+							draggable={false}
+							ref={measureRef}
+							src={'/static/pitch.svg'}
+							alt="Pitch outlines"
+						/>
 					)}
 				</Measure>
 				{rect &&
