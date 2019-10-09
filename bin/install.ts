@@ -1,6 +1,7 @@
 import path from 'path';
 import crypto from 'crypto';
 import fs from 'fs';
+import childProcess from 'child_process';
 import { getAllPackages } from '../helpers/package';
 import { execSync } from '../helpers/process';
 const allPackages = getAllPackages();
@@ -43,7 +44,7 @@ function checkLatestInstall() {
 				}
 				updateChecksum();
 				if (!isProduction) {
-					execSync("lerna exec 'npx sort-package-json'");
+					execSync('npx lerna exec sort-package-json');
 					execSync('npx sort-package-json');
 				}
 			} else {
@@ -58,8 +59,14 @@ function checkLatestInstall() {
 function ensureNpmInstall() {
 	if (!fs.existsSync(path.resolve(__dirname, '..', 'node_modules', CHECKSUM_FILE))) {
 		console.log('Installing node_modules');
-		execSync(
-			isProduction ? 'npm install --production --no-optional' : `npm install ${noOptional ? '--no-optional' : ''}`
+		childProcess.execSync(
+			isProduction
+				? 'npm install --production --no-optional'
+				: `npm install ${noOptional ? '--no-optional' : ''}`,
+			{
+				stdio: 'inherit',
+				encoding: 'utf-8',
+			}
 		);
 		execSync('npm audit fix');
 		execSync('npx lerna clean -y');
@@ -105,11 +112,11 @@ function writeCheckSum(dir) {
 
 function installSubPackagesDependencies() {
 	if (isProduction) {
-		execSync('npm run bootstrap:prod');
+		execSync('npx gulp bootstrap --production');
 	} else if (noOptional) {
-		execSync('npm run bootstrap:no-optional');
+		execSync('npx gulp bootstrap');
 	} else {
-		execSync('npm run bootstrap');
+		execSync('npx gulp bootstrap --optional');
 	}
 
 	if (!savePackageLock && packageLock !== '') {

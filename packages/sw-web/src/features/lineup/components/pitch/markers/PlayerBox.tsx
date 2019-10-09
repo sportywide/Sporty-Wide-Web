@@ -8,6 +8,7 @@ import {
 	SwPlayerCircleAvatar,
 	SwPlayerCircleName,
 } from '@web/features/lineup/components/pitch/markers/PlayeCircle.styled';
+import { useEmptyPreviewImage } from '@web/shared/lib/react/hooks';
 
 interface IProps {
 	rect: any;
@@ -26,7 +27,7 @@ const SwPlayerBoxComponent: React.FC<IProps> = ({
 	onRemovePlayerFromLineup,
 	onSubstitutePlayer,
 }) => {
-	const [{ isDragging }, drag] = useDrag({
+	const [{ isDragging }, drag, preview] = useDrag({
 		item: { type: PLAYER, player, position, zone: PLAYER_BOX_ZONE },
 		isDragging: monitor => {
 			return monitor.getItem().player === player;
@@ -38,6 +39,8 @@ const SwPlayerBoxComponent: React.FC<IProps> = ({
 			}
 		},
 	});
+
+	useEmptyPreviewImage(preview);
 
 	const [, drop] = useDrop({
 		accept: PLAYER,
@@ -67,11 +70,11 @@ const SwPlayerBoxComponent: React.FC<IProps> = ({
 	return (
 		<SwPlayerCircle
 			ref={connectedRef}
-			isDragging={isDragging}
 			style={{
 				left: rect.width * (position.left / 100),
 				top: rect.height * (position.top / 100),
 			}}
+			isDragging={isDragging}
 		>
 			<SwPlayerCircleAvatar avatar src={player.image} />
 			<SwPlayerCircleName>{player.name}</SwPlayerCircleName>

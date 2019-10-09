@@ -4,6 +4,7 @@ import { SwContainer, SwGreyBackground } from '@web/shared/styled/Background.sty
 import { SwLineupBuilder } from '@web/features/lineup/components/pitch/LineupBuilder';
 import { DndProvider } from 'react-dnd-cjs';
 import html5Backend from 'react-dnd-html5-backend-cjs';
+import { SwDragLayer } from '@web/shared/lib/ui/components/dnd/DragLayer';
 
 class SwLineupBuilderPage extends React.Component<any> {
 	render() {
@@ -12,13 +13,14 @@ class SwLineupBuilderPage extends React.Component<any> {
 				<Head>
 					<title>Build your lineup</title>
 				</Head>
-				<SwGreyBackground style={{ paddingTop: 'var(--space-1)' }}>
-					<SwContainer>
-						<DndProvider backend={html5Backend}>
+				<DndProvider backend={html5Backend}>
+					<SwDragLayer />
+					<SwGreyBackground style={{ paddingTop: 'var(--space-1)' }}>
+						<SwContainer>
 							<SwLineupBuilder />
-						</DndProvider>
-					</SwContainer>
-				</SwGreyBackground>
+						</SwContainer>
+					</SwGreyBackground>
+				</DndProvider>
 			</>
 		);
 	}

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Label, List } from 'semantic-ui-react';
 import { useDrag } from 'react-dnd-cjs';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
@@ -9,6 +9,8 @@ import {
 	SwStatsLabel,
 	SwTeamLogo,
 } from '@web/features/lineup/components/players/PlayerItem.styled';
+import { getEmptyImage } from 'react-dnd-html5-backend-cjs';
+import { useEmptyPreviewImage } from '@web/shared/lib/react/hooks';
 
 interface IProps {
 	player: PlayerDto;
@@ -18,16 +20,16 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 	const [{ isDragging }, drag, preview] = useDrag({
 		item: { type: PLAYER, player, zone: PLAYER_ITEM_ZONE },
 		isDragging: monitor => monitor.getItem().player === player,
-		collect: monitor => ({ isDragging: monitor.isDragging(), dropResult: monitor.getDropResult() }),
+		collect: monitor => ({ isDragging: monitor.isDragging() }),
 	});
+
+	useEmptyPreviewImage(preview);
 
 	return (
 		<List.Item>
 			<List.Content>
 				<SwDraggablePlayer ref={drag} isDragging={isDragging}>
-					<div ref={preview}>
-						<SwPlayerLogo circular avatar src={player.image} />
-					</div>
+					<SwPlayerLogo circular avatar src={player.image} />
 					<div className={'sw-flex-grow'}>
 						<span>
 							{player.shirt}. {player.name}

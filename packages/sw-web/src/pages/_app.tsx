@@ -13,9 +13,9 @@ import { allowActiveOnly } from '@web/shared/lib/auth/check-user';
 import { ThemeProvider } from 'styled-components';
 import { COOKIE_REFERRER } from '@web/api/auth/constants';
 import Notifications from 'react-notification-system-redux';
-import NotificationContainer from '@web/shared/lib/components/notification/NotificationContainer';
+import NotificationContainer from '@web/shared/lib/ui/components/notification/NotificationContainer';
 import { ucfirst } from '@shared/lib/utils/string/conversion';
-import { LoadingBar } from '@web/shared/lib/components/loading/LoadingBar';
+import { LoadingBar } from '@web/shared/lib/ui/components/loading/LoadingBar';
 import { ApiService } from '@web/shared/lib/http/api.service';
 
 interface IProps {
