@@ -10,8 +10,8 @@ import { range } from '@shared/lib/utils/array/range';
 import { sleep } from '@shared/lib/utils/sleep';
 import { flattenDeep } from 'lodash';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
+import { resourcesPath } from '@data/crawler/crawler.constants';
 
-const resourcesPath = path.resolve(process.cwd(), 'resources');
 const DEFAULT_PLAYER_PAGES = 5;
 
 @Injectable()

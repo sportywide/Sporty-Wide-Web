@@ -3,29 +3,7 @@ import { INestApplicationContext } from '@nestjs/common';
 import { TeamPlayerCrawlerService } from '@data/crawler/team-player-crawler.service';
 import { CrawlerModule } from '@data/crawler/crawler.module';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
-
-const leagues = [
-	{
-		name: 'premier-league',
-		id: 13,
-	},
-	{
-		name: 'la-liga',
-		id: 53,
-	},
-	{
-		name: 'bundesliga',
-		id: 19,
-	},
-	{
-		name: 'seria-a',
-		id: 31,
-	},
-	{
-		name: 'ligue-one',
-		id: 16,
-	},
-];
+import { leagues } from '@data/crawler/crawler.constants';
 
 async function bootstrap() {
 	const context: INestApplicationContext = await NestFactory.createApplicationContext(CrawlerModule);

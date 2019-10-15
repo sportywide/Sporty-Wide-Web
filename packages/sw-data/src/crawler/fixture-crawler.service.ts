@@ -1,10 +1,14 @@
 import https from 'https';
+import path from 'path';
 import { Injectable, Inject } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 import cheerio from 'cheerio';
 import { parse } from 'date-fns';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
+import fsExtra from 'fs-extra';
+import { fsPromise } from '@shared/lib/utils/promisify/fs';
+import { resourcesPath } from '@data/crawler/crawler.constants';
 
 @Injectable()
 export class FixtureCrawlerService {
@@ -26,26 +30,29 @@ export class FixtureCrawlerService {
 		});
 	}
 
-	async getFixturesForLeague(league: string) {
+	async getMatchesForLeague(league: string) {
 		try {
-			this.logger.info('Getting fixture for league', league);
-			const { data: content } = await this.axios.get(`https://www.skysports.com/${league}-fixtures`);
-			const fixtures = this.parseFixture(content);
-			this.logger.info(fixtures);
+			const [results, fixtures] = await Promise.all([
+				this.getResultsForLeague(league),
+				this.getFixturesForLeague(league),
+			]);
+			const matches = [...results, ...fixtures].sort((a, b) => a.time.getTime() - b.time.getTime());
+			this.writeResult(`matches/${league}.json`, matches);
 		} catch (e) {
-			this.logger.error(`Failed to get fixture for league ${league}`, e);
+			this.logger.error(`Failed to get matches for league ${league}`, e);
 		}
 	}
 
+	async getFixturesForLeague(league: string) {
+		this.logger.info('Getting fixture for league', league);
+		const { data: content } = await this.axios.get(`https://www.skysports.com/${league}-fixtures`);
+		return this.parseFixture(content);
+	}
+
 	async getResultsForLeague(league: string) {
-		try {
-			this.logger.info('Getting results for league', league);
-			const { data: content } = await this.axios.get(`https://www.skysports.com/${league}-results`);
-			const fixtures = this.parseFixture(content);
-			this.logger.info(fixtures);
-		} catch (e) {
-			this.logger.error(`Failed to get results for league ${league}`, e);
-		}
+		this.logger.info('Getting results for league', league);
+		const { data: content } = await this.axios.get(`https://www.skysports.com/${league}-results`);
+		return this.parseFixture(content);
 	}
 
 	private parseFixture($: CheerioStatic) {
@@ -107,5 +114,13 @@ export class FixtureCrawlerService {
 			allResults.push(...Array.from(fixtureDetails));
 		});
 		return allResults;
+	}
+
+	private async writeResult(relativePath, result) {
+		const outputPath = path.resolve(resourcesPath, relativePath);
+		await fsExtra.mkdirp(path.dirname(outputPath));
+		await fsPromise.writeFile(outputPath, JSON.stringify(result, null, 4), {
+			encoding: 'utf-8',
+		});
 	}
 }
