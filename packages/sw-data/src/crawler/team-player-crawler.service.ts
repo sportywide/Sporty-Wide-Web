@@ -2,12 +2,14 @@ import path from 'path';
 import https from 'https';
 import { fsPromise } from '@shared/lib/utils/promisify/fs';
 import fsExtra from 'fs-extra';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
+import { Logger } from 'log4js';
 import cheerio from 'cheerio';
 import { range } from '@shared/lib/utils/array/range';
 import { sleep } from '@shared/lib/utils/sleep';
 import { flattenDeep } from 'lodash';
+import { DATA_LOGGER } from '@core/logging/logging.constant';
 
 const resourcesPath = path.resolve(process.cwd(), 'resources');
 const DEFAULT_PLAYER_PAGES = 5;
@@ -18,7 +20,7 @@ export class TeamPlayerCrawlerService {
 
 	private axios: AxiosInstance;
 
-	constructor() {
+	constructor(@Inject(DATA_LOGGER) private readonly logger: Logger) {
 		this.axios = axios.create({
 			baseURL: 'https://www.fifaindex.com',
 			transformResponse: (data, headers) => {
@@ -34,7 +36,7 @@ export class TeamPlayerCrawlerService {
 
 	// region Crawl teams
 	async crawlTeam(leagueId): Promise<any> {
-		console.info(`Fetching league id ${leagueId}`);
+		this.logger.info(`Fetching league id ${leagueId}`);
 		const url = `/teams?league=${leagueId}&order=desc`;
 		const result = await this.getParsedResponse(url);
 		const teams = this.parseInfoTeam(result);
@@ -89,7 +91,7 @@ export class TeamPlayerCrawlerService {
 
 	// region Crawl from listing page
 	async crawlPlayers(leagueId): Promise<any> {
-		console.info(`Fetching players for league id ${leagueId}`);
+		this.logger.info(`Fetching players for league id ${leagueId}`);
 		const result: any[] = [];
 		let shouldContinue = true;
 		let currentPage = 1;
@@ -106,12 +108,12 @@ export class TeamPlayerCrawlerService {
 	}
 
 	private async crawlPlayersBatchPages(leagueId, start, count): Promise<{ error: boolean; response: any }[]> {
-		console.info(`Fetching ${count} players page for league ${leagueId} starting from ${start}`);
+		this.logger.info(`Fetching ${count} players page for league ${leagueId} starting from ${start}`);
 		return Promise.all(
 			range(start, start + count).map(page =>
 				this.crawlPlayerPage(leagueId, page)
 					.then(playerData => {
-						console.info(`Successfully fetched player page ${page} for league id ${leagueId}`);
+						this.logger.info(`Successfully fetched player page ${page} for league id ${leagueId}`);
 						return { error: false, response: playerData };
 					})
 					.catch(error => {
@@ -126,7 +128,7 @@ export class TeamPlayerCrawlerService {
 	}
 
 	private async crawlPlayerPage(leagueId: string, page: number) {
-		console.info(`Fetching player page ${page} for league id ${leagueId}`);
+		this.logger.info(`Fetching player page ${page} for league id ${leagueId}`);
 		const url = `/players/${page}/?league=${leagueId}&order=desc`;
 		const result = await this.getParsedResponse(url);
 		return this.parseInfoBulk(result);

@@ -1,8 +1,10 @@
 import https from 'https';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 import cheerio from 'cheerio';
 import { parse } from 'date-fns';
+import { DATA_LOGGER } from '@core/logging/logging.constant';
+import { Logger } from 'log4js';
 
 @Injectable()
 export class FixtureCrawlerService {
@@ -10,7 +12,7 @@ export class FixtureCrawlerService {
 	private initiated: boolean;
 	private cookies: string;
 
-	constructor() {
+	constructor(@Inject(DATA_LOGGER) private readonly logger: Logger) {
 		this.axios = axios.create({
 			baseURL: 'https://www.skysports.com',
 			httpsAgent: new https.Agent({ rejectUnauthorized: false }),
@@ -25,17 +27,25 @@ export class FixtureCrawlerService {
 	}
 
 	async getFixturesForLeague(league: string) {
-		console.info('Getting fixture for league', league);
-		const { data: content } = await this.axios.get(`https://www.skysports.com/${league}-fixtures`);
-		const fixtures = this.parseFixture(content);
-		console.info(fixtures);
+		try {
+			this.logger.info('Getting fixture for league', league);
+			const { data: content } = await this.axios.get(`https://www.skysports.com/${league}-fixtures`);
+			const fixtures = this.parseFixture(content);
+			this.logger.info(fixtures);
+		} catch (e) {
+			this.logger.error(`Failed to get fixture for league ${league}`, e);
+		}
 	}
 
 	async getResultsForLeague(league: string) {
-		console.info('Getting fixture for league', league);
-		const { data: content } = await this.axios.get(`https://www.skysports.com/${league}-results`);
-		const fixtures = this.parseFixture(content);
-		console.info(fixtures);
+		try {
+			this.logger.info('Getting results for league', league);
+			const { data: content } = await this.axios.get(`https://www.skysports.com/${league}-results`);
+			const fixtures = this.parseFixture(content);
+			this.logger.info(fixtures);
+		} catch (e) {
+			this.logger.error(`Failed to get results for league ${league}`, e);
+		}
 	}
 
 	private parseFixture($: CheerioStatic) {

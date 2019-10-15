@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { INestApplicationContext } from '@nestjs/common';
 import { TeamPlayerCrawlerService } from '@data/crawler/team-player-crawler.service';
 import { CrawlerModule } from '@data/crawler/crawler.module';
+import { DATA_LOGGER } from '@core/logging/logging.constant';
 
 const leagues = [
 	{
@@ -35,8 +36,11 @@ async function bootstrap() {
 		await crawlerService.crawlTeam(leagueId);
 		await crawlerService.crawlPlayers(leagueId);
 	}
+
+	return context;
 }
 
-bootstrap().then(() => {
-	console.info('Finished team-player crawler service');
+bootstrap().then(context => {
+	const logger = context.get(DATA_LOGGER);
+	logger.info('Finished team-player crawler service');
 });
