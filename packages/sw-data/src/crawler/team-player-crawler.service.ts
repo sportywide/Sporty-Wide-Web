@@ -333,8 +333,9 @@ export class TeamPlayerCrawlerService {
 	}
 
 	private async writeResult(relativePath, result) {
-		await fsExtra.mkdirp(resourcesPath);
-		await fsPromise.writeFile(path.resolve(resourcesPath, relativePath), JSON.stringify(result, null, 4), {
+		const outputPath = path.resolve(resourcesPath, relativePath);
+		await fsExtra.mkdirp(path.dirname(outputPath));
+		await fsPromise.writeFile(outputPath, JSON.stringify(result, null, 4), {
 			encoding: 'utf-8',
 		});
 	}
