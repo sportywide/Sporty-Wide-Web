@@ -1,7 +1,6 @@
 import { NestFactory } from '@nestjs/core';
-import { DataModule } from '@data/data.module';
 import { INestApplicationContext } from '@nestjs/common';
-import { CrawlerService } from '@data/crawler/crawler.service';
+import { TeamPlayerCrawlerService } from '@data/crawler/team-player-crawler.service';
 import { CrawlerModule } from '@data/crawler/crawler.module';
 
 const leagues = [
@@ -29,15 +28,15 @@ const leagues = [
 
 async function bootstrap() {
 	const context: INestApplicationContext = await NestFactory.createApplicationContext(CrawlerModule);
-	const crawlerService = context.get(CrawlerService);
+	const crawlerService = context.get(TeamPlayerCrawlerService);
 	// we are fine with fetching each league sequentially
 
 	for (const { id: leagueId } of leagues) {
-		await crawlerService.crawlFiFaTeam(leagueId);
-		await crawlerService.crawlFiFaPlayers(leagueId);
+		await crawlerService.crawlTeam(leagueId);
+		await crawlerService.crawlPlayers(leagueId);
 	}
 }
 
 bootstrap().then(() => {
-	console.info('Finished crawler service');
+	console.info('Finished team-player crawler service');
 });

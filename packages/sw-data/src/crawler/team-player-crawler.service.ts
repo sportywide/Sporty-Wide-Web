@@ -13,7 +13,7 @@ const resourcesPath = path.resolve(process.cwd(), 'resources');
 const DEFAULT_PLAYER_PAGES = 5;
 
 @Injectable()
-export class CrawlerService {
+export class TeamPlayerCrawlerService {
 	private _fifaRegex = /\s*fifa\s*\d*/gim;
 
 	private axios: AxiosInstance;
@@ -33,16 +33,16 @@ export class CrawlerService {
 	}
 
 	// region Crawl teams
-	async crawlFiFaTeam(leagueId): Promise<any> {
+	async crawlTeam(leagueId): Promise<any> {
 		console.info(`Fetching league id ${leagueId}`);
 		const url = `/teams?league=${leagueId}&order=desc`;
 		const result = await this.getParsedResponse(url);
-		const teams = this.parseInfoFiFaTeam(result);
-		await this.writeResult(`team.l${leagueId}.json`, teams);
+		const teams = this.parseInfoTeam(result);
+		await this.writeResult(`teams/team.l${leagueId}.json`, teams);
 		return teams;
 	}
 
-	private parseInfoFiFaTeam($: CheerioStatic): any {
+	private parseInfoTeam($: CheerioStatic): any {
 		const result: any[] = [];
 		const rows = $('table tbody tr');
 
@@ -88,28 +88,28 @@ export class CrawlerService {
 	// endregion Crawl teams
 
 	// region Crawl from listing page
-	async crawlFiFaPlayers(leagueId): Promise<any> {
+	async crawlPlayers(leagueId): Promise<any> {
 		console.info(`Fetching players for league id ${leagueId}`);
 		const result: any[] = [];
 		let shouldContinue = true;
 		let currentPage = 1;
 		do {
-			const responses = await this.crawlPlayersFiFaBatchPages(leagueId, currentPage, DEFAULT_PLAYER_PAGES);
+			const responses = await this.crawlPlayersBatchPages(leagueId, currentPage, DEFAULT_PLAYER_PAGES);
 			shouldContinue = responses.every(({ error, response }) => !error || response.status !== 404);
 			result.push(...flattenDeep(responses.filter(({ error }) => !error).map(({ response }) => response)));
 			currentPage += DEFAULT_PLAYER_PAGES;
 			await sleep(1000);
 		} while (shouldContinue);
 
-		await this.writeResult(`player.l${leagueId}.json`, result);
+		await this.writeResult(`players/player.l${leagueId}.json`, result);
 		return result;
 	}
 
-	private async crawlPlayersFiFaBatchPages(leagueId, start, count): Promise<{ error: boolean; response: any }[]> {
+	private async crawlPlayersBatchPages(leagueId, start, count): Promise<{ error: boolean; response: any }[]> {
 		console.info(`Fetching ${count} players page for league ${leagueId} starting from ${start}`);
 		return Promise.all(
 			range(start, start + count).map(page =>
-				this.crawlPlayerFiFaPage(leagueId, page)
+				this.crawlPlayerPage(leagueId, page)
 					.then(playerData => {
 						console.info(`Successfully fetched player page ${page} for league id ${leagueId}`);
 						return { error: false, response: playerData };
@@ -125,14 +125,14 @@ export class CrawlerService {
 		);
 	}
 
-	private async crawlPlayerFiFaPage(leagueId: string, page: number) {
+	private async crawlPlayerPage(leagueId: string, page: number) {
 		console.info(`Fetching player page ${page} for league id ${leagueId}`);
 		const url = `/players/${page}/?league=${leagueId}&order=desc`;
 		const result = await this.getParsedResponse(url);
-		return this.parseInfoFiFaBulk(result);
+		return this.parseInfoBulk(result);
 	}
 
-	private parseInfoFiFaBulk($: CheerioStatic): any {
+	private parseInfoBulk($: CheerioStatic): any {
 		const result: any[] = [];
 		const rows = $('table tbody tr');
 
@@ -183,12 +183,12 @@ export class CrawlerService {
 	// endregion Crawl from listing page
 
 	// region Crawl from detail page
-	async crawlFiFaPlayerDetail(url): Promise<any> {
+	async crawlPlayerDetail(url): Promise<any> {
 		const result = await this.getParsedResponse(url);
-		return this.parseInfoFiFa(result);
+		return this.parseInfo(result);
 	}
 
-	private parseInfoFiFa($: CheerioStatic): any {
+	private parseInfo($: CheerioStatic): any {
 		let result = {};
 		const cards = $('div.container div.card');
 		let isInfoCard = true;
