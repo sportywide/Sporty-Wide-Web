@@ -2,23 +2,25 @@ import path from 'path';
 import https from 'https';
 import { fsPromise } from '@shared/lib/utils/promisify/fs';
 import fsExtra from 'fs-extra';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
+import { Logger } from 'log4js';
 import cheerio from 'cheerio';
 import { range } from '@shared/lib/utils/array/range';
 import { sleep } from '@shared/lib/utils/sleep';
 import { flattenDeep } from 'lodash';
+import { DATA_LOGGER } from '@core/logging/logging.constant';
+import { resourcesPath } from '@data/crawler/crawler.constants';
 
-const resourcesPath = path.resolve(process.cwd(), 'resources');
 const DEFAULT_PLAYER_PAGES = 5;
 
 @Injectable()
-export class CrawlerService {
+export class TeamPlayerCrawlerService {
 	private _fifaRegex = /\s*fifa\s*\d*/gim;
 
 	private axios: AxiosInstance;
 
-	constructor() {
+	constructor(@Inject(DATA_LOGGER) private readonly logger: Logger) {
 		this.axios = axios.create({
 			baseURL: 'https://www.fifaindex.com',
 			transformResponse: (data, headers) => {
@@ -33,37 +35,46 @@ export class CrawlerService {
 	}
 
 	// region Crawl teams
-	async crawlFiFaTeam(leagueId): Promise<any> {
-		console.info(`Fetching league id ${leagueId}`);
+	async crawlTeam(leagueId): Promise<any> {
+		this.logger.info(`Fetching league id ${leagueId}`);
 		const url = `/teams?league=${leagueId}&order=desc`;
 		const result = await this.getParsedResponse(url);
-		const teams = this.parseInfoFiFaTeam(result);
-		await this.writeResult(`team.l${leagueId}.json`, teams);
+		const teams = this.parseInfoTeam(result);
+		await this.writeResult(`teams/team.l${leagueId}.json`, teams);
 		return teams;
 	}
 
-	private parseInfoFiFaTeam($: CheerioStatic): any {
+	private parseInfoTeam($: CheerioStatic): any {
 		const result: any[] = [];
 		const rows = $('table tbody tr');
 
 		rows.each((i, row) => {
-			const columns = $($(row).find('td'));
+			const columns = $(row).find('td');
 
-			const image = $($(columns.eq(0)).find('img')).attr();
-			const bio = $($(columns.eq(1)).find('a')).attr();
+			const image = columns
+				.eq(0)
+				.find('img')
+				.attr();
+			const bio = columns
+				.eq(1)
+				.find('a')
+				.attr();
 
-			const league = $($(columns.eq(2)).find('a')).attr();
+			const league = columns
+				.eq(2)
+				.find('a')
+				.attr();
 
-			const att = $($(columns.eq(3)));
-			const mid = $($(columns.eq(4)));
-			const def = $($(columns.eq(5)));
-			const ovr = $($(columns.eq(6)));
+			const att = columns.eq(3);
+			const mid = columns.eq(4);
+			const def = columns.eq(5);
+			const ovr = columns.eq(6);
 
 			// Ratio - content as `{active} / {max}`
-			const span = $(columns.eq(7)).find('span.star');
-			const maxStars = $(span.find('i')).length;
-			const activeStars = $(span.find('i.fas.fa-star')).length;
-			const halfStars = $(span.find('i.fas.fa-star-half-alt')).length;
+			const span = columns.eq(7).find('span.star');
+			const maxStars = span.find('i').length;
+			const activeStars = span.find('i.fas.fa-star').length;
+			const halfStars = span.find('i.fas.fa-star-half-alt').length;
 			const rating = `${activeStars + halfStars / 2}/${maxStars}`;
 
 			result.push({
@@ -75,10 +86,10 @@ export class CrawlerService {
 					title: league['title'].replace(this._fifaRegex, '').trim(),
 					fifaId: parseInt(league['href'].split('league=')[1], 10),
 				},
-				[att.attr()['data-title'].toLowerCase()]: parseInt(att.eq(0).text(), 10),
-				[mid.attr()['data-title'].toLowerCase()]: parseInt(mid.eq(0).text(), 10),
-				[def.attr()['data-title'].toLowerCase()]: parseInt(def.eq(0).text(), 10),
-				[ovr.attr()['data-title'].toLowerCase()]: parseInt(ovr.eq(0).text(), 10),
+				[att.attr('data-title').toLowerCase()]: parseInt(att.eq(0).text(), 10),
+				[mid.attr('data-title').toLowerCase()]: parseInt(mid.eq(0).text(), 10),
+				[def.attr('data-title').toLowerCase()]: parseInt(def.eq(0).text(), 10),
+				[ovr.attr('data-title').toLowerCase()]: parseInt(ovr.eq(0).text(), 10),
 				rating,
 			});
 		});
@@ -88,30 +99,30 @@ export class CrawlerService {
 	// endregion Crawl teams
 
 	// region Crawl from listing page
-	async crawlFiFaPlayers(leagueId): Promise<any> {
-		console.info(`Fetching players for league id ${leagueId}`);
+	async crawlPlayers(leagueId): Promise<any> {
+		this.logger.info(`Fetching players for league id ${leagueId}`);
 		const result: any[] = [];
 		let shouldContinue = true;
 		let currentPage = 1;
 		do {
-			const responses = await this.crawlPlayersFiFaBatchPages(leagueId, currentPage, DEFAULT_PLAYER_PAGES);
+			const responses = await this.crawlPlayersBatchPages(leagueId, currentPage, DEFAULT_PLAYER_PAGES);
 			shouldContinue = responses.every(({ error, response }) => !error || response.status !== 404);
 			result.push(...flattenDeep(responses.filter(({ error }) => !error).map(({ response }) => response)));
 			currentPage += DEFAULT_PLAYER_PAGES;
 			await sleep(1000);
 		} while (shouldContinue);
 
-		await this.writeResult(`player.l${leagueId}.json`, result);
+		await this.writeResult(`players/player.l${leagueId}.json`, result);
 		return result;
 	}
 
-	private async crawlPlayersFiFaBatchPages(leagueId, start, count): Promise<{ error: boolean; response: any }[]> {
-		console.info(`Fetching ${count} players page for league ${leagueId} starting from ${start}`);
+	private async crawlPlayersBatchPages(leagueId, start, count): Promise<{ error: boolean; response: any }[]> {
+		this.logger.info(`Fetching ${count} players page for league ${leagueId} starting from ${start}`);
 		return Promise.all(
 			range(start, start + count).map(page =>
-				this.crawlPlayerFiFaPage(leagueId, page)
+				this.crawlPlayerPage(leagueId, page)
 					.then(playerData => {
-						console.info(`Successfully fetched player page ${page} for league id ${leagueId}`);
+						this.logger.info(`Successfully fetched player page ${page} for league id ${leagueId}`);
 						return { error: false, response: playerData };
 					})
 					.catch(error => {
@@ -125,39 +136,54 @@ export class CrawlerService {
 		);
 	}
 
-	private async crawlPlayerFiFaPage(leagueId: string, page: number) {
-		console.info(`Fetching player page ${page} for league id ${leagueId}`);
+	private async crawlPlayerPage(leagueId: string, page: number) {
+		this.logger.info(`Fetching player page ${page} for league id ${leagueId}`);
 		const url = `/players/${page}/?league=${leagueId}&order=desc`;
 		const result = await this.getParsedResponse(url);
-		return this.parseInfoFiFaBulk(result);
+		return this.parseInfoBulk(result);
 	}
 
-	private parseInfoFiFaBulk($: CheerioStatic): any {
+	private parseInfoBulk($: CheerioStatic): any {
 		const result: any[] = [];
 		const rows = $('table tbody tr');
 
 		rows.each((i, row) => {
-			const columns = $($(row).find('td'));
+			const columns = $(row).find('td');
 
-			const image = $($(columns.eq(0)).find('img')).attr();
-			const nationality = $($(columns.eq(1)).find('a')).attr();
-			const rating = $($(columns.eq(2)).find('span'))
+			const image = columns
+				.eq(0)
+				.find('img')
+				.attr();
+			const nationality = columns
+				.eq(1)
+				.find('a')
+				.attr();
+			const rating = columns
+				.eq(2)
+				.find('span')
 				.eq(0)
 				.text();
 
-			const bio = $($(columns.eq(3)).find('a')).attr();
+			const bio = columns
+				.eq(3)
+				.find('a')
+				.attr();
 
 			const positions: string[] = [];
-			const positionLinks = $($(columns.eq(4)).find('a'));
+			const positionLinks = columns.eq(4).find('a');
 			positionLinks.each((pli, positionLink) => {
 				positions.push($(positionLink).text());
 			});
 
-			const age = $($(columns.eq(5)))
+			const age = columns
+				.eq(5)
 				.eq(0)
 				.text();
 
-			const club = $($(columns.eq(7)).find('a')).attr();
+			const club = columns
+				.eq(7)
+				.find('a')
+				.attr();
 
 			result.push({
 				fifaId: parseInt($(row).attr('data-playerid'), 10),
@@ -183,12 +209,12 @@ export class CrawlerService {
 	// endregion Crawl from listing page
 
 	// region Crawl from detail page
-	async crawlFiFaPlayerDetail(url): Promise<any> {
+	async crawlPlayerDetail(url): Promise<any> {
 		const result = await this.getParsedResponse(url);
-		return this.parseInfoFiFa(result);
+		return this.parseInfo(result);
 	}
 
-	private parseInfoFiFa($: CheerioStatic): any {
+	private parseInfo($: CheerioStatic): any {
 		let result = {};
 		const cards = $('div.container div.card');
 		let isInfoCard = true;
@@ -221,7 +247,7 @@ export class CrawlerService {
 	}
 
 	private resolveHeader($: CheerioStatic, row): string | null {
-		const headerTag = $($(row).find('h5.card-header'));
+		const headerTag = $(row).find('h5.card-header');
 		const node = this.resolveNode($, headerTag);
 		if (!node) {
 			return null;
@@ -278,7 +304,7 @@ export class CrawlerService {
 		}
 
 		// Link list - content as array of link label
-		const links = $($(span).find('a'));
+		const links = $(span).find('a');
 		if (links.length > 0) {
 			const valueList: string[] = [];
 			links.each((i, link) => {
@@ -288,10 +314,10 @@ export class CrawlerService {
 		}
 
 		// Ratio - content as `{active} / {max}`
-		const stars = $($(span).find('span.star'));
+		const stars = $(span).find('span.star');
 		if (stars.length > 0) {
-			const maxStars = $(stars.find('i')).length;
-			const activeStars = $(stars.find('i.fas')).length;
+			const maxStars = stars.find('i').length;
+			const activeStars = stars.find('i.fas').length;
 			return `${activeStars}/${maxStars}`;
 		}
 
@@ -307,8 +333,9 @@ export class CrawlerService {
 	}
 
 	private async writeResult(relativePath, result) {
-		await fsExtra.mkdirp(resourcesPath);
-		await fsPromise.writeFile(path.resolve(resourcesPath, relativePath), JSON.stringify(result, null, 4), {
+		const outputPath = path.resolve(resourcesPath, relativePath);
+		await fsExtra.mkdirp(path.dirname(outputPath));
+		await fsPromise.writeFile(outputPath, JSON.stringify(result, null, 4), {
 			encoding: 'utf-8',
 		});
 	}

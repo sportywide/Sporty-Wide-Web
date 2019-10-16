@@ -12,6 +12,6 @@ import { CoreModule } from '@core/core.module';
 			exportAs: DATA_CONFIG,
 		}),
 	],
-	exports: [ConfigModule],
+	exports: [ConfigModule, CoreModule],
 })
 export class CoreDataModule {}
