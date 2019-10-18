@@ -4,7 +4,7 @@ import { PuppeteerService } from '@data/core/browser/browser.service';
 import { SwBrowser, SwPage } from '@data/core/browser/browser.class';
 import Cheerio from 'cheerio';
 import { Logger } from 'log4js';
-import { format } from 'date-fns';
+import { format, isSameDay } from 'date-fns';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { WorkerQueueService } from '@core/worker/worker-queue.service';
 import { ResultsService } from '@data/crawler/results.service';
@@ -12,6 +12,8 @@ import { leagues as popularLeagues } from '@data/crawler/crawler.constants';
 const popularLeagueIds = popularLeagues.map(({ whoscoreId }) => whoscoreId);
 
 const WHOSCORE_URL = 'https://www.whoscored.com';
+const PAGE_TIMEOUT = 60000;
+const DATA_TIMEOUT = 30000;
 @Injectable()
 export class ScoreCrawlerService extends ResultsService {
 	private readonly axios: AxiosInstance;
@@ -33,19 +35,30 @@ export class ScoreCrawlerService extends ResultsService {
 	}
 
 	async getLiveMatches(date: Date) {
-		this.dataLogger.info('Getting matches for date', format(date, 'yyyy-MM-dd'));
-		const browser = await this.browser();
-		const page = await browser.newPage();
-		browser.setQuiet(true);
-		await this.navigateTo(page, '/LiveScores#');
-		browser.setQuiet(false);
-		await this.waitForResults(page);
-		await this.selectDate(page, date);
-		const leagueMap = await this.expandIncidents(page);
-		const content = await page.content();
-		await page.close();
-		const $ = Cheerio.load(content);
-		return this.parseLiveScores($, date, leagueMap);
+		const dateString = format(date, 'yyyy-MM-dd');
+		let page;
+		for (let i = 0; i < 3; i++) {
+			try {
+				this.dataLogger.info(`Attempt ${i + 1}: Getting matches for date`, dateString);
+				const browser = await this.browser();
+				page = await browser.newPage();
+				browser.setQuiet(true);
+				await this.navigateTo(page, '/LiveScores#');
+				browser.setQuiet(false);
+				await this.selectDate(page, date);
+				const leagueMap = await this.expandIncidents(page);
+				const content = await page.content();
+				await page.close();
+				const $ = Cheerio.load(content);
+				return this.parseLiveScores($, date, leagueMap);
+			} catch (e) {
+				this.dataLogger.error(`Failed to get matches for ${dateString}`, e);
+				if (page) {
+					await page.close();
+				}
+			}
+		}
+		return [];
 	}
 
 	private async expandIncidents(page: SwPage) {
@@ -80,26 +93,30 @@ export class ScoreCrawlerService extends ResultsService {
 		);
 	}
 
-	private async selectDate(page, date: Date) {
-		const year = date.getFullYear();
-		const month = date.getMonth();
-		const day = date.getDate();
-		await page.click('#date-config-toggle-button');
-		// year selector
-		await page.click(
-			`#date-config > div.datepicker-wrapper > div > table > tbody > tr > td:nth-child(1) > div > table > tbody > tr > td[data-value="${year}"]`
-		);
+	private async selectDate(page: SwPage, date: Date) {
+		const isToday = isSameDay(date, new Date());
+		if (!isToday) {
+			this.dataLogger.info('Select date', format(date, 'yyyy-MM-dd'));
+			const year = date.getFullYear();
+			const month = date.getMonth();
+			const day = date.getDate();
+			await page.click('#date-config-toggle-button');
+			// year selector
+			await page.click(
+				`#date-config > div.datepicker-wrapper > div > table > tbody > tr > td:nth-child(1) > div > table > tbody > tr > td[data-value="${year}"]`
+			);
 
-		// month selector
-		await page.click(
-			`#date-config > div.datepicker-wrapper > div > table > tbody > tr > td:nth-child(2) > div > table > tbody > tr > td[data-value="${month}"]`
-		);
+			// month selector
+			await page.click(
+				`#date-config > div.datepicker-wrapper > div > table > tbody > tr > td:nth-child(2) > div > table > tbody > tr > td[data-value="${month}"]`
+			);
 
-		await page.click(
-			`#date-config > div.datepicker-wrapper > div > table > tbody > tr > td:nth-child(3) > div > table > tbody > tr > td[data-value="${day -
-				1}"]`
-		);
-		await this.waitForResults(page);
+			await page.click(
+				`#date-config > div.datepicker-wrapper > div > table > tbody > tr > td:nth-child(3) > div > table > tbody > tr > td[data-value="${day -
+					1}"]`
+			);
+		}
+		await this.waitForResults(page, date, !isToday);
 	}
 
 	private parseLiveScores($: CheerioStatic, date, leagueMap): any[] {
@@ -206,24 +223,27 @@ export class ScoreCrawlerService extends ResultsService {
 		const result = {};
 		await workerQueue.submit(
 			async (page: SwPage, link: string) => {
-				try {
-					this.dataLogger.info('Getting ratings for match', link);
-					browser.setQuiet(true);
-					await this.navigateTo(page, link);
-					browser.setQuiet(false);
-					await this.waitForRatings(page);
-					const content = await page.content();
-					const $ = Cheerio.load(content);
-					result[link] = this.parseRatingPage($);
-				} catch (e) {
-					this.dataLogger.error(`Failed to get ratings for match ${link}`, e);
-					result[link] = null;
+				for (let i = 0; i < 3; i++) {
+					try {
+						this.dataLogger.info(`Attempt ${i + 1}: Getting ratings for match`, link);
+						browser.setQuiet(true);
+						await this.navigateTo(page, link);
+						browser.setQuiet(false);
+						await this.waitForRatings(page);
+						const content = await page.content();
+						const $ = Cheerio.load(content);
+						result[link] = this.parseRatingPage($);
+						break;
+					} catch (e) {
+						this.dataLogger.error(`Failed to get ratings for match ${link}`, e);
+						result[link] = null;
+					}
 				}
 			},
 			matchLinks,
 			{
 				limiter: 2,
-				interval: 30 * 1000,
+				interval: 25 * 1000,
 			}
 		);
 		return result;
@@ -283,12 +303,12 @@ export class ScoreCrawlerService extends ResultsService {
 
 	private async waitForRatings(page: SwPage) {
 		await page.waitForSelector('#statistics-table-home-summary-loading', {
-			timeout: 10000,
+			timeout: DATA_TIMEOUT,
 			hidden: true,
 		});
 
 		await page.waitForSelector('#statistics-table-away-summary-loading', {
-			timeout: 10000,
+			timeout: DATA_TIMEOUT,
 			hidden: true,
 		});
 	}
@@ -297,20 +317,33 @@ export class ScoreCrawlerService extends ResultsService {
 		return page.navigateTo(`${WHOSCORE_URL}${url}`, {
 			cookieSelector: '#qcCmpButtons > button:nth-child(2)',
 			options: {
-				waitUntil: ['domcontentloaded'],
+				timeout: PAGE_TIMEOUT,
 			},
 		});
 	}
 
-	private async waitForResults(page: SwPage) {
+	private async waitForResults(page: SwPage, date: Date, waitForResponse) {
+		if (waitForResponse) {
+			await page.waitForResponse(response => {
+				return (
+					response.url().startsWith(`${WHOSCORE_URL}/matchesfeed/?d=${format(date, 'yyyyMMdd')}`) &&
+					response.status() === 200
+				);
+			});
+		}
+
 		await page.waitForFunction(
 			selector => {
 				// eslint-disable-next-line no-undef
 				const element = document.querySelector(selector);
-				return !element || !element.innerText.trim().startsWith('Loading');
+				const text = (element && element.innerText.trim()) || '';
+				if (text.startsWith('Unable')) {
+					throw new Error('Failed to do xhr request');
+				}
+				return !text || !text.startsWith('Loading');
 			},
 			{
-				timeout: 10000,
+				timeout: DATA_TIMEOUT,
 			},
 			'#countdown'
 		);
