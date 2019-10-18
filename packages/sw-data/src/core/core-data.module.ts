@@ -3,6 +3,7 @@ import { ConfigModule } from '@core/config/config.module';
 import { config } from '@data/config';
 import { DATA_CONFIG } from '@core/config/config.constants';
 import { CoreModule } from '@core/core.module';
+import { PuppeteerService } from '@data/core/browser/browser.service';
 
 @Module({
 	imports: [
@@ -12,6 +13,7 @@ import { CoreModule } from '@core/core.module';
 			exportAs: DATA_CONFIG,
 		}),
 	],
-	exports: [ConfigModule, CoreModule],
+	providers: [PuppeteerService],
+	exports: [ConfigModule, CoreModule, PuppeteerService],
 })
 export class CoreDataModule {}

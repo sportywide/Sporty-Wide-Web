@@ -82,15 +82,17 @@ export class FixtureCrawlerService {
 				const matchResults = fixtureElement.find('.matches__status');
 				const hasHappened = fixtureLinkElement.data('status') !== 'KO';
 				let status;
+				let current;
 				let homeScore, awayScore;
 				if (hasHappened) {
 					[homeScore, awayScore] = Array.from(matchResults.find('.matches__teamscores-side')).map(node =>
 						parseInt($(node).text())
 					);
-					const matchesInfo = fixtureElement.find('.matches__info');
-					status = matchesInfo.text().trim() === 'FT' ? 'PAST' : 'ACTIVE';
+					status = 'FT';
+					current = 90;
 				} else {
 					status = 'PENDING';
+					current = 0;
 				}
 				return {
 					link: fixtureLink,
@@ -99,6 +101,7 @@ export class FixtureCrawlerService {
 					status,
 					homeScore,
 					awayScore,
+					current,
 					time: new Date(
 						Date.UTC(
 							currentMonth.getFullYear(),
