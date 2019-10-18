@@ -1,22 +1,18 @@
 import https from 'https';
-import path from 'path';
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 import cheerio from 'cheerio';
 import { parse } from 'date-fns';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
-import fsExtra from 'fs-extra';
-import { fsPromise } from '@shared/lib/utils/promisify/fs';
-import { resourcesPath } from '@data/crawler/crawler.constants';
+import { ResultsService } from '@data/crawler/results.service';
 
 @Injectable()
-export class FixtureCrawlerService {
+export class FixtureCrawlerService extends ResultsService {
 	private axios: AxiosInstance;
-	private initiated: boolean;
-	private cookies: string;
 
 	constructor(@Inject(DATA_LOGGER) private readonly logger: Logger) {
+		super();
 		this.axios = axios.create({
 			baseURL: 'https://www.skysports.com',
 			httpsAgent: new https.Agent({ rejectUnauthorized: false }),
@@ -117,13 +113,5 @@ export class FixtureCrawlerService {
 			allResults.push(...Array.from(fixtureDetails));
 		});
 		return allResults;
-	}
-
-	private async writeResult(relativePath, result) {
-		const outputPath = path.resolve(resourcesPath, relativePath);
-		await fsExtra.mkdirp(path.dirname(outputPath));
-		await fsPromise.writeFile(outputPath, JSON.stringify(result, null, 4), {
-			encoding: 'utf-8',
-		});
 	}
 }

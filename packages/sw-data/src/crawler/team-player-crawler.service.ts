@@ -1,8 +1,5 @@
-import path from 'path';
 import https from 'https';
-import { fsPromise } from '@shared/lib/utils/promisify/fs';
-import fsExtra from 'fs-extra';
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 import { Logger } from 'log4js';
 import cheerio from 'cheerio';
@@ -10,17 +7,18 @@ import { range } from '@shared/lib/utils/array/range';
 import { sleep } from '@shared/lib/utils/sleep';
 import { flattenDeep } from 'lodash';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
-import { resourcesPath } from '@data/crawler/crawler.constants';
+import { ResultsService } from '@data/crawler/results.service';
 
 const DEFAULT_PLAYER_PAGES = 5;
 
 @Injectable()
-export class TeamPlayerCrawlerService {
+export class TeamPlayerCrawlerService extends ResultsService {
 	private _fifaRegex = /\s*fifa\s*\d*/gim;
 
 	private axios: AxiosInstance;
 
 	constructor(@Inject(DATA_LOGGER) private readonly logger: Logger) {
+		super();
 		this.axios = axios.create({
 			baseURL: 'https://www.fifaindex.com',
 			transformResponse: (data, headers) => {
@@ -330,13 +328,5 @@ export class TeamPlayerCrawlerService {
 
 	private getParsedResponse(url) {
 		return this.axios.get(url).then(({ data }) => data);
-	}
-
-	private async writeResult(relativePath, result) {
-		const outputPath = path.resolve(resourcesPath, relativePath);
-		await fsExtra.mkdirp(path.dirname(outputPath));
-		await fsPromise.writeFile(outputPath, JSON.stringify(result, null, 4), {
-			encoding: 'utf-8',
-		});
 	}
 }

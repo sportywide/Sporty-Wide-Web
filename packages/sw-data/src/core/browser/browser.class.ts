@@ -14,6 +14,7 @@ export class SwBrowserWrapper {
 	static async create({ logger, config, options = {} }): Promise<SwBrowser> {
 		const browserOptions: LaunchOptions = {
 			ignoreHTTPSErrors: true,
+			headless: false,
 			args: ['--no-sandbox', '--disable-setuid-sandbox'],
 			executablePath: config.get('puppeteer:executable'),
 			...options,
@@ -130,8 +131,8 @@ class SwPageWrapper {
 		return false;
 	}
 
-	async navigateTo(url, { cookieSelector = '' } = {}) {
-		await this.page.goto(url, { waitUntil: ['domcontentloaded', 'networkidle0'] });
+	async navigateTo(url, { cookieSelector = '', options = {} } = {}) {
+		await this.page.goto(url, { waitUntil: ['domcontentloaded', 'networkidle0'], ...options });
 		if (cookieSelector) {
 			await this.click(cookieSelector);
 		}

@@ -4,9 +4,9 @@
 	"description": "A Social network for Sports",
 	"author": "Sporty Wide",
 	"scripts": {
-		"install:dependencies": "ts-node -T bin/install.ts",
 		"dev:exec": "cross-env TS_NODE_TYPE_CHECK=false TS_NODE_TRANSPILE_ONLY=true gulp dev:exec",
-		"exec": "cross-env TS_NODE_TYPE_CHECK=false TS_NODE_TRANSPILE_ONLY=true gulp exec"
+		"exec": "cross-env TS_NODE_TYPE_CHECK=false TS_NODE_TRANSPILE_ONLY=true gulp exec",
+		"install:dependencies": "ts-node -T bin/install.ts"
 	},
 	"husky": {
 		"hooks": {
