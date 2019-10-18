@@ -229,6 +229,9 @@ export class ScoreCrawlerService extends ResultsService {
 						browser.setQuiet(true);
 						await this.navigateTo(page, link);
 						browser.setQuiet(false);
+						if (page.url().includes('404.html')) {
+							throw new NonRecoverable('404');
+						}
 						await this.waitForRatings(page);
 						const content = await page.content();
 						const $ = Cheerio.load(content);
@@ -236,6 +239,9 @@ export class ScoreCrawlerService extends ResultsService {
 						break;
 					} catch (e) {
 						this.dataLogger.error(`Failed to get ratings for match ${link}`, e);
+						if (e.nonRecoverable) {
+							break;
+						}
 						result[link] = null;
 					}
 				}
@@ -253,9 +259,15 @@ export class ScoreCrawlerService extends ResultsService {
 		const homePlayers = $(
 			'#live-player-home-summary #top-player-stats-summary-grid #player-table-statistics-body > tr'
 		);
+		if (homePlayers.length <= 1) {
+			throw new Error('Failed to fetch data');
+		}
 		const awayPlayers = $(
 			'#live-player-away-summary #top-player-stats-summary-grid #player-table-statistics-body > tr'
 		);
+		if (awayPlayers.length <= 1) {
+			throw new Error('Failed to fetch data');
+		}
 		return {
 			home: this.parseRatingTable(homePlayers, $),
 			away: this.parseRatingTable(awayPlayers, $),
@@ -352,5 +364,14 @@ export class ScoreCrawlerService extends ResultsService {
 	async close() {
 		const browser = await this.browser();
 		await browser.close();
+	}
+}
+
+class NonRecoverable extends Error {
+	nonRecoverable: boolean;
+
+	constructor(message) {
+		super(message);
+		this.nonRecoverable = true;
 	}
 }
