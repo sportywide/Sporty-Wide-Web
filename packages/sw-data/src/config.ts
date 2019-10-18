@@ -9,5 +9,8 @@ export const config = {
 			port: 5432,
 			database: process.env.SW_POSTGRES_DB,
 		},
+		puppeteer: {
+			executable: '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser',
+		},
 	},
 };
