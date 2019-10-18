@@ -56,6 +56,7 @@ export class WorkerQueue {
 
 					progress.finally(() => {
 						alreadyProcessed++;
+						this.log('debug', `Finished ${alreadyProcessed}/${numJobs}`);
 						poll();
 					});
 
@@ -87,7 +88,7 @@ export class WorkerQueue {
 		if (!this.hasAvailableWorker()) {
 			return;
 		}
-		const worker = this.availableWorkers.pop();
+		const worker = this.availableWorkers.shift();
 
 		try {
 			await process(worker, data);

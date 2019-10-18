@@ -10,7 +10,7 @@ async function bootstrap() {
 	const crawlerService = context.get(ScoreCrawlerService);
 
 	try {
-		const date = new Date(2019, 9, 6);
+		const date = new Date(2019, 9, 5);
 		let matches = await crawlerService.getLiveMatches(date);
 		const finishedMatches = matches.filter(match => match.status === 'FT');
 		const finishedMatchLinks = finishedMatches.map(match => match.link).filter(link => link);
