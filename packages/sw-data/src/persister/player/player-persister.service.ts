@@ -46,7 +46,7 @@ export class PlayerPersisterService {
 						};
 						delete dbObj['fifaId'];
 						await this.playerRepository.save(dbObj);
-						this.logger.info(`Persisted team ${dbObj.name} from ${dbObj.team}`);
+						this.logger.info(`Persisted player ${dbObj.name} from ${dbObj.team}`);
 					});
 				});
 			});
