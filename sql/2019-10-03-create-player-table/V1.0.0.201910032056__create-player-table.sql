@@ -2,7 +2,7 @@ CREATE TABLE "player"
 (
     id              INTEGER PRIMARY KEY,
     name            VARCHAR(20) NOT NULL,
-    url             VARCHAR(30) NOT NULL,
+    url             VARCHAR(60) NOT NULL,
     image           VARCHAR(60) NOT NULL,
     rating          INTEGER,
     age             INTEGER,
