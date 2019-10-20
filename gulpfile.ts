@@ -15,10 +15,12 @@ export class Gulpfile {
 			return spawn(
 				'lerna bootstrap -- --production --no-optional --ci && link-parent-bin -s true -d false -o false'
 			);
+		} else if (argv.packageLockOnly) {
+			return spawn('lerna bootstrap -- --no-optional --package-lock-only');
 		} else if (argv.optional) {
 			return spawn('lerna bootstrap && link-parent-bin');
 		} else {
-			return spawn('lerna bootstrap -- --ci --no-optional && link-parent-bin');
+			return spawn('lerna bootstrap -- --no-optional && link-parent-bin');
 		}
 	}
 
