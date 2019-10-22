@@ -6,7 +6,7 @@ CREATE TABLE "player"
     image           VARCHAR(60) NOT NULL,
     rating          INTEGER,
     age             INTEGER,
-    positions       VARCHAR(60) NOT NULL,
+    positions       VARCHAR(3)[] NOT NULL,
     team            VARCHAR(60),
     team_id         INTEGER REFERENCES team (id),
     nationality     VARCHAR(60) NOT NULL,

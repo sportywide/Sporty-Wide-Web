@@ -1,11 +1,13 @@
+import util from 'util';
+import path from 'path';
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectSwRepository } from '@schema/core/repository/sql/inject-repository.decorator';
 import { SwRepository } from '@schema/core/repository/sql/base.repository';
 import { Team } from '@schema/team/models/team.entity';
-import fs from 'fs';
-import path from 'path';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
-import { Logger } from '@root/node_modules/log4js';
+import { Logger } from 'log4js';
+import { fsPromise } from '@shared/lib/utils/promisify/fs';
+const glob = util.promisify(require('glob'));
 
 @Injectable()
 export class TeamPersisterService {
@@ -14,32 +16,44 @@ export class TeamPersisterService {
 		@InjectSwRepository(Team) private readonly teamRepository: SwRepository<Team>
 	) {}
 
-	saveTeams() {
-		const resourceRoot = path.join(__dirname, 'resources');
-		fs.readdirSync(resourceRoot)
-			.filter(file => !!file && file.indexOf('team') === 0)
-			.forEach(file => {
-				this.logger.info(`Reading from resource ${file}`);
-				// eslint-disable-next-line import/dynamic-import-chunkname
-				fs.readFile(path.join(resourceRoot, file), 'utf8', (err, content) => {
-					if (!!err) {
-						this.logger.error(err);
-						return;
-					}
-
-					const teams = JSON.parse(content);
-					teams.forEach(async team => {
-						const dbObj = {
-							...team,
-							id: team.fifaId,
-							league: team.league.title,
-							leagueId: team.league.fifaId,
-						};
-						delete dbObj['fifaId'];
-						await this.teamRepository.save(dbObj);
-						this.logger.info(`Persisted team ${dbObj.title} from ${dbObj.league}`);
-					});
-				});
+	async saveTeams() {
+		try {
+			const files = await glob('team.*.json', {
+				cwd: path.resolve(__dirname, 'resources', 'teams'),
+				absolute: true,
 			});
+			await Promise.all(files.map(file => this.saveFile(file)));
+		} catch (e) {
+			this.logger.error(`Failed to read team files`, e);
+		}
+	}
+
+	private async saveFile(file) {
+		try {
+			this.logger.info(`Reading from resource ${file}`);
+			const content = await fsPromise.readFile(file, 'utf8');
+
+			const teams = JSON.parse(content);
+			await Promise.all(
+				teams.map(async team => {
+					const dbObj = {
+						...team,
+						id: team.fifaId,
+						league: team.league.title,
+						leagueId: team.league.fifaId,
+					};
+
+					delete dbObj['fifaId'];
+					try {
+						await this.teamRepository.save(dbObj);
+						this.logger.debug(`Persisted team ${dbObj.name}`);
+					} catch (e) {
+						this.logger.error(`Failed to save team ${dbObj.name}`);
+					}
+				})
+			);
+		} catch (e) {
+			this.logger.error('Failed to read file', e);
+		}
 	}
 }
