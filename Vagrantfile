@@ -57,6 +57,7 @@ Vagrant.configure(2) do |config|
 
 	config.vm.provision "shell", inline: "sudo yum clean all && sudo yum makecache fast"
 	config.vm.provision "shell", path: "vagrant/scripts/node.sh"
+	config.vm.provision "shell", path: "vagrant/scripts/chromium.sh"
 
 	config.vm.provision :docker
 	
