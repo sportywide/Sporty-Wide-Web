@@ -1,11 +1,11 @@
-import { AfterLoad, PrimaryGeneratedColumn } from 'typeorm';
+import { AfterLoad, PrimaryColumn } from 'typeorm';
 import { isPromise } from '@shared/lib/utils/promise';
 
 export class BaseEntity {
 	_initialValues: any = {};
 	_isLoaded = false;
 
-	@PrimaryGeneratedColumn() id: number;
+	@PrimaryColumn() id: number;
 
 	@AfterLoad()
 	afterLoad() {

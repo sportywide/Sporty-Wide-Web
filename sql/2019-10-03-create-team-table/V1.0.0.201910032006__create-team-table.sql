@@ -1,7 +1,7 @@
 CREATE TABLE "team"
 (
     id          INTEGER PRIMARY KEY,
-    name        VARCHAR(20) NOT NULL,
+    name        VARCHAR(60) NOT NULL,
     title       VARCHAR(30) NOT NULL,
     image       VARCHAR(60) NOT NULL,
     att         INTEGER,
