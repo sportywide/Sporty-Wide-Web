@@ -5,6 +5,7 @@ import { SqlConnectionModule } from '@schema/core/connection/sql-connection.modu
 import { DATA_CONFIG, SCHEMA_CONFIG } from '@core/config/config.constants';
 import { SchemaUserModule } from '@schema/user/user.module';
 import { CoreDataModule } from '@data/core/core-data.module';
+import { TeamPersisterService } from '@data/persister/team/team-persister.service';
 
 @Module({
 	imports: [
@@ -23,6 +24,6 @@ import { CoreDataModule } from '@data/core/core-data.module';
 			imports: [CoreSchemaModule, CoreDataModule],
 		}),
 	],
-	providers: [PlayerPersisterService],
+	providers: [PlayerPersisterService, TeamPersisterService],
 })
 export class PersisterModule {}
