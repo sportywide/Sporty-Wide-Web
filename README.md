@@ -22,7 +22,7 @@ mkcert --key-file certs/sportywide-key.pem --cert-file certs/sportywide-cert.pem
 -   Add the following entries to /etc/hosts
 
 ```bash
-192.168.50.10 sportywidedev.com mail.sportywidedev.com api.sportywidedev.com www.sportywidedev.com
+192.168.50.10 sportywidedev.com mail.sportywidedev.com api.sportywidedev.com www.sportywidedev.com proxy.sportywidedev.com
 ```
 
 -   After following the running instructions below, you should be able to access the API at `https://api.sportywidedev.com` and the app at `https://www.sportywidedev.com`

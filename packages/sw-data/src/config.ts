@@ -10,7 +10,7 @@ export const config = {
 			database: process.env.SW_POSTGRES_DB,
 		},
 		puppeteer: {
-			executable: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+			executable: '/usr/bin/chromium-browser',
 		},
 		proxy: {
 			url: 'http://localhost:8081',
