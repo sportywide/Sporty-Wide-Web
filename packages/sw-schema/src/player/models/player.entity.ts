@@ -1,10 +1,8 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { BaseEntity } from '@schema/core/base.entity';
 
 @Entity()
-export class Player {
-	@PrimaryColumn()
-	id: number;
-
+export class Player extends BaseEntity {
 	@Column()
 	name: string;
 

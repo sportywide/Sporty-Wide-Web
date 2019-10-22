@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { SchemaUserModule } from '@schema/user/user.module';
 import { CoreSchemaModule } from '@schema/core/core-schema.module';
-import './subscribers';
+import './core/subscribers';
 import { SchemaAuthModule } from '@schema/auth/auth.module';
 import { SchemaAddressModule } from '@schema/address/address.module';
 import { SchemaLeagueModule } from '@schema/league/league.module';

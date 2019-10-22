@@ -1,10 +1,8 @@
 import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { BaseEntity } from '@schema/core/base.entity';
 
 @Entity()
-export class Team {
-	@PrimaryColumn()
-	id: number;
-
+export class Team extends BaseEntity {
 	@Column()
 	name: string;
 
