@@ -3,6 +3,7 @@ import { wrap } from '@shared/lib/utils/object/proxy';
 import puppeteer, { Browser, Page, LaunchOptions, ClickOptions } from 'puppeteer-core';
 import { Logger } from 'log4js';
 const MAX_ATTEMPTS = 3;
+import { Provider } from 'nconf';
 
 export type SwBrowser = SwBrowserWrapper & Browser;
 
@@ -11,10 +12,28 @@ export class SwBrowserWrapper {
 	private readonly logger: Logger;
 	private quiet: boolean;
 
-	static async create({ logger, config, options = {} }): Promise<SwBrowser> {
+	static async create({
+		logger,
+		config,
+		options = {},
+	}: {
+		logger: Logger;
+		config: Provider;
+		options: any;
+	}): Promise<SwBrowser> {
+		let proxyServer;
+		if (options.proxyServer) {
+			proxyServer = options.proxyServer;
+			delete options.proxyServer;
+		}
 		const browserOptions: LaunchOptions = {
 			ignoreHTTPSErrors: true,
-			args: ['--no-sandbox', '--disable-setuid-sandbox'],
+			headless: true,
+			args: [
+				'--no-sandbox',
+				'--disable-setuid-sandbox',
+				proxyServer ? `--proxy-server=${proxyServer}` : null,
+			].filter(arg => arg),
 			executablePath: config.get('puppeteer:executable'),
 			...options,
 		};
@@ -53,46 +72,22 @@ export class SwBrowserWrapper {
 
 		// prevent site blocking of Headless Chrome: https://intoli.com/blog/not-possible-to-block-chrome-headless/
 		const userAgent =
-			'Mozilla/5.0 (X11; Linux x86_64)' +
-			'AppleWebKit/537.36 (KHTML, like Gecko) Chrome/64.0.3282.39 Safari/537.36';
+			'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.50 Safari/537.36';
 		await page.setUserAgent(userAgent);
 
 		await page.evaluateOnNewDocument(() => {
-			Object.defineProperty(navigator, 'webdriver', {
-				get: () => false,
-			});
-		});
-
-		await page.evaluateOnNewDocument(() => {
-			// Overwrite the `plugins` property to use a custom getter.
 			Object.defineProperty(navigator, 'languages', {
-				get: () => ['en-US', 'en'],
+				get: function() {
+					return ['en-US', 'en'];
+				},
 			});
-		});
 
-		await page.evaluateOnNewDocument(() => {
-			// We can mock this in as much depth as we need for the test.
-			(window.navigator as any).chrome = {
-				runtime: {},
-				// etc.
-			};
-		});
-
-		await page.evaluateOnNewDocument(() => {
-			const originalQuery = window.navigator.permissions.query;
-			return (window.navigator.permissions.query = parameters =>
-				// @ts-ignore
-				parameters.name === 'notifications'
-					? Promise.resolve({ state: Notification.permission })
-					: originalQuery(parameters));
-		});
-
-		await page.evaluateOnNewDocument(() => {
-			// Overwrite the `plugins` property to use a custom getter.
+			// overwrite the `plugins` property to use a custom getter
 			Object.defineProperty(navigator, 'plugins', {
-				// This just needs to have `length > 0` for the current test,
-				// but we could mock the plugins too if necessary.
-				get: () => [1, 2, 3, 4, 5],
+				get: function() {
+					// this just needs to have `length > 0`, but we could mock the plugins too
+					return [1, 2, 3, 4, 5];
+				},
 			});
 		});
 
@@ -132,7 +127,7 @@ class SwPageWrapper {
 	}
 
 	async navigateTo(url, { cookieSelector = '', options = {} } = {}) {
-		await this.page.goto(url, { waitUntil: ['domcontentloaded', 'networkidle0'], ...options });
+		const response = await this.page.goto(url, { waitUntil: ['domcontentloaded', 'networkidle0'], ...options });
 		if (cookieSelector) {
 			await this.click(cookieSelector);
 			await this.page.waitForSelector(cookieSelector, {
@@ -140,6 +135,7 @@ class SwPageWrapper {
 				timeout: 10000,
 			});
 		}
+		return response;
 	}
 
 	async click(selector: string, options: ClickOptions = {}) {
@@ -152,10 +148,10 @@ class SwPageWrapper {
 		await this.page.$$eval(selector, links => links.map(link => (link as any).click()));
 	}
 
-	get(url, options = {}): Promise<Response> {
+	get(url, options = {}): Promise<any> {
 		return this.request({
 			url,
-			options: { method: 'GET', credentials: 'include', ...options },
+			options: { method: 'GET', ...options },
 		});
 	}
 
@@ -163,7 +159,7 @@ class SwPageWrapper {
 		return this.page.evaluate(
 			data => {
 				return fetch(data.url, data.options)
-					.then(response => console.error(response))
+					.then(response => response.json())
 					.catch(err => {
 						console.error('Failed to make XHR request', err);
 					});

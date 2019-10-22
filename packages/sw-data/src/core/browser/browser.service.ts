@@ -12,7 +12,7 @@ export class PuppeteerService {
 		@Inject(DATA_LOGGER) private readonly logger: Logger
 	) {}
 
-	startBrowser(options: LaunchOptions = {}) {
+	startBrowser(options: LaunchOptions & { proxyServer?: string } = {}) {
 		return SwBrowserWrapper.create({ logger: this.logger, config: this.config, options });
 	}
 }

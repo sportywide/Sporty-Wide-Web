@@ -1,4 +1,4 @@
-import { Gulpclass, Task } from '@root/node_modules/gulpclass';
+import { Gulpclass, Task } from 'gulpclass';
 import { spawn } from '@root/helpers/process';
 
 @Gulpclass()

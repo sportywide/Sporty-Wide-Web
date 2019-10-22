@@ -9,6 +9,9 @@ import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { WorkerQueueService } from '@core/worker/worker-queue.service';
 import { ResultsService } from '@data/crawler/results.service';
 import { leagues as popularLeagues } from '@data/crawler/crawler.constants';
+import { sleep } from '@shared/lib/utils/sleep';
+import { DATA_CONFIG } from '@core/config/config.constants';
+import { Provider } from 'nconf';
 const popularLeagueIds = popularLeagues.map(({ whoscoreId }) => whoscoreId);
 
 const WHOSCORE_URL = 'https://www.whoscored.com';
@@ -20,6 +23,7 @@ export class ScoreCrawlerService extends ResultsService {
 	private swBrowser: SwBrowser;
 	constructor(
 		private readonly puppeteerService: PuppeteerService,
+		@Inject(DATA_CONFIG) private readonly config: Provider,
 		private readonly workerQueueService: WorkerQueueService,
 		@Inject(DATA_LOGGER) private readonly dataLogger: Logger
 	) {
@@ -30,21 +34,26 @@ export class ScoreCrawlerService extends ResultsService {
 		if (this.swBrowser) {
 			return this.swBrowser;
 		}
-		this.swBrowser = await this.puppeteerService.startBrowser();
+		this.swBrowser = await this.puppeteerService.startBrowser({
+			proxyServer: this.config.get('proxy:url'),
+		});
 		return this.swBrowser;
 	}
 
 	async getLiveMatches(date: Date) {
 		const dateString = format(date, 'yyyy-MM-dd');
 		let page;
-		for (let i = 0; i < 3; i++) {
+		for (let i = 0; i < 4; i++) {
 			try {
 				this.dataLogger.info(`Attempt ${i + 1}: Getting matches for date`, dateString);
 				const browser = await this.browser();
 				page = await browser.newPage();
 				browser.setQuiet(true);
-				await this.navigateTo(page, '/LiveScores#');
+				const response = await this.navigateTo(page, '/LiveScores#');
 				browser.setQuiet(false);
+				if (response!.status() === 403) {
+					throw new Error('Failed to fetch live score');
+				}
 				await this.selectDate(page, date);
 				const leagueMap = await this.expandIncidents(page);
 				const content = await page.content();
@@ -223,7 +232,7 @@ export class ScoreCrawlerService extends ResultsService {
 		const result = {};
 		await workerQueue.submit(
 			async (page: SwPage, link: string) => {
-				for (let i = 0; i < 3; i++) {
+				for (let i = 0; i < 4; i++) {
 					try {
 						this.dataLogger.info(`Attempt ${i + 1}: Getting ratings for match`, link);
 						browser.setQuiet(true);
@@ -243,13 +252,14 @@ export class ScoreCrawlerService extends ResultsService {
 							break;
 						}
 						result[link] = null;
+						await sleep(1500 * (i + 1));
 					}
 				}
 			},
 			matchLinks,
 			{
 				limiter: 2,
-				interval: 25 * 1000,
+				interval: 10 * 1000,
 			}
 		);
 		return result;
@@ -330,6 +340,7 @@ export class ScoreCrawlerService extends ResultsService {
 			cookieSelector: '#qcCmpButtons > button:nth-child(2)',
 			options: {
 				timeout: PAGE_TIMEOUT,
+				waitUntil: ['domcontentloaded', 'networkidle2'],
 			},
 		});
 	}
