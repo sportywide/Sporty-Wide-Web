@@ -10,7 +10,10 @@ export const config = {
 			database: process.env.SW_POSTGRES_DB,
 		},
 		puppeteer: {
-			executable: '/Applications/Brave Browser.app/Contents/MacOS/Brave Browser',
+			executable: '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',
+		},
+		proxy: {
+			url: 'http://localhost:8081',
 		},
 	},
 };
