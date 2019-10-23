@@ -48,7 +48,7 @@ export class PlayerPersisterService {
 					delete dbObj['fifaId'];
 					try {
 						await this.playerRepository.save(dbObj);
-						this.logger.debug(`Persisted player ${dbObj.name} from ${dbObj.team}`);
+						this.logger.trace(`Persisted player ${dbObj.name} from ${dbObj.team}`);
 					} catch (e) {
 						this.logger.error(`Failed to save player ${dbObj.name}`);
 					}

@@ -10,6 +10,16 @@ import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { ResultsService } from '@data/crawler/results.service';
 
 const DEFAULT_PLAYER_PAGES = 5;
+const teamMapping = {
+	// eslint-disable-next-line
+	Köln: 'Cologne',
+	// eslint-disable-next-line
+	Paris: 'Paris Saint-Germain',
+	Spurs: 'Tottenham Hotspur',
+	Brighton: 'Brighton and Hove Albion',
+	Wolves: 'Wolverhampton Wanderers',
+	'Girondins de Bx': 'Bordeaux',
+};
 
 @Injectable()
 export class TeamPlayerCrawlerService extends ResultsService {
@@ -75,10 +85,11 @@ export class TeamPlayerCrawlerService extends ResultsService {
 			const halfStars = span.find('i.fas.fa-star-half-alt').length;
 			const rating = `${activeStars + halfStars / 2}/${maxStars}`;
 
+			const title = bio['title'].replace(this._fifaRegex, '').trim();
 			result.push({
 				fifaId: parseInt(bio['href'].split('/').filter(s => !!s)[1], 10),
 				image: image['data-src'],
-				title: bio['title'].replace(this._fifaRegex, '').trim(),
+				title: teamMapping[title] || title,
 				name: bio['href'].split('/').filter(s => !!s)[2],
 				league: {
 					title: league['title'].replace(this._fifaRegex, '').trim(),

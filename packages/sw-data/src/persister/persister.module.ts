@@ -6,6 +6,7 @@ import { DATA_CONFIG, SCHEMA_CONFIG } from '@core/config/config.constants';
 import { SchemaUserModule } from '@schema/user/user.module';
 import { CoreDataModule } from '@data/core/core-data.module';
 import { TeamPersisterService } from '@data/persister/team/team-persister.service';
+import { FixturePersisterService } from '@data/persister/fixture/fixture-persister.service';
 
 @Module({
 	imports: [
@@ -24,6 +25,7 @@ import { TeamPersisterService } from '@data/persister/team/team-persister.servic
 			imports: [CoreSchemaModule, CoreDataModule],
 		}),
 	],
-	providers: [PlayerPersisterService, TeamPersisterService],
+	providers: [PlayerPersisterService, TeamPersisterService, FixturePersisterService],
+	exports: [PlayerPersisterService, TeamPersisterService, FixturePersisterService],
 })
 export class PersisterModule {}

@@ -83,7 +83,7 @@ export class FixtureCrawlerService extends ResultsService {
 			}
 			const fixtureDateStr = headerElement.text();
 			const fixtureDate = parse(fixtureDateStr, 'EEEE do MMMM', new Date());
-			const fixtureElements = $(headerElement).nextUntil('fixres__header2', '.fixres__item');
+			const fixtureElements = $(headerElement).nextUntil('.fixres__header2', '.fixres__item');
 			const fixtureDetails = fixtureElements.map((index, fixtureNode) => {
 				const fixtureElement = $(fixtureNode);
 				const fixtureLinkElement = fixtureElement.find('.matches__link');
