@@ -2,12 +2,12 @@ import { NestFactory } from '@nestjs/core';
 import { INestApplicationContext } from '@nestjs/common';
 import { CrawlerModule } from '@data/crawler/crawler.module';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
-import { ScoreCrawlerService } from '@data/crawler/score-crawler.service';
+import { WhoScoreCrawlerService } from '@data/crawler/who-score-crawler.service';
 import { format } from 'date-fns';
 
 async function bootstrap() {
 	const context: INestApplicationContext = await NestFactory.createApplicationContext(CrawlerModule);
-	const crawlerService = context.get(ScoreCrawlerService);
+	const crawlerService = context.get(WhoScoreCrawlerService);
 
 	try {
 		const date = new Date(2019, 9, 5);
