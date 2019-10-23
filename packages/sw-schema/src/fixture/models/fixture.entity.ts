@@ -1,6 +1,7 @@
 import { Column, Entity, OneToOne, ManyToOne, JoinColumn } from 'typeorm';
 import { BaseEntity } from '@schema/core/base.entity';
 import { Team } from '@schema/team/models/team.entity';
+import { League } from '@schema/league/models/league.entity';
 
 @Entity()
 export class Fixture extends BaseEntity {
@@ -27,6 +28,15 @@ export class Fixture extends BaseEntity {
 
 	@Column()
 	homeId: number;
+
+	@Column()
+	leagueId: number;
+
+	@JoinColumn({
+		name: 'league_id',
+	})
+	@ManyToOne(type => League)
+	league: League;
 
 	@Column()
 	awayId: number;

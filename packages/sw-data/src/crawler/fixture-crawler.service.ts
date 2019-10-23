@@ -6,6 +6,8 @@ import { parse } from 'date-fns';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import { ResultsService } from '@data/crawler/results.service';
+import { League } from '@data/crawler/crawler.constants';
+import { getSeasonYears, isInSeason } from '@shared/lib/utils/season';
 
 @Injectable()
 export class FixtureCrawlerService extends ResultsService {
@@ -26,32 +28,44 @@ export class FixtureCrawlerService extends ResultsService {
 		});
 	}
 
-	async getMatchesForLeague(league: string) {
+	async getMatchesForLeague(league: League, season: string | null) {
+		if (!season) {
+			return;
+		}
+		const name = league.name;
 		try {
 			const [results, fixtures] = await Promise.all([
-				this.getResultsForLeague(league),
-				this.getFixturesForLeague(league),
+				this.getResultsForLeague(name, season),
+				this.getFixturesForLeague(name, season),
 			]);
 			const matches = [...results, ...fixtures].sort((a, b) => a.time.getTime() - b.time.getTime());
-			this.writeResult(`matches/${league}.json`, matches);
+			this.writeResult(`fixtures/${name}.json`, {
+				id: league.id,
+				season: season,
+				matches,
+			});
 		} catch (e) {
-			this.logger.error(`Failed to get matches for league ${league}`, e);
+			this.logger.error(`Failed to get matches for league ${name}`, e);
 		}
 	}
 
-	async getFixturesForLeague(league: string) {
+	async getFixturesForLeague(league: string, season: string) {
 		this.logger.info('Getting fixture for league', league);
-		const { data: content } = await this.axios.get(`https://www.skysports.com/${league}-fixtures`);
-		return this.parseFixture(content);
+		const [start, end] = getSeasonYears(season);
+		const seasonString = [start, end.toString().replace(/\d{2}(\d{2})/, '$1')].join('-');
+		const { data: content } = await this.axios.get(`https://www.skysports.com/${league}-fixtures/${seasonString}`);
+		return this.parseFixture(content, season);
 	}
 
-	async getResultsForLeague(league: string) {
+	async getResultsForLeague(league: string, season: string) {
 		this.logger.info('Getting results for league', league);
-		const { data: content } = await this.axios.get(`https://www.skysports.com/${league}-results`);
-		return this.parseFixture(content);
+		const [start, end] = getSeasonYears(season);
+		const seasonString = [start, end.toString().replace(/\d{2}(\d{2})/, '$1')].join('-');
+		const { data: content } = await this.axios.get(`https://www.skysports.com/${league}-results/${seasonString}`);
+		return this.parseFixture(content, season);
 	}
 
-	private parseFixture($: CheerioStatic) {
+	private parseFixture($: CheerioStatic, season) {
 		const allResults: any[] = [];
 		const showMoreScript = $('script[type="text/show-more"]');
 		showMoreScript.replaceWith($(showMoreScript.html()));
@@ -63,6 +77,9 @@ export class FixtureCrawlerService extends ResultsService {
 				// if month header exists
 				const currentMonthStr = monthHeader.text();
 				currentMonth = parse(currentMonthStr, 'MMMM yyyy', new Date());
+			}
+			if (!isInSeason(currentMonth, season)) {
+				return;
 			}
 			const fixtureDateStr = headerElement.text();
 			const fixtureDate = parse(fixtureDateStr, 'EEEE do MMMM', new Date());

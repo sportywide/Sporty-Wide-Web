@@ -6,6 +6,7 @@ CREATE TABLE "fixture"
     home_id    INTEGER REFERENCES team (id) ON DELETE CASCADE,
     away_id    INTEGER REFERENCES team (id) ON DELETE CASCADE,
     season     VARCHAR(10),
+    league_id  INTEGER REFERENCES league(id) ON DELETE CASCADE,
     status     VARCHAR(10),
     link       VARCHAR(100),
     home_score INTEGER,

@@ -2,7 +2,12 @@ import path from 'path';
 
 export const resourcesPath = path.resolve(process.cwd(), 'resources');
 
-export const leagues = [
+export type League = {
+	name: string;
+	id: number;
+	whoscoreId: number;
+};
+export const leagues: League[] = [
 	{
 		name: 'premier-league',
 		id: 13,
