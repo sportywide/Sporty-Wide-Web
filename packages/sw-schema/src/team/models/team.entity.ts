@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryColumn } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { BaseEntity } from '@schema/core/base.entity';
 
 @Entity()

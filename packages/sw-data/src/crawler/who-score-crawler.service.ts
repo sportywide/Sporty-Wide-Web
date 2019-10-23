@@ -17,8 +17,10 @@ const popularLeagueIds = popularLeagues.map(({ whoscoreId }) => whoscoreId);
 const WHOSCORE_URL = 'https://www.whoscored.com';
 const PAGE_TIMEOUT = 60000;
 const DATA_TIMEOUT = 30000;
+const MAX_ATTEMPTS = 4;
+
 @Injectable()
-export class ScoreCrawlerService extends ResultsService {
+export class WhoScoreCrawlerService extends ResultsService {
 	private readonly axios: AxiosInstance;
 	private swBrowser: SwBrowser;
 	constructor(
@@ -43,7 +45,7 @@ export class ScoreCrawlerService extends ResultsService {
 	async getLiveMatches(date: Date) {
 		const dateString = format(date, 'yyyy-MM-dd');
 		let page;
-		for (let i = 0; i < 4; i++) {
+		for (let i = 0; i < MAX_ATTEMPTS; i++) {
 			try {
 				this.dataLogger.info(`Attempt ${i + 1}: Getting matches for date`, dateString);
 				const browser = await this.browser();
@@ -51,9 +53,6 @@ export class ScoreCrawlerService extends ResultsService {
 				browser.setQuiet(true);
 				const response = await this.navigateTo(page, '/LiveScores#');
 				browser.setQuiet(false);
-				if (response!.status() === 403) {
-					throw new Error('Failed to fetch live score');
-				}
 				await this.selectDate(page, date);
 				const leagueMap = await this.expandIncidents(page);
 				const content = await page.content();
@@ -68,6 +67,41 @@ export class ScoreCrawlerService extends ResultsService {
 			}
 		}
 		return [];
+	}
+
+	async getLeagues() {
+		let page;
+		for (let i = 0; i < MAX_ATTEMPTS; i++) {
+			try {
+				this.dataLogger.info(`Attempt ${i + 1}: Getting leagues`);
+				const browser = await this.browser();
+				page = await browser.newPage();
+				browser.setQuiet(true);
+				const response = await this.navigateTo(page, '/', {
+					waitUntil: ['domcontentloaded'],
+				});
+				browser.setQuiet(false);
+				const content = await page.content();
+				return this.parseLeagues(Cheerio.load(content));
+			} catch (e) {
+				this.dataLogger.error(`Failed to get leagues`);
+				if (page) {
+					await page.close();
+				}
+			}
+		}
+	}
+
+	private parseLeagues($: CheerioStatic) {
+		return Array.from($('#popular-tournaments-list > .hover-target > a'))
+			.map(linkNode => {
+				const link = $(linkNode);
+				return link.attr('href');
+			})
+			.filter(link => {
+				const [, leagueId] = link.match(/Regions\/\d+\/Tournaments\/(\d+)\//);
+				return popularLeagueIds.includes(parseInt(leagueId, 10));
+			});
 	}
 
 	private async expandIncidents(page: SwPage) {
@@ -232,7 +266,7 @@ export class ScoreCrawlerService extends ResultsService {
 		const result = {};
 		await workerQueue.submit(
 			async (page: SwPage, link: string) => {
-				for (let i = 0; i < 4; i++) {
+				for (let i = 0; i < MAX_ATTEMPTS; i++) {
 					try {
 						this.dataLogger.info(`Attempt ${i + 1}: Getting ratings for match`, link);
 						browser.setQuiet(true);
@@ -335,14 +369,20 @@ export class ScoreCrawlerService extends ResultsService {
 		});
 	}
 
-	private navigateTo(page: SwPage, url) {
-		return page.navigateTo(`${WHOSCORE_URL}${url}`, {
+	private async navigateTo(page: SwPage, url, options = {}) {
+		const response = await page.navigateTo(`${WHOSCORE_URL}${url}`, {
 			cookieSelector: '#qcCmpButtons > button:nth-child(2)',
 			options: {
 				timeout: PAGE_TIMEOUT,
 				waitUntil: ['domcontentloaded', 'networkidle2'],
+				...options,
 			},
 		});
+
+		if (response!.status() === 403) {
+			throw new Error(`Failed to access page ${url}`);
+		}
+		return response;
 	}
 
 	private async waitForResults(page: SwPage, date: Date, waitForResponse) {
