@@ -5,11 +5,13 @@ import { CrawlerModule } from '@data/crawler/crawler.module';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { leagues } from '@data/crawler/crawler.constants';
 import { noop } from '@shared/lib/utils/functions';
+import { getSeason } from '@shared/lib/utils/season';
 
 async function bootstrap() {
 	const context: INestApplicationContext = await NestFactory.createApplicationContext(CrawlerModule);
 	const crawlerService = context.get(FixtureCrawlerService);
-	await Promise.all(leagues.map(league => crawlerService.getMatchesForLeague(league.name).catch(noop)));
+	const season = getSeason(new Date());
+	await Promise.all(leagues.map(league => crawlerService.getMatchesForLeague(league, season).catch(noop)));
 	return context;
 }
 
