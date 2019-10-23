@@ -12,12 +12,14 @@ export function wrap(wrapper, base) {
 }
 
 export function getProperty(object, property, proxy) {
-	if (typeof object[property] === 'function') {
+	if (typeof object[property] === 'function' && !object[property].proxy) {
 		const oldFunction = object[property];
 		object[property] = function(...args) {
 			const value = oldFunction.apply(object, args);
 			return value === object ? proxy : value;
 		};
+
+		(object[property] as any).proxy = true;
 	}
 	return object[property];
 }

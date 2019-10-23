@@ -46,7 +46,7 @@ export class TeamPersisterService {
 					delete dbObj['fifaId'];
 					try {
 						await this.teamRepository.save(dbObj);
-						this.logger.debug(`Persisted team ${dbObj.name}`);
+						this.logger.trace(`Persisted team ${dbObj.name}`);
 					} catch (e) {
 						this.logger.error(`Failed to save team ${dbObj.name}`);
 					}

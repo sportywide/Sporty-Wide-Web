@@ -12,6 +12,7 @@ import {
 	Repository,
 	SelectQueryBuilder,
 	UpdateQueryBuilder,
+	DeepPartial,
 } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { SwSubscriber } from '@schema/core/subscriber/sql/base.subscriber';
@@ -60,6 +61,28 @@ class SwBaseRepository<T> {
 
 	getTableNameForEntity(entity) {
 		return this.repository.metadata.connection.getMetadata(entity).tableName;
+	}
+
+	async upsert(obj): Promise<T> {
+		const keys: string[] = Object.keys(obj);
+		const setterString = keys.map(k => {
+			const columnMetadata = this.repository.metadata.findColumnWithPropertyName(k);
+			const databaseName = columnMetadata ? columnMetadata.databaseName : k;
+			return `${databaseName} = :${k}`;
+		});
+		const queryBuilder = this.repository.createQueryBuilder();
+
+		const qb = queryBuilder
+			.insert()
+			.into(this.repository.metadata.tableName)
+			.values(obj)
+			.onConflict(`("id") DO UPDATE SET ${setterString}`);
+
+		keys.forEach(k => {
+			qb.setParameter(k, (obj as any)[k]);
+		});
+
+		return (await qb.returning('*').execute()).generatedMaps[0] as T;
 	}
 
 	async save(...args) {
@@ -115,6 +138,10 @@ class SwBaseRepository<T> {
 				.where(criteria)
 				.getMany();
 		}
+	}
+
+	public createOneEntity(dto: any): T {
+		return this.repository.create(dto as DeepPartial<any>);
 	}
 
 	async advancedFindIds(
