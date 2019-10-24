@@ -1,12 +1,11 @@
 import { TypeOrmModule, TypeOrmModuleAsyncOptions } from '@nestjs/typeorm';
 import { DynamicModule } from '@nestjs/common';
 import { SnakeNamingStrategy } from '@schema/core/naming-strategy';
-import { SwRepositoryModule } from '@schema/core/repository/sql/providers/repository.module';
 import { isDevelopment } from '@shared/lib/utils/env';
 import { getMetadataArgsStorage } from 'typeorm';
-import { CoreModule } from '@core/core.module';
 import { TypeormLoggerService } from '@schema/core/logging/typeorm.logger';
 import { noop } from '@shared/lib/utils/functions';
+import { CoreSchemaModule } from '@schema/core/core-schema.module';
 
 export class SqlConnectionModule {
 	static forRoot(connectionOptions: Partial<TypeOrmModuleAsyncOptions> = {}): DynamicModule {
@@ -24,13 +23,10 @@ export class SqlConnectionModule {
 						logger,
 						...connectionOptions,
 					}),
-					imports: [CoreModule],
-				}),
-				SwRepositoryModule.forRoot({
-					entities: getEntities(),
+					imports: [CoreSchemaModule],
 				}),
 			],
-			exports: [TypeOrmModule, SwRepositoryModule],
+			exports: [TypeOrmModule],
 		};
 	}
 
@@ -53,13 +49,10 @@ export class SqlConnectionModule {
 							...connectionProperties,
 						};
 					},
-					imports: [CoreModule, ...connectionOptions.imports],
-				}),
-				SwRepositoryModule.forRoot({
-					entities: getEntities(),
+					imports: [CoreSchemaModule, ...connectionOptions.imports],
 				}),
 			],
-			exports: [TypeOrmModule, SwRepositoryModule],
+			exports: [TypeOrmModule],
 		};
 	}
 }
