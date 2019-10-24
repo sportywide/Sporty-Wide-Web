@@ -11,6 +11,7 @@ export const config = {
 		},
 	},
 	development: {
+		test_host: 'localhost',
 		mongo_url: 'http://localhost:6000',
 	},
 };

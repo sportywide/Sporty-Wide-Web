@@ -1,5 +1,6 @@
-import { Column, Entity } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '@schema/core/base.entity';
+import { Team } from '@schema/team/models/team.entity';
 
 @Entity()
 export class Player extends BaseEntity {
@@ -24,8 +25,16 @@ export class Player extends BaseEntity {
 	@Column()
 	teamId: number;
 
-	@Column()
-	team: string;
+	@ManyToOne(type => Team)
+	@JoinColumn({
+		name: 'team_id',
+	})
+	team: Team;
+
+	@Column({
+		name: 'team',
+	})
+	teamName: string;
 
 	@Column()
 	nationality: string;

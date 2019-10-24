@@ -33,6 +33,7 @@
 	},
 	"devDependencies": {
 		"identity-obj-proxy": "3.0.0",
-		"jest": "24.9.0"
+		"jest": "24.9.0",
+		"jest-createspyobj": "1.2.2"
 	}
 }

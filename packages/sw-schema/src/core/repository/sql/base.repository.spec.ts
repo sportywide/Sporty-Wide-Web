@@ -1,4 +1,4 @@
-import { setupConnection } from '@schema-test/setup';
+import { setupMemoryConnection } from '@schema-test/setup';
 import { Connection, QueryRunner } from 'typeorm';
 import { Post } from '@schema-test/entities/post.entity';
 import { SwSubscriber } from '@schema/core/subscriber/sql/base.subscriber';
@@ -8,7 +8,7 @@ import { Category } from '@schema-test/entities/category.entity';
 describe('SwBaseRepository', () => {
 	let connection: Connection, subscriber: SwSubscriber, queryRunner: QueryRunner;
 	beforeAll(async () => {
-		connection = await setupConnection();
+		connection = await setupMemoryConnection();
 		subscriber = new SwSubscriber();
 		connection.subscribers.push(subscriber);
 	});

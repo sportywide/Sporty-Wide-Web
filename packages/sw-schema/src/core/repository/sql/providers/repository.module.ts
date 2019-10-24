@@ -1,9 +1,9 @@
 import { DynamicModule } from '@nestjs/common';
-import { getConnectionToken } from '@nestjs/typeorm';
+import { getConnectionToken, TypeOrmModule } from '@nestjs/typeorm';
 import { getSwRepository } from '@schema/core/repository/sql/base.repository';
 
 export class SwRepositoryModule {
-	static forRoot({
+	static forFeature({
 		connection = 'default',
 		entities = [],
 	}: {
@@ -12,6 +12,7 @@ export class SwRepositoryModule {
 	}): DynamicModule {
 		const providers = getProviders(connection, entities);
 		return {
+			imports: [TypeOrmModule.forFeature(entities, connection)],
 			providers,
 			exports: providers,
 			module: SwRepositoryModule,
@@ -19,7 +20,7 @@ export class SwRepositoryModule {
 	}
 }
 
-function getProviders(connectionName, entities: Function[] = []) {
+function getProviders(connectionName?, entities: Function[] = []) {
 	return entities.map(entity => ({
 		provide: getSwRepositoryToken(entity, connectionName),
 		inject: [getConnectionToken(connectionName)],
@@ -27,6 +28,6 @@ function getProviders(connectionName, entities: Function[] = []) {
 	}));
 }
 
-export function getSwRepositoryToken(entity: Function, connectionName: string) {
+export function getSwRepositoryToken(entity: Function, connectionName = 'default') {
 	return `sw-repository-${connectionName}-${entity.name}`;
 }

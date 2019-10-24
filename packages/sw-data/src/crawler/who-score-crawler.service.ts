@@ -12,6 +12,7 @@ import { leagues as popularLeagues } from '@data/crawler/crawler.constants';
 import { sleep } from '@shared/lib/utils/sleep';
 import { DATA_CONFIG } from '@core/config/config.constants';
 import { Provider } from 'nconf';
+
 const popularLeagueIds = popularLeagues.map(({ whoscoreId }) => whoscoreId);
 
 const WHOSCORE_URL = 'https://www.whoscored.com';
@@ -51,7 +52,7 @@ export class WhoScoreCrawlerService extends ResultsService {
 				const browser = await this.browser();
 				page = await browser.newPage();
 				browser.setQuiet(true);
-				const response = await this.navigateTo(page, '/LiveScores#');
+				await this.navigateTo(page, '/LiveScores#');
 				browser.setQuiet(false);
 				await this.selectDate(page, date);
 				const leagueMap = await this.expandIncidents(page);
@@ -77,7 +78,7 @@ export class WhoScoreCrawlerService extends ResultsService {
 				const browser = await this.browser();
 				page = await browser.newPage();
 				browser.setQuiet(true);
-				const response = await this.navigateTo(page, '/', {
+				await this.navigateTo(page, '/', {
 					waitUntil: ['domcontentloaded'],
 				});
 				browser.setQuiet(false);
@@ -272,9 +273,6 @@ export class WhoScoreCrawlerService extends ResultsService {
 						browser.setQuiet(true);
 						await this.navigateTo(page, link);
 						browser.setQuiet(false);
-						if (page.url().includes('404.html')) {
-							throw new NonRecoverable('404');
-						}
 						await this.waitForRatings(page);
 						const content = await page.content();
 						const $ = Cheerio.load(content);
@@ -381,6 +379,9 @@ export class WhoScoreCrawlerService extends ResultsService {
 
 		if (response!.status() === 403) {
 			throw new Error(`Failed to access page ${url}`);
+		}
+		if (page.url().includes('404.html')) {
+			throw new NonRecoverable('404');
 		}
 		return response;
 	}

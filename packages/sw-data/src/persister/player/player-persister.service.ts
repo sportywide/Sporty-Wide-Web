@@ -42,7 +42,7 @@ export class PlayerPersisterService {
 						nationality: player.nationality.title,
 						nationalityId: player.nationality.fifaId,
 						positions: player.positions,
-						team: player.team.title,
+						teamName: player.team.title,
 						teamId: player.team.fifaId,
 					};
 					delete dbObj['fifaId'];

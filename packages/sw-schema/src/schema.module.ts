@@ -1,7 +1,5 @@
 import { Module } from '@nestjs/common';
 import { SchemaUserModule } from '@schema/user/user.module';
-import { CoreSchemaModule } from '@schema/core/core-schema.module';
-import './core/subscribers';
 import { SchemaAuthModule } from '@schema/auth/auth.module';
 import { SchemaAddressModule } from '@schema/address/address.module';
 import { SchemaLeagueModule } from '@schema/league/league.module';
@@ -9,11 +7,13 @@ import { SqlConnectionModule } from '@schema/core/connection/sql-connection.modu
 import { SCHEMA_CONFIG } from '@core/config/config.constants';
 import { SchemaTeamModule } from '@schema/team/team.module';
 import { SchemaPlayerModule } from '@schema/player/player.module';
+import { CoreSchemaModule } from '@schema/core/core-schema.module';
+import './core/subscribers';
 
 @Module({
 	imports: [
-		SchemaUserModule,
 		SchemaAuthModule,
+		SchemaUserModule,
 		SchemaAddressModule,
 		SchemaLeagueModule,
 		SchemaTeamModule,
@@ -32,6 +32,15 @@ import { SchemaPlayerModule } from '@schema/player/player.module';
 			imports: [CoreSchemaModule],
 		}),
 	],
-	exports: [SqlConnectionModule],
+	exports: [
+		SqlConnectionModule,
+		CoreSchemaModule,
+		SchemaAuthModule,
+		SchemaUserModule,
+		SchemaAddressModule,
+		SchemaLeagueModule,
+		SchemaTeamModule,
+		SchemaPlayerModule,
+	],
 })
 export class SchemaModule {}

@@ -52,11 +52,16 @@ export class Gulpfile {
 			args.push('--coverage');
 		}
 
+		if (argv.it) {
+			args.push('--testRegex=\\.ispec\\.ts$');
+		}
+
 		if (argv.e2e) {
 			args.push('--testRegex=\\.e2e-spec\\.ts$');
 		}
 
 		if (argv.full) {
+			args.push('--testRegex=\\.ispec\\.tsx?$');
 			args.push('--testRegex=\\.e2e-spec\\.tsx?$');
 			args.push('--testRegex=\\.spec\\.tsx?$');
 		}
