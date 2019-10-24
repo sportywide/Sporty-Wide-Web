@@ -91,7 +91,11 @@ Run one of the following commands (in Vagrant)
 Run one of the following commands
 
 -   npm run api-test (run this on local)
--   docker-compose -f docker-compose.yml -f docker-e2e.yml up api-test (run this inside vagrant)
+-   docker-compose -f docker-compose.yml -f docker-test.yml up api-test (run this inside vagrant)
+
+##### Full testing
+
+-   docker-compose -f docker-compose.yml -f docker-test.yml up base test (run this inside vagrant)
 
 #### Running locally
 

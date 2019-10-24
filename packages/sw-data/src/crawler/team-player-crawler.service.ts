@@ -194,6 +194,8 @@ export class TeamPlayerCrawlerService extends ResultsService {
 				.find('a')
 				.attr();
 
+			const teamTitle = club['title'].replace(this._fifaRegex, '').trim();
+
 			result.push({
 				fifaId: parseInt($(row).attr('data-playerid'), 10),
 				image: image['data-src'],
@@ -207,7 +209,7 @@ export class TeamPlayerCrawlerService extends ResultsService {
 				positions,
 				age: parseInt(age, 10),
 				team: {
-					title: club['title'].replace(this._fifaRegex, '').trim(),
+					title: teamMapping[teamTitle] || teamTitle,
 					fifaId: parseInt(club['href'].split('/').filter(s => !!s)[1], 10),
 				},
 			});

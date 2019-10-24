@@ -36,7 +36,7 @@ export function setupDatabaseModule({ entities, modules = [], ...options }) {
 				inject: [SCHEMA_CONFIG],
 				useFactory: schemaConfig => ({
 					type: 'postgres',
-					host: schemaConfig.get('postgres:test_host'),
+					host: schemaConfig.get('postgres:host'),
 					port: schemaConfig.get('postgres:port'),
 					username: schemaConfig.get('postgres:username'),
 					password: schemaConfig.get('postgres:password'),

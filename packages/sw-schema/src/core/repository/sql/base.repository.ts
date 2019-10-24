@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import {
 	Connection,
 	DeleteQueryBuilder,
@@ -189,8 +190,13 @@ class SwQueryBaseBuilder<T> {
 		return wrap(customQueryBuilder, queryBuilder) as SwQueryBuilder<T>;
 	}
 
-	select() {
-		return SwQueryBaseBuilder.from<T>(this.queryBuilder.select(), this.objectType) as SwSelectQueryBuilder<T>;
+	select(): SwSelectQueryBuilder<T>;
+	select(selection?: string[]): SwSelectQueryBuilder<T>;
+	select(selection?: string | string[], selectionAliasName?: string): SwSelectQueryBuilder<T> {
+		return SwQueryBaseBuilder.from<T>(
+			this.queryBuilder.select(selection as any, selectionAliasName),
+			this.objectType
+		) as SwSelectQueryBuilder<T>;
 	}
 
 	update() {

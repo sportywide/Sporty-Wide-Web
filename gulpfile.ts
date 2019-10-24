@@ -53,7 +53,7 @@ export class Gulpfile {
 		}
 
 		if (argv.it) {
-			args.push('--testRegex=\\.ispec\\.ts$');
+			args.push('--testRegex=\\.it-spec\\.ts$');
 		}
 
 		if (argv.e2e) {
@@ -61,9 +61,19 @@ export class Gulpfile {
 		}
 
 		if (argv.full) {
-			args.push('--testRegex=\\.ispec\\.tsx?$');
+			args.push('--testRegex=\\.it-spec\\.tsx?$');
 			args.push('--testRegex=\\.e2e-spec\\.tsx?$');
 			args.push('--testRegex=\\.spec\\.tsx?$');
+		}
+
+		for (const key of Object.keys(argv)) {
+			if (['watch', 'coverage', 'it', 'e2e', 'full', '$0', '_'].includes(key)) {
+				continue;
+			}
+			args.push(`--${key}`);
+			if (typeof argv[key] !== 'boolean') {
+				args.push(`"${argv[key]}"`);
+			}
 		}
 
 		return spawn(`jest ${args.join(' ')}`);
