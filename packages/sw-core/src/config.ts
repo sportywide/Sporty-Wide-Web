@@ -26,4 +26,9 @@ export const config = {
 			name: 'Sporty Wide',
 		},
 	},
+	test: {
+		logging: {
+			default: 'INFO',
+		},
+	},
 };
