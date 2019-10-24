@@ -46,7 +46,7 @@ export function setupDatabaseModule({ entities, modules = [], ...options }) {
 				}),
 				imports: [ConfigModule],
 			}),
-			SwRepositoryModule.forRoot({
+			SwRepositoryModule.forFeature({
 				entities,
 			}),
 			...modules,

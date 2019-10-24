@@ -1,4 +1,5 @@
 import os from 'os';
+import { log } from 'util';
 import { Inject, Injectable } from '@nestjs/common';
 import { Provider } from 'nconf';
 import { mergeConcatArray } from '@shared/lib/utils/object/merge';
@@ -66,6 +67,12 @@ export class LoggerProviderFactory {
 
 		if (!isProduction()) {
 			log4jsConfig = this.buildConsoleConfig(log4jsConfig);
+		}
+
+		for (const category of Object.keys(log4jsConfig.categories)) {
+			if (!log4jsConfig.categories[category].appenders.length) {
+				delete log4jsConfig.categories[category];
+			}
 		}
 
 		return log4jsConfig;
