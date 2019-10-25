@@ -120,7 +120,7 @@ class SwPageWrapper {
 				await this.page.goto(url, opts);
 				return true;
 			} catch (e) {
-				console.error(`(Attempt ${i}/${maxAttempts}) Fail to go to ${url}: ${e}`);
+				this.logger.error(`(Attempt ${i}/${maxAttempts}) Fail to go to ${url}: ${e}`);
 			}
 		}
 		return false;

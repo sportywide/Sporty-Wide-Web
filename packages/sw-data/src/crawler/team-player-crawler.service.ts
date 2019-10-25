@@ -85,7 +85,10 @@ export class TeamPlayerCrawlerService extends ResultsService {
 			const halfStars = span.find('i.fas.fa-star-half-alt').length;
 			const rating = `${activeStars + halfStars / 2}/${maxStars}`;
 
-			const title = bio['title'].replace(this._fifaRegex, '').trim();
+			const title = bio['title']
+				.replace(this._fifaRegex, '')
+				.replace(/\d+./, '')
+				.trim();
 			result.push({
 				fifaId: parseInt(bio['href'].split('/').filter(s => !!s)[1], 10),
 				image: image['data-src'],
@@ -135,7 +138,7 @@ export class TeamPlayerCrawlerService extends ResultsService {
 						return { error: false, response: playerData };
 					})
 					.catch(error => {
-						console.error(
+						this.logger.error(
 							`Failed to fetch player page ${page} for league id ${leagueId}`,
 							error.response.status
 						);

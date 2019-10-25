@@ -31,7 +31,7 @@ export const leagues: League[] = [
 		name: 'serie-a',
 		id: 31,
 		whoscoreId: 5,
-		apiFootballId: 6,
+		apiFootballId: 28,
 	},
 	{
 		name: 'ligue-1',
