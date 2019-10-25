@@ -22,7 +22,7 @@ const teamMapping = {
 };
 
 @Injectable()
-export class TeamPlayerCrawlerService extends ResultsService {
+export class TeamPlayerFifaCrawlerService extends ResultsService {
 	private _fifaRegex = /\s*fifa\s*\d*/gim;
 
 	private axios: AxiosInstance;
@@ -48,7 +48,7 @@ export class TeamPlayerCrawlerService extends ResultsService {
 		const url = `/teams?league=${leagueId}&order=desc`;
 		const result = await this.getParsedResponse(url);
 		const teams = this.parseInfoTeam(result);
-		await this.writeResult(`teams/team.l${leagueId}.json`, teams);
+		await this.writeResult(`teams/fifa-${leagueId}.json`, teams);
 		return teams;
 	}
 
@@ -124,7 +124,7 @@ export class TeamPlayerCrawlerService extends ResultsService {
 			await sleep(1000);
 		} while (shouldContinue);
 
-		await this.writeResult(`players/player.l${leagueId}.json`, result);
+		await this.writeResult(`players/fifa-${leagueId}.json`, result);
 		return result;
 	}
 

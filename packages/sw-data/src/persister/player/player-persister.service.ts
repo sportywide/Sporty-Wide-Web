@@ -18,7 +18,7 @@ export class PlayerPersisterService {
 
 	async savePlayersFromPlayerInfoFiles() {
 		try {
-			const files = await glob('player.*.json', {
+			const files = await glob('fifa*.json', {
 				cwd: path.resolve(process.cwd(), 'resources', 'players'),
 				absolute: true,
 			});

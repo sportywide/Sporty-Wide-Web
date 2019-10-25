@@ -1,17 +1,17 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { AxiosInstance } from 'axios';
-import { PuppeteerService } from '@data/core/browser/browser.service';
-import { SwBrowser, SwPage } from '@data/core/browser/browser.class';
-import Cheerio from 'cheerio';
-import { Logger } from 'log4js';
-import { format, isSameDay } from 'date-fns';
+import { DATA_CONFIG } from '@core/config/config.constants';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { WorkerQueueService } from '@core/worker/worker-queue.service';
-import { ResultsService } from '@data/crawler/results.service';
+import { SwPage } from '@data/core/browser/browser.class';
+import { PuppeteerService } from '@data/core/browser/browser.service';
+import { Inject, Injectable } from '@nestjs/common';
 import { leagues as popularLeagues } from '@root/packages/sw-data/src/data.constants';
 import { sleep } from '@shared/lib/utils/sleep';
-import { DATA_CONFIG } from '@core/config/config.constants';
+import { AxiosInstance } from 'axios';
+import Cheerio from 'cheerio';
+import { format, isSameDay } from 'date-fns';
+import { Logger } from 'log4js';
 import { Provider } from 'nconf';
+import { BrowserService } from './browser.service';
 
 const popularLeagueIds = popularLeagues.map(({ whoscoreId }) => whoscoreId);
 
@@ -21,26 +21,15 @@ const DATA_TIMEOUT = 30000;
 const MAX_ATTEMPTS = 4;
 
 @Injectable()
-export class WhoScoreCrawlerService extends ResultsService {
+export class WhoScoreCrawlerService extends BrowserService {
 	private readonly axios: AxiosInstance;
-	private swBrowser: SwBrowser;
 	constructor(
-		private readonly puppeteerService: PuppeteerService,
-		@Inject(DATA_CONFIG) private readonly config: Provider,
+		puppeteerService: PuppeteerService,
+		@Inject(DATA_CONFIG) config: Provider,
 		private readonly workerQueueService: WorkerQueueService,
 		@Inject(DATA_LOGGER) private readonly dataLogger: Logger
 	) {
-		super();
-	}
-
-	async browser() {
-		if (this.swBrowser) {
-			return this.swBrowser;
-		}
-		this.swBrowser = await this.puppeteerService.startBrowser({
-			proxyServer: this.config.get('proxy:url'),
-		});
-		return this.swBrowser;
+		super(puppeteerService, config);
 	}
 
 	async getLiveMatches(date: Date) {
@@ -411,11 +400,6 @@ export class WhoScoreCrawlerService extends ResultsService {
 			},
 			'#countdown'
 		);
-	}
-
-	async close() {
-		const browser = await this.browser();
-		await browser.close();
 	}
 }
 
