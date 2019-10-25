@@ -10,7 +10,7 @@ async function bootstrap() {
 	const playerPersisterService = context.get(PlayerPersisterService);
 	const teamPersisterService = context.get(TeamPersisterService);
 	await teamPersisterService.saveTeamsFromFifaInfoFiles();
-	await playerPersisterService.savePlayersFromPlayerInfoFiles();
+	await playerPersisterService.saveFifaPlayersFromPlayerInfoFiles();
 
 	return context;
 }
