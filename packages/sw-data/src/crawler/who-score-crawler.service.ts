@@ -280,7 +280,7 @@ export class WhoScoreCrawlerService extends BrowserService {
 			matchLinks,
 			{
 				limiter: 2,
-				interval: 10 * 1000,
+				interval: 25 * 1000,
 			}
 		);
 		return result;

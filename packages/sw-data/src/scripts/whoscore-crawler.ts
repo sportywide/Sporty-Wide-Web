@@ -12,7 +12,6 @@ async function bootstrap() {
 	try {
 		const leagues = await crawlerService.getLeagues();
 		logger.info(leagues);
-		const teams = await crawlerService.getTeams('/Regions/252/Tournaments/2/England-Premier-League');
 	} finally {
 		await crawlerService.close();
 	}
