@@ -16,19 +16,19 @@ export class TeamPersisterService {
 		@InjectSwRepository(Team) private readonly teamRepository: SwRepository<Team>
 	) {}
 
-	async saveTeams() {
+	async saveTeamsFromFifaInfoFiles() {
 		try {
 			const files = await glob('team.*.json', {
 				cwd: path.resolve(__dirname, 'resources', 'teams'),
 				absolute: true,
 			});
-			await Promise.all(files.map(file => this.saveFile(file)));
+			await Promise.all(files.map(file => this.saveFifaTeamFile(file)));
 		} catch (e) {
 			this.logger.error(`Failed to read team files`, e);
 		}
 	}
 
-	private async saveFile(file) {
+	private async saveFifaTeamFile(file) {
 		try {
 			this.logger.info(`Reading from resource ${file}`);
 			const content = await fsPromise.readFile(file, 'utf8');

@@ -8,7 +8,7 @@ import { format, isSameDay } from 'date-fns';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { WorkerQueueService } from '@core/worker/worker-queue.service';
 import { ResultsService } from '@data/crawler/results.service';
-import { leagues as popularLeagues } from '@data/crawler/crawler.constants';
+import { leagues as popularLeagues } from '@root/packages/sw-data/src/data.constants';
 import { sleep } from '@shared/lib/utils/sleep';
 import { DATA_CONFIG } from '@core/config/config.constants';
 import { Provider } from 'nconf';

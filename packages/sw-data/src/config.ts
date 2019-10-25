@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/camelcase */
 require('dotenv').config();
 export const config = {
 	development: {
@@ -13,6 +14,12 @@ export const config = {
 		},
 		proxy: {
 			url: 'http://localhost:8081',
+		},
+		rapidapi: {
+			api_key: [
+				'146c159443mshef8c4d9a0ff13bep1ff757jsn61807079a373',
+				'ad2cb35fdamsh8523849c5b78cf4p19069ejsn777712d8220a',
+			],
 		},
 	},
 };

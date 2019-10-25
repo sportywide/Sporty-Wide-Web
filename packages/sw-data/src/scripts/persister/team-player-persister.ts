@@ -9,8 +9,8 @@ async function bootstrap() {
 	const context: INestApplicationContext = await NestFactory.createApplicationContext(DataModule);
 	const playerPersisterService = context.get(PlayerPersisterService);
 	const teamPersisterService = context.get(TeamPersisterService);
-	await teamPersisterService.saveTeams();
-	await playerPersisterService.savePlayers();
+	await teamPersisterService.saveTeamsFromFifaInfoFiles();
+	await playerPersisterService.savePlayersFromPlayerInfoFiles();
 
 	return context;
 }
