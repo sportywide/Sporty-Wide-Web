@@ -1,5 +1,6 @@
 import util from 'util';
 import path from 'path';
+import { defaultFuzzyOptions } from '@data/data.constants';
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectSwRepository } from '@schema/core/repository/sql/inject-repository.decorator';
 import { SwRepository } from '@schema/core/repository/sql/base.repository';
@@ -7,6 +8,7 @@ import { Team } from '@schema/team/models/team.entity';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import { fsPromise } from '@shared/lib/utils/promisify/fs';
+import Fuse from 'fuse.js';
 const glob = util.promisify(require('glob'));
 
 @Injectable()
@@ -36,6 +38,47 @@ export class TeamPersisterService {
 		);
 	}
 
+	async saveTeamsFromScoreBoardInfoFiles() {
+		const files = await glob('scoreboard*.json', {
+			cwd: path.resolve(process.cwd(), 'resources', 'teams'),
+			absolute: true,
+		});
+		await Promise.all(
+			files.map(async file => {
+				try {
+					this.logger.info(`Reading from resource ${file}`);
+					const content = await fsPromise.readFile(file, 'utf8');
+
+					const leagueTeams = JSON.parse(content);
+					return this.saveScoreboardTeams(leagueTeams);
+				} catch (e) {
+					this.logger.error(`Failed to read file ${file}`, e);
+				}
+			})
+		);
+	}
+
+	private async saveScoreboardTeams(leagueTeams) {
+		const league = leagueTeams.league;
+		const teamsInfo = leagueTeams.teams;
+		const dbTeams = await this.teamRepository.find({
+			leagueId: league.id,
+		});
+		const fuzzyOptions = {
+			...defaultFuzzyOptions,
+			keys: ['title', 'alias'],
+		};
+		const fuse = new Fuse(dbTeams, fuzzyOptions);
+		for (const teamInfo of teamsInfo) {
+			const foundTeam = fuse.search(teamInfo.teamName);
+			if (!foundTeam.length) {
+				this.logger.error('Cannot find the team', teamInfo.teamName);
+				continue;
+			}
+			this.logger.debug(`Match ${foundTeam[0].title} with ${teamInfo.teamName}`);
+		}
+	}
+
 	private async saveFifaTeams(teams) {
 		return Promise.all(
 			teams.map(async team => {
@@ -48,7 +91,7 @@ export class TeamPersisterService {
 
 				delete dbObj['fifaId'];
 				try {
-					await this.teamRepository.save(dbObj);
+					await this.teamRepository.upsert(dbObj, ['name', 'image', 'att', 'mid', 'def', 'ovr', 'rating']);
 					this.logger.trace(`Persisted team ${dbObj.name}`);
 				} catch (e) {
 					this.logger.error(`Failed to save team ${dbObj.name}`);

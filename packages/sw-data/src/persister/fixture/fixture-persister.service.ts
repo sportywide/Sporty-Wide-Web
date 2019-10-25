@@ -9,6 +9,7 @@ import { Logger } from 'log4js';
 import { Fixture } from '@schema/fixture/models/fixture.entity';
 import { Team } from '@schema/team/models/team.entity';
 import Fuse from 'fuse.js';
+import { defaultFuzzyOptions } from '@data/data.constants';
 
 const glob = util.promisify(require('glob'));
 
@@ -34,11 +35,8 @@ export class FixturePersisterService {
 
 	private async saveFile(file) {
 		const fuzzyOptions = {
-			shouldSort: true,
-			threshold: 0.6,
-			location: 0,
-			distance: 100,
-			keys: ['title'],
+			...defaultFuzzyOptions,
+			keys: ['title', 'alias'],
 		};
 		try {
 			this.logger.info(`Reading from resource ${file}`);
@@ -55,9 +53,7 @@ export class FixturePersisterService {
 			await Promise.all(
 				matches.map(async match => {
 					const homeTeam = teamCache[match.home] || fuse.search(match.home)[0];
-					teamCache[match.home] = homeTeam;
 					const awayTeam = teamCache[match.away] || fuse.search(match.away)[0];
-					teamCache[match.away] = awayTeam;
 					if (!homeTeam) {
 						this.logger.error('Not able to find team', match.home);
 						return;
@@ -66,12 +62,20 @@ export class FixturePersisterService {
 						this.logger.error('Not able to find team', match.away);
 						return;
 					}
+					if (!teamCache[match.home]) {
+						this.logger.debug(`Matching ${match.home} with ${homeTeam.title}`);
+					}
+					if (!teamCache[match.away]) {
+						this.logger.debug(`Matching ${match.away} with ${awayTeam.title}`);
+					}
+					teamCache[match.home] = homeTeam;
+					teamCache[match.away] = awayTeam;
 
 					const dbObj = {
 						id: parseInt(this.getMatchId(match.link), 10),
 						link: match.link,
-						home: match.home,
-						away: match.away,
+						home: homeTeam.title,
+						away: awayTeam.title,
 						homeId: homeTeam.id,
 						awayId: awayTeam.id,
 						homeScore: match.homeScore,

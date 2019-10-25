@@ -2,8 +2,8 @@ import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { CrawlerModule } from '@data/crawler/crawler.module';
 import { INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { leagues } from '@root/packages/sw-data/src/data.constants';
-import { TeamPlayerScoreboardCrawlerService } from './../../crawler/team-player-scoreboard-crawler.service';
+import { leagues } from '@data/data.constants';
+import { TeamPlayerScoreboardCrawlerService } from '@data/crawler/team-player-scoreboard-crawler.service';
 
 async function bootstrap() {
 	const context: INestApplicationContext = await NestFactory.createApplicationContext(CrawlerModule);
@@ -15,7 +15,10 @@ async function bootstrap() {
 			leagues.map(league => crawlerService.crawlTeams(league.scoreboardUrl).then(teams => ({ teams, league })))
 		)).filter(teamResult => !!teamResult);
 		await crawlerService.close();
-		await crawlerService.writeResult('teams/scoreboard.json', leagueTeams);
+		for (const leagueTeam of leagueTeams) {
+			await crawlerService.writeResult(`teams/scoreboard-${leagueTeam.league.id}.json`, leagueTeam);
+		}
+
 		const allTeams: any[] = [];
 		for (const leagueTeam of leagueTeams) {
 			for (const team of leagueTeam.teams!) {

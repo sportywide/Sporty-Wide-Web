@@ -8,18 +8,9 @@ import { sleep } from '@shared/lib/utils/sleep';
 import { flattenDeep } from 'lodash';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { ResultsService } from '@data/crawler/results.service';
+import { teamMapping, teamAliasMapping } from '../data.constants';
 
 const DEFAULT_PLAYER_PAGES = 5;
-const teamMapping = {
-	// eslint-disable-next-line
-	Köln: 'Cologne',
-	// eslint-disable-next-line
-	Paris: 'Paris Saint-Germain',
-	Spurs: 'Tottenham Hotspur',
-	Brighton: 'Brighton and Hove Albion',
-	Wolves: 'Wolverhampton Wanderers',
-	'Girondins de Bx': 'Bordeaux',
-};
 
 @Injectable()
 export class TeamPlayerFifaCrawlerService extends ResultsService {
@@ -98,6 +89,7 @@ export class TeamPlayerFifaCrawlerService extends ResultsService {
 					title: league['title'].replace(this._fifaRegex, '').trim(),
 					fifaId: parseInt(league['href'].split('league=')[1], 10),
 				},
+				alias: !teamMapping[title] ? [] : teamAliasMapping[teamMapping[title]],
 				[att.attr('data-title').toLowerCase()]: parseInt(att.eq(0).text(), 10),
 				[mid.attr('data-title').toLowerCase()]: parseInt(mid.eq(0).text(), 10),
 				[def.attr('data-title').toLowerCase()]: parseInt(def.eq(0).text(), 10),

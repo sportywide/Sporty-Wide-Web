@@ -64,13 +64,19 @@ class SwBaseRepository<T> {
 		return this.repository.metadata.connection.getMetadata(entity).tableName;
 	}
 
-	async upsert(obj): Promise<T> {
+	async upsert(obj, upsertColumns?: string[]): Promise<T> {
 		const keys: string[] = Object.keys(obj);
-		const setterString = keys.map(k => {
-			const columnMetadata = this.repository.metadata.findColumnWithPropertyName(k);
-			const databaseName = columnMetadata ? columnMetadata.databaseName : k;
-			return `${databaseName} = :${k}`;
-		});
+		const setterString = keys
+			.map(k => {
+				if (upsertColumns && !upsertColumns.includes(k)) {
+					return;
+				}
+				const columnMetadata = this.repository.metadata.findColumnWithPropertyName(k);
+				const databaseName = columnMetadata ? columnMetadata.databaseName : k;
+				return `${databaseName} = :${k}`;
+			})
+			.filter(str => str)
+			.join(',');
 		const queryBuilder = this.repository.createQueryBuilder();
 
 		const qb = queryBuilder

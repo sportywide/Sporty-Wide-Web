@@ -9,6 +9,30 @@ export type League = {
 	apiFootballId: number;
 	scoreboardUrl: string;
 };
+
+export const teamAliasMapping = {
+	Cologne: ['Köln', 'Koln'],
+	'Paris Saint-Germain': ['Paris', 'PSG'],
+	'Tottenham Hotspur': ['Spurs'],
+	'Brighton and Hove Albion': ['Brighton'],
+	'Wolverhampton Wanderers': ['Wolves'],
+	'AC Milan': ['Milan'],
+	'Inter Milan': ['Inter'],
+	Bordeaux: ['Girondins de Bx'],
+	'Olympic Lyon': ['OL'],
+	'Olympique de Marseille': ['OM'],
+	'Saint-Étienne': ['ASSE', 'St Etienne'],
+	'Stade Rennais': ['Rennes'],
+	'Athletic Bilbao': ['Athletic Club'],
+	'Atlético Madrid': ['Atl. Madrid'],
+};
+export const teamMapping = Object.keys(teamAliasMapping).reduce((currentMapping, team) => {
+	const aliases = teamAliasMapping[team];
+	for (const alias of aliases) {
+		currentMapping[alias] = team;
+	}
+	return currentMapping;
+}, {});
 export const leagues: League[] = [
 	{
 		name: 'premier-league',
@@ -46,3 +70,10 @@ export const leagues: League[] = [
 		scoreboardUrl: '/france/ligue-1/',
 	},
 ];
+
+export const defaultFuzzyOptions = {
+	shouldSort: true,
+	threshold: 0.6,
+	location: 0,
+	distance: 100,
+};

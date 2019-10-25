@@ -32,4 +32,7 @@ export class Team extends BaseEntity {
 
 	@Column()
 	leagueId: number;
+
+	@Column('text', { array: true })
+	alias: string[];
 }
