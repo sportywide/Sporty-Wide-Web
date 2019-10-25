@@ -19,7 +19,7 @@ async function bootstrap() {
 				})
 		)
 	)).filter(teamResult => teamResult);
-	teamApiService.writeResult('teams/api-teams.json', teams);
+	teamApiService.writeResult('teams/api-football.json', teams);
 	return context;
 }
 

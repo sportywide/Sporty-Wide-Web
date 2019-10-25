@@ -17,7 +17,7 @@ export class TeamPersisterService {
 	) {}
 
 	async saveTeamsFromFifaInfoFiles() {
-		const files = await glob('team.*.json', {
+		const files = await glob('fifa*.json', {
 			cwd: path.resolve(process.cwd(), 'resources', 'teams'),
 			absolute: true,
 		});
