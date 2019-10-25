@@ -8,7 +8,7 @@ RUN apk add dos2unix --no-cache --repository http://dl-3.alpinelinux.org/alpine/
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.5.0/wait /usr/local/bin/wait
 RUN chmod +x /usr/local/bin/wait
 
-RUN npm install -g ts-node@8.3.0 typescript@3.4.5 lerna@3.16.4
+RUN npm install -g ts-node@7.0.1 typescript@3.4.5 lerna@3.16.4
 
 FROM node as base
 
