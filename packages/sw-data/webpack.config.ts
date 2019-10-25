@@ -3,7 +3,6 @@ import { makeConfig } from 'sportywide-shared/build/webpack/node/config';
 import paths from 'sportywide-shared/build/paths';
 import glob = require('glob');
 const findup = require('find-up');
-const argv = require('yargs').argv;
 
 //@ts-ignore
 process.env.NODE_ENV = process.env.NODE_ENV || 'development';

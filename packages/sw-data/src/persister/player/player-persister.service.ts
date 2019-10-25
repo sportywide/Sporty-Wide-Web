@@ -16,19 +16,19 @@ export class PlayerPersisterService {
 		@InjectSwRepository(Player) private readonly playerRepository: SwRepository<Player>
 	) {}
 
-	async savePlayers() {
+	async savePlayersFromPlayerInfoFiles() {
 		try {
 			const files = await glob('player.*.json', {
 				cwd: path.resolve(__dirname, 'resources', 'players'),
 				absolute: true,
 			});
-			await Promise.all(files.map(file => this.saveFile(file)));
+			await Promise.all(files.map(file => this.saveFifaPlayerFile(file)));
 		} catch (e) {
 			this.logger.error(`Failed to read player files`, e);
 		}
 	}
 
-	private async saveFile(file) {
+	private async saveFifaPlayerFile(file) {
 		try {
 			this.logger.info(`Reading from resource ${file}`);
 			const content = await fsPromise.readFile(file, 'utf8');
