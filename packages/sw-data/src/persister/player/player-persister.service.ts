@@ -109,11 +109,10 @@ export class PlayerPersisterService {
 					nationalityId: player.nationality.fifaId,
 					positions: player.positions,
 					teamName: player.team.title,
-					team: {
-						id: player.team.fifaId,
-					},
+					teamId: player.team.fifaId,
 				};
 				delete dbObj['fifaId'];
+				delete dbObj['team'];
 				try {
 					await this.playerRepository.save(dbObj);
 					this.logger.trace(`Persisted player ${dbObj.name} from ${dbObj.team}`);
