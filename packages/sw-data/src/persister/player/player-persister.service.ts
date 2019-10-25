@@ -19,7 +19,7 @@ export class PlayerPersisterService {
 	async savePlayersFromPlayerInfoFiles() {
 		try {
 			const files = await glob('player.*.json', {
-				cwd: path.resolve(__dirname, 'resources', 'players'),
+				cwd: path.resolve(process.cwd(), 'resources', 'players'),
 				absolute: true,
 			});
 			await Promise.all(files.map(file => this.saveFifaPlayerFile(file)));

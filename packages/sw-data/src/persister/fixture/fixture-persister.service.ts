@@ -23,7 +23,7 @@ export class FixturePersisterService {
 	async saveFixtures() {
 		try {
 			const files = await glob('*.json', {
-				cwd: path.resolve(__dirname, 'resources', 'fixtures'),
+				cwd: path.resolve(process.cwd(), 'resources', 'fixtures'),
 				absolute: true,
 			});
 			await Promise.all(files.map(file => this.saveFile(file)));

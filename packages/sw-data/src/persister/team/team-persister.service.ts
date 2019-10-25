@@ -17,43 +17,43 @@ export class TeamPersisterService {
 	) {}
 
 	async saveTeamsFromFifaInfoFiles() {
-		try {
-			const files = await glob('team.*.json', {
-				cwd: path.resolve(__dirname, 'resources', 'teams'),
-				absolute: true,
-			});
-			await Promise.all(files.map(file => this.saveFifaTeamFile(file)));
-		} catch (e) {
-			this.logger.error(`Failed to read team files`, e);
-		}
+		const files = await glob('team.*.json', {
+			cwd: path.resolve(process.cwd(), 'resources', 'teams'),
+			absolute: true,
+		});
+		await Promise.all(
+			files.map(async file => {
+				try {
+					this.logger.info(`Reading from resource ${file}`);
+					const content = await fsPromise.readFile(file, 'utf8');
+
+					const teams = JSON.parse(content);
+					return this.saveFifaTeams(teams);
+				} catch (e) {
+					this.logger.error(`Failed to read file ${file}`, e);
+				}
+			})
+		);
 	}
 
-	private async saveFifaTeamFile(file) {
-		try {
-			this.logger.info(`Reading from resource ${file}`);
-			const content = await fsPromise.readFile(file, 'utf8');
+	private async saveFifaTeams(teams) {
+		return Promise.all(
+			teams.map(async team => {
+				const dbObj = {
+					...team,
+					id: team.fifaId,
+					league: team.league.title,
+					leagueId: team.league.fifaId,
+				};
 
-			const teams = JSON.parse(content);
-			await Promise.all(
-				teams.map(async team => {
-					const dbObj = {
-						...team,
-						id: team.fifaId,
-						league: team.league.title,
-						leagueId: team.league.fifaId,
-					};
-
-					delete dbObj['fifaId'];
-					try {
-						await this.teamRepository.save(dbObj);
-						this.logger.trace(`Persisted team ${dbObj.name}`);
-					} catch (e) {
-						this.logger.error(`Failed to save team ${dbObj.name}`);
-					}
-				})
-			);
-		} catch (e) {
-			this.logger.error('Failed to read file', e);
-		}
+				delete dbObj['fifaId'];
+				try {
+					await this.teamRepository.save(dbObj);
+					this.logger.trace(`Persisted team ${dbObj.name}`);
+				} catch (e) {
+					this.logger.error(`Failed to save team ${dbObj.name}`);
+				}
+			})
+		);
 	}
 }
