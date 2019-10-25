@@ -12,7 +12,7 @@ export class TypeormLoggerService implements Logger {
 	}
 
 	public logQueryError(error: string, query: string, parameters?: any[]) {
-		this.logger.error(query, parameters);
+		this.logger.error(error, query, parameters);
 	}
 
 	public logQuerySlow(time: number, query: string, parameters?: any[]) {
