@@ -1,7 +1,7 @@
 import { Logger } from 'log4js';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Inject, Injectable } from '@nestjs/common';
-import { ResultsService } from './../../crawler/results.service';
+import { ResultsService } from '@data/crawler/results.service';
 import { ApiFootballService } from './api-football.service';
 
 @Injectable()

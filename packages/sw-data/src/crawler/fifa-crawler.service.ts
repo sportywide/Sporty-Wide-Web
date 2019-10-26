@@ -12,8 +12,43 @@ import { teamMapping, teamAliasMapping } from '../data.constants';
 
 const DEFAULT_PLAYER_PAGES = 5;
 
+export type FifaTeam = {
+	fifaId: number;
+	image: string;
+	title: string;
+	name: string;
+	league: {
+		title: string;
+		fifaId: number;
+	};
+	alias: string[];
+	att: number;
+	mid: number;
+	def: number;
+	rating: number;
+	ovr: number;
+};
+
+export type FifaPlayer = {
+	fifaId: number;
+	image: string;
+	nationality: {
+		title: string;
+		fifaId: number;
+	};
+	rating: number;
+	name: string;
+	url: string;
+	positions: string[];
+	age: number;
+	team: {
+		title: string;
+		fifaId: number;
+	};
+};
+
 @Injectable()
-export class TeamPlayerFifaCrawlerService extends ResultsService {
+export class FifaCrawlerService extends ResultsService {
 	private _fifaRegex = /\s*fifa\s*\d*/gim;
 
 	private axios: AxiosInstance;
@@ -34,7 +69,7 @@ export class TeamPlayerFifaCrawlerService extends ResultsService {
 	}
 
 	// region Crawl teams
-	async crawlTeam(leagueId): Promise<any> {
+	async crawlTeam(leagueId): Promise<FifaTeam[]> {
 		this.logger.info(`Fetching league id ${leagueId}`);
 		const url = `/teams?league=${leagueId}&order=desc`;
 		const result = await this.getParsedResponse(url);
@@ -43,7 +78,7 @@ export class TeamPlayerFifaCrawlerService extends ResultsService {
 		return teams;
 	}
 
-	private parseInfoTeam($: CheerioStatic): any {
+	private parseInfoTeam($: CheerioStatic): FifaTeam[] {
 		const result: any[] = [];
 		const rows = $('table tbody tr');
 
@@ -103,7 +138,7 @@ export class TeamPlayerFifaCrawlerService extends ResultsService {
 	// endregion Crawl teams
 
 	// region Crawl from listing page
-	async crawlPlayers(leagueId): Promise<any> {
+	async crawlPlayers(leagueId): Promise<FifaPlayer[]> {
 		this.logger.info(`Fetching players for league id ${leagueId}`);
 		const result: any[] = [];
 		let shouldContinue = true;
@@ -147,7 +182,7 @@ export class TeamPlayerFifaCrawlerService extends ResultsService {
 		return this.parseInfoBulk(result);
 	}
 
-	private parseInfoBulk($: CheerioStatic): any {
+	private parseInfoBulk($: CheerioStatic): FifaPlayer[] {
 		const result: any[] = [];
 		const rows = $('table tbody tr');
 
@@ -263,7 +298,7 @@ export class TeamPlayerFifaCrawlerService extends ResultsService {
 	}
 
 	private resolveStats($: CheerioStatic, row): any {
-		const dataRows = $($(row).find('p'));
+		const dataRows = $(row).find('p');
 		const content = {};
 		dataRows.each((di, dataRow) => {
 			const node = this.resolveNode($, dataRow);
@@ -280,7 +315,7 @@ export class TeamPlayerFifaCrawlerService extends ResultsService {
 	}
 
 	private resolveSkills($: CheerioStatic, row): any {
-		const dataRows = $($(row).find('p'));
+		const dataRows = $(row).find('p');
 		const content: string[] = [];
 		dataRows.each((di, dataRow) => {
 			content.push($(dataRow).text());

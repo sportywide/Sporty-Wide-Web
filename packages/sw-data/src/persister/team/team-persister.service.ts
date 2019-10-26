@@ -1,5 +1,7 @@
 import util from 'util';
 import path from 'path';
+import { FifaTeam } from '@data/crawler/fifa-crawler.service';
+import { League } from '@schema/league/models/league.entity';
 import { defaultFuzzyOptions } from '@data/data.constants';
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectSwRepository } from '@schema/core/repository/sql/inject-repository.decorator';
@@ -9,6 +11,7 @@ import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import { fsPromise } from '@shared/lib/utils/promisify/fs';
 import Fuse from 'fuse.js';
+import { ScoreboardTeam } from '@data/crawler/scoreboard-crawler.service';
 const glob = util.promisify(require('glob'));
 
 @Injectable()
@@ -43,6 +46,7 @@ export class TeamPersisterService {
 			cwd: path.resolve(process.cwd(), 'resources', 'teams'),
 			absolute: true,
 		});
+		let allMatchedTeams = {};
 		await Promise.all(
 			files.map(async file => {
 				try {
@@ -50,15 +54,18 @@ export class TeamPersisterService {
 					const content = await fsPromise.readFile(file, 'utf8');
 
 					const leagueTeams = JSON.parse(content);
-					return this.saveScoreboardTeams(leagueTeams);
+					const { matchedTeams } = await this.matchScoreboardTeams(leagueTeams);
+					allMatchedTeams = { ...allMatchedTeams, ...matchedTeams };
 				} catch (e) {
 					this.logger.error(`Failed to read file ${file}`, e);
 				}
 			})
 		);
+
+		return allMatchedTeams;
 	}
 
-	private async saveScoreboardTeams(leagueTeams) {
+	private async matchScoreboardTeams(leagueTeams: { league: League; teams: ScoreboardTeam[] }) {
 		const league = leagueTeams.league;
 		const teamsInfo = leagueTeams.teams;
 		const dbTeams = await this.teamRepository.find({
@@ -68,18 +75,27 @@ export class TeamPersisterService {
 			...defaultFuzzyOptions,
 			keys: ['title', 'alias'],
 		};
+		const unresolvedTeams: any[] = [];
+		const matchedTeams = {};
 		const fuse = new Fuse(dbTeams, fuzzyOptions);
 		for (const teamInfo of teamsInfo) {
-			const foundTeam = fuse.search(teamInfo.teamName);
+			const foundTeam = fuse.search(teamInfo.name);
 			if (!foundTeam.length) {
-				this.logger.error('Cannot find the team', teamInfo.teamName);
+				unresolvedTeams.push(teamInfo);
+				this.logger.error('Cannot find the team', teamInfo.name);
 				continue;
 			}
-			this.logger.debug(`Match ${foundTeam[0].title} with ${teamInfo.teamName}`);
+			this.logger.debug(`Match ${foundTeam[0].title} with ${teamInfo.name}`);
+			matchedTeams[foundTeam[0].id] = teamInfo;
 		}
+
+		return {
+			matchedTeams,
+			unresolvedTeams,
+		};
 	}
 
-	private async saveFifaTeams(teams) {
+	private async saveFifaTeams(teams: FifaTeam[]) {
 		return Promise.all(
 			teams.map(async team => {
 				const dbObj = {

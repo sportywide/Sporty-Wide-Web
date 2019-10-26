@@ -7,8 +7,8 @@ import { DATA_CONFIG, SCHEMA_CONFIG } from '@core/config/config.constants';
 import { CoreDataModule } from '@data/core/core-data.module';
 import { TeamPersisterService } from '@data/persister/team/team-persister.service';
 import { FixturePersisterService } from '@data/persister/fixture/fixture-persister.service';
-import { SchemaTeamModule } from './../../../sw-schema/src/team/team.module';
-import { SchemaFixtureModule } from './../../../sw-schema/src/fixture/fixture.module';
+import { SchemaTeamModule } from '@schema/team/team.module';
+import { SchemaFixtureModule } from '@schema/fixture/fixture.module';
 
 @Module({
 	imports: [

@@ -1,5 +1,6 @@
 import path from 'path';
 import util from 'util';
+import { FifaPlayer } from '@data/crawler/fifa-crawler.service';
 import { defaultFuzzyOptions } from '@data/data.constants';
 import { Team } from '@schema/team/models/team.entity';
 import { Injectable, Inject } from '@nestjs/common';
@@ -10,6 +11,7 @@ import { Player } from '@schema/player/models/player.entity';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import Fuse from 'fuse.js';
+import { ScoreboardPlayer } from '@data/crawler/scoreboard-crawler.service';
 const glob = util.promisify(require('glob'));
 
 @Injectable()
@@ -49,6 +51,11 @@ export class PlayerPersisterService {
 			cwd: path.resolve(process.cwd(), 'resources', 'players'),
 			absolute: true,
 		});
+		const allUnresolvedPlayers: { fifa: Player[]; scoreboard: ScoreboardPlayer[] } = {
+			fifa: [],
+			scoreboard: [],
+		};
+		let allMatchedPlayers = {};
 		await Promise.all(
 			files.map(async file => {
 				try {
@@ -56,7 +63,10 @@ export class PlayerPersisterService {
 					const content = await fsPromise.readFile(file, 'utf8');
 
 					const playerTeamMap = JSON.parse(content);
-					return this.saveScoreBoardPlayers(playerTeamMap);
+					const { unresolvedPlayers, matchedPlayers } = await this.matchScoreBoardPlayers(playerTeamMap);
+					allMatchedPlayers = { ...allMatchedPlayers, ...matchedPlayers };
+					allUnresolvedPlayers.fifa.push(...unresolvedPlayers.fifa);
+					allUnresolvedPlayers.scoreboard.push(...unresolvedPlayers.scoreboard);
 				} catch (e) {
 					this.logger.error(`Failed to read file ${file}`, e);
 				}
@@ -64,8 +74,8 @@ export class PlayerPersisterService {
 		);
 	}
 
-	private async saveScoreBoardPlayers(playerTeamMap) {
-		const playerMap: { [key: string]: any[] } = playerTeamMap.players;
+	private async matchScoreBoardPlayers(playerTeamMap) {
+		const playerMap: { [key: string]: ScoreboardPlayer[] } = playerTeamMap.players;
 		const leagueId = playerTeamMap.leagueId;
 		const dbTeams = await this.teamRepository.find({
 			leagueId: leagueId,
@@ -74,55 +84,61 @@ export class PlayerPersisterService {
 			...defaultFuzzyOptions,
 			keys: ['title', 'alias'],
 		});
+
+		const matchedPlayers = {};
+		const unresolvedPlayers: { scoreboard: ScoreboardPlayer[]; fifa: Player[] } = {
+			scoreboard: [],
+			fifa: [],
+		};
 		for (const [teamName, players] of Object.entries(playerMap)) {
-			const transformedPlayers = players.map(player => ({
-				...player,
-				playerName: player.playerName
-					.split(/\s+/)
-					.reverse()
-					.join(' '),
-			}));
 			const foundTeams = teamFuse.search(teamName);
 			if (!foundTeams.length) {
 				this.logger.error('Cannot find the team', teamName);
 				continue;
 			}
 			this.logger.info(`Match ${foundTeams[0].title} with ${teamName}`);
+
+			const transformedPlayers = players.map(player => ({
+				...player,
+				name: player.name
+					.split(/\s+/)
+					.reverse()
+					.join(' '),
+			}));
 			const dbPlayers = await this.playerRepository.find({
 				teamId: foundTeams[0].id,
 			});
-			let playerFuse = new Fuse(dbPlayers, {
+			const playerFuse = new Fuse(dbPlayers, {
 				...defaultFuzzyOptions,
 				threshold: 0.5,
 				tokenize: true,
 				keys: ['name'],
 			});
 			for (const player of transformedPlayers) {
-				const foundPlayers = playerFuse.search(player.playerName);
+				const foundPlayers = playerFuse.search(player.name);
 				if (!foundPlayers.length) {
-					this.logger.error('Cannot find scoreboard player', player.playerName);
+					this.logger.error('Cannot find scoreboard player', player.name);
+					unresolvedPlayers.scoreboard.push(player);
 					continue;
 				}
-				this.logger.trace(`Match ${foundPlayers[0].name} with ${player.playerName}`);
+				this.logger.trace(`Match ${foundPlayers[0].name} with ${player.name}`);
+				matchedPlayers[foundPlayers[0].id] = player;
 			}
 
-			playerFuse = new Fuse(transformedPlayers, {
-				...defaultFuzzyOptions,
-				threshold: 0.5,
-				tokenize: true,
-				keys: ['playerName'],
-			});
 			for (const dbPlayer of dbPlayers) {
-				const foundPlayers = playerFuse.search(dbPlayer.name);
-				if (!foundPlayers.length) {
-					this.logger.error('Cannot find fifa player', dbPlayer.name);
-					continue;
+				if (!matchedPlayers[dbPlayer.id]) {
+					unresolvedPlayers.fifa.push(dbPlayer);
 				}
 			}
 		}
+
+		return {
+			matchedPlayers,
+			unresolvedPlayers,
+		};
 	}
 
-	private saveFifaPlayers(players) {
+	private saveFifaPlayers(players: FifaPlayer[]) {
 		return Promise.all(
 			players.map(async player => {
 				const dbObj = {
