@@ -8,9 +8,10 @@ import Cheerio from 'cheerio';
 import { Logger } from 'log4js';
 import { Provider } from 'nconf';
 import { keyBy } from 'lodash';
-import { PuppeteerService } from '../core/browser/browser.service';
-import { sleep } from '../../../sw-shared/src/lib/utils/sleep';
-import { SwPage } from '../core/browser/browser.class';
+import { sleep } from '@shared/lib/utils/sleep';
+import { PuppeteerService } from '@data/core/browser/browser.service';
+import { SwPage } from '@data/core/browser/browser.class';
+import { ScoreboardPlayer } from './scoreboard-crawler.service';
 import { BrowserService } from './browser.service';
 const MAX_ATTEMPTS = 4;
 const PAGE_TIMEOUT = 60000;
@@ -18,8 +19,33 @@ const PAGE_URL = 'https://www.scoreboard.com/au/soccer';
 
 const DATA_TIMEOUT = 30000;
 
+export type ScoreboardTeam = {
+	name: string;
+	url: string;
+	played: number;
+	wins: number;
+	draws: number;
+	losses: number;
+	scored: number;
+	conceded: number;
+	points: number;
+	forms: { type: string; teams: string; score: string; date: string }[];
+};
+
+export type ScoreboardPlayer = {
+	jersey: number;
+	nationality: string;
+	age: number;
+	played: number;
+	name: string;
+	scored: number;
+	yellow: number;
+	red: number;
+	status: string;
+};
+
 @Injectable()
-export class TeamPlayerScoreboardCrawlerService extends BrowserService {
+export class ScoreboardCrawlerService extends BrowserService {
 	private axios: AxiosInstance;
 
 	constructor(
@@ -64,9 +90,10 @@ export class TeamPlayerScoreboardCrawlerService extends BrowserService {
 				}
 			}
 		}
+		return [];
 	}
 
-	private parseTeams($: CheerioStatic) {
+	private parseTeams($: CheerioStatic): ScoreboardTeam[] {
 		const teamRows = $('#table-type-1 > tbody > tr');
 
 		return Array.from(teamRows).map(teamRowNode => {
@@ -119,8 +146,8 @@ export class TeamPlayerScoreboardCrawlerService extends BrowserService {
 				};
 			});
 			return {
-				teamName,
-				teamUrl,
+				name: teamName,
+				url: teamUrl,
 				played,
 				wins,
 				draws,
@@ -133,7 +160,7 @@ export class TeamPlayerScoreboardCrawlerService extends BrowserService {
 		});
 	}
 
-	async crawlPlayers(teams: { url: string; id: any }[]) {
+	async crawlPlayers(teams: { url: string; id: any }[]): Promise<{ [key: string]: ScoreboardPlayer[] }> {
 		const teamUrls = teams.map(team => team.url);
 		const teamUrlMap = keyBy(teams, 'url');
 		const workerQueue = this.workerQueueService.newWorker({
@@ -168,7 +195,7 @@ export class TeamPlayerScoreboardCrawlerService extends BrowserService {
 		return result;
 	}
 
-	private parsePlayers($: CheerioStatic) {
+	private parsePlayers($: CheerioStatic): ScoreboardPlayer[] {
 		const playerRows = $('#fsbody > table > tbody > tr.player');
 		return Array.from(playerRows).map(playerNode => {
 			const playerRow = $(playerNode);
@@ -187,7 +214,7 @@ export class TeamPlayerScoreboardCrawlerService extends BrowserService {
 				nationality,
 				age,
 				played,
-				playerName,
+				name: playerName,
 				scored,
 				yellow,
 				red,

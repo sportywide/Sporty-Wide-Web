@@ -5,7 +5,7 @@ import { Player } from '@schema/player/models/player.entity';
 import { PlayerService } from '@schema/player/services/player.service';
 import { Team } from '@schema/team/models/team.entity';
 import { TestingModule } from '@nestjs/testing';
-import { League } from './../../league/models/league.entity';
+import { League } from '@schema/league/models/league.entity';
 const formation = require('@shared/lib/strategy/4-4-2');
 
 describe('Testing player service', () => {

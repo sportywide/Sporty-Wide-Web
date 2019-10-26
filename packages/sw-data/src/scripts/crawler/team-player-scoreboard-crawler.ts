@@ -3,11 +3,11 @@ import { CrawlerModule } from '@data/crawler/crawler.module';
 import { INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { leagues } from '@data/data.constants';
-import { TeamPlayerScoreboardCrawlerService } from '@data/crawler/team-player-scoreboard-crawler.service';
+import { ScoreboardCrawlerService } from '@root/packages/sw-data/src/crawler/scoreboard-crawler.service';
 
 async function bootstrap() {
 	const context: INestApplicationContext = await NestFactory.createApplicationContext(CrawlerModule);
-	const crawlerService = context.get(TeamPlayerScoreboardCrawlerService);
+	const crawlerService = context.get(ScoreboardCrawlerService);
 
 	try {
 		await crawlerService.init();
@@ -28,13 +28,11 @@ async function bootstrap() {
 				});
 			}
 		}
-		const playersMap = await crawlerService.crawlPlayers(
-			allTeams.map(team => ({ url: team.teamUrl, id: team.teamUrl }))
-		);
+		const playersMap = await crawlerService.crawlPlayers(allTeams.map(team => ({ url: team.url, id: team.url })));
 		for (const leagueTeam of leagueTeams) {
 			const result = {};
 			for (const team of leagueTeam.teams!) {
-				result[team.teamName] = playersMap[team.teamUrl];
+				result[team.name] = playersMap[team.url];
 			}
 			await crawlerService.writeResult(`players/scoreboard-${leagueTeam.league.id}.json`, {
 				players: result,
