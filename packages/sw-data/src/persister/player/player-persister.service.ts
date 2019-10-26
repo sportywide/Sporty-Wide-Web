@@ -75,26 +75,49 @@ export class PlayerPersisterService {
 			keys: ['title', 'alias'],
 		});
 		for (const [teamName, players] of Object.entries(playerMap)) {
+			const transformedPlayers = players.map(player => ({
+				...player,
+				playerName: player.playerName
+					.split(/\s+/)
+					.reverse()
+					.join(' '),
+			}));
 			const foundTeams = teamFuse.search(teamName);
 			if (!foundTeams.length) {
 				this.logger.error('Cannot find the team', teamName);
 				continue;
 			}
-			this.logger.debug(`Match ${foundTeams[0].title} with ${teamName}`);
+			this.logger.info(`Match ${foundTeams[0].title} with ${teamName}`);
 			const dbPlayers = await this.playerRepository.find({
 				teamId: foundTeams[0].id,
 			});
-			const playerFuse = new Fuse(dbPlayers, {
+			let playerFuse = new Fuse(dbPlayers, {
 				...defaultFuzzyOptions,
+				threshold: 0.5,
+				tokenize: true,
 				keys: ['name'],
 			});
-			for (const player of players) {
+			for (const player of transformedPlayers) {
 				const foundPlayers = playerFuse.search(player.playerName);
 				if (!foundPlayers.length) {
-					this.logger.error('Cannot find the player', player.playerName);
+					this.logger.error('Cannot find scoreboard player', player.playerName);
 					continue;
 				}
-				this.logger.debug(`Match ${foundPlayers[0].name} with ${player.playerName}`);
+				this.logger.trace(`Match ${foundPlayers[0].name} with ${player.playerName}`);
+			}
+
+			playerFuse = new Fuse(transformedPlayers, {
+				...defaultFuzzyOptions,
+				threshold: 0.5,
+				tokenize: true,
+				keys: ['playerName'],
+			});
+			for (const dbPlayer of dbPlayers) {
+				const foundPlayers = playerFuse.search(dbPlayer.name);
+				if (!foundPlayers.length) {
+					this.logger.error('Cannot find fifa player', dbPlayer.name);
+					continue;
+				}
 			}
 		}
 	}
