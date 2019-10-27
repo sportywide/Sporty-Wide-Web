@@ -4,8 +4,8 @@
 	"description": "Data Crawler service for SportyWide",
 	"license": "ISC",
 	"scripts": {
-		"dev:exec": "gulp dev:exec --colors",
-		"exec": "gulp exec --colors"
+		"dev:exec": "gulp dev:exec --color",
+		"exec": "gulp exec --color"
 	},
 	"dependencies": {
 		"cheerio": "0.22.0",

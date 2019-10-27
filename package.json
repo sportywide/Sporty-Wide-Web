@@ -4,8 +4,8 @@
 	"description": "A Social network for Sports",
 	"author": "Sporty Wide",
 	"scripts": {
-		"dev:exec": "gulp dev:exec --colors",
-		"exec": "gulp exec --colors",
+		"dev:exec": "gulp dev:exec --color",
+		"exec": "gulp exec --color",
 		"install:dependencies": "ts-node -T bin/install.ts",
 		"compile:build": "ts-node -r tsconfig-paths/register compiler.ts"
 	},

@@ -1,7 +1,7 @@
 module.exports = /******/ (function(modules) {
 	// webpackBootstrap
 	/******/ // The module cache
-	/******/ const installedModules = {}; // The require function
+	/******/ var installedModules = {}; // The require function
 	/******/
 	/******/ /******/ function __webpack_require__(moduleId) {
 		/******/
@@ -10,7 +10,7 @@ module.exports = /******/ (function(modules) {
 			/******/ return installedModules[moduleId].exports;
 			/******/
 		} // Create a new module (and put it into the cache)
-		/******/ /******/ const module = (installedModules[moduleId] = {
+		/******/ /******/ var module = (installedModules[moduleId] = {
 			/******/ i: moduleId,
 			/******/ l: false,
 			/******/ exports: {},
@@ -51,11 +51,11 @@ module.exports = /******/ (function(modules) {
 		/******/ if (mode & 1) value = __webpack_require__(value);
 		/******/ if (mode & 8) return value;
 		/******/ if (mode & 4 && typeof value === 'object' && value && value.__esModule) return value;
-		/******/ const ns = Object.create(null);
+		/******/ var ns = Object.create(null);
 		/******/ __webpack_require__.r(ns);
 		/******/ Object.defineProperty(ns, 'default', { enumerable: true, value: value });
 		/******/ if (mode & 2 && typeof value != 'string')
-			for (const key in value)
+			for (var key in value)
 				__webpack_require__.d(
 					ns,
 					key,
@@ -68,7 +68,7 @@ module.exports = /******/ (function(modules) {
 	}; // getDefaultExport function for compatibility with non-harmony modules
 	/******/
 	/******/ /******/ __webpack_require__.n = function(module) {
-		/******/ const getter =
+		/******/ var getter =
 			module && module.__esModule
 				? /******/ function getDefault() {
 						return module['default'];
@@ -101,7 +101,7 @@ module.exports = /******/ (function(modules) {
 			/***/ function(module, exports, __webpack_require__) {
 				'use strict';
 				eval(
-					"\n\nvar _path = _interopRequireDefault(__webpack_require__(/*! path */ \"path\"));\n\nvar _config = __webpack_require__(/*! @build/webpack/node/config */ \"./packages/sw-shared/build/webpack/node/config.ts\");\n\nvar _paths = _interopRequireDefault(__webpack_require__(/*! @build/paths */ \"./packages/sw-shared/build/paths/index.js\"));\n\nvar _glob = _interopRequireDefault(__webpack_require__(/*! glob */ \"glob\"));\n\nvar findup = _interopRequireWildcard(__webpack_require__(/*! find-up */ \"find-up\"));\n\nfunction _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) { var desc = Object.defineProperty && Object.getOwnPropertyDescriptor ? Object.getOwnPropertyDescriptor(obj, key) : {}; if (desc.get || desc.set) { Object.defineProperty(newObj, key, desc); } else { newObj[key] = obj[key]; } } } } newObj.default = obj; return newObj; } }\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\n//@ts-ignore\nprocess.env.NODE_ENV = process.env.NODE_ENV || 'development';\nmodule.exports = (0, _config.makeConfig)({\n  entries: getEntries(),\n  output: _paths.default.data.dist,\n  watchMode: false,\n  alias: {\n    '@root': _paths.default.project.root,\n    '@shared': _paths.default.shared.src,\n    '@schema': _paths.default.schema.src,\n    '@data': _paths.default.data.src,\n    '@core': _paths.default.core.src\n  },\n  envFile: findup.sync('.env')\n});\n\nfunction getEntries() {\n  if (process.env.SCRIPT) {\n    const entryName = process.env.SCRIPT.replace(/\\.(js|ts)x?$/, '');\n    return {\n      [entryName]: _path.default.resolve(_paths.default.data.scripts, process.env.SCRIPT)\n    };\n  } else {\n    return _glob.default.sync('**/*.ts', {\n      absolute: true,\n      cwd: _paths.default.data.scripts\n    }).reduce((currentMap, entry) => {\n      const entryName = _path.default.relative(_paths.default.data.scripts, entry).replace(/\\.(js|ts)x?$/, '');\n\n      return { ...currentMap,\n        [entryName]: entry\n      };\n    }, {});\n  }\n}\n\n//# sourceURL=webpack:///./packages/sw-data/webpack.config.ts?"
+					"\n\nvar _path = _interopRequireDefault(__webpack_require__(/*! path */ \"path\"));\n\nvar _config = __webpack_require__(/*! @build/webpack/node/config */ \"./packages/sw-shared/build/webpack/node/config.ts\");\n\nvar _paths = _interopRequireDefault(__webpack_require__(/*! @build/paths */ \"./packages/sw-shared/build/paths/index.js\"));\n\nvar _glob = _interopRequireDefault(__webpack_require__(/*! glob */ \"glob\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nconst findup = __webpack_require__(/*! find-up */ \"find-up\"); //@ts-ignore\n\n\nprocess.env.NODE_ENV = process.env.NODE_ENV || 'development';\nmodule.exports = (0, _config.makeConfig)({\n  entries: getEntries(),\n  output: _paths.default.data.dist,\n  watchMode: false,\n  alias: {\n    '@root': _paths.default.project.root,\n    '@shared': _paths.default.shared.src,\n    '@schema': _paths.default.schema.src,\n    '@data': _paths.default.data.src,\n    '@core': _paths.default.core.src\n  },\n  envFile: findup.sync('.env')\n});\n\nfunction getEntries() {\n  if (process.env.SCRIPT) {\n    const entryName = process.env.SCRIPT.replace(/\\.(js|ts)x?$/, '');\n    return {\n      [entryName]: _path.default.resolve(_paths.default.data.scripts, process.env.SCRIPT)\n    };\n  } else {\n    return _glob.default.sync('**/*.ts', {\n      absolute: true,\n      cwd: _paths.default.data.scripts\n    }).reduce((currentMap, entry) => {\n      const entryName = _path.default.relative(_paths.default.data.scripts, entry).replace(/\\.(js|ts)x?$/, '');\n\n      return { ...currentMap,\n        [entryName]: entry\n      };\n    }, {});\n  }\n}\n\n//# sourceURL=webpack:///./packages/sw-data/webpack.config.ts?"
 				);
 
 				/***/

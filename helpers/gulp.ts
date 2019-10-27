@@ -17,7 +17,7 @@ export class GenericWebpackTasks {
 
 	@Task('dev:webpack')
 	buildDev() {
-		return spawn('webpack');
+		return spawn('webpack --color');
 	}
 
 	@Task('build:env')
@@ -28,6 +28,6 @@ export class GenericWebpackTasks {
 
 	@Task('build:webpack')
 	webpackBuild() {
-		return spawn('webpack');
+		return spawn('webpack --color');
 	}
 }
