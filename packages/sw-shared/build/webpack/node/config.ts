@@ -47,7 +47,7 @@ export function makeConfig({
 		target('node'),
 		externals([...getNodeModules()]),
 		babelHelper({
-			cwd: path.resolve(__dirname, 'babel'),
+			cwd: path.resolve(paths.shared.webpack, 'node', 'babel'),
 			cacheDirectory: true,
 		}),
 		resolve({
@@ -111,7 +111,7 @@ export function makeConfig({
 	]);
 }
 
-function getNodeModules() {
+export function getNodeModules() {
 	const projectRoot = paths.project.root;
 	const packageFolder = path.resolve(projectRoot, 'packages');
 	const excludeDirs = ['sw-web'];

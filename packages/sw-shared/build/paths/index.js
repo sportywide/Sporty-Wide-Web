@@ -1,4 +1,5 @@
 const path = require('path');
+const findUp = require('find-up');
 
 const paths = {
 	get web() {
@@ -89,7 +90,7 @@ const paths = {
 	},
 	get project() {
 		return {
-			root: path.resolve(__dirname, '..', '..', '..', '..'),
+			root: path.dirname(findUp.sync('package-lock.json')),
 		};
 	},
 };

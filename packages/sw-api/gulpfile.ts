@@ -1,3 +1,4 @@
+require('reflect-metadata');
 require('tsconfig-paths/register');
 import { Gulpclass, SequenceTask, Task } from 'gulpclass';
 import { GenericWebpackTasks } from '@root/helpers/gulp';

@@ -1,7 +1,7 @@
 import path from 'path';
-import { makeConfig as makeNodeConfig } from 'sportywide-shared/build/webpack/node/config';
-import { makeConfig as makeStyleConfig } from 'sportywide-shared/build/webpack/styles/config';
-import paths from 'sportywide-shared/build/paths';
+import { makeConfig as makeNodeConfig } from '@build/webpack/node/config';
+import { makeConfig as makeStyleConfig } from '@build/webpack/styles/config';
+import paths from '@build/paths';
 import glob from 'glob';
 
 module.exports = [

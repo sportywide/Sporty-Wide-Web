@@ -1,3 +1,4 @@
+require('reflect-metadata');
 import { Gulpclass, Task } from 'gulpclass';
 import { spawn } from '@root/helpers/process';
 
@@ -16,10 +17,7 @@ export class GenericWebpackTasks {
 
 	@Task('dev:webpack')
 	buildDev() {
-		process.env.TS_NODE_TRANSPILE_ONLY = 'true';
-		process.env.TS_NODE_TYPE_CHECK = 'false';
-		process.env.TSC_WATCHFILE = 'UseFsEvents';
-		return spawn('webpack -r tsconfig-paths/register');
+		return spawn('webpack');
 	}
 
 	@Task('build:env')
@@ -30,8 +28,6 @@ export class GenericWebpackTasks {
 
 	@Task('build:webpack')
 	webpackBuild() {
-		process.env.TS_NODE_TRANSPILE_ONLY = 'true';
-		process.env.TS_NODE_TYPE_CHECK = 'false';
-		return spawn('webpack -r tsconfig-paths/register');
+		return spawn('webpack');
 	}
 }

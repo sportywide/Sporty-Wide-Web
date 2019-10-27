@@ -4,8 +4,8 @@
 	"description": "Data Crawler service for SportyWide",
 	"license": "ISC",
 	"scripts": {
-		"dev:exec": "cross-env TS_NODE_TYPE_CHECK=false TS_NODE_TRANSPILE_ONLY=true gulp dev:exec",
-		"exec": "cross-env TS_NODE_TYPE_CHECK=false TS_NODE_TRANSPILE_ONLY=true gulp exec"
+		"dev:exec": "gulp dev:exec --colors",
+		"exec": "gulp exec --colors"
 	},
 	"dependencies": {
 		"cheerio": "0.22.0",
