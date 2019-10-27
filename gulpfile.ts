@@ -1,3 +1,4 @@
+require('reflect-metadata');
 require('tsconfig-paths/register');
 import { Gulpclass, Task } from 'gulpclass';
 import { spawn } from '@root/helpers/process';

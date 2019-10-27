@@ -5,8 +5,8 @@
 	"keywords": [],
 	"license": "ISC",
 	"scripts": {
-		"build": "cross-env TS_NODE_TYPE_CHECK=false TS_NODE_TRANSPILE_ONLY=true gulp build",
-		"dev": "cross-env TS_NODE_TYPE_CHECK=false TS_NODE_TRANSPILE_ONLY=true gulp dev"
+		"build": "gulp build --colors",
+		"dev": "gulp dev --colors"
 	},
 	"dependencies": {
 		"@nestjs/graphql": "6.5.3",

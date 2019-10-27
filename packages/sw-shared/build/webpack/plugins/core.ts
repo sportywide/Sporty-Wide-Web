@@ -13,7 +13,14 @@ export function externals(externals) {
 }
 
 export function none() {
-	return (context, util) => config => config;
+	return () => config => config;
+}
+
+export function optimize(options) {
+	return (context, util) =>
+		util.merge({
+			optimization: options,
+		});
 }
 
 export function watch() {
