@@ -21,7 +21,7 @@ services:
         image: sportywide/sportywide-base
         container_name: sw_test
         entrypoint: ['npx', 'gulp']
-        command: ['test', '--full', '--colors']
+        command: ['test', '--full', '--color']
         environment:
             POSTGRES__HOST: postgres
         depends_on:

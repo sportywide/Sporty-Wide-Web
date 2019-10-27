@@ -4,8 +4,8 @@
 	"description": "Email microservice",
 	"license": "ISC",
 	"scripts": {
-		"build": "gulp build --colors",
-		"dev": "gulp dev --colors"
+		"build": "gulp build --color",
+		"dev": "gulp dev --color"
 	},
 	"dependencies": {
 		"nodemailer": "6.3.0",

@@ -5,8 +5,8 @@
 	"keywords": [],
 	"license": "ISC",
 	"scripts": {
-		"build": "gulp build --colors",
-		"dev": "gulp dev --colors"
+		"build": "gulp build --color",
+		"dev": "gulp dev --color"
 	},
 	"dependencies": {
 		"@nestjs/graphql": "6.5.3",

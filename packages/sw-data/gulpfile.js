@@ -1,7 +1,7 @@
 module.exports = /******/ (function(modules) {
 	// webpackBootstrap
 	/******/ // The module cache
-	/******/ const installedModules = {}; // The require function
+	/******/ var installedModules = {}; // The require function
 	/******/
 	/******/ /******/ function __webpack_require__(moduleId) {
 		/******/
@@ -10,7 +10,7 @@ module.exports = /******/ (function(modules) {
 			/******/ return installedModules[moduleId].exports;
 			/******/
 		} // Create a new module (and put it into the cache)
-		/******/ /******/ const module = (installedModules[moduleId] = {
+		/******/ /******/ var module = (installedModules[moduleId] = {
 			/******/ i: moduleId,
 			/******/ l: false,
 			/******/ exports: {},
@@ -51,11 +51,11 @@ module.exports = /******/ (function(modules) {
 		/******/ if (mode & 1) value = __webpack_require__(value);
 		/******/ if (mode & 8) return value;
 		/******/ if (mode & 4 && typeof value === 'object' && value && value.__esModule) return value;
-		/******/ const ns = Object.create(null);
+		/******/ var ns = Object.create(null);
 		/******/ __webpack_require__.r(ns);
 		/******/ Object.defineProperty(ns, 'default', { enumerable: true, value: value });
 		/******/ if (mode & 2 && typeof value != 'string')
-			for (const key in value)
+			for (var key in value)
 				__webpack_require__.d(
 					ns,
 					key,
@@ -68,7 +68,7 @@ module.exports = /******/ (function(modules) {
 	}; // getDefaultExport function for compatibility with non-harmony modules
 	/******/
 	/******/ /******/ __webpack_require__.n = function(module) {
-		/******/ const getter =
+		/******/ var getter =
 			module && module.__esModule
 				? /******/ function getDefault() {
 						return module['default'];
@@ -101,7 +101,7 @@ module.exports = /******/ (function(modules) {
 			/***/ function(module, exports, __webpack_require__) {
 				'use strict';
 				eval(
-					'\n\nObject.defineProperty(exports, "__esModule", {\n  value: true\n});\nexports.GenericWebpackTasks = void 0;\n\nvar _gulpclass = __webpack_require__(/*! gulpclass */ "gulpclass");\n\nvar _process = __webpack_require__(/*! @root/helpers/process */ "./helpers/process.ts");\n\nvar _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _class, _class2;\n\nfunction _applyDecoratedDescriptor(target, property, decorators, descriptor, context) { var desc = {}; Object.keys(descriptor).forEach(function (key) { desc[key] = descriptor[key]; }); desc.enumerable = !!desc.enumerable; desc.configurable = !!desc.configurable; if (\'value\' in desc || desc.initializer) { desc.writable = true; } desc = decorators.slice().reverse().reduce(function (desc, decorator) { return decorator(target, property, desc) || desc; }, desc); if (context && desc.initializer !== void 0) { desc.value = desc.initializer ? desc.initializer.call(context) : void 0; desc.initializer = undefined; } if (desc.initializer === void 0) { Object.defineProperty(target, property, desc); desc = null; } return desc; }\n\n__webpack_require__(/*! reflect-metadata */ "reflect-metadata");\n\nlet GenericWebpackTasks = (_dec = (0, _gulpclass.Gulpclass)(), _dec2 = (0, _gulpclass.Task)(\'clean\'), _dec3 = Reflect.metadata("design:paramtypes", []), _dec4 = (0, _gulpclass.Task)(\'dev:env\'), _dec5 = Reflect.metadata("design:paramtypes", [void 0]), _dec6 = (0, _gulpclass.Task)(\'dev:webpack\'), _dec7 = Reflect.metadata("design:paramtypes", []), _dec8 = (0, _gulpclass.Task)(\'build:env\'), _dec9 = Reflect.metadata("design:paramtypes", [void 0]), _dec10 = (0, _gulpclass.Task)(\'build:webpack\'), _dec11 = Reflect.metadata("design:paramtypes", []), _dec(_class = (_class2 = class GenericWebpackTasks {\n  clean() {\n    return (0, _process.spawn)(\'rm -rf dist\');\n  }\n\n  setDevEnv(callback) {\n    process.env.NODE_ENV = \'development\';\n    callback();\n  }\n\n  buildDev() {\n    return (0, _process.spawn)(\'webpack\');\n  }\n\n  buildEnv(callback) {\n    process.env.NODE_ENV = \'production\';\n    callback();\n  }\n\n  webpackBuild() {\n    return (0, _process.spawn)(\'webpack\');\n  }\n\n}, (_applyDecoratedDescriptor(_class2.prototype, "clean", [_dec2, _dec3], Object.getOwnPropertyDescriptor(_class2.prototype, "clean"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setDevEnv", [_dec4, _dec5], Object.getOwnPropertyDescriptor(_class2.prototype, "setDevEnv"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "buildDev", [_dec6, _dec7], Object.getOwnPropertyDescriptor(_class2.prototype, "buildDev"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "buildEnv", [_dec8, _dec9], Object.getOwnPropertyDescriptor(_class2.prototype, "buildEnv"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "webpackBuild", [_dec10, _dec11], Object.getOwnPropertyDescriptor(_class2.prototype, "webpackBuild"), _class2.prototype)), _class2)) || _class);\nexports.GenericWebpackTasks = GenericWebpackTasks;\n\n//# sourceURL=webpack:///./helpers/gulp.ts?'
+					'\n\nObject.defineProperty(exports, "__esModule", {\n  value: true\n});\nexports.GenericWebpackTasks = void 0;\n\nvar _gulpclass = __webpack_require__(/*! gulpclass */ "gulpclass");\n\nvar _process = __webpack_require__(/*! @root/helpers/process */ "./helpers/process.ts");\n\nvar _dec, _dec2, _dec3, _dec4, _dec5, _dec6, _dec7, _dec8, _dec9, _dec10, _dec11, _class, _class2;\n\nfunction _applyDecoratedDescriptor(target, property, decorators, descriptor, context) { var desc = {}; Object.keys(descriptor).forEach(function (key) { desc[key] = descriptor[key]; }); desc.enumerable = !!desc.enumerable; desc.configurable = !!desc.configurable; if (\'value\' in desc || desc.initializer) { desc.writable = true; } desc = decorators.slice().reverse().reduce(function (desc, decorator) { return decorator(target, property, desc) || desc; }, desc); if (context && desc.initializer !== void 0) { desc.value = desc.initializer ? desc.initializer.call(context) : void 0; desc.initializer = undefined; } if (desc.initializer === void 0) { Object.defineProperty(target, property, desc); desc = null; } return desc; }\n\n__webpack_require__(/*! reflect-metadata */ "reflect-metadata");\n\nlet GenericWebpackTasks = (_dec = (0, _gulpclass.Gulpclass)(), _dec2 = (0, _gulpclass.Task)(\'clean\'), _dec3 = Reflect.metadata("design:paramtypes", []), _dec4 = (0, _gulpclass.Task)(\'dev:env\'), _dec5 = Reflect.metadata("design:paramtypes", [void 0]), _dec6 = (0, _gulpclass.Task)(\'dev:webpack\'), _dec7 = Reflect.metadata("design:paramtypes", []), _dec8 = (0, _gulpclass.Task)(\'build:env\'), _dec9 = Reflect.metadata("design:paramtypes", [void 0]), _dec10 = (0, _gulpclass.Task)(\'build:webpack\'), _dec11 = Reflect.metadata("design:paramtypes", []), _dec(_class = (_class2 = class GenericWebpackTasks {\n  clean() {\n    return (0, _process.spawn)(\'rm -rf dist\');\n  }\n\n  setDevEnv(callback) {\n    process.env.NODE_ENV = \'development\';\n    callback();\n  }\n\n  buildDev() {\n    return (0, _process.spawn)(\'webpack --color\');\n  }\n\n  buildEnv(callback) {\n    process.env.NODE_ENV = \'production\';\n    callback();\n  }\n\n  webpackBuild() {\n    return (0, _process.spawn)(\'webpack --color\');\n  }\n\n}, (_applyDecoratedDescriptor(_class2.prototype, "clean", [_dec2, _dec3], Object.getOwnPropertyDescriptor(_class2.prototype, "clean"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "setDevEnv", [_dec4, _dec5], Object.getOwnPropertyDescriptor(_class2.prototype, "setDevEnv"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "buildDev", [_dec6, _dec7], Object.getOwnPropertyDescriptor(_class2.prototype, "buildDev"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "buildEnv", [_dec8, _dec9], Object.getOwnPropertyDescriptor(_class2.prototype, "buildEnv"), _class2.prototype), _applyDecoratedDescriptor(_class2.prototype, "webpackBuild", [_dec10, _dec11], Object.getOwnPropertyDescriptor(_class2.prototype, "webpackBuild"), _class2.prototype)), _class2)) || _class);\nexports.GenericWebpackTasks = GenericWebpackTasks;\n\n//# sourceURL=webpack:///./helpers/gulp.ts?'
 				);
 
 				/***/

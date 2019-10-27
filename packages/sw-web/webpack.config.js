@@ -1,7 +1,7 @@
 module.exports = /******/ (function(modules) {
 	// webpackBootstrap
 	/******/ // The module cache
-	/******/ const installedModules = {}; // The require function
+	/******/ var installedModules = {}; // The require function
 	/******/
 	/******/ /******/ function __webpack_require__(moduleId) {
 		/******/
@@ -10,7 +10,7 @@ module.exports = /******/ (function(modules) {
 			/******/ return installedModules[moduleId].exports;
 			/******/
 		} // Create a new module (and put it into the cache)
-		/******/ /******/ const module = (installedModules[moduleId] = {
+		/******/ /******/ var module = (installedModules[moduleId] = {
 			/******/ i: moduleId,
 			/******/ l: false,
 			/******/ exports: {},
@@ -51,11 +51,11 @@ module.exports = /******/ (function(modules) {
 		/******/ if (mode & 1) value = __webpack_require__(value);
 		/******/ if (mode & 8) return value;
 		/******/ if (mode & 4 && typeof value === 'object' && value && value.__esModule) return value;
-		/******/ const ns = Object.create(null);
+		/******/ var ns = Object.create(null);
 		/******/ __webpack_require__.r(ns);
 		/******/ Object.defineProperty(ns, 'default', { enumerable: true, value: value });
 		/******/ if (mode & 2 && typeof value != 'string')
-			for (const key in value)
+			for (var key in value)
 				__webpack_require__.d(
 					ns,
 					key,
@@ -68,7 +68,7 @@ module.exports = /******/ (function(modules) {
 	}; // getDefaultExport function for compatibility with non-harmony modules
 	/******/
 	/******/ /******/ __webpack_require__.n = function(module) {
-		/******/ const getter =
+		/******/ var getter =
 			module && module.__esModule
 				? /******/ function getDefault() {
 						return module['default'];

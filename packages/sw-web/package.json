@@ -5,8 +5,8 @@
 	"license": "MIT",
 	"author": "",
 	"scripts": {
-		"build": "gulp build --colors",
-		"dev": "gulp dev --colors"
+		"build": "gulp build --color",
+		"dev": "gulp dev --color"
 	},
 	"dependencies": {
 		"@apollo/react-hooks": "3.1.2",
