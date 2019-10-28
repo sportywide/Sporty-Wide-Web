@@ -32,6 +32,7 @@ export class SwBrowserWrapper {
 			args: [
 				'--no-sandbox',
 				'--disable-setuid-sandbox',
+				'--lang=en-US,en;q=0.9',
 				proxyServer ? `--proxy-server=${proxyServer}` : null,
 			].filter(arg => arg),
 			executablePath: config.get('puppeteer:executable'),
@@ -76,11 +77,25 @@ export class SwBrowserWrapper {
 		await page.setUserAgent(userAgent);
 
 		await page.evaluateOnNewDocument(() => {
+			Object.defineProperty(navigator, 'webdriver', {
+				get: () => false,
+			});
 			Object.defineProperty(navigator, 'languages', {
 				get: function() {
 					return ['en-US', 'en'];
 				},
 			});
+			(window.navigator as any).chrome = {
+				runtime: {},
+				// etc.
+			};
+
+			const originalQuery = window.navigator.permissions.query;
+			window.navigator.permissions.query = parameters =>
+				//@ts-ignore
+				parameters.name === 'notifications'
+					? Promise.resolve({ state: Notification.permission })
+					: originalQuery(parameters);
 
 			// overwrite the `plugins` property to use a custom getter
 			Object.defineProperty(navigator, 'plugins', {

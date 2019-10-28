@@ -54,6 +54,7 @@ export class WhoScoreCrawlerService extends BrowserService {
 				if (page) {
 					await page.close();
 				}
+				await sleep(1500 * (i + 1));
 			}
 		}
 		return [];
@@ -279,8 +280,8 @@ export class WhoScoreCrawlerService extends BrowserService {
 			},
 			matchLinks,
 			{
-				limiter: 2,
-				interval: 25 * 1000,
+				limiter: 3,
+				interval: 10 * 1000,
 			}
 		);
 		return result;
@@ -314,7 +315,7 @@ export class WhoScoreCrawlerService extends BrowserService {
 				.replace(/\(.*\)/, '')
 				.trim();
 			const playerPosition = playerElement
-				.find('.player-meta-data')
+				.find('.pn > .player-meta-data')
 				.eq(1)
 				.text()
 				.replace(',', '')
@@ -361,7 +362,7 @@ export class WhoScoreCrawlerService extends BrowserService {
 			cookieSelector: '#qcCmpButtons > button:nth-child(2)',
 			options: {
 				timeout: PAGE_TIMEOUT,
-				waitUntil: ['domcontentloaded', 'networkidle2'],
+				waitUntil: ['domcontentloaded'],
 				...options,
 			},
 		});
