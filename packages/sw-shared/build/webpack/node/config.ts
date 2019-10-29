@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import { isDevelopment } from '@shared/lib/utils/env';
 import nodeExternals from 'webpack-node-externals';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import webpack from 'webpack';
@@ -13,12 +14,12 @@ import {
 	setOutput,
 	sourceMaps,
 } from '@webpack-blocks/webpack';
-import { isDevelopment } from '@shared/lib/utils/env';
 import paths from '@build/paths';
 import { babelHelper } from '../plugins/transpile';
 import { externals, node, none, setEntry, target, watch } from '../plugins/core';
 
 export function makeConfig({
+	env: environment = 'development',
 	entries,
 	output,
 	alias,
@@ -29,20 +30,19 @@ export function makeConfig({
 	entries: any;
 	output: string;
 	alias: any;
+	env?: string;
 	hot?: boolean;
 	envFile?: string;
 	watchMode?: boolean;
 }) {
-	// @ts-ignore
-	process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-	watchMode = isDevelopment() ? (watchMode === undefined ? true : watchMode) : false;
+	watchMode = isDevelopment(environment) ? (watchMode === undefined ? true : watchMode) : false;
 	const packageName = path.basename(path.dirname(output));
 
 	envFile = envFile || path.resolve(paths.project.root, 'packages', packageName, '.env');
 
 	return createConfig([
 		setOutput(output),
-		setMode(isDevelopment() ? 'development' : 'production'),
+		setMode(isDevelopment(environment) ? 'development' : 'production'),
 		setEntry(hot ? ['webpack/hot/poll?1000', entries] : entries),
 		target('node'),
 		externals([...getNodeModules()]),
@@ -56,7 +56,7 @@ export function makeConfig({
 			modules: ['node_modules'],
 		}),
 		setEnv({
-			NODE_ENV: process.env.NODE_ENV,
+			NODE_ENV: environment,
 		}),
 		env('development', [
 			watchMode ? watch() : none(),
