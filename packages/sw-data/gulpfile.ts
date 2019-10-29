@@ -12,13 +12,13 @@ export class Gulpfile extends GenericWebpackTasks {
 	@SequenceTask('dev:exec')
 	dev() {
 		process.env.SCRIPT = argv.entry;
-		return ['dev:env', 'dev:webpack', 'exec'];
+		return ['dev:webpack', 'exec'];
 	}
 
 	/** Build tasks **/
 	@SequenceTask('build')
 	build() {
-		return ['build:env', 'clean', 'build:webpack'];
+		return ['clean', 'build:webpack'];
 	}
 
 	@SequenceTask('exec')

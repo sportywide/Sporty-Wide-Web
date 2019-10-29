@@ -9,25 +9,13 @@ export class GenericWebpackTasks {
 		return spawn('rm -rf dist');
 	}
 
-	@Task('dev:env')
-	setDevEnv(callback) {
-		process.env.NODE_ENV = 'development';
-		callback();
-	}
-
 	@Task('dev:webpack')
 	buildDev() {
-		return spawn('webpack --color');
-	}
-
-	@Task('build:env')
-	buildEnv(callback) {
-		process.env.NODE_ENV = 'production';
-		callback();
+		return spawn('webpack --color --env=development');
 	}
 
 	@Task('build:webpack')
 	webpackBuild() {
-		return spawn('webpack --color');
+		return spawn('webpack --color --env=production');
 	}
 }

@@ -1,12 +1,12 @@
 import path from 'path';
+import { isDevelopment } from '@shared/lib/utils/env';
 import { makeConfig } from '@build/webpack/node/config';
 import paths from '@build/paths';
-import { isDevelopment } from '@shared/lib/utils/env';
-//@ts-ignore
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+const argv = require('yargs').argv;
 
 module.exports = makeConfig({
-	hot: isDevelopment(),
+	hot: isDevelopment(argv.env),
+	env: argv.env,
 	entries: path.resolve(paths.web.src, 'next-server'),
 	output: paths.web.dist,
 	alias: {

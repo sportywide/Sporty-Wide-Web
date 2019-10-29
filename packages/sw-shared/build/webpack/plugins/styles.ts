@@ -80,10 +80,9 @@ export function cssModules(options: any = {}) {
 	const defaultCssOptions = {
 		modules: true,
 		importLoaders: 1,
-		localIdentName:
-			String(process.env.NODE_ENV) === 'production' ? '[hash:base64:10]' : '[name]--[local]--[hash:base64:5]',
+		localIdentName: options.env === 'production' ? '[hash:base64:10]' : '[name]--[local]--[hash:base64:5]',
 	};
-	const cssOptions = Object.assign(defaultCssOptions, omit(options, ['exclude', 'include', 'styleLoader']));
+	const cssOptions = Object.assign(defaultCssOptions, omit(options, ['exclude', 'include', 'styleLoader', 'env']));
 	const loaders = [{ loader: 'css-loader', options: cssOptions }];
 
 	if (options.styleLoader !== false) {
