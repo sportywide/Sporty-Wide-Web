@@ -1,6 +1,6 @@
 {
 	"name": "sportywide-web",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Sporty Wide Web repository",
 	"license": "MIT",
 	"author": "",
@@ -49,7 +49,7 @@
 		"semantic-ui-calendar-react": "0.15.3",
 		"semantic-ui-react": "0.87.3",
 		"sporty-wide-style": "1.0.1",
-		"sportywide-shared": "1.0.0",
+		"sportywide-shared": "^1.0.1",
 		"styled-components": "4.3.2",
 		"typedi": "0.8.0",
 		"typesafe-actions": "4.4.2",
