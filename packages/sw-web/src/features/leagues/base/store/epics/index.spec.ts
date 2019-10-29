@@ -1,5 +1,5 @@
 import { fetchLeagues, fetchLeaguesSuccess } from '@web/features/leagues/base/store/actions';
-import { createTestScheduler, newContainer } from '@web-test/test-setup';
+import { createTestScheduler, newContainer } from '@web/test/test-setup';
 import { LeagueService } from '@web/features/leagues/base/services/league.service';
 import { LeagueDto } from '@shared/lib/dtos/leagues/league.dto';
 import { ActionsObservable } from 'redux-observable';

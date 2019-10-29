@@ -6,13 +6,10 @@ import { css, extractCss, postcss, sass } from '@build/webpack/plugins/styles';
 import { setEntry, watch } from '@build/webpack/plugins/core';
 import FixStyleOnlyEntriesPlugin from 'webpack-fix-style-only-entries';
 
-export function makeConfig({ entries, output }: { entries: any; output: string }) {
-	// @ts-ignore
-	process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-
+export function makeConfig({ entries, output, env: environment }: { entries: any; output: string; env: string }) {
 	return createConfig([
 		setOutput(output),
-		setMode(isDevelopment() ? 'development' : 'production'),
+		setMode(isDevelopment(environment) ? 'development' : 'production'),
 		setEntry(entries),
 		env('development', [watch()]),
 		match(
@@ -23,13 +20,13 @@ export function makeConfig({ entries, output }: { entries: any; output: string }
 				}),
 				css({
 					styleLoader: false,
-					sourceMap: isDevelopment(),
+					sourceMap: isDevelopment(environment),
 				}),
 				postcss({
 					config: {
 						path: paths.project.root,
 					},
-					sourceMap: isDevelopment(),
+					sourceMap: isDevelopment(environment),
 				}),
 			]
 		),
@@ -41,16 +38,16 @@ export function makeConfig({ entries, output }: { entries: any; output: string }
 				}),
 				css({
 					styleLoader: false,
-					sourceMap: isDevelopment(),
+					sourceMap: isDevelopment(environment),
 				}),
 				postcss({
 					config: {
 						path: paths.project.root,
 					},
-					sourceMap: isDevelopment(),
+					sourceMap: isDevelopment(environment),
 				}),
 				sass({
-					sourceMap: isDevelopment(),
+					sourceMap: isDevelopment(environment),
 				}),
 			]
 		),

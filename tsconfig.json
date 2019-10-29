@@ -27,7 +27,6 @@
 		"paths": {
 			"@root/*": ["./*"],
 			"@web/*": ["./packages/sw-web/src/*"],
-			"@web-test/*": ["./packages/sw-web/test/*"],
 			"@shared/*": ["./packages/sw-shared/src/*"],
 			"@build/*": ["./packages/sw-shared/build/*"],
 			"@api/*": ["./packages/sw-api/src/*"],
