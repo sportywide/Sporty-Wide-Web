@@ -13,6 +13,7 @@
 		"date-fns": "2.0.1",
 		"dotenv": "8.1.0",
 		"escodegen": "1.12.0",
+		"find-up": "4.1.0",
 		"graphql": "14.5.8",
 		"json5": "2.1.1",
 		"juice": "5.2.0",

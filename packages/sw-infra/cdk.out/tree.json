@@ -1,0 +1,181 @@
+{
+	"version": "tree-0.1",
+	"tree": {
+		"id": "App",
+		"path": "",
+		"children": [
+			{
+				"id": "Tree",
+				"path": "Tree"
+			},
+			{
+				"id": "swStack",
+				"path": "swStack",
+				"children": [
+					{
+						"id": "swVpc",
+						"path": "swStack/swVpc",
+						"children": [
+							{
+								"id": "Resource",
+								"path": "swStack/swVpc/Resource"
+							},
+							{
+								"id": "PublicSubnet1",
+								"path": "swStack/swVpc/PublicSubnet1",
+								"children": [
+									{
+										"id": "Subnet",
+										"path": "swStack/swVpc/PublicSubnet1/Subnet"
+									},
+									{
+										"id": "Acl",
+										"path": "swStack/swVpc/PublicSubnet1/Acl"
+									},
+									{
+										"id": "RouteTable",
+										"path": "swStack/swVpc/PublicSubnet1/RouteTable"
+									},
+									{
+										"id": "RouteTableAssociation",
+										"path": "swStack/swVpc/PublicSubnet1/RouteTableAssociation"
+									},
+									{
+										"id": "DefaultRoute",
+										"path": "swStack/swVpc/PublicSubnet1/DefaultRoute"
+									},
+									{
+										"id": "EIP",
+										"path": "swStack/swVpc/PublicSubnet1/EIP"
+									},
+									{
+										"id": "NATGateway",
+										"path": "swStack/swVpc/PublicSubnet1/NATGateway"
+									}
+								]
+							},
+							{
+								"id": "PublicSubnet2",
+								"path": "swStack/swVpc/PublicSubnet2",
+								"children": [
+									{
+										"id": "Subnet",
+										"path": "swStack/swVpc/PublicSubnet2/Subnet"
+									},
+									{
+										"id": "Acl",
+										"path": "swStack/swVpc/PublicSubnet2/Acl"
+									},
+									{
+										"id": "RouteTable",
+										"path": "swStack/swVpc/PublicSubnet2/RouteTable"
+									},
+									{
+										"id": "RouteTableAssociation",
+										"path": "swStack/swVpc/PublicSubnet2/RouteTableAssociation"
+									},
+									{
+										"id": "DefaultRoute",
+										"path": "swStack/swVpc/PublicSubnet2/DefaultRoute"
+									},
+									{
+										"id": "EIP",
+										"path": "swStack/swVpc/PublicSubnet2/EIP"
+									},
+									{
+										"id": "NATGateway",
+										"path": "swStack/swVpc/PublicSubnet2/NATGateway"
+									}
+								]
+							},
+							{
+								"id": "PrivateSubnet1",
+								"path": "swStack/swVpc/PrivateSubnet1",
+								"children": [
+									{
+										"id": "Subnet",
+										"path": "swStack/swVpc/PrivateSubnet1/Subnet"
+									},
+									{
+										"id": "Acl",
+										"path": "swStack/swVpc/PrivateSubnet1/Acl"
+									},
+									{
+										"id": "RouteTable",
+										"path": "swStack/swVpc/PrivateSubnet1/RouteTable"
+									},
+									{
+										"id": "RouteTableAssociation",
+										"path": "swStack/swVpc/PrivateSubnet1/RouteTableAssociation"
+									},
+									{
+										"id": "DefaultRoute",
+										"path": "swStack/swVpc/PrivateSubnet1/DefaultRoute"
+									}
+								]
+							},
+							{
+								"id": "PrivateSubnet2",
+								"path": "swStack/swVpc/PrivateSubnet2",
+								"children": [
+									{
+										"id": "Subnet",
+										"path": "swStack/swVpc/PrivateSubnet2/Subnet"
+									},
+									{
+										"id": "Acl",
+										"path": "swStack/swVpc/PrivateSubnet2/Acl"
+									},
+									{
+										"id": "RouteTable",
+										"path": "swStack/swVpc/PrivateSubnet2/RouteTable"
+									},
+									{
+										"id": "RouteTableAssociation",
+										"path": "swStack/swVpc/PrivateSubnet2/RouteTableAssociation"
+									},
+									{
+										"id": "DefaultRoute",
+										"path": "swStack/swVpc/PrivateSubnet2/DefaultRoute"
+									}
+								]
+							},
+							{
+								"id": "IGW",
+								"path": "swStack/swVpc/IGW"
+							},
+							{
+								"id": "VPCGW",
+								"path": "swStack/swVpc/VPCGW"
+							}
+						]
+					},
+					{
+						"id": "swRdsSecurityGroup",
+						"path": "swStack/swRdsSecurityGroup",
+						"children": [
+							{
+								"id": "Resource",
+								"path": "swStack/swRdsSecurityGroup/Resource"
+							}
+						]
+					},
+					{
+						"id": "swRds",
+						"path": "swStack/swRds",
+						"children": [
+							{
+								"id": "SubnetGroup",
+								"path": "swStack/swRds/SubnetGroup"
+							},
+							{
+								"id": "Resource",
+								"path": "swStack/swRds/Resource"
+							}
+						]
+					}
+				]
+			}
+		]
+	}
+}
