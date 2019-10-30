@@ -38,6 +38,9 @@ export function makeConfig({
 	watchMode = isDevelopment(environment) ? (watchMode === undefined ? true : watchMode) : false;
 	const packageName = path.basename(path.dirname(output));
 
+	// @ts-ignore
+	process.env.NODE_ENV = environment;
+
 	envFile = envFile || path.resolve(paths.project.root, 'packages', packageName, '.env');
 
 	return createConfig([
