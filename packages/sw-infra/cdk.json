@@ -1,3 +1,3 @@
 {
-	"app": "npx ts-node -r tsconfig-paths/register bin/sw-infra.ts"
+	"app": "npx ts-node -T -r tsconfig-paths/register bin/sw-infra.ts"
 }
