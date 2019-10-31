@@ -12,6 +12,7 @@
 		"@aws-cdk/aws-elasticache": "1.15.0",
 		"@aws-cdk/aws-rds": "1.15.0",
 		"@aws-cdk/core": "1.15.0",
+		"@aws-cdk/aws-secretsmanager": "1.15.0",
 		"sportywide-shared": "1.0.1"
 	},
 	"devDependencies": {

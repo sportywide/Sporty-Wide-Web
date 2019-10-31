@@ -170,6 +170,8 @@ next-build
 # DynamoDB Local files
 .dynamodb/
 
+cdk.out
+
 ### Windows ###
 # Windows thumbnail cache files
 Thumbs.db
