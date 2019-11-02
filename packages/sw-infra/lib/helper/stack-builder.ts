@@ -12,6 +12,15 @@ import {
 } from '@aws-cdk/aws-ec2';
 import { ucfirst } from '@shared/lib/utils/string/conversion';
 import { DatabaseInstance, DatabaseInstanceProps } from '@aws-cdk/aws-rds';
+import { AutoScalingGroup, AutoScalingGroupProps } from '@aws-cdk/aws-autoscaling';
+import {
+	Cluster as ECSCluster,
+	ClusterProps,
+	Ec2ServiceProps,
+	TaskDefinitionProps,
+	Ec2Service,
+	TaskDefinition,
+} from '@aws-cdk/aws-ecs';
 import { CfnCacheCluster, CfnCacheClusterProps, CfnSubnetGroup, CfnSubnetGroupProps } from '@aws-cdk/aws-elasticache';
 
 type SwSecurityGroupProps = SecurityGroupProps & {
@@ -40,7 +49,7 @@ export class StackBuilder {
 		return this.register(name, new CfnCondition(this.stack, this.getName(name), props));
 	}
 
-	register(name, instance) {
+	register<T extends Construct>(name, instance: T): T {
 		this.resourceMap.set(this.getName(name), instance);
 		return instance;
 	}
@@ -49,9 +58,48 @@ export class StackBuilder {
 		return this.register(name, new Vpc(this.stack, this.getName(name), props));
 	}
 
+	autoScalingGroup(name, props: AutoScalingGroupProps) {
+		return new AutoScalingGroup(this.stack, this.getName(name), {
+			...props,
+		});
+	}
+
+	ecs(name, props: ClusterProps) {
+		const resourceName = this.getName(name);
+		return this.register(
+			name,
+			new ECSCluster(this.stack, resourceName, {
+				clusterName: resourceName,
+				...props,
+			})
+		);
+	}
+
+	ecsTask(name, props: TaskDefinitionProps) {
+		const resourceName = this.getName(name);
+		return this.register(
+			name,
+			new TaskDefinition(this.stack, resourceName, {
+				...props,
+			})
+		);
+	}
+
+	ecsService(name, props: Ec2ServiceProps) {
+		const resourceName = this.getName(name);
+		return this.register(
+			name,
+			new Ec2Service(this.stack, resourceName, {
+				serviceName: resourceName,
+				...props,
+			})
+		);
+	}
+
 	securityGroup(name, { ingressRules = [], egressRules = [], ...props }: SwSecurityGroupProps): SecurityGroup {
-		const securityGroup = new SecurityGroup(this.stack, this.getName(name), {
-			securityGroupName: this.getName(name),
+		const resourceName = this.getName(name);
+		const securityGroup = new SecurityGroup(this.stack, resourceName, {
+			securityGroupName: resourceName,
 			...props,
 		});
 		for (const rule of ingressRules) {
@@ -77,20 +125,22 @@ export class StackBuilder {
 	}
 
 	cacheSubnetGroup(name, props: CfnSubnetGroupProps) {
+		const resourceName = this.getName(name);
 		return this.register(
 			name,
-			new CfnSubnetGroup(this.stack, this.getName(name), {
-				cacheSubnetGroupName: this.getName(name),
+			new CfnSubnetGroup(this.stack, resourceName, {
+				cacheSubnetGroupName: resourceName,
 				...props,
 			})
 		);
 	}
 
 	cacheCluster(name, props: CfnCacheClusterProps) {
+		const resourceName = this.getName(name);
 		return this.register(
 			name,
-			new CfnCacheCluster(this.stack, this.getName(name), {
-				clusterName: this.getName(name),
+			new CfnCacheCluster(this.stack, resourceName, {
+				clusterName: resourceName,
 				...props,
 			})
 		);
