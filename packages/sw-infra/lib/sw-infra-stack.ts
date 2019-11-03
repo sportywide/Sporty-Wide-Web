@@ -1,29 +1,32 @@
-import { App, Fn, SecretValue, Duration } from '@aws-cdk/core';
+import { App, Duration, Fn, SecretValue } from '@aws-cdk/core';
 import {
 	CfnRoute,
 	InstanceClass,
 	InstanceSize,
 	InstanceType,
+	Peer,
 	Port,
-	AmazonLinuxImage,
 	SecurityGroup,
 	SubnetType,
 	Vpc,
-	Peer,
 } from '@aws-cdk/aws-ec2';
-import { Protocol, ContainerImage, EcsOptimizedImage } from '@aws-cdk/aws-ecs';
+import { ContainerImage, EcsOptimizedImage, Protocol } from '@aws-cdk/aws-ecs';
 import { DatabaseInstanceEngine } from '@aws-cdk/aws-rds';
 import { createConfig } from '@shared/lib/config/config-reader';
 import { StackBuilder } from '@root/packages/sw-infra/lib/helper/stack-builder';
 import { Compatibility, NetworkMode } from '@root/node_modules/@aws-cdk/aws-ecs';
-import { ManagedPolicy } from '@aws-cdk/aws-iam';
+import { Effect, ManagedPolicy, PolicyStatement, ServicePrincipal } from '@aws-cdk/aws-iam';
 
 const config = createConfig(require('./config').config, process.env.NODE_ENV || 'production');
 
 export async function buildSwStack() {
 	const app = new App();
 	const stackBuilder = new StackBuilder(app, 'stack');
+	const associateEIPRole = createAssociateEIPRole(stackBuilder);
+	createEIPs(stackBuilder);
 	const vpc = createVpc(stackBuilder);
+	const natInstance = createNatInstance(stackBuilder, vpc);
+	stackBuilder.attachRolesToInstance('natInstanceProfileRole', natInstance, associateEIPRole);
 	createRds(stackBuilder, vpc);
 	createRedis(stackBuilder, vpc);
 	createECSCluster(stackBuilder, vpc);
@@ -37,7 +40,10 @@ function createVpc(stackBuilder: StackBuilder) {
 		cidr: '10.0.0.0/16',
 		natGateways: 0,
 	});
+	return vpc;
+}
 
+function createNatInstance(stackBuilder: StackBuilder, vpc: Vpc) {
 	const natSecurityGroup = stackBuilder.securityGroup('natSecurityGroup', {
 		vpc: vpc,
 		description: 'NAT Instance Security Group',
@@ -48,6 +54,21 @@ function createVpc(stackBuilder: StackBuilder) {
 
 	const natInstance = stackBuilder.ec2('NATInstance', {
 		keyName: 'sw-ec2-key',
+		tags: [
+			{
+				key: 'Name',
+				value: 'swStack/swNatInstance',
+			},
+		],
+		userData: Fn.base64(`#!/bin/bash
+set -x
+exec > >(tee /var/log/user-data.log|logger -t user-data ) 2>&1
+yum update -y
+yum install -y postgresql
+yum install -y gcc
+wget http://download.redis.io/redis-stable.tar.gz && tar xvzf redis-stable.tar.gz && cd redis-stable && make
+cp src/redis-cli /usr/bin/
+yum install -y jq`),
 		imageId: 'ami-00c1445796bc0a29f',
 		instanceType: InstanceType.of(InstanceClass.T2, InstanceSize.NANO).toString(),
 		subnetId: vpc.publicSubnets[0].subnetId,
@@ -59,12 +80,32 @@ function createVpc(stackBuilder: StackBuilder) {
 		const defaultRoute = subnet.node.findChild('DefaultRoute') as CfnRoute;
 		defaultRoute.addPropertyOverride('InstanceId', natInstance.ref);
 	});
-	return vpc;
+
+	return natInstance;
+}
+
+function createAssociateEIPRole(stackBuilder: StackBuilder) {
+	const role = stackBuilder.role('associateEIPRole', {
+		assumedBy: new ServicePrincipal('ec2.amazonaws.com'),
+	});
+
+	role.addToPolicy(createAssociateEIPPolicyStatement());
+
+	return role;
+}
+
+function createAssociateEIPPolicyStatement() {
+	return new PolicyStatement({
+		effect: Effect.ALLOW,
+		resources: ['*'],
+		actions: ['ec2:AssociateAddress', 'ec2:DescribeAddresses', 'ec2:DescribeTags', 'ec2:DescribeInstances'],
+	});
 }
 
 function createRds(stackBuilder: StackBuilder, vpc: Vpc) {
 	const rds = stackBuilder.rds('rds', {
 		engine: DatabaseInstanceEngine.POSTGRES,
+		engineVersion: '10.10',
 		vpcPlacement: { subnetType: SubnetType.PRIVATE },
 		databaseName: config.get('postgres:database'),
 		instanceClass: InstanceType.of(InstanceClass.T2, InstanceSize.MICRO),
@@ -120,10 +161,14 @@ function createECSCluster(stackBuilder: StackBuilder, vpc: Vpc) {
 		ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonEC2ContainerServiceforEC2Role')
 	);
 
+	autoScalingGroup.role.addToPolicy(createAssociateEIPPolicyStatement());
+
 	cluster.addAutoScalingGroup(autoScalingGroup, {
 		spotInstanceDraining: false,
 		taskDrainTime: Duration.seconds(0),
 	});
+
+	autoScalingGroup.addUserData('');
 
 	const stellaTask = createStellaECSTask(stackBuilder);
 
@@ -131,6 +176,10 @@ function createECSCluster(stackBuilder: StackBuilder, vpc: Vpc) {
 		cluster,
 		taskDefinition: stellaTask,
 	});
+}
+
+function createEIPs(stackBuilder: StackBuilder) {
+	stackBuilder.eip('scyllaEIP');
 }
 
 function createStellaECSTask(stackBuilder: StackBuilder) {

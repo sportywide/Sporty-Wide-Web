@@ -1,4 +1,4 @@
-import { CfnCondition, CfnConditionProps, Construct, Resource, Stack } from '@aws-cdk/core';
+import { CfnCondition, CfnConditionProps, Construct, Resource, Stack, Tag } from '@aws-cdk/core';
 import {
 	CfnInstance,
 	CfnInstanceProps,
@@ -9,7 +9,10 @@ import {
 	SubnetConfiguration,
 	Vpc,
 	VpcProps,
+	CfnEIPProps,
+	CfnEIP,
 } from '@aws-cdk/aws-ec2';
+import { Role, RoleProps, CfnInstanceProfileProps, CfnInstanceProfile } from '@aws-cdk/aws-iam';
 import { ucfirst } from '@shared/lib/utils/string/conversion';
 import { DatabaseInstance, DatabaseInstanceProps } from '@aws-cdk/aws-rds';
 import { AutoScalingGroup, AutoScalingGroupProps } from '@aws-cdk/aws-autoscaling';
@@ -59,9 +62,39 @@ export class StackBuilder {
 	}
 
 	autoScalingGroup(name, props: AutoScalingGroupProps) {
-		return new AutoScalingGroup(this.stack, this.getName(name), {
-			...props,
-		});
+		return this.register(
+			name,
+			new AutoScalingGroup(this.stack, this.getName(name), {
+				...props,
+			})
+		);
+	}
+
+	eip(name, props?: CfnEIPProps) {
+		const eip = new CfnEIP(this.stack, this.getName(name), props);
+		Tag.add(eip, 'Reference', 'sw-eip');
+		Tag.add(eip, 'Environment', 'production');
+		return eip;
+	}
+
+	role(name, props: RoleProps) {
+		return this.register(
+			name,
+			new Role(this.stack, this.getName(name), {
+				roleName: this.getName(name),
+				...props,
+			})
+		);
+	}
+
+	instanceProfile(name, props: CfnInstanceProfileProps) {
+		return this.register(
+			name,
+			new CfnInstanceProfile(this.stack, this.getName(name), {
+				instanceProfileName: this.getName(name),
+				...props,
+			})
+		);
 	}
 
 	ecs(name, props: ClusterProps) {
@@ -121,7 +154,13 @@ export class StackBuilder {
 	}
 
 	rds(name, props: DatabaseInstanceProps): DatabaseInstance {
-		return this.register(name, new DatabaseInstance(this.stack, this.getName(name), props));
+		return this.register(
+			name,
+			new DatabaseInstance(this.stack, this.getName(name), {
+				instanceIdentifier: this.getName(name),
+				...props,
+			})
+		);
 	}
 
 	cacheSubnetGroup(name, props: CfnSubnetGroupProps) {
@@ -161,5 +200,14 @@ export class StackBuilder {
 
 	private getName(name) {
 		return `sw${ucfirst(name)}`;
+	}
+
+	attachRolesToInstance(instanceProfileName, instance: CfnInstance, ...roles: Role[]) {
+		const instanceProfile = this.instanceProfile(instanceProfileName, {
+			roles: roles.map(role => role.roleName),
+		});
+		instance.iamInstanceProfile = instanceProfile.ref;
+		instance.addDependsOn(instanceProfile);
+		return instance;
 	}
 }
