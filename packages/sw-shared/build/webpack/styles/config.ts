@@ -7,6 +7,9 @@ import { setEntry, watch } from '@build/webpack/plugins/core';
 import FixStyleOnlyEntriesPlugin from 'webpack-fix-style-only-entries';
 
 export function makeConfig({ entries, output, env: environment }: { entries: any; output: string; env: string }) {
+	// @ts-ignore
+	process.env.NODE_ENV = environment;
+
 	return createConfig([
 		setOutput(output),
 		setMode(isDevelopment(environment) ? 'development' : 'production'),
