@@ -40,8 +40,10 @@ export class StackBuilder {
 	readonly stack: Stack;
 	private readonly resourceMap: Map<string, Construct>;
 	readonly app: Construct;
+	private readonly env: string;
 
-	constructor(scope: Construct, id: string, props?: any) {
+	constructor(scope: Construct, id: string, props: any = {}) {
+		this.env = props.env;
 		this.app = scope;
 		this.stack = new Stack(scope, this.getName(id), props);
 		this.resourceMap = new Map<string, Resource>();
@@ -54,6 +56,7 @@ export class StackBuilder {
 
 	register<T extends Construct>(name, instance: T): T {
 		this.resourceMap.set(this.getName(name), instance);
+		Tag.add(instance, 'Environment', this.env);
 		return instance;
 	}
 
@@ -73,7 +76,7 @@ export class StackBuilder {
 	eip(name, props?: CfnEIPProps) {
 		const eip = new CfnEIP(this.stack, this.getName(name), props);
 		Tag.add(eip, 'Reference', 'sw-eip');
-		Tag.add(eip, 'Environment', 'production');
+		this.register(name, eip);
 		return eip;
 	}
 
