@@ -50,6 +50,7 @@ export class FixturePersisterService {
 			});
 			const fuse = new Fuse(teams, fuzzyOptions);
 			const teamCache = {};
+			const fixtureCountMap = {};
 			await Promise.all(
 				matches.map(async match => {
 					const homeTeam = teamCache[match.home] || fuse.search(match.home)[0];
@@ -71,6 +72,9 @@ export class FixturePersisterService {
 					teamCache[match.home] = homeTeam;
 					teamCache[match.away] = awayTeam;
 
+					fixtureCountMap[homeTeam.id] = (fixtureCountMap[homeTeam.id] || 0) + 1;
+					fixtureCountMap[awayTeam.id] = (fixtureCountMap[awayTeam.id] || 0) + 1;
+
 					const dbObj = {
 						id: parseInt(this.getMatchId(match.link), 10),
 						link: match.link,
@@ -78,6 +82,7 @@ export class FixturePersisterService {
 						away: awayTeam.title,
 						homeId: homeTeam.id,
 						awayId: awayTeam.id,
+						fixtureNumber: Math.max(fixtureCountMap[homeTeam.id], fixtureCountMap[awayTeam.id]),
 						homeScore: match.homeScore,
 						awayScore: match.awayScore,
 						current: match.current,

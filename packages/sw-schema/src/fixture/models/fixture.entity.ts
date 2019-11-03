@@ -1,15 +1,18 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { BaseGeneratedEntity } from '@schema/core/base.entity';
+import { BaseEntity, BaseGeneratedEntity } from '@schema/core/base.entity';
 import { Team } from '@schema/team/models/team.entity';
 import { League } from '@schema/league/models/league.entity';
 
 @Entity()
-export class Fixture extends BaseGeneratedEntity {
+export class Fixture extends BaseEntity {
 	@Column()
 	home: string;
 
 	@Column()
 	away: string;
+
+	@Column()
+	fixtureNumber: number;
 
 	@ManyToOne(type => Team)
 	@JoinColumn({
