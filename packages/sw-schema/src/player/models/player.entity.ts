@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, RelationId } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '@schema/core/base.entity';
 import { Team } from '@schema/team/models/team.entity';
 

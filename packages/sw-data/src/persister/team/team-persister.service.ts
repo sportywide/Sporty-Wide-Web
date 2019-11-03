@@ -106,6 +106,7 @@ export class TeamPersisterService {
 				};
 
 				delete dbObj['fifaId'];
+
 				try {
 					await this.teamRepository.upsert(dbObj, ['name', 'image', 'att', 'mid', 'def', 'ovr', 'rating']);
 					this.logger.trace(`Persisted team ${dbObj.name}`);

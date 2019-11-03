@@ -1,8 +1,8 @@
-import { BaseEntity } from '@schema/core/base.entity';
+import { BaseGeneratedEntity } from '@schema/core/base.entity';
 import { Column, Entity } from 'typeorm';
 
 @Entity()
-export class League extends BaseEntity {
+export class League extends BaseGeneratedEntity {
 	@Column()
 	name: string;
 

@@ -1,10 +1,10 @@
 import { Column, Entity } from 'typeorm';
-import { BaseEntity } from '@schema/core/base.entity';
+import { BaseGeneratedEntity } from '@schema/core/base.entity';
 
 @Entity({
 	name: 'states',
 })
-export class State extends BaseEntity {
+export class State extends BaseGeneratedEntity {
 	@Column()
 	name: string;
 

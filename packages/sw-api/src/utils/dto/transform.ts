@@ -1,4 +1,4 @@
-import { BaseEntity } from '@schema/core/base.entity';
+import { BaseGeneratedEntity } from '@schema/core/base.entity';
 import { ClassTransformOptions, plainToClass } from 'class-transformer-imp';
 import { filterValues } from '@shared/lib/utils/object/filter';
 import { Type } from '@nestjs/common';
@@ -17,7 +17,7 @@ export function toDto<T>({
 	options?: ClassTransformOptions;
 }): T {
 	let plain = value;
-	if (value instanceof BaseEntity) {
+	if (value instanceof BaseGeneratedEntity) {
 		plain = value.toPlain();
 	}
 

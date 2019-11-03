@@ -1,12 +1,12 @@
 import { DeepPartial, DeleteResult, FindConditions, FindManyOptions, In, ObjectID, SaveOptions } from 'typeorm';
-import { BaseEntity } from '@schema/core/base.entity';
+import { BaseGeneratedEntity } from '@schema/core/base.entity';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { SwLRUCache } from '@shared/lib/utils/cache/lru-cache';
 import DataLoader from 'dataloader';
 import { keyBy, omit } from 'lodash';
 import { SwRepository } from '@schema/core/repository/sql/base.repository';
 
-export class BaseEntityService<T extends BaseEntity> {
+export class BaseEntityService<T extends BaseGeneratedEntity> {
 	private cache: SwLRUCache<DataLoader<number, T>>;
 	constructor(private readonly repository: SwRepository<T>) {
 		this.cache = new SwLRUCache();
