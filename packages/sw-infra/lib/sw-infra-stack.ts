@@ -17,11 +17,14 @@ import { StackBuilder } from '@root/packages/sw-infra/lib/helper/stack-builder';
 import { Compatibility, NetworkMode } from '@root/node_modules/@aws-cdk/aws-ecs';
 import { Effect, ManagedPolicy, PolicyStatement, ServicePrincipal } from '@aws-cdk/aws-iam';
 
-const config = createConfig(require('./config').config, process.env.NODE_ENV || 'production');
+const env = process.env.NODE_ENV || 'production';
+const config = createConfig(require('./config').config, env);
 
 export async function buildSwStack() {
 	const app = new App();
-	const stackBuilder = new StackBuilder(app, 'stack');
+	const stackBuilder = new StackBuilder(app, 'stack', {
+		env,
+	});
 	const associateEIPRole = createAssociateEIPRole(stackBuilder);
 	createEIPs(stackBuilder);
 	const vpc = createVpc(stackBuilder);
@@ -35,12 +38,11 @@ export async function buildSwStack() {
 }
 
 function createVpc(stackBuilder: StackBuilder) {
-	const vpc = stackBuilder.vpc('vpc', {
+	return stackBuilder.vpc('vpc', {
 		maxAzs: 2,
 		cidr: '10.0.0.0/16',
 		natGateways: 0,
 	});
-	return vpc;
 }
 
 function createNatInstance(stackBuilder: StackBuilder, vpc: Vpc) {
@@ -179,7 +181,8 @@ function createECSCluster(stackBuilder: StackBuilder, vpc: Vpc) {
 }
 
 function createEIPs(stackBuilder: StackBuilder) {
-	stackBuilder.eip('scyllaEIP');
+	stackBuilder.eip('eip-1');
+	stackBuilder.eip('eip-2');
 }
 
 function createStellaECSTask(stackBuilder: StackBuilder) {
