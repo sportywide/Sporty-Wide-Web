@@ -4,10 +4,10 @@
 	"description": "A Social network for Sports",
 	"author": "Sporty Wide",
 	"scripts": {
+		"compile:build": "ts-node -r tsconfig-paths/register compiler.ts",
 		"dev:exec": "gulp dev:exec --color",
 		"exec": "gulp exec --color",
-		"install:dependencies": "ts-node -T bin/install.ts",
-		"compile:build": "ts-node -r tsconfig-paths/register compiler.ts"
+		"install:dependencies": "ts-node -T bin/install.ts"
 	},
 	"husky": {
 		"hooks": {

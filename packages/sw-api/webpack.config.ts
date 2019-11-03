@@ -7,7 +7,6 @@ module.exports = makeConfig({
 	env: argv.env,
 	entries: path.resolve(paths.api.src, 'main'),
 	output: paths.api.dist,
-	hot: true,
 	alias: {
 		'@root': paths.project.root,
 		'@shared': paths.shared.src,
