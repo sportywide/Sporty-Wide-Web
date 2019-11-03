@@ -7,7 +7,7 @@ import { InjectSwRepository } from '@schema/core/repository/sql/inject-repositor
 import { SwRepository } from '@schema/core/repository/sql/base.repository';
 import { Fixture } from '@schema/fixture/models/fixture.entity';
 import { Brackets } from 'typeorm';
-import { min, max } from 'lodash';
+import { max, min } from 'lodash';
 
 @Injectable()
 export class PlayerService {
@@ -154,8 +154,9 @@ export class PlayerService {
 
 		function markPlayerUnavailable(removedPlayer) {
 			for (const position of removedPlayer.positions) {
-				const availablePlayers = positionMap[position].players.filter(player => player !== removedPlayer);
-				positionMap[position].players = availablePlayers;
+				positionMap[position].players = positionMap[position].players.filter(
+					player => player !== removedPlayer
+				);
 			}
 		}
 	}

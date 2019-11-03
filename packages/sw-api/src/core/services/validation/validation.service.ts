@@ -6,7 +6,7 @@ import { plainToClass } from 'class-transformer-imp';
 import { getEditableGroupsForUser } from '@shared/lib/utils/decorators/permissions';
 import { filterValues } from '@shared/lib/utils/object/filter';
 import { isPromise } from '@shared/lib/utils/promise';
-import { BaseEntity } from '@schema/core/base.entity';
+import { BaseGeneratedEntity } from '@schema/core/base.entity';
 import { mergeConcatArray } from '@shared/lib/utils/object/merge';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class ApiValidationService {
 			if (isPromise(originalValues)) {
 				originalValues = await originalValues;
 			}
-			if (originalValues instanceof BaseEntity) {
+			if (originalValues instanceof BaseGeneratedEntity) {
 				originalValues = originalValues.toPlain();
 			}
 			const strippedValues = this.strip({ objectType, value: patch, user });

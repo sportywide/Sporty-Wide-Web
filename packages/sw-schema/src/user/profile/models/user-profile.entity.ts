@@ -1,10 +1,10 @@
 import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
-import { BaseEntity } from '@schema/core/base.entity';
+import { BaseGeneratedEntity } from '@schema/core/base.entity';
 import { Address } from '@schema/address/models/address.entity';
 import { User } from '@schema/user/models/user.entity';
 
 @Entity()
-export class UserProfile extends BaseEntity {
+export class UserProfile extends BaseGeneratedEntity {
 	@Column()
 	summary: string;
 

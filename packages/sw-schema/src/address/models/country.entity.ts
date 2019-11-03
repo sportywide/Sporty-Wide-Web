@@ -1,10 +1,10 @@
 import { Column, Entity } from 'typeorm';
-import { BaseEntity } from '@schema/core/base.entity';
+import { BaseGeneratedEntity } from '@schema/core/base.entity';
 
 @Entity({
 	name: 'countries',
 })
-export class Country extends BaseEntity {
+export class Country extends BaseGeneratedEntity {
 	@Column()
 	sortname: string;
 

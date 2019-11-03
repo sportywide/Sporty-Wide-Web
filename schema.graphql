@@ -4,16 +4,16 @@
 # -----------------------------------------------
 
 type AddressDto {
-	id: Int!
-	street1: String
-	street2: String
-	state: String
-	city: String
-	country: String
-	suburb: String
-	postcode: String
-	lat: Int
-	lon: Int
+  id: Int!
+  street1: String
+  street2: String
+  state: String
+  city: String
+  country: String
+  suburb: String
+  postcode: String
+  lat: Int
+  lon: Int
 }
 
 """
@@ -22,48 +22,48 @@ The javascript `Date` as string. Type represents date and time as the ISO Date s
 scalar DateTime
 
 type Query {
-	users(limit: Int, skip: Int): [UserDto!]!
-	user(id: Float!): UserDto!
+  users(limit: Int, skip: Int): [UserDto!]!
+  user(id: Float!): UserDto!
 }
 
 type UserDto {
-	id: Int!
-	firstName: String!
-	lastName: String
-	email: String!
-	username: String!
-	role: UserRole!
-	status: UserStatus!
-	gender: UserGender
-	dob: String
-	phone: String
-	createdAt: DateTime!
-	updatedAt: DateTime!
-	profileUrl: String
-	profile: UserProfileDto
+  id: Int!
+  firstName: String!
+  lastName: String
+  email: String!
+  username: String!
+  role: UserRole!
+  status: UserStatus!
+  gender: UserGender
+  dob: String
+  phone: String
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  profileUrl: String
+  profile: UserProfileDto
 }
 
 enum UserGender {
-	MALE
-	FEMALE
-	OTHER
+  MALE
+  FEMALE
+  OTHER
 }
 
 type UserProfileDto {
-	id: Int!
-	work: String
-	education: String
-	summary: String
-	address: AddressDto
-	addressId: Float
+  id: Int!
+  work: String
+  education: String
+  summary: String
+  address: AddressDto
+  addressId: Float
 }
 
 enum UserRole {
-	ADMIN
-	USER
+  ADMIN
+  USER
 }
 
 enum UserStatus {
-	PENDING
-	ACTIVE
+  PENDING
+  ACTIVE
 }

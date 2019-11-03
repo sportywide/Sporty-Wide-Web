@@ -1,6 +1,7 @@
 /* eslint-disable prettier/prettier */
 import {
 	Connection,
+	DeepPartial,
 	DeleteQueryBuilder,
 	EntitySchema,
 	EntitySubscriberInterface,
@@ -13,12 +14,11 @@ import {
 	Repository,
 	SelectQueryBuilder,
 	UpdateQueryBuilder,
-	DeepPartial,
 } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { SwSubscriber } from '@schema/core/subscriber/sql/base.subscriber';
 import { wrap } from '@shared/lib/utils/object/proxy';
-import { BaseEntity } from '@schema/core/base.entity';
+import { BaseGeneratedEntity } from '@schema/core/base.entity';
 
 class SwBaseRepository<T> {
 	constructor(private repository: Repository<T>) {}
@@ -100,7 +100,7 @@ class SwBaseRepository<T> {
 			entities = [entities];
 		}
 		entities.forEach(entity => {
-			if (entity instanceof BaseEntity) {
+			if (entity instanceof BaseGeneratedEntity) {
 				entity.afterLoad();
 			}
 		});
