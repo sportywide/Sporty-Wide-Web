@@ -13,7 +13,7 @@ export const config = {
 			executable: '/usr/bin/chromium-browser',
 		},
 		proxy: {
-			url: '52.65.6.49:8081',
+			url: '3.105.235.150:8081',
 		},
 		rapidapi: {
 			api_key: [
