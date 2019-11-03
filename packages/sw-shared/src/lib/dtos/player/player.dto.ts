@@ -9,4 +9,5 @@ export class PlayerDto {
 	team?: TeamDto;
 	image: string;
 	rating: number;
+	age?: number;
 }
