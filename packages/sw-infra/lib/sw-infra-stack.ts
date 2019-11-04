@@ -10,7 +10,7 @@ import {
 	SubnetType,
 	Vpc,
 } from '@aws-cdk/aws-ec2';
-import { ContainerImage, EcsOptimizedImage, Protocol } from '@aws-cdk/aws-ecs';
+import { ContainerImage, EcsOptimizedImage, Protocol, LogDrivers } from '@aws-cdk/aws-ecs';
 import { DatabaseInstanceEngine } from '@aws-cdk/aws-rds';
 import { createConfig } from '@shared/lib/config/config-reader';
 import { StackBuilder } from '@root/packages/sw-infra/lib/helper/stack-builder';
@@ -186,15 +186,23 @@ function createEIPs(stackBuilder: StackBuilder) {
 }
 
 function createStellaECSTask(stackBuilder: StackBuilder) {
+	const executionRole = stackBuilder.role('ecsScyllaExecutionRole', {
+		assumedBy: new ServicePrincipal('ecs-tasks.amazonaws.com'),
+	});
+	executionRole.addManagedPolicy(
+		ManagedPolicy.fromAwsManagedPolicyName('service-role/AmazonECSTaskExecutionRolePolicy')
+	);
 	const taskDefinition = stackBuilder.ecsTask('ecsScyllaTask', {
 		compatibility: Compatibility.EC2,
 		memoryMiB: '512',
 		cpu: '256',
 		networkMode: NetworkMode.BRIDGE,
+		executionRole,
 	});
 
 	const scyllaContainer = taskDefinition.addContainer('scyllaContainer', {
 		image: ContainerImage.fromRegistry('wildcat/scylla'),
+		logging: LogDrivers.awsLogs({ streamPrefix: 'ECSScylla' }),
 		memoryLimitMiB: 512,
 	});
 
