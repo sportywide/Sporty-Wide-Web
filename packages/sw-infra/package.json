@@ -1,5 +1,5 @@
 {
-	"name": "sw-infra",
+	"name": "sportywide-infra",
 	"version": "1.0.1",
 	"bin": {
 		"sw-infra": "bin/sw-infra.js"

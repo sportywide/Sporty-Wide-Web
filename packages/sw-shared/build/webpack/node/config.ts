@@ -21,6 +21,7 @@ import { externals, node, none, setEntry, target, watch } from '../plugins/core'
 export function makeConfig({
 	env: environment = 'development',
 	entries,
+	libraryTarget,
 	output,
 	alias,
 	hot,
@@ -34,6 +35,7 @@ export function makeConfig({
 	hot?: boolean;
 	envFile?: string;
 	watchMode?: boolean;
+	libraryTarget?: string;
 }) {
 	watchMode = isDevelopment(environment) ? (watchMode === undefined ? true : watchMode) : false;
 	const packageName = path.basename(path.dirname(output));
@@ -77,6 +79,7 @@ export function makeConfig({
 		setOutput({
 			filename: '[name].js',
 			path: output,
+			libraryTarget,
 		}),
 		addPlugins(
 			[

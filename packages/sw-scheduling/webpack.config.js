@@ -88,20 +88,22 @@ module.exports = /******/ (function(modules) {
 	/******/ /******/ __webpack_require__.p = ''; // Load entry module and return exports
 	/******/
 	/******/
-	/******/ /******/ return __webpack_require__((__webpack_require__.s = './packages/sw-api/webpack.config.ts'));
+	/******/ /******/ return __webpack_require__(
+		(__webpack_require__.s = './packages/sw-scheduling/webpack.config.ts')
+	);
 	/******/
 })(
 	/************************************************************************/
 	/******/ {
-		/***/ './packages/sw-api/webpack.config.ts':
-			/*!*******************************************!*\
-  !*** ./packages/sw-api/webpack.config.ts ***!
-  \*******************************************/
+		/***/ './packages/sw-scheduling/webpack.config.ts':
+			/*!**************************************************!*\
+  !*** ./packages/sw-scheduling/webpack.config.ts ***!
+  \**************************************************/
 			/*! no static exports found */
 			/***/ function(module, exports, __webpack_require__) {
 				'use strict';
 				eval(
-					"\n\nvar _path = _interopRequireDefault(__webpack_require__(/*! path */ \"path\"));\n\nvar _config = __webpack_require__(/*! @build/webpack/node/config */ \"./packages/sw-shared/build/webpack/node/config.ts\");\n\nvar _paths = _interopRequireDefault(__webpack_require__(/*! @build/paths */ \"./packages/sw-shared/build/paths/index.js\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nconst argv = __webpack_require__(/*! yargs */ \"yargs\").argv;\n\nmodule.exports = (0, _config.makeConfig)({\n  env: argv.env,\n  entries: _path.default.resolve(_paths.default.api.src, 'main'),\n  output: _paths.default.api.dist,\n  alias: {\n    '@root': _paths.default.project.root,\n    '@shared': _paths.default.shared.src,\n    '@schema': _paths.default.schema.src,\n    '@core': _paths.default.core.src,\n    '@api': _paths.default.api.src\n  }\n});\n\n//# sourceURL=webpack:///./packages/sw-api/webpack.config.ts?"
+					"\n\nvar _config = __webpack_require__(/*! @build/webpack/node/config */ \"./packages/sw-shared/build/webpack/node/config.ts\");\n\nvar _serverlessWebpack = _interopRequireDefault(__webpack_require__(/*! serverless-webpack */ \"serverless-webpack\"));\n\nvar _paths = _interopRequireDefault(__webpack_require__(/*! @build/paths */ \"./packages/sw-shared/build/paths/index.js\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nconst isDev = _serverlessWebpack.default.lib.webpack.isLocal;\nprocess.env.NODE_ENV = isDev ? 'development' : 'production';\nmodule.exports = (0, _config.makeConfig)({\n  entries: _serverlessWebpack.default.lib.entries,\n  env: process.env.NODE_ENV,\n  libraryTarget: 'commonjs2',\n  output: _paths.default.scheduling.dist,\n  alias: {\n    '@scheduling': _paths.default.scheduling.src,\n    '@shared': _paths.default.shared.src\n  }\n});\n\n//# sourceURL=webpack:///./packages/sw-scheduling/webpack.config.ts?"
 				);
 
 				/***/
@@ -236,6 +238,19 @@ module.exports = /******/ (function(modules) {
 				/***/
 			},
 
+		/***/ 'serverless-webpack':
+			/*!*************************************!*\
+  !*** external "serverless-webpack" ***!
+  \*************************************/
+			/*! no static exports found */
+			/***/ function(module, exports) {
+				eval(
+					'module.exports = require("serverless-webpack");\n\n//# sourceURL=webpack:///external_%22serverless-webpack%22?'
+				);
+
+				/***/
+			},
+
 		/***/ webpack:
 			/*!**************************!*\
   !*** external "webpack" ***!
@@ -256,17 +271,6 @@ module.exports = /******/ (function(modules) {
 				eval(
 					'module.exports = require("webpack-node-externals");\n\n//# sourceURL=webpack:///external_%22webpack-node-externals%22?'
 				);
-
-				/***/
-			},
-
-		/***/ yargs:
-			/*!************************!*\
-  !*** external "yargs" ***!
-  \************************/
-			/*! no static exports found */
-			/***/ function(module, exports) {
-				eval('module.exports = require("yargs");\n\n//# sourceURL=webpack:///external_%22yargs%22?');
 
 				/***/
 			},

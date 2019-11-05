@@ -1,0 +1,22 @@
+{
+	"name": "sportywide-scheduling",
+	"version": "1.0.1",
+	"description": "Contain scheduling functions",
+	"repository": {
+		"type": "git",
+		"url": "git+ssh://git@gitlab.com/sporty-wide/sporty-wide-web.git"
+	},
+	"license": "ISC",
+	"scripts": {
+		"deploy": "sls deploy",
+		"dev": "sls offline start"
+	},
+	"dependencies": {
+		"sportywide-data": "1.0.1"
+	},
+	"devDependencies": {
+		"serverless": "1.56.1",
+		"serverless-offline": "5.12.0",
+		"serverless-webpack": "5.3.1"
+	}
+}

@@ -88,6 +88,17 @@ const paths = {
 			},
 		};
 	},
+	get scheduling() {
+		return {
+			root: path.resolve(paths.project.root, 'packages', 'sw-scheduling'),
+			get src() {
+				return path.resolve(this.root, 'src');
+			},
+			get dist() {
+				return path.resolve(this.root, 'dist');
+			},
+		};
+	},
 	get project() {
 		return {
 			root: path.dirname(findUp.sync('package-lock.json')),
