@@ -1,6 +1,6 @@
 {
 	"name": "sportywide-data",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Data Crawler service for SportyWide",
 	"license": "ISC",
 	"scripts": {
@@ -10,9 +10,9 @@
 	"dependencies": {
 		"cheerio": "0.22.0",
 		"puppeteer-core": "1.20.0",
-		"sportywide-core": "^1.0.1",
-		"sportywide-schema": "^1.0.1",
-		"sportywide-shared": "^1.0.1"
+		"sportywide-core": "^1.0.2",
+		"sportywide-schema": "^1.0.2",
+		"sportywide-shared": "^1.0.2"
 	},
 	"devDependencies": {
 		"@types/cheerio": "0.22.13",
