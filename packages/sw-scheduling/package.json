@@ -1,6 +1,6 @@
 {
 	"name": "sportywide-scheduling",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "Contain scheduling functions",
 	"repository": {
 		"type": "git",
@@ -12,7 +12,7 @@
 		"dev": "sls offline start"
 	},
 	"dependencies": {
-		"sportywide-data": "^1.0.2"
+		"sportywide-data": "^1.0.3"
 	},
 	"devDependencies": {
 		"serverless": "1.56.1",

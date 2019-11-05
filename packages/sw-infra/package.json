@@ -1,6 +1,6 @@
 {
 	"name": "sportywide-infra",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"bin": {
 		"sw-infra": "bin/sw-infra.js"
 	},
@@ -13,7 +13,7 @@
 		"@aws-cdk/aws-elasticache": "1.14.0",
 		"@aws-cdk/aws-rds": "1.14.0",
 		"@aws-cdk/core": "1.14.0",
-		"sportywide-shared": "^1.0.2"
+		"sportywide-shared": "^1.0.3"
 	},
 	"devDependencies": {
 		"@aws-cdk/assert": "1.14.0",
