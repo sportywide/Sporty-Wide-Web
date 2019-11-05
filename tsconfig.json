@@ -34,7 +34,8 @@
 			"@schema-test/*": ["./packages/sw-schema/test/*"],
 			"@core/*": ["./packages/sw-core/src/*"],
 			"@email/*": ["./packages/sw-email/src/*"],
-			"@data/*": ["./packages/sw-data/src/*"]
+			"@data/*": ["./packages/sw-data/src/*"],
+			"@scheduling/*": ["./packages/sw-scheduling/src/*"]
 		}
 	},
 	"exclude": ["node_modules"]

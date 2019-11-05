@@ -1,0 +1,7 @@
+test:
+    handler: src/lambda/test.handler
+    events:
+        - http:
+              cors: true
+              path: test
+              method: get
