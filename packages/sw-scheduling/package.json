@@ -8,11 +8,12 @@
 	},
 	"license": "ISC",
 	"scripts": {
-		"deploy": "sls deploy",
+		"deploy": "ts-node -r tsconfig-paths/register -T deploy.ts",
 		"dev": "sls offline start"
 	},
 	"dependencies": {
-		"sportywide-data": "^1.0.3"
+		"source-map-support": "0.5.13",
+		"sportywide-data": "1.0.3"
 	},
 	"devDependencies": {
 		"serverless": "1.56.1",

@@ -2,8 +2,9 @@ service: sw-scheduling
 
 provider:
     name: aws
+    region: ap-southeast-2
     runtime: nodejs10.x
-    stage: ${opt:stage, 'development'}
+    stage: ${opt:stage, 'production'}
 
 plugins:
     - serverless-webpack
@@ -13,6 +14,9 @@ custom:
     serverless-offline:
         port: 4000
     webpack:
-        includeModules: true
+        includeModules:
+            packagePath: '../../package.json'
+            forceInclude:
+                - source-map-support
 
 functions: ${file(resources/functions.yml)}
