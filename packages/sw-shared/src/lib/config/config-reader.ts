@@ -18,7 +18,7 @@ export function getConfigProvider() {
 	return provider;
 }
 
-export function createConfig(config, env = 'development') {
+export function createConfig(config = {}, env = 'development') {
 	const nconf = getConfigProvider();
 
 	const envConfig = config[env] || {};
