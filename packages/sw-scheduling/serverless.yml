@@ -9,6 +9,9 @@ provider:
 plugins:
     - serverless-webpack
     - serverless-offline
+    - serverless-s3-local
+    - serverless-dynamodb-local
+    - serverless-iam-roles-per-function
 
 custom:
     serverless-offline:
@@ -18,5 +21,18 @@ custom:
             packagePath: '../../package.json'
             forceInclude:
                 - source-map-support
+    s3:
+        port: 6000
+        directory: .s3
+    dynamodb:
+        readCapacity: 5
+        writeCapacity: 5
+        start:
+            port: 5500
+            migrate: true
+            inMemory: false
+            dbPath: .dynamodb
 
 functions: ${file(resources/functions.yml)}
+resources:
+    - ${file(resources/s3.yml)}

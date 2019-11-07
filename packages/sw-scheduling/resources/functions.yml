@@ -5,3 +5,11 @@ test:
               cors: true
               path: test
               method: get
+
+fetch-teams:
+    handler: src/lambda/crawl/fetch-teams.handler
+    events:
+        - http:
+              cors: true
+              path: teams
+              method: get

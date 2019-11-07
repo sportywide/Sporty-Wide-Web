@@ -16,6 +16,7 @@ certs/*.pem
 out/
 
 .vagrant
+.s3
 
 install.lock
 

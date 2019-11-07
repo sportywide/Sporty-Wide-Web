@@ -3,7 +3,7 @@ import { CrawlerModule } from '@data/crawler/crawler.module';
 import { INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { leagues } from '@data/data.constants';
-import { ScoreboardCrawlerService } from '@root/packages/sw-data/src/crawler/scoreboard-crawler.service';
+import { ScoreboardCrawlerService } from '@data/crawler/scoreboard-crawler.service';
 
 async function bootstrap() {
 	const context: INestApplicationContext = await NestFactory.createApplicationContext(CrawlerModule);

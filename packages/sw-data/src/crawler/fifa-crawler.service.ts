@@ -8,7 +8,7 @@ import { sleep } from '@shared/lib/utils/sleep';
 import { flattenDeep } from 'lodash';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { ResultsService } from '@data/crawler/results.service';
-import { teamMapping, teamAliasMapping } from '../data.constants';
+import { teamAliasMapping, teamMapping } from '../data.constants';
 
 const DEFAULT_PLAYER_PAGES = 5;
 
@@ -73,9 +73,7 @@ export class FifaCrawlerService extends ResultsService {
 		this.logger.info(`Fetching league id ${leagueId}`);
 		const url = `/teams?league=${leagueId}&order=desc`;
 		const result = await this.getParsedResponse(url);
-		const teams = this.parseInfoTeam(result);
-		await this.writeResult(`teams/fifa-${leagueId}.json`, teams);
-		return teams;
+		return this.parseInfoTeam(result);
 	}
 
 	private parseInfoTeam($: CheerioStatic): FifaTeam[] {
@@ -151,7 +149,6 @@ export class FifaCrawlerService extends ResultsService {
 			await sleep(1000);
 		} while (shouldContinue);
 
-		await this.writeResult(`players/fifa-${leagueId}.json`, result);
 		return result;
 	}
 
