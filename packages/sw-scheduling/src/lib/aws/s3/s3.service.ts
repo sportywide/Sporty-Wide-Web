@@ -21,15 +21,26 @@ export class S3Service {
 		key,
 		body,
 		bucket,
+		metadata,
 	}: {
 		key: string;
 		body: Buffer | Uint8Array | Blob | string | Readable;
 		bucket: string;
+		metadata?;
 	}) {
 		return util.promisify(this.s3.upload.bind(this.s3))({
 			Bucket: bucket,
 			Key: key,
 			Body: body,
+			Metadata: metadata,
+		});
+	}
+
+	getObject({ key, bucket }: { key: string; bucket: string }): Promise<S3.Types.GetObjectOutput> {
+		const getObject = util.promisify(this.s3.getObject.bind(this.s3)) as any;
+		return getObject({
+			Bucket: bucket,
+			Key: key,
 		});
 	}
 }
