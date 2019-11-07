@@ -16,8 +16,11 @@ export async function handler() {
 				const team = await fifaCrawler.crawlTeam(league.id);
 				await s3Service.uploadFile({
 					bucket: config.get('s3:data_bucket_name'),
-					key: `teams/fifa/${league.name}`,
+					key: `teams/fifa/${league.id}.json`,
 					body: JSON.stringify(team),
+					metadata: {
+						league: league.id.toString(),
+					},
 				});
 			})
 		);

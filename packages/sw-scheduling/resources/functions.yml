@@ -13,3 +13,13 @@ fetch-teams:
               cors: true
               path: teams
               method: get
+
+fetch-players:
+    handler: src/lambda/crawl/fetch-players.handler
+    events:
+        - s3:
+              bucket: sw-data-bucket
+              event: s3:ObjectCreated:*
+              rules:
+                  - prefix: teams/fifa/
+                  - suffix: .json
