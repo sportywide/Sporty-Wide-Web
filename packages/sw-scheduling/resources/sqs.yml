@@ -7,3 +7,7 @@ Resources:
         Type: AWS::SQS::Queue
         Properties:
             QueueName: FifaPlayerQueue
+    FixtureQueue:
+        Type: AWS::SQS::Queue
+        Properties:
+            QueueName: FixtureQueue

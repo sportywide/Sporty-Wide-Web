@@ -21,87 +21,91 @@ export class FixturePersisterService {
 		@InjectSwRepository(Team) private readonly teamRepository: SwRepository<Team>
 	) {}
 
-	async saveFixtures() {
+	async saveFixturesFromFiles() {
 		try {
 			const files = await glob('*.json', {
 				cwd: path.resolve(process.cwd(), 'resources', 'fixtures'),
 				absolute: true,
 			});
-			await Promise.all(files.map(file => this.saveFile(file)));
+			await Promise.all(
+				files.map(async file => {
+					try {
+						this.logger.info(`Reading from resource ${file}`);
+						const content = await fsPromise.readFile(file, 'utf8');
+						const fixtures = JSON.parse(content);
+						await this.saveFixtures(fixtures);
+					} catch (e) {
+						this.logger.error('Failed to read file', e);
+					}
+				})
+			);
 		} catch (e) {
 			this.logger.error(`Failed to read fixture files`, e);
 		}
 	}
 
-	private async saveFile(file) {
+	async saveFixtures(fixtures) {
 		const fuzzyOptions = {
 			...defaultFuzzyOptions,
 			keys: ['title', 'alias'],
 		};
-		try {
-			this.logger.info(`Reading from resource ${file}`);
-			const content = await fsPromise.readFile(file, 'utf8');
+		const { id: leagueId, matches, season } = fixtures;
+		const teams = await this.teamRepository.find({
+			where: {
+				leagueId,
+			},
+		});
+		const fuse = new Fuse(teams, fuzzyOptions);
+		const teamCache = {};
+		const fixtureCountMap = {};
+		await Promise.all(
+			matches.map(async match => {
+				const homeTeam = teamCache[match.home] || fuse.search(match.home)[0];
+				const awayTeam = teamCache[match.away] || fuse.search(match.away)[0];
+				if (!homeTeam) {
+					this.logger.error('Not able to find team', match.home);
+					return;
+				}
+				if (!awayTeam) {
+					this.logger.error('Not able to find team', match.away);
+					return;
+				}
+				if (!teamCache[match.home]) {
+					this.logger.debug(`Matching ${match.home} with ${homeTeam.title}`);
+				}
+				if (!teamCache[match.away]) {
+					this.logger.debug(`Matching ${match.away} with ${awayTeam.title}`);
+				}
+				teamCache[match.home] = homeTeam;
+				teamCache[match.away] = awayTeam;
 
-			const { id: leagueId, matches, season } = JSON.parse(content);
-			const teams = await this.teamRepository.find({
-				where: {
+				fixtureCountMap[homeTeam.id] = (fixtureCountMap[homeTeam.id] || 0) + 1;
+				fixtureCountMap[awayTeam.id] = (fixtureCountMap[awayTeam.id] || 0) + 1;
+
+				const dbObj = {
+					id: parseInt(this.getMatchId(match.link), 10),
+					link: match.link,
+					home: homeTeam.title,
+					away: awayTeam.title,
+					homeId: homeTeam.id,
+					awayId: awayTeam.id,
+					fixtureNumber: Math.max(fixtureCountMap[homeTeam.id], fixtureCountMap[awayTeam.id]),
+					homeScore: match.homeScore,
+					awayScore: match.awayScore,
+					current: match.current,
+					time: new Date(match.time),
+					status: match.status,
+					season,
 					leagueId,
-				},
-			});
-			const fuse = new Fuse(teams, fuzzyOptions);
-			const teamCache = {};
-			const fixtureCountMap = {};
-			await Promise.all(
-				matches.map(async match => {
-					const homeTeam = teamCache[match.home] || fuse.search(match.home)[0];
-					const awayTeam = teamCache[match.away] || fuse.search(match.away)[0];
-					if (!homeTeam) {
-						this.logger.error('Not able to find team', match.home);
-						return;
-					}
-					if (!awayTeam) {
-						this.logger.error('Not able to find team', match.away);
-						return;
-					}
-					if (!teamCache[match.home]) {
-						this.logger.debug(`Matching ${match.home} with ${homeTeam.title}`);
-					}
-					if (!teamCache[match.away]) {
-						this.logger.debug(`Matching ${match.away} with ${awayTeam.title}`);
-					}
-					teamCache[match.home] = homeTeam;
-					teamCache[match.away] = awayTeam;
+				};
 
-					fixtureCountMap[homeTeam.id] = (fixtureCountMap[homeTeam.id] || 0) + 1;
-					fixtureCountMap[awayTeam.id] = (fixtureCountMap[awayTeam.id] || 0) + 1;
-
-					const dbObj = {
-						id: parseInt(this.getMatchId(match.link), 10),
-						link: match.link,
-						home: homeTeam.title,
-						away: awayTeam.title,
-						homeId: homeTeam.id,
-						awayId: awayTeam.id,
-						fixtureNumber: Math.max(fixtureCountMap[homeTeam.id], fixtureCountMap[awayTeam.id]),
-						homeScore: match.homeScore,
-						awayScore: match.awayScore,
-						current: match.current,
-						time: new Date(match.time),
-						status: match.status,
-						season,
-						leagueId,
-					};
-
-					try {
-						await this.fixtureRepository.upsert(dbObj);
-					} catch (e) {
-						this.logger.error(`Failed to save fixture ${dbObj.link}`, e);
-					}
-				})
-			);
-		} catch (e) {
-			this.logger.error('Failed to read file', e);
-		}
+				try {
+					await this.fixtureRepository.upsert(dbObj);
+				} catch (e) {
+					this.logger.error(`Failed to save fixture ${dbObj.link}`, e);
+				}
+			})
+		);
 	}
 
 	private getMatchId(link) {

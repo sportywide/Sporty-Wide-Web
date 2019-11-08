@@ -24,6 +24,16 @@ fetch-players:
                   - prefix: teams/fifa/
                   - suffix: .json
 
+fetch-fixtures:
+    handler: src/lambda/crawl/fetch-fixture.handler
+    events:
+        - s3:
+              bucket: sw-data-bucket
+              event: s3:ObjectCreated:*
+              rules:
+                  - prefix: teams/fifa/
+                  - suffix: .json
+
 save-teams:
     handler: src/lambda/persist/save-teams.handler
     events:
@@ -41,5 +51,15 @@ save-players:
               arn:
                   Fn::GetAtt:
                       - FifaPlayerQueue
+                      - Arn
+              batchSize: 1
+
+save-fixtures:
+    handler: src/lambda/persist/save-fixture.handler
+    events:
+        - sqs:
+              arn:
+                  Fn::GetAtt:
+                      - FixtureQueue
                       - Arn
               batchSize: 1

@@ -5,6 +5,7 @@ import { AwsModule } from '@scheduling/lib/aws/aws.module';
 import { DataModule } from '@data/data.module';
 import { PersisterModule } from '@data/persister/persister.module';
 import { CrawlerModule } from '@data/crawler/crawler.module';
+import { isDevelopment } from '@shared/lib/utils/env';
 
 @Module({
 	imports: [CoreSchedulingModule, DataModule, AwsModule],
@@ -29,8 +30,8 @@ export async function initModule(moduleClass) {
 		return module;
 	}
 
-	module = await NestFactory.createApplicationContext(SchedulingModule, {
-		logger: false,
+	module = await NestFactory.createApplicationContext(moduleClass, {
+		logger: isDevelopment(),
 	});
 	moduleMap.set(moduleClass, module);
 	return module;
