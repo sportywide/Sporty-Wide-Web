@@ -138,7 +138,7 @@ export class PlayerPersisterService {
 		};
 	}
 
-	private saveFifaPlayers(players: FifaPlayer[]) {
+	saveFifaPlayers(players: FifaPlayer[]) {
 		return Promise.all(
 			players.map(async player => {
 				const dbObj = {

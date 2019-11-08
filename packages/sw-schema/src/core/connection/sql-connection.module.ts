@@ -42,7 +42,10 @@ export class SqlConnectionModule {
 						let options: ConnectionOptions;
 						if (connectionManager.has('default')) {
 							options = connectionManager.get('default').options;
-							await connectionManager.get('default').close();
+							const connection = await connectionManager.get('default');
+							if (connection.isConnected) {
+								await connectionManager.get('default').close();
+							}
 						} else {
 							const useFactory: any = connectionOptions.useFactory || noop;
 							// eslint-disable-next-line react-hooks/rules-of-hooks

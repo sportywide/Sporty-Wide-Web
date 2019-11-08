@@ -32,3 +32,14 @@ save-teams:
                   Fn::GetAtt:
                       - FifaTeamQueue
                       - Arn
+              batchSize: 1
+
+save-players:
+    handler: src/lambda/persist/save-players.handler
+    events:
+        - sqs:
+              arn:
+                  Fn::GetAtt:
+                      - FifaPlayerQueue
+                      - Arn
+              batchSize: 1
