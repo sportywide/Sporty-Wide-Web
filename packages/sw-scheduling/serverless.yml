@@ -8,6 +8,7 @@ provider:
 
 plugins:
     - serverless-webpack
+    - serverless-offline-sqs
     - serverless-offline
     - serverless-s3-local
     - serverless-dynamodb-local
@@ -16,11 +17,20 @@ plugins:
 custom:
     serverless-offline:
         port: 4000
+        host: 0.0.0.0
     webpack:
         includeModules:
             packagePath: '../../package.json'
             forceInclude:
                 - source-map-support
+    serverless-offline-sqs:
+        autoCreate: true
+        apiVersion: '2012-11-05'
+        endpoint: http://0.0.0.0:9324
+        region: ${self:provider.region}
+        accessKeyId: root
+        secretAccessKey: root
+        skipCacheInvalidation: false
     s3:
         port: 6000
         directory: .s3
@@ -33,6 +43,7 @@ custom:
             inMemory: false
             dbPath: .dynamodb
 
-functions: ${file(resources/functions.yml)}
 resources:
     - ${file(resources/s3.yml)}
+    - ${file(resources/sqs.yml)}
+functions: ${file(resources/functions.yml)}

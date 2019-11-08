@@ -1,11 +1,11 @@
-import { Module, INestApplicationContext } from '@nestjs/common';
+import { INestApplicationContext, Module } from '@nestjs/common';
 import { CoreSchedulingModule } from '@scheduling/lib/core/core.module';
-import { CrawlerModule } from '@data/crawler/crawler.module';
 import { NestFactory } from '@nestjs/core';
 import { AwsModule } from '@scheduling/lib/aws/aws.module';
+import { DataModule } from '@data/data.module';
 
 @Module({
-	imports: [CoreSchedulingModule, CrawlerModule, AwsModule],
+	imports: [CoreSchedulingModule, DataModule, AwsModule],
 })
 export class SchedulingModule {}
 

@@ -1,5 +1,5 @@
 Resources:
-    NewResource:
+    DataBucket:
         Type: AWS::S3::Bucket
         Properties:
             BucketName: sw-data-bucket
