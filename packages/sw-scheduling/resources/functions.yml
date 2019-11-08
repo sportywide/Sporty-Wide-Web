@@ -23,3 +23,12 @@ fetch-players:
               rules:
                   - prefix: teams/fifa/
                   - suffix: .json
+
+save-teams:
+    handler: src/lambda/persist/save-teams.handler
+    events:
+        - sqs:
+              arn:
+                  Fn::GetAtt:
+                      - FifaTeamQueue
+                      - Arn

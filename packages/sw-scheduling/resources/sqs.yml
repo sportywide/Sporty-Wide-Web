@@ -1,0 +1,9 @@
+Resources:
+    FifaTeamQueue:
+        Type: AWS::SQS::Queue
+        Properties:
+            QueueName: FifaTeamQueue
+    FifaPlayerQueue:
+        Type: AWS::SQS::Queue
+        Properties:
+            QueueName: FifaPlayerQueue

@@ -11,18 +11,18 @@ export async function handler(event) {
 		const module = await initModule();
 		const s3Service = module.get(S3Service);
 		const objectDetails = await s3Service.getObject({
-			key,
-			bucket: bucketName,
+			Key: key,
+			Bucket: bucketName,
 		});
 		const fifaCrawler = module.get(FifaCrawlerService);
 		const leagueId = parseInt((objectDetails.Metadata || {}).league);
 		const players = await fifaCrawler.crawlPlayers(leagueId);
 		const config = module.get(SCHEDULING_CONFIG);
 		await s3Service.uploadFile({
-			bucket: config.get('s3:data_bucket_name'),
-			key: `players/fifa/${leagueId}.json`,
-			body: JSON.stringify(players),
-			metadata: {
+			Bucket: config.get('s3:data_bucket_name'),
+			Key: `players/fifa/${leagueId}.json`,
+			Body: JSON.stringify(players),
+			Metadata: {
 				league: leagueId.toString(),
 			},
 		});

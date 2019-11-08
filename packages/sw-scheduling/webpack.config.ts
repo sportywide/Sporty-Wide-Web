@@ -12,6 +12,7 @@ module.exports = makeConfig({
 	output: paths.scheduling.dist,
 	alias: {
 		'@scheduling': paths.scheduling.src,
+		'@schema': paths.schema.src,
 		'@core': paths.core.src,
 		'@data': paths.data.src,
 		'@shared': paths.shared.src,

@@ -61,11 +61,22 @@ services:
         networks:
             - sw_net_frontend
             - sw_net_backend
+    sqs:
+        container_name: sw_sqs
+        image: roribio16/alpine-sqs
+        ports:
+            - 9324:9324
+            - 9325:9325
+        networks:
+            - sw_net_frontend
+            - sw_net_backend
 volumes:
     postgres:
         name: sw_volume_postgres
     redis:
         name: sw_volume_redis
+    localstack:
+        name: sw_volume_localstack
 networks:
     sw_net_frontend:
         driver: bridge

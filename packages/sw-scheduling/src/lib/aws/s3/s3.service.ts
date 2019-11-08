@@ -11,36 +11,19 @@ export class S3Service {
 	constructor(@Inject(SCHEDULING_CONFIG) private readonly config: Provider) {
 		this.s3 = new S3({
 			s3ForcePathStyle: true,
+			region: config.get('aws:region'),
 			accessKeyId: config.get('s3:accessKeyId'),
 			secretAccessKey: config.get('s3:secretAccessKey'),
 			endpoint: config.get('s3:url'),
 		});
 	}
 
-	uploadFile({
-		key,
-		body,
-		bucket,
-		metadata,
-	}: {
-		key: string;
-		body: Buffer | Uint8Array | Blob | string | Readable;
-		bucket: string;
-		metadata?;
-	}) {
-		return util.promisify(this.s3.upload.bind(this.s3))({
-			Bucket: bucket,
-			Key: key,
-			Body: body,
-			Metadata: metadata,
-		});
+	uploadFile(request: S3.Types.PutObjectRequest) {
+		return util.promisify(this.s3.upload.bind(this.s3))(request);
 	}
 
-	getObject({ key, bucket }: { key: string; bucket: string }): Promise<S3.Types.GetObjectOutput> {
+	getObject(request: S3.Types.GetObjectRequest): Promise<S3.Types.GetObjectOutput> {
 		const getObject = util.promisify(this.s3.getObject.bind(this.s3)) as any;
-		return getObject({
-			Bucket: bucket,
-			Key: key,
-		});
+		return getObject(request);
 	}
 }
