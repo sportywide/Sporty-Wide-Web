@@ -1,14 +1,15 @@
 import { error, ok } from '@scheduling/lib/http';
-import { initModule } from '@scheduling/lib/scheduling.module';
+import { initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
 import { FifaCrawlerService } from '@data/crawler/fifa-crawler.service';
 import { SCHEDULING_CONFIG } from '@core/config/config.constants';
 import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
+import { SqsService } from '@scheduling/lib/aws/sqs/sqs.service';
 
 export async function handler(event) {
 	try {
 		const bucketName = event.Records[0].s3.bucket.name;
 		const key = event.Records[0].s3.object.key;
-		const module = await initModule();
+		const module = await initModule(SchedulingCrawlerModule);
 		const s3Service = module.get(S3Service);
 		const objectDetails = await s3Service.getObject({
 			Key: key,
@@ -25,6 +26,11 @@ export async function handler(event) {
 			Metadata: {
 				league: leagueId.toString(),
 			},
+		});
+		const sqsService = module.get(SqsService);
+		await sqsService.sendMessage({
+			MessageBody: String(leagueId),
+			Queue: 'FifaPlayerQueue',
 		});
 		return ok('SUCCESS');
 	} catch (e) {

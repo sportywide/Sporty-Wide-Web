@@ -95,7 +95,7 @@ export class TeamPersisterService {
 		};
 	}
 
-	private async saveFifaTeams(teams: FifaTeam[]) {
+	async saveFifaTeams(teams: FifaTeam[]) {
 		return Promise.all(
 			teams.map(async team => {
 				const dbObj = {
