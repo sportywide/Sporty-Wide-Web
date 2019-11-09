@@ -47,7 +47,9 @@ export class SqlConnectionModule {
 								if (connection.isConnected) {
 									await connectionManager.get('default').close();
 								}
-							} catch (e) {}
+							} catch (e) {
+								logger.error('Failed to close existing connection');
+							}
 						} else {
 							const useFactory: any = connectionOptions.useFactory || noop;
 							// eslint-disable-next-line react-hooks/rules-of-hooks

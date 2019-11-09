@@ -9,6 +9,7 @@ provider:
 plugins:
     - serverless-webpack
     - serverless-offline-sqs
+    - serverless-offline-sns
     - serverless-offline
     - serverless-s3-local
     - serverless-dynamodb-local
@@ -18,6 +19,8 @@ custom:
     serverless-offline:
         port: 4000
         host: 0.0.0.0
+    aws:
+        accountId: 409050499179
     webpack:
         includeModules:
             packagePath: '../../package.json'
@@ -31,6 +34,11 @@ custom:
         accessKeyId: root
         secretAccessKey: root
         skipCacheInvalidation: false
+    serverless-offline-sns:
+        port: 4002
+        debug: false
+        host: 0.0.0.0
+        accountId: ${self:custom.aws.accountId}
     s3:
         port: 6000
         directory: .s3
@@ -46,4 +54,5 @@ custom:
 resources:
     - ${file(resources/s3.yml)}
     - ${file(resources/sqs.yml)}
+    - ${file(resources/sns.yml)}
 functions: ${file(resources/functions.yml)}
