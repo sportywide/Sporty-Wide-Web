@@ -31,4 +31,9 @@ export const config = {
 			default: 'INFO',
 		},
 	},
+	production: {
+		logging: {
+			default: 'INFO',
+		},
+	},
 };

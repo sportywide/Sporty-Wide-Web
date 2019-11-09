@@ -68,9 +68,14 @@ exec > >(tee /var/log/user-data.log|logger -t user-data ) 2>&1
 yum update -y
 yum install -y postgresql
 yum install -y gcc
+yum install -y git
 wget http://download.redis.io/redis-stable.tar.gz && tar xvzf redis-stable.tar.gz && cd redis-stable && make
 cp src/redis-cli /usr/bin/
-yum install -y jq`),
+yum install -y jq
+yum install -y docker
+service docker start
+usermod -aG docker ec2-user
+`),
 		imageId: 'ami-00c1445796bc0a29f',
 		instanceType: InstanceType.of(InstanceClass.T2, InstanceSize.NANO).toString(),
 		subnetId: vpc.publicSubnets[0].subnetId,
