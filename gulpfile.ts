@@ -1,3 +1,4 @@
+require('reflect-metadata');
 require('tsconfig-paths/register');
 import { Gulpclass, Task } from 'gulpclass';
 import { spawn } from '@root/helpers/process';
@@ -15,10 +16,12 @@ export class Gulpfile {
 			return spawn(
 				'lerna bootstrap -- --production --no-optional --ci && link-parent-bin -s true -d false -o false'
 			);
+		} else if (argv.packageLockOnly) {
+			return spawn('lerna bootstrap -- --no-optional --package-lock-only');
 		} else if (argv.optional) {
 			return spawn('lerna bootstrap && link-parent-bin');
 		} else {
-			return spawn('lerna bootstrap -- --ci --no-optional && link-parent-bin');
+			return spawn('lerna bootstrap -- --no-optional && link-parent-bin');
 		}
 	}
 
@@ -50,13 +53,28 @@ export class Gulpfile {
 			args.push('--coverage');
 		}
 
+		if (argv.it) {
+			args.push('--testRegex=\\.it-spec\\.ts$');
+		}
+
 		if (argv.e2e) {
 			args.push('--testRegex=\\.e2e-spec\\.ts$');
 		}
 
 		if (argv.full) {
+			args.push('--testRegex=\\.it-spec\\.tsx?$');
 			args.push('--testRegex=\\.e2e-spec\\.tsx?$');
 			args.push('--testRegex=\\.spec\\.tsx?$');
+		}
+
+		for (const key of Object.keys(argv)) {
+			if (['watch', 'coverage', 'it', 'e2e', 'full', '$0', '_'].includes(key)) {
+				continue;
+			}
+			args.push(`--${key}`);
+			if (typeof argv[key] !== 'boolean') {
+				args.push(`"${argv[key]}"`);
+			}
 		}
 
 		return spawn(`jest ${args.join(' ')}`);

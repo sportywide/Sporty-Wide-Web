@@ -3,6 +3,7 @@ services:
     api-test:
         image: sportywide/sportywide-base
         container_name: sw_api_test
+        entrypoint: ['npx', 'gulp']
         command: api-test
         depends_on:
             - base
@@ -14,6 +15,21 @@ services:
             WAIT_HOSTS: api:5000
             WAIT_SLEEP_INTERVAL: 10
             WAIT_HOSTS_TIMEOUT: 120
+        networks:
+            - sw_net_backend
+    test:
+        image: sportywide/sportywide-base
+        container_name: sw_test
+        entrypoint: ['npx', 'gulp']
+        command: ['test', '--full', '--color']
+        environment:
+            POSTGRES__HOST: postgres
+        depends_on:
+            - base
+            - api
+        volumes:
+            - .:/opt/app
+            - node_modules:/opt/app/node_modules
         networks:
             - sw_net_backend
 networks:

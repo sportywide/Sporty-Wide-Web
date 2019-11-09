@@ -22,7 +22,7 @@ mkcert --key-file certs/sportywide-key.pem --cert-file certs/sportywide-cert.pem
 -   Add the following entries to /etc/hosts
 
 ```bash
-192.168.50.10 sportywidedev.com mail.sportywidedev.com api.sportywidedev.com www.sportywidedev.com
+192.168.50.10 sportywidedev.com mail.sportywidedev.com api.sportywidedev.com www.sportywidedev.com proxy.sportywidedev.com
 ```
 
 -   After following the running instructions below, you should be able to access the API at `https://api.sportywidedev.com` and the app at `https://www.sportywidedev.com`
@@ -91,7 +91,11 @@ Run one of the following commands (in Vagrant)
 Run one of the following commands
 
 -   npm run api-test (run this on local)
--   docker-compose -f docker-compose.yml -f docker-e2e.yml up api-test (run this inside vagrant)
+-   docker-compose -f docker-compose.yml -f docker-test.yml up api-test (run this inside vagrant)
+
+##### Full testing
+
+-   docker-compose -f docker-compose.yml -f docker-test.yml up base test (run this inside vagrant)
 
 #### Running locally
 

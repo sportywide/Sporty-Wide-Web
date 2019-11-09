@@ -1,12 +1,12 @@
 import { Column, Entity } from 'typeorm';
 import { TokenType } from '@schema/auth/models/enums/token-type.token';
 import { TrackCreated } from '@schema/core/timestamp/track-created.mixin';
-import { BaseEntity } from '@schema/core/base.entity';
+import { BaseGeneratedEntity } from '@schema/core/base.entity';
 
 @Entity({
 	name: 'tokens',
 })
-export class Token extends TrackCreated(BaseEntity) {
+export class Token extends TrackCreated(BaseGeneratedEntity) {
 	@Column({ type: 'timestamptz' })
 	ttl: Date;
 

@@ -1,8 +1,5 @@
-import path from 'path';
 import https from 'https';
-import { fsPromise } from '@shared/lib/utils/promisify/fs';
-import fsExtra from 'fs-extra';
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 import { Logger } from 'log4js';
 import cheerio from 'cheerio';
@@ -10,17 +7,54 @@ import { range } from '@shared/lib/utils/array/range';
 import { sleep } from '@shared/lib/utils/sleep';
 import { flattenDeep } from 'lodash';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
-import { resourcesPath } from '@data/crawler/crawler.constants';
+import { ResultsService } from '@data/crawler/results.service';
+import { teamMapping, teamAliasMapping } from '../data.constants';
 
 const DEFAULT_PLAYER_PAGES = 5;
 
+export type FifaTeam = {
+	fifaId: number;
+	image: string;
+	title: string;
+	name: string;
+	league: {
+		title: string;
+		fifaId: number;
+	};
+	alias: string[];
+	att: number;
+	mid: number;
+	def: number;
+	rating: number;
+	ovr: number;
+};
+
+export type FifaPlayer = {
+	fifaId: number;
+	image: string;
+	nationality: {
+		title: string;
+		fifaId: number;
+	};
+	rating: number;
+	name: string;
+	url: string;
+	positions: string[];
+	age: number;
+	team: {
+		title: string;
+		fifaId: number;
+	};
+};
+
 @Injectable()
-export class TeamPlayerCrawlerService {
+export class FifaCrawlerService extends ResultsService {
 	private _fifaRegex = /\s*fifa\s*\d*/gim;
 
 	private axios: AxiosInstance;
 
 	constructor(@Inject(DATA_LOGGER) private readonly logger: Logger) {
+		super();
 		this.axios = axios.create({
 			baseURL: 'https://www.fifaindex.com',
 			transformResponse: (data, headers) => {
@@ -35,16 +69,16 @@ export class TeamPlayerCrawlerService {
 	}
 
 	// region Crawl teams
-	async crawlTeam(leagueId): Promise<any> {
+	async crawlTeam(leagueId): Promise<FifaTeam[]> {
 		this.logger.info(`Fetching league id ${leagueId}`);
 		const url = `/teams?league=${leagueId}&order=desc`;
 		const result = await this.getParsedResponse(url);
 		const teams = this.parseInfoTeam(result);
-		await this.writeResult(`teams/team.l${leagueId}.json`, teams);
+		await this.writeResult(`teams/fifa-${leagueId}.json`, teams);
 		return teams;
 	}
 
-	private parseInfoTeam($: CheerioStatic): any {
+	private parseInfoTeam($: CheerioStatic): FifaTeam[] {
 		const result: any[] = [];
 		const rows = $('table tbody tr');
 
@@ -77,15 +111,20 @@ export class TeamPlayerCrawlerService {
 			const halfStars = span.find('i.fas.fa-star-half-alt').length;
 			const rating = `${activeStars + halfStars / 2}/${maxStars}`;
 
+			const title = bio['title']
+				.replace(this._fifaRegex, '')
+				.replace(/\d+./, '')
+				.trim();
 			result.push({
 				fifaId: parseInt(bio['href'].split('/').filter(s => !!s)[1], 10),
 				image: image['data-src'],
-				title: bio['title'].replace(this._fifaRegex, '').trim(),
+				title: teamMapping[title] || title,
 				name: bio['href'].split('/').filter(s => !!s)[2],
 				league: {
 					title: league['title'].replace(this._fifaRegex, '').trim(),
 					fifaId: parseInt(league['href'].split('league=')[1], 10),
 				},
+				alias: !teamMapping[title] ? [] : teamAliasMapping[teamMapping[title]],
 				[att.attr('data-title').toLowerCase()]: parseInt(att.eq(0).text(), 10),
 				[mid.attr('data-title').toLowerCase()]: parseInt(mid.eq(0).text(), 10),
 				[def.attr('data-title').toLowerCase()]: parseInt(def.eq(0).text(), 10),
@@ -99,7 +138,7 @@ export class TeamPlayerCrawlerService {
 	// endregion Crawl teams
 
 	// region Crawl from listing page
-	async crawlPlayers(leagueId): Promise<any> {
+	async crawlPlayers(leagueId): Promise<FifaPlayer[]> {
 		this.logger.info(`Fetching players for league id ${leagueId}`);
 		const result: any[] = [];
 		let shouldContinue = true;
@@ -112,7 +151,7 @@ export class TeamPlayerCrawlerService {
 			await sleep(1000);
 		} while (shouldContinue);
 
-		await this.writeResult(`players/player.l${leagueId}.json`, result);
+		await this.writeResult(`players/fifa-${leagueId}.json`, result);
 		return result;
 	}
 
@@ -126,7 +165,7 @@ export class TeamPlayerCrawlerService {
 						return { error: false, response: playerData };
 					})
 					.catch(error => {
-						console.error(
+						this.logger.error(
 							`Failed to fetch player page ${page} for league id ${leagueId}`,
 							error.response.status
 						);
@@ -143,7 +182,7 @@ export class TeamPlayerCrawlerService {
 		return this.parseInfoBulk(result);
 	}
 
-	private parseInfoBulk($: CheerioStatic): any {
+	private parseInfoBulk($: CheerioStatic): FifaPlayer[] {
 		const result: any[] = [];
 		const rows = $('table tbody tr');
 
@@ -185,6 +224,8 @@ export class TeamPlayerCrawlerService {
 				.find('a')
 				.attr();
 
+			const teamTitle = club['title'].replace(this._fifaRegex, '').trim();
+
 			result.push({
 				fifaId: parseInt($(row).attr('data-playerid'), 10),
 				image: image['data-src'],
@@ -198,7 +239,7 @@ export class TeamPlayerCrawlerService {
 				positions,
 				age: parseInt(age, 10),
 				team: {
-					title: club['title'].replace(this._fifaRegex, '').trim(),
+					title: teamMapping[teamTitle] || teamTitle,
 					fifaId: parseInt(club['href'].split('/').filter(s => !!s)[1], 10),
 				},
 			});
@@ -257,7 +298,7 @@ export class TeamPlayerCrawlerService {
 	}
 
 	private resolveStats($: CheerioStatic, row): any {
-		const dataRows = $($(row).find('p'));
+		const dataRows = $(row).find('p');
 		const content = {};
 		dataRows.each((di, dataRow) => {
 			const node = this.resolveNode($, dataRow);
@@ -274,7 +315,7 @@ export class TeamPlayerCrawlerService {
 	}
 
 	private resolveSkills($: CheerioStatic, row): any {
-		const dataRows = $($(row).find('p'));
+		const dataRows = $(row).find('p');
 		const content: string[] = [];
 		dataRows.each((di, dataRow) => {
 			content.push($(dataRow).text());
@@ -330,13 +371,5 @@ export class TeamPlayerCrawlerService {
 
 	private getParsedResponse(url) {
 		return this.axios.get(url).then(({ data }) => data);
-	}
-
-	private async writeResult(relativePath, result) {
-		const outputPath = path.resolve(resourcesPath, relativePath);
-		await fsExtra.mkdirp(path.dirname(outputPath));
-		await fsPromise.writeFile(outputPath, JSON.stringify(result, null, 4), {
-			encoding: 'utf-8',
-		});
 	}
 }

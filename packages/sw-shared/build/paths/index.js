@@ -1,4 +1,5 @@
 const path = require('path');
+const findUp = require('find-up');
 
 const paths = {
 	get web() {
@@ -87,9 +88,20 @@ const paths = {
 			},
 		};
 	},
+	get scheduling() {
+		return {
+			root: path.resolve(paths.project.root, 'packages', 'sw-scheduling'),
+			get src() {
+				return path.resolve(this.root, 'src');
+			},
+			get dist() {
+				return path.resolve(this.root, 'dist');
+			},
+		};
+	},
 	get project() {
 		return {
-			root: path.resolve(__dirname, '..', '..', '..', '..'),
+			root: path.dirname(findUp.sync('package-lock.json')),
 		};
 	},
 };

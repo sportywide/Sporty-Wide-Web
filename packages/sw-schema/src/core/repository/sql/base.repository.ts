@@ -1,5 +1,7 @@
+/* eslint-disable prettier/prettier */
 import {
 	Connection,
+	DeepPartial,
 	DeleteQueryBuilder,
 	EntitySchema,
 	EntitySubscriberInterface,
@@ -16,7 +18,7 @@ import {
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { SwSubscriber } from '@schema/core/subscriber/sql/base.subscriber';
 import { wrap } from '@shared/lib/utils/object/proxy';
-import { BaseEntity } from '@schema/core/base.entity';
+import { BaseGeneratedEntity } from '@schema/core/base.entity';
 
 class SwBaseRepository<T> {
 	constructor(private repository: Repository<T>) {}
@@ -62,6 +64,34 @@ class SwBaseRepository<T> {
 		return this.repository.metadata.connection.getMetadata(entity).tableName;
 	}
 
+	async upsert(obj, upsertColumns?: string[]): Promise<T> {
+		const keys: string[] = Object.keys(obj);
+		const setterString = keys
+			.map(k => {
+				if (upsertColumns && !upsertColumns.includes(k)) {
+					return;
+				}
+				const columnMetadata = this.repository.metadata.findColumnWithPropertyName(k);
+				const databaseName = columnMetadata ? columnMetadata.databaseName : k;
+				return `${databaseName} = :${k}`;
+			})
+			.filter(str => str)
+			.join(',');
+		const queryBuilder = this.repository.createQueryBuilder();
+
+		const qb = queryBuilder
+			.insert()
+			.into(this.repository.metadata.tableName)
+			.values(obj)
+			.onConflict(`("id") DO UPDATE SET ${setterString}`);
+
+		keys.forEach(k => {
+			qb.setParameter(k, (obj as any)[k]);
+		});
+
+		return (await qb.returning('*').execute()).generatedMaps[0] as T;
+	}
+
 	async save(...args) {
 		// @ts-ignore
 		const result = await this.repository.save(...args);
@@ -70,7 +100,7 @@ class SwBaseRepository<T> {
 			entities = [entities];
 		}
 		entities.forEach(entity => {
-			if (entity instanceof BaseEntity) {
+			if (entity instanceof BaseGeneratedEntity) {
 				entity.afterLoad();
 			}
 		});
@@ -115,6 +145,10 @@ class SwBaseRepository<T> {
 				.where(criteria)
 				.getMany();
 		}
+	}
+
+	public createOneEntity(dto: any): T {
+		return this.repository.create(dto as DeepPartial<any>);
 	}
 
 	async advancedFindIds(
@@ -162,8 +196,13 @@ class SwQueryBaseBuilder<T> {
 		return wrap(customQueryBuilder, queryBuilder) as SwQueryBuilder<T>;
 	}
 
-	select() {
-		return SwQueryBaseBuilder.from<T>(this.queryBuilder.select(), this.objectType) as SwSelectQueryBuilder<T>;
+	select(): SwSelectQueryBuilder<T>;
+	select(selection?: string[]): SwSelectQueryBuilder<T>;
+	select(selection?: string | string[], selectionAliasName?: string): SwSelectQueryBuilder<T> {
+		return SwQueryBaseBuilder.from<T>(
+			this.queryBuilder.select(selection as any, selectionAliasName),
+			this.objectType
+		) as SwSelectQueryBuilder<T>;
 	}
 
 	update() {

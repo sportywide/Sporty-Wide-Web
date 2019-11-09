@@ -1,13 +1,12 @@
 import path from 'path';
-import { makeConfig } from 'sportywide-shared/build/webpack/node/config';
-import paths from 'sportywide-shared/build/paths';
-//@ts-ignore
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
+import { makeConfig } from '@build/webpack/node/config';
+import paths from '@build/paths';
+const argv = require('yargs').argv;
 
 module.exports = makeConfig({
+	env: argv.env,
 	entries: path.resolve(paths.api.src, 'main'),
 	output: paths.api.dist,
-	hot: true,
 	alias: {
 		'@root': paths.project.root,
 		'@shared': paths.shared.src,

@@ -1,3 +1,4 @@
+require('reflect-metadata');
 require('tsconfig-paths/register');
 import { Gulpclass, SequenceTask, Task } from 'gulpclass';
 import { GenericWebpackTasks } from '@root/helpers/gulp';
@@ -9,7 +10,7 @@ export class Gulpfile extends GenericWebpackTasks {
 	/** Dev tasks **/
 	@SequenceTask('dev')
 	dev() {
-		return ['dev:env', 'clean', gulp.parallel('dev:codegen', 'dev:webpack', 'dev:start')];
+		return ['clean', gulp.parallel('dev:codegen', 'dev:webpack', 'dev:start')];
 	}
 
 	@Task('dev:start')
@@ -25,7 +26,7 @@ export class Gulpfile extends GenericWebpackTasks {
 	/** Build tasks **/
 	@SequenceTask('build')
 	build() {
-		return ['build:env', 'clean', 'build:codegen', gulp.parallel('build:webpack', 'build:next')];
+		return ['clean', 'build:codegen', gulp.parallel('build:webpack', 'build:next')];
 	}
 
 	@SequenceTask('build:next')

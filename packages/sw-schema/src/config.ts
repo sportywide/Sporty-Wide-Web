@@ -10,7 +10,10 @@ export const config = {
 			database: process.env.SW_POSTGRES_DB,
 		},
 	},
-	development: {
+	test: {
+		postgres: {
+			host: 'localhost',
+		},
 		mongo_url: 'http://localhost:6000',
 	},
 };

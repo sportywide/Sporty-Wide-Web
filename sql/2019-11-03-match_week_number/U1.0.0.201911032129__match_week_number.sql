@@ -1,0 +1,1 @@
+ALTER TABLE fixture DROP COLUMN fixture_number;

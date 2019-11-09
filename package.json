@@ -4,6 +4,9 @@
 	"description": "A Social network for Sports",
 	"author": "Sporty Wide",
 	"scripts": {
+		"compile:build": "ts-node -r tsconfig-paths/register -T compiler.ts",
+		"dev:exec": "gulp dev:exec --color",
+		"exec": "gulp exec --color",
 		"install:dependencies": "ts-node -T bin/install.ts"
 	},
 	"husky": {
@@ -33,7 +36,8 @@
 		"safari >= 8"
 	],
 	"dependencies": {
-		"link-parent-bin": "1.0.2"
+		"link-parent-bin": "1.0.2",
+		"reflect-metadata": "0.1.13"
 	},
 	"devDependencies": {
 		"@babel/core": "7.5.5",
@@ -89,7 +93,7 @@
 		"sort-package-json": "1.22.1",
 		"style-loader": "1.0.0",
 		"ts-jest": "24.0.2",
-		"ts-node": "8.3.0",
+		"ts-node": "7.0.1",
 		"tsconfig-paths": "3.8.0",
 		"typescript": "3.5.3",
 		"url-loader": "2.1.0",

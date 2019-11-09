@@ -1,11 +1,9 @@
-import { AfterLoad, PrimaryGeneratedColumn } from 'typeorm';
+import { AfterLoad, PrimaryColumn, PrimaryGeneratedColumn } from 'typeorm';
 import { isPromise } from '@shared/lib/utils/promise';
 
-export class BaseEntity {
+class ChangeTrackingEntity {
 	_initialValues: any = {};
 	_isLoaded = false;
-
-	@PrimaryGeneratedColumn() id: number;
 
 	@AfterLoad()
 	afterLoad() {
@@ -36,6 +34,14 @@ export class BaseEntity {
 	isResolved(key) {
 		return isResolved(this, key);
 	}
+}
+
+export class BaseGeneratedEntity extends ChangeTrackingEntity {
+	@PrimaryGeneratedColumn() id: number;
+}
+
+export class BaseEntity extends ChangeTrackingEntity {
+	@PrimaryColumn() id: number;
 }
 
 function isResolved(entity, key) {

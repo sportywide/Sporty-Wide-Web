@@ -1,22 +1,20 @@
 import https from 'https';
-import path from 'path';
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import axios, { AxiosInstance } from 'axios';
 import cheerio from 'cheerio';
 import { parse } from 'date-fns';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
-import fsExtra from 'fs-extra';
-import { fsPromise } from '@shared/lib/utils/promisify/fs';
-import { resourcesPath } from '@data/crawler/crawler.constants';
+import { ResultsService } from '@data/crawler/results.service';
+import { League } from '@data/data.constants';
+import { getSeasonYears, isInSeason } from '@shared/lib/utils/season';
 
 @Injectable()
-export class FixtureCrawlerService {
+export class FixtureCrawlerService extends ResultsService {
 	private axios: AxiosInstance;
-	private initiated: boolean;
-	private cookies: string;
 
 	constructor(@Inject(DATA_LOGGER) private readonly logger: Logger) {
+		super();
 		this.axios = axios.create({
 			baseURL: 'https://www.skysports.com',
 			httpsAgent: new https.Agent({ rejectUnauthorized: false }),
@@ -30,32 +28,44 @@ export class FixtureCrawlerService {
 		});
 	}
 
-	async getMatchesForLeague(league: string) {
+	async getMatchesForLeague(league: League, season: string | null) {
+		if (!season) {
+			return;
+		}
+		const name = league.name;
 		try {
 			const [results, fixtures] = await Promise.all([
-				this.getResultsForLeague(league),
-				this.getFixturesForLeague(league),
+				this.getResultsForLeague(name, season),
+				this.getFixturesForLeague(name, season),
 			]);
 			const matches = [...results, ...fixtures].sort((a, b) => a.time.getTime() - b.time.getTime());
-			this.writeResult(`matches/${league}.json`, matches);
+			this.writeResult(`fixtures/${name}.json`, {
+				id: league.id,
+				season: season,
+				matches,
+			});
 		} catch (e) {
-			this.logger.error(`Failed to get matches for league ${league}`, e);
+			this.logger.error(`Failed to get matches for league ${name}`, e);
 		}
 	}
 
-	async getFixturesForLeague(league: string) {
+	async getFixturesForLeague(league: string, season: string) {
 		this.logger.info('Getting fixture for league', league);
-		const { data: content } = await this.axios.get(`https://www.skysports.com/${league}-fixtures`);
-		return this.parseFixture(content);
+		const [start, end] = getSeasonYears(season);
+		const seasonString = [start, end.toString().replace(/\d{2}(\d{2})/, '$1')].join('-');
+		const { data: content } = await this.axios.get(`https://www.skysports.com/${league}-fixtures/${seasonString}`);
+		return this.parseFixture(content, season);
 	}
 
-	async getResultsForLeague(league: string) {
+	async getResultsForLeague(league: string, season: string) {
 		this.logger.info('Getting results for league', league);
-		const { data: content } = await this.axios.get(`https://www.skysports.com/${league}-results`);
-		return this.parseFixture(content);
+		const [start, end] = getSeasonYears(season);
+		const seasonString = [start, end.toString().replace(/\d{2}(\d{2})/, '$1')].join('-');
+		const { data: content } = await this.axios.get(`https://www.skysports.com/${league}-results/${seasonString}`);
+		return this.parseFixture(content, season);
 	}
 
-	private parseFixture($: CheerioStatic) {
+	private parseFixture($: CheerioStatic, season) {
 		const allResults: any[] = [];
 		const showMoreScript = $('script[type="text/show-more"]');
 		showMoreScript.replaceWith($(showMoreScript.html()));
@@ -68,9 +78,12 @@ export class FixtureCrawlerService {
 				const currentMonthStr = monthHeader.text();
 				currentMonth = parse(currentMonthStr, 'MMMM yyyy', new Date());
 			}
+			if (!isInSeason(currentMonth, season)) {
+				return;
+			}
 			const fixtureDateStr = headerElement.text();
 			const fixtureDate = parse(fixtureDateStr, 'EEEE do MMMM', new Date());
-			const fixtureElements = $(headerElement).nextUntil('fixres__header2', '.fixres__item');
+			const fixtureElements = $(headerElement).nextUntil('.fixres__header2', '.fixres__item');
 			const fixtureDetails = fixtureElements.map((index, fixtureNode) => {
 				const fixtureElement = $(fixtureNode);
 				const fixtureLinkElement = fixtureElement.find('.matches__link');
@@ -82,15 +95,17 @@ export class FixtureCrawlerService {
 				const matchResults = fixtureElement.find('.matches__status');
 				const hasHappened = fixtureLinkElement.data('status') !== 'KO';
 				let status;
+				let current;
 				let homeScore, awayScore;
 				if (hasHappened) {
 					[homeScore, awayScore] = Array.from(matchResults.find('.matches__teamscores-side')).map(node =>
 						parseInt($(node).text())
 					);
-					const matchesInfo = fixtureElement.find('.matches__info');
-					status = matchesInfo.text().trim() === 'FT' ? 'PAST' : 'ACTIVE';
+					status = 'FT';
+					current = 90;
 				} else {
 					status = 'PENDING';
+					current = 0;
 				}
 				return {
 					link: fixtureLink,
@@ -99,6 +114,7 @@ export class FixtureCrawlerService {
 					status,
 					homeScore,
 					awayScore,
+					current,
 					time: new Date(
 						Date.UTC(
 							currentMonth.getFullYear(),
@@ -114,13 +130,5 @@ export class FixtureCrawlerService {
 			allResults.push(...Array.from(fixtureDetails));
 		});
 		return allResults;
-	}
-
-	private async writeResult(relativePath, result) {
-		const outputPath = path.resolve(resourcesPath, relativePath);
-		await fsExtra.mkdirp(path.dirname(outputPath));
-		await fsPromise.writeFile(outputPath, JSON.stringify(result, null, 4), {
-			encoding: 'utf-8',
-		});
 	}
 }

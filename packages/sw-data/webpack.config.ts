@@ -1,13 +1,12 @@
 import path from 'path';
-import { makeConfig } from 'sportywide-shared/build/webpack/node/config';
-import paths from 'sportywide-shared/build/paths';
-import glob = require('glob');
+import { makeConfig } from '@build/webpack/node/config';
+import paths from '@build/paths';
+import glob from 'glob';
 const findup = require('find-up');
 const argv = require('yargs').argv;
 
-//@ts-ignore
-process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 module.exports = makeConfig({
+	env: argv.env,
 	entries: getEntries(),
 	output: paths.data.dist,
 	watchMode: false,

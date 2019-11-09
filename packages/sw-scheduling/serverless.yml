@@ -1,0 +1,18 @@
+service: sw-scheduling
+
+provider:
+    name: aws
+    runtime: nodejs10.x
+    stage: ${opt:stage, 'development'}
+
+plugins:
+    - serverless-webpack
+    - serverless-offline
+
+custom:
+    serverless-offline:
+        port: 4000
+    webpack:
+        includeModules: true
+
+functions: ${file(resources/functions.yml)}

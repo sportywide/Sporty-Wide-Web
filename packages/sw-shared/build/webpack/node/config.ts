@@ -1,5 +1,6 @@
 import path from 'path';
 import fs from 'fs';
+import { isDevelopment } from '@shared/lib/utils/env';
 import nodeExternals from 'webpack-node-externals';
 import CopyWebpackPlugin from 'copy-webpack-plugin';
 import webpack from 'webpack';
@@ -13,13 +14,14 @@ import {
 	setOutput,
 	sourceMaps,
 } from '@webpack-blocks/webpack';
-import { isDevelopment } from '@shared/lib/utils/env';
 import paths from '@build/paths';
 import { babelHelper } from '../plugins/transpile';
 import { externals, node, none, setEntry, target, watch } from '../plugins/core';
 
 export function makeConfig({
+	env: environment = 'development',
 	entries,
+	libraryTarget,
 	output,
 	alias,
 	hot,
@@ -29,25 +31,28 @@ export function makeConfig({
 	entries: any;
 	output: string;
 	alias: any;
+	env?: string;
 	hot?: boolean;
 	envFile?: string;
 	watchMode?: boolean;
+	libraryTarget?: string;
 }) {
-	// @ts-ignore
-	process.env.NODE_ENV = process.env.NODE_ENV || 'development';
-	watchMode = isDevelopment() ? (watchMode === undefined ? true : watchMode) : false;
+	watchMode = isDevelopment(environment) ? (watchMode === undefined ? true : watchMode) : false;
 	const packageName = path.basename(path.dirname(output));
+
+	// @ts-ignore
+	process.env.NODE_ENV = environment;
 
 	envFile = envFile || path.resolve(paths.project.root, 'packages', packageName, '.env');
 
 	return createConfig([
 		setOutput(output),
-		setMode(isDevelopment() ? 'development' : 'production'),
+		setMode(isDevelopment(environment) ? 'development' : 'production'),
 		setEntry(hot ? ['webpack/hot/poll?1000', entries] : entries),
 		target('node'),
 		externals([...getNodeModules()]),
 		babelHelper({
-			cwd: path.resolve(__dirname, 'babel'),
+			cwd: path.resolve(paths.shared.webpack, 'node', 'babel'),
 			cacheDirectory: true,
 		}),
 		resolve({
@@ -56,7 +61,7 @@ export function makeConfig({
 			modules: ['node_modules'],
 		}),
 		setEnv({
-			NODE_ENV: process.env.NODE_ENV,
+			NODE_ENV: environment,
 		}),
 		env('development', [
 			watchMode ? watch() : none(),
@@ -74,6 +79,7 @@ export function makeConfig({
 		setOutput({
 			filename: '[name].js',
 			path: output,
+			libraryTarget,
 		}),
 		addPlugins(
 			[
@@ -111,7 +117,7 @@ export function makeConfig({
 	]);
 }
 
-function getNodeModules() {
+export function getNodeModules() {
 	const projectRoot = paths.project.root;
 	const packageFolder = path.resolve(projectRoot, 'packages');
 	const excludeDirs = ['sw-web'];

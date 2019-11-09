@@ -1,16 +1,16 @@
 {
 	"name": "sportywide-email",
-	"version": "1.0.0",
+	"version": "1.0.3",
 	"description": "Email microservice",
 	"license": "ISC",
 	"scripts": {
-		"build": "cross-env TS_NODE_TYPE_CHECK=false TS_NODE_TRANSPILE_ONLY=true gulp build",
-		"dev": "cross-env TS_NODE_TYPE_CHECK=false TS_NODE_TRANSPILE_ONLY=true gulp dev"
+		"build": "gulp build --color",
+		"dev": "gulp dev --color"
 	},
 	"dependencies": {
 		"nodemailer": "6.3.0",
-		"sportywide-core": "1.0.0",
-		"sportywide-schema": "1.0.0",
-		"sportywide-shared": "1.0.0"
+		"sportywide-core": "^1.0.3",
+		"sportywide-schema": "^1.0.3",
+		"sportywide-shared": "^1.0.3"
 	}
 }

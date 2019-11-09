@@ -1,8 +1,8 @@
 import { Column, Entity } from 'typeorm';
-import { BaseEntity } from '@schema/core/base.entity';
+import { BaseGeneratedEntity } from '@schema/core/base.entity';
 
 @Entity()
-export class Address extends BaseEntity {
+export class Address extends BaseGeneratedEntity {
 	@Column({
 		name: 'street1',
 	})

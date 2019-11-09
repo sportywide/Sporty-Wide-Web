@@ -1,19 +1,21 @@
 {
 	"name": "sportywide-data",
-	"version": "1.0.0",
+	"version": "1.0.3",
 	"description": "Data Crawler service for SportyWide",
 	"license": "ISC",
 	"scripts": {
-		"dev:exec": "gulp dev:exec",
-		"exec": "gulp exec"
+		"dev:exec": "gulp dev:exec --color",
+		"exec": "gulp exec --color"
 	},
 	"dependencies": {
 		"cheerio": "0.22.0",
-		"sportywide-core": "1.0.0",
-		"sportywide-schema": "1.0.0",
-		"sportywide-shared": "1.0.0"
+		"puppeteer-core": "1.20.0",
+		"sportywide-core": "^1.0.3",
+		"sportywide-schema": "^1.0.3",
+		"sportywide-shared": "^1.0.3"
 	},
 	"devDependencies": {
-		"@types/cheerio": "0.22.13"
+		"@types/cheerio": "0.22.13",
+		"@types/puppeteer-core": "1.9.0"
 	}
 }

@@ -1,13 +1,15 @@
 import path from 'path';
-import { makeConfig as makeNodeConfig } from 'sportywide-shared/build/webpack/node/config';
-import { makeConfig as makeStyleConfig } from 'sportywide-shared/build/webpack/styles/config';
-import paths from 'sportywide-shared/build/paths';
+import { makeConfig as makeNodeConfig } from '@build/webpack/node/config';
+import { makeConfig as makeStyleConfig } from '@build/webpack/styles/config';
+import paths from '@build/paths';
 import glob from 'glob';
+const argv = require('yargs').argv;
 
 module.exports = [
 	makeNodeConfig({
 		entries: path.resolve(paths.email.src, 'main'),
 		output: paths.email.dist,
+		env: argv.env,
 		alias: {
 			'@root': paths.project.root,
 			'@shared': paths.shared.src,
@@ -17,6 +19,7 @@ module.exports = [
 		},
 	}),
 	makeStyleConfig({
+		env: argv.env,
 		entries: getStylesEntries(),
 		output: path.resolve(paths.email.dist, 'styles'),
 	}),

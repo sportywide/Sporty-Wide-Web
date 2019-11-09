@@ -27,7 +27,6 @@
 		"paths": {
 			"@root/*": ["./*"],
 			"@web/*": ["./packages/sw-web/src/*"],
-			"@web-test/*": ["./packages/sw-web/test/*"],
 			"@shared/*": ["./packages/sw-shared/src/*"],
 			"@build/*": ["./packages/sw-shared/build/*"],
 			"@api/*": ["./packages/sw-api/src/*"],
@@ -35,7 +34,8 @@
 			"@schema-test/*": ["./packages/sw-schema/test/*"],
 			"@core/*": ["./packages/sw-core/src/*"],
 			"@email/*": ["./packages/sw-email/src/*"],
-			"@data/*": ["./packages/sw-data/src/*"]
+			"@data/*": ["./packages/sw-data/src/*"],
+			"@scheduling/*": ["./packages/sw-scheduling/src/*"]
 		}
 	},
 	"exclude": ["node_modules"]
