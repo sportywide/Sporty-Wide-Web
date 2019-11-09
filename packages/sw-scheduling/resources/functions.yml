@@ -17,16 +17,16 @@ fetch-teams:
 fetch-players:
     handler: src/lambda/crawl/fetch-players.handler
     events:
-        - s3:
-              bucket: sw-data-bucket
-              event: s3:ObjectCreated:*
-              rules:
-                  - prefix: teams/fifa/
-                  - suffix: .json
+        - sns: arn:aws:sns:ap-southeast-2:409050499179:FifaTeamSns
 
 fetch-fixtures:
     handler: src/lambda/crawl/fetch-fixture.handler
     events:
+        - sns: arn:aws:sns:ap-southeast-2:409050499179:FifaTeamSns
+
+save-teams:
+    handler: src/lambda/persist/save-teams.handler
+    events:
         - s3:
               bucket: sw-data-bucket
               event: s3:ObjectCreated:*
@@ -34,32 +34,22 @@ fetch-fixtures:
                   - prefix: teams/fifa/
                   - suffix: .json
 
-save-teams:
-    handler: src/lambda/persist/save-teams.handler
-    events:
-        - sqs:
-              arn:
-                  Fn::GetAtt:
-                      - FifaTeamQueue
-                      - Arn
-              batchSize: 1
-
 save-players:
     handler: src/lambda/persist/save-players.handler
     events:
-        - sqs:
-              arn:
-                  Fn::GetAtt:
-                      - FifaPlayerQueue
-                      - Arn
-              batchSize: 1
+        - s3:
+              bucket: sw-data-bucket
+              event: s3:ObjectCreated:*
+              rules:
+                  - prefix: players/fifa/
+                  - suffix: .json
 
 save-fixtures:
     handler: src/lambda/persist/save-fixture.handler
     events:
-        - sqs:
-              arn:
-                  Fn::GetAtt:
-                      - FixtureQueue
-                      - Arn
-              batchSize: 1
+        - s3:
+              bucket: sw-data-bucket
+              event: s3:ObjectCreated:*
+              rules:
+                  - prefix: fixtures
+                  - suffix: .json

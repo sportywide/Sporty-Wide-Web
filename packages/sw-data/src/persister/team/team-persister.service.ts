@@ -111,7 +111,7 @@ export class TeamPersisterService {
 					await this.teamRepository.upsert(dbObj, ['name', 'image', 'att', 'mid', 'def', 'ovr', 'rating']);
 					this.logger.trace(`Persisted team ${dbObj.name}`);
 				} catch (e) {
-					this.logger.error(`Failed to save team ${dbObj.name}`);
+					this.logger.error(`Failed to save team ${dbObj.name}`, e);
 				}
 			})
 		);

@@ -156,7 +156,7 @@ export class PlayerPersisterService {
 					await this.playerRepository.save(dbObj);
 					this.logger.trace(`Persisted player ${dbObj.name} from ${dbObj.team}`);
 				} catch (e) {
-					this.logger.error(`Failed to save player ${dbObj.name}`);
+					this.logger.error(`Failed to save player ${dbObj.name}`, e);
 				}
 			})
 		);

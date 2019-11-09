@@ -18,5 +18,8 @@ export const config = {
 		sqs: {
 			url: 'http://localhost:9324',
 		},
+		sns: {
+			url: 'http://localhost:4002',
+		},
 	},
 };

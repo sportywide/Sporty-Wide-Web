@@ -22,7 +22,6 @@ BEGIN
                FROM fixture
                WHERE fixture.status = 'PENDING' AND
                      fixture.time <= select_next_interval(NOW())
-                     AND (fixture.home_id = 11 OR fixture.away_id = 11)
                LIMIT 1);
 END;$$
 LANGUAGE 'plpgsql';
