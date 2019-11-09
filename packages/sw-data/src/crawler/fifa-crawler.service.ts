@@ -31,6 +31,7 @@ export type FifaTeam = {
 
 export type FifaPlayer = {
 	fifaId: number;
+	shirt: number;
 	image: string;
 	nationality: {
 		title: string;
@@ -182,7 +183,7 @@ export class FifaCrawlerService extends ResultsService {
 		return this.parseInfoBulk(result);
 	}
 
-	private parseInfoBulk($: CheerioStatic): FifaPlayer[] {
+	private async parseInfoBulk($: CheerioStatic): Promise<FifaPlayer[]> {
 		const result: any[] = [];
 		const rows = $('table tbody tr');
 
@@ -245,11 +246,27 @@ export class FifaCrawlerService extends ResultsService {
 			});
 		});
 
+		// Crawl each player page for extra data
+		let index = 0;
+		do {
+			const { shirt } = await this.crawlPlayerLimitedDetail(result[index].fifaId);
+			result[index].shirt = shirt;
+			index++;
+			await sleep(500);
+		} while (index < result.length);
+
 		return result;
 	}
 	// endregion Crawl from listing page
 
 	// region Crawl from detail page
+	async crawlPlayerLimitedDetail(playerId: number): Promise<any> {
+		const $ = await this.getParsedResponse(`player/${playerId}`);
+		const tag = $('div.container div.card div.card-body p:contains("Kit Number") span');
+		const shirt = !!tag ? parseInt(tag.last().text(), 10) : null;
+		return { shirt };
+	}
+
 	async crawlPlayerDetail(url): Promise<any> {
 		const result = await this.getParsedResponse(url);
 		return this.parseInfo(result);
