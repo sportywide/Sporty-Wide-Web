@@ -13,16 +13,31 @@ fetch-teams:
               cors: true
               path: teams
               method: get
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:putObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
 
 fetch-players:
     handler: src/lambda/crawl/fetch-players.handler
     events:
         - sns: arn:aws:sns:ap-southeast-2:409050499179:FifaTeamSns
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:putObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
 
 fetch-fixtures:
     handler: src/lambda/crawl/fetch-fixture.handler
     events:
         - sns: arn:aws:sns:ap-southeast-2:409050499179:FifaTeamSns
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:putObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
 
 save-teams:
     handler: src/lambda/persist/save-teams.handler
@@ -33,6 +48,16 @@ save-teams:
               rules:
                   - prefix: teams/fifa/
                   - suffix: .json
+              existing: true
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - sns:*
+          Resource: arn:aws:sns:${self:provider.region}:${self:custom.aws.accountId}:FifaTeamSns
+        - Effect: 'Allow'
+          Action:
+              - s3:getObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
 
 save-players:
     handler: src/lambda/persist/save-players.handler
@@ -43,6 +68,12 @@ save-players:
               rules:
                   - prefix: players/fifa/
                   - suffix: .json
+              existing: true
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:getObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
 
 save-fixtures:
     handler: src/lambda/persist/save-fixture.handler
@@ -53,3 +84,9 @@ save-fixtures:
               rules:
                   - prefix: fixtures
                   - suffix: .json
+              existing: true
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:getObject
+          Resource: arn:aws:s3:::sw-data-bucket/*

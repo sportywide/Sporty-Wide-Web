@@ -5,9 +5,9 @@ import paths from '@build/paths';
 const isDev = slsw.lib.webpack.isLocal;
 process.env.NODE_ENV = isDev ? 'development' : 'production';
 
-module.exports = makeConfig({
+const config = makeConfig({
 	entries: slsw.lib.entries,
-	env: process.env.NODE_ENV,
+	env: 'production',
 	libraryTarget: 'commonjs2',
 	output: paths.scheduling.dist,
 	alias: {
@@ -18,3 +18,7 @@ module.exports = makeConfig({
 		'@shared': paths.shared.src,
 	},
 });
+
+(config.optimization = config.optimization || {}).minimize = false;
+
+module.exports = config;

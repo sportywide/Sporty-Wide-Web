@@ -65,9 +65,7 @@ export class LoggerProviderFactory {
 			log4jsConfig = this.buildLogStashConfig(log4jsConfig, coreConfig);
 		}
 
-		if (!isProduction()) {
-			log4jsConfig = this.buildConsoleConfig(log4jsConfig);
-		}
+		log4jsConfig = this.buildConsoleConfig(log4jsConfig);
 
 		for (const category of Object.keys(log4jsConfig.categories)) {
 			if (!log4jsConfig.categories[category].appenders.length) {

@@ -73,8 +73,6 @@
 		"extracted-loader": "1.0.7",
 		"file-loader": "4.2.0",
 		"find-up": "4.1.0",
-		"fs-extra": "8.1.0",
-		"glob": "7.1.4",
 		"gulp": "4.0.2",
 		"gulp-cli": "2.2.0",
 		"gulp-shell": "0.7.1",
