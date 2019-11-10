@@ -32,7 +32,7 @@ export async function buildSwStack() {
 	stackBuilder.attachRolesToInstance('natInstanceProfileRole', natInstance, associateEIPRole);
 	createRds(stackBuilder, vpc);
 	createRedis(stackBuilder, vpc);
-	createECSCluster(stackBuilder, vpc);
+	//createECSCluster(stackBuilder, vpc);
 
 	return stackBuilder.stack;
 }

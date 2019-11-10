@@ -1,0 +1,23 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+    name: sw-scylla-deployment
+spec:
+    replicas: 1
+    template:
+        metadata:
+            name: sw-scylla-pod
+            labels:
+                app: sw-scylla
+        spec:
+            containers:
+                - name: sw-sylla
+                  image: wildcat/scylla
+                  resources:
+                      requests:
+                          cpu: 400m
+                  ports:
+                      - name: proxy
+                        containerPort: 8081
+                      - name: web
+                        containerPort: 8899
