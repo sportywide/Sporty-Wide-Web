@@ -32,7 +32,7 @@ export class Gulpfile {
 
 	@Task('dev:exec')
 	exec() {
-		return spawn(`lerna run dev:exec --stream --scope ${argv.scope} -- -- --entry ${argv.entry}`);
+		return spawn(`lerna exec "gulp dev:exec --entry ${argv.entry}" --stream --scope ${argv.scope}`);
 	}
 
 	@Task('generate:migration')
