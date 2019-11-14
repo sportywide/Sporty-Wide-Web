@@ -15,6 +15,7 @@ provider:
     environment:
         SW_POSTGRES_USER: ${file(./secret.${self:provider.stage}.yml):rdsUser}
         SW_POSTGRES_PASSWORD: ${file(./secret.${self:provider.stage}.yml):rdsPassword}
+        SW_POSTGRES_DB: sportywide
 
 plugins:
     - serverless-webpack

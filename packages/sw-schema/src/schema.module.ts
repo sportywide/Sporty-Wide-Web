@@ -9,6 +9,7 @@ import { SchemaTeamModule } from '@schema/team/team.module';
 import { SchemaPlayerModule } from '@schema/player/player.module';
 import { CoreSchemaModule } from '@schema/core/core-schema.module';
 import './core/subscribers';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
 	imports: [
@@ -29,6 +30,22 @@ import './core/subscribers';
 				password: schemaConfig.get('postgres:password'),
 				database: schemaConfig.get('postgres:database'),
 			}),
+			imports: [CoreSchemaModule],
+		}),
+		MongooseModule.forRootAsync({
+			inject: [SCHEMA_CONFIG],
+			useFactory: schemaConfig => {
+				console.log({
+					uri: `mongodb://${schemaConfig.get('mongo:username')}:${schemaConfig.get(
+						'mongo:password'
+					)}@${schemaConfig.get('mongo:host')}/${schemaConfig.get('mongo:database')}}`,
+				});
+				return {
+					uri: `mongodb://${schemaConfig.get('mongo:username')}:${schemaConfig.get(
+						'mongo:password'
+					)}@${schemaConfig.get('mongo:host')}/${schemaConfig.get('mongo:database')}}`,
+				};
+			},
 			imports: [CoreSchemaModule],
 		}),
 	],
