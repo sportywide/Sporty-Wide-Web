@@ -68,6 +68,9 @@ services:
             SW_POSTGRES_DB: ${SW_POSTGRES_DB}
             SW_FACEBOOK_CLIENT_SECRET: ${SW_FACEBOOK_CLIENT_SECRET}
             SW_GOOGLE_CLIENT_SECRET: ${SW_GOOGLE_CLIENT_SECRET}
+            SW_MONGO_USER: ${SW_MONGO_USER}
+            SW_MONGO_PASSWORD: ${SW_MONGO_PASSWORD}
+            SW_MONGO_DB: ${SW_MONGO_DB}
         depends_on:
             - base
         volumes:
