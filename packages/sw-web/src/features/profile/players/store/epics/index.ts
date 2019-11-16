@@ -9,8 +9,10 @@ export const fetchProfilePlayersEpic = (action$, state$, { container }: { contai
 	return action$
 		.ofType(FETCH_PROFILE_PLAYERS)
 		.pipe(
-			switchMap((action: any) =>
-				profilePlayersService.getProfilePlayers(action.payload).pipe(map(players => fetchProfilePlayersSuccess(players)))
+			switchMap(({ payload: { userId, leagueId } }) =>
+				profilePlayersService
+					.getProfilePlayers({ userId, leagueId })
+					.pipe(map(players => fetchProfilePlayersSuccess({ players, userId, leagueId })))
 			)
 		);
 };
