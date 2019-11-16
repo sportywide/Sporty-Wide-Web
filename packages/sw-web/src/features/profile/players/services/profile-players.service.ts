@@ -10,12 +10,12 @@ export class ProfilePlayersService {
 		private readonly apiService: ApiService
 	) {}
 
-	getProfilePlayers(userId: string) {
+	getProfilePlayers({ userId, leagueId }: { userId: number; leagueId: number }) {
 		return of(players);
 	}
 }
 
-const players: PlayerDto[] = [
+const players = [
 	{
 		id: 192985,
 		image: '/static/FIFA20/images/players/5/192985.png',
@@ -29,7 +29,7 @@ const players: PlayerDto[] = [
 			id: 10,
 			name: 'Manchester City',
 			image: '/static/FIFA20/images/crest/5/light/10.png',
-		}
+		},
 	},
 	{
 		id: 209331,
@@ -44,6 +44,6 @@ const players: PlayerDto[] = [
 			id: 9,
 			name: 'Liverpool',
 			image: '/static/FIFA20/images/crest/5/light/9.png',
-		}
+		},
 	},
 ];

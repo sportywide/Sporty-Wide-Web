@@ -9,16 +9,34 @@ export interface IProfilePlayers {
 	loading: boolean;
 }
 
-export const profilePlayersReducer = createReducer<IProfilePlayers, ProfilePlayersAction>({
-	players: [] as PlayerDto[],
+interface IState {
+	playerMap: any;
+	loading: boolean;
+}
+
+const initialState = {
+	playerMap: {},
 	loading: false,
-})
-	.handleAction(actions.fetchProfilePlayers, (state, action) => ({
+};
+
+export const profilePlayersReducer = createReducer<IState, ProfilePlayersAction>(initialState)
+	.handleAction(actions.fetchProfilePlayersSuccess, (state, { payload: { userId, leagueId, players } }) => ({
 		...state,
-		loading: true,
+		[userId]: {
+			...(state[userId] || {}),
+			[leagueId]: {
+				loading: false,
+				players,
+			},
+		},
 	}))
-	.handleAction(actions.fetchProfilePlayersSuccess, (state, action) => ({
+	.handleAction(actions.fetchProfilePlayers, (state, { payload: { userId, leagueId } }) => ({
 		...state,
-		players: action.payload,
-		loading: false
+		[userId]: {
+			...(state[userId] || {}),
+			[leagueId]: {
+				loading: true,
+				players: [],
+			},
+		},
 	}));

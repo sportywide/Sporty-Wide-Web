@@ -1,13 +1,30 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { fifaImage } from '@web/shared/lib/images/links';
-import { Card, Image, Button } from 'semantic-ui-react';
+import { Card, Image, Button, Loader } from 'semantic-ui-react';
+import { IProfilePlayers, profilePlayersReducer } from '@web/features/profile/players/store/reducers';
+import { IUser } from '@web/shared/lib/interfaces/auth/user';
+import { registerReducer } from '@web/shared/lib/redux/register-reducer';
+import { registerEpic } from '@web/shared/lib/redux/register-epic';
+import { fetchProfilePlayersEpic } from '@web/features/profile/players/store/epics';
+import { fetchProfilePlayers } from '@web/features/profile/players/store/actions';
+import { compose } from '@shared/lib/utils/fp/combine';
+import { connect } from 'react-redux';
+
+import { useUser } from '@web/shared/lib/react/hooks';
+import { safeGet } from '@shared/lib/utils/object/get';
 
 interface IProps {
 	players: PlayerDto[];
 	renewContract: () => void;
 }
 
+interface IProps {
+	profilePlayers: IProfilePlayers;
+	user: IUser;
+	leagueId: number;
+	fetchProfilePlayers: typeof fetchProfilePlayers;
+}
 const playerPosition = (position: string) => {
 	return (
 		<Button key={position} size="mini">
@@ -45,11 +62,34 @@ const playerCard = (player: PlayerDto) => {
 	);
 };
 
-const SwManageProfilePlayersComponent: React.FC<IProps> = ({ players, renewContract }) => {
+const SwManageProfilePlayersComponent: React.FC<IProps> = ({ profilePlayers, leagueId, fetchProfilePlayers }) => {
+	const user = useUser();
+	useEffect(() => {
+		fetchProfilePlayers({ leagueId: leagueId, userId: user.id });
+	}, [fetchProfilePlayers, leagueId, user.id]);
+
+	if (!profilePlayers || profilePlayers.loading) {
+		return <Loader />;
+	}
+	const players = profilePlayers.players;
 	return (
 		<div className={'sw-mt4'}>
 			<Card.Group>{players.length > 0 ? players.map(playerCard) : <span />}</Card.Group>
 		</div>
 	);
 };
-export const SwManageProfilePlayers = SwManageProfilePlayersComponent;
+const enhancer = compose(
+	registerReducer({ profilePlayers: profilePlayersReducer }),
+	registerEpic(fetchProfilePlayersEpic),
+	connect(
+		(state, ownProps) => {
+			const userId = safeGet(() => state.auth.user.id);
+			return { profilePlayers: safeGet(() => state.profilePlayers[userId][ownProps.leagueId]) };
+		},
+		{
+			fetchProfilePlayers,
+		}
+	)
+);
+
+export const SwManageProfilePlayers = enhancer(SwManageProfilePlayersComponent);
