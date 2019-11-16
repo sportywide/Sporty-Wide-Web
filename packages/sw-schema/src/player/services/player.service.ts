@@ -19,24 +19,24 @@ export class PlayerService {
 	constructor(
 		@InjectSwRepository(Player) private readonly playerRepository: SwRepository<Player>,
 		private readonly userPreferenceService: UserPreferenceService,
-		@InjectModel('UserPlayers') private readonly userPlayersModel: Model<UserPlayers>,
+		@InjectModel('UserPlayers') private readonly userPlayersModel: Model<UserPlayers>
 	) {}
 
 	async getPlayersForUser({ userId, leagueId, date = new Date() }) {
 		const season = getSeason(date);
 		if (!season) {
-			return [];
+			return null;
 		}
 		let userPlayers = await this.userPlayersModel.findOne({
 			userId,
 			leagueId,
-			date,
+			week: date,
 		});
 		if (!userPlayers) {
 			const userPreference = await this.userPreferenceService.findById(userId);
 			const formationName = userPreference ? userPreference.formation : '4-4-2';
 			const formation = formationMap[formationName];
-			const playerIds = this.generateFormationIds({
+			const playerIds = await this.generateFormationIds({
 				formation,
 				leagueId,
 				date,
@@ -45,13 +45,19 @@ export class PlayerService {
 			userPlayers = new this.userPlayersModel({
 				userId,
 				leagueId,
-				date,
+				week: date,
 				season: getSeason(date),
 				players: playerIds,
 			});
+
+			await userPlayers.save();
 		}
 
 		return userPlayers;
+	}
+
+	async getPlayerByIds(playerIds) {
+		return this.playerRepository.getByIdsOrdered(playerIds);
 	}
 
 	async generateFormation({ formation, leagueId, maxPlayers = 15, date = new Date() }) {
@@ -61,11 +67,8 @@ export class PlayerService {
 			maxPlayers,
 			date,
 		});
-		const queryBuilder = this.playerRepository.createQueryBuilder();
-		queryBuilder.where('id IN (:...ids)', { ids: playerIds });
-		queryBuilder.orderBy(`field(id, ARRAY[${playerIds.join(',')}])`);
 
-		return queryBuilder.getMany();
+		return this.playerRepository.getByIdsOrdered(playerIds);
 	}
 
 	async generateFormationIds({
@@ -83,7 +86,7 @@ export class PlayerService {
 		queryBuilder
 			.select(['player.id', 'player.rating', 'player.positions'])
 			.innerJoin('player.team', 'team')
-			.where('team.leagueId = :leagueId AND player.rating >= 70', { leagueId })
+			.where('team.leagueId = :leagueId AND player.rating >= 65', { leagueId })
 			.andWhere(qb => {
 				const subQuery = qb
 					.subQuery()

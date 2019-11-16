@@ -176,6 +176,14 @@ class SwBaseRepository<T> {
 
 		return rows.map(({ id }) => id);
 	}
+
+	async getByIdsOrdered(ids: number[]) {
+		const queryBuilder = this.createQueryBuilder();
+		queryBuilder.where('id IN (:...ids)', { ids });
+		queryBuilder.orderBy(`field(id, ARRAY[${ids.join(',')}])`);
+
+		return queryBuilder.getMany();
+	}
 }
 
 //hack to prevent export not found warning when babel typescript strips out type information
