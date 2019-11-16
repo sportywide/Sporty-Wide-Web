@@ -12,13 +12,13 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { UserPlayers } from '@schema/player/models/user-players.schema';
 import { getSeason } from '@shared/lib/utils/season';
-import { UserPreferenceService } from '@schema/user/services/user-preference.service';
+import { UserLeaguePreferenceService } from '@schema/league/services/user-league-preference.service';
 
 @Injectable()
 export class PlayerService {
 	constructor(
 		@InjectSwRepository(Player) private readonly playerRepository: SwRepository<Player>,
-		private readonly userPreferenceService: UserPreferenceService,
+		private readonly userLeaguePreferenceService: UserLeaguePreferenceService,
 		@InjectModel('UserPlayers') private readonly userPlayersModel: Model<UserPlayers>
 	) {}
 
@@ -33,7 +33,7 @@ export class PlayerService {
 			week: date,
 		});
 		if (!userPlayers) {
-			const userPreference = await this.userPreferenceService.findById(userId);
+			const userPreference = await this.userLeaguePreferenceService.find({ userId, leagueId });
 			const formationName = userPreference ? userPreference.formation : '4-4-2';
 			const formation = formationMap[formationName];
 			const playerIds = await this.generateFormationIds({
@@ -46,6 +46,7 @@ export class PlayerService {
 				userId,
 				leagueId,
 				week: date,
+				formation: formationName,
 				season: getSeason(date),
 				players: playerIds,
 			});
