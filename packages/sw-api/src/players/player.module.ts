@@ -9,4 +9,4 @@ import { PlayerController } from '@api/players/controllers/player.controller';
 	providers: [],
 	exports: [],
 })
-export class UserModule {}
+export class PlayerModule {}

@@ -34,18 +34,12 @@ import { MongooseModule } from '@nestjs/mongoose';
 		}),
 		MongooseModule.forRootAsync({
 			inject: [SCHEMA_CONFIG],
-			useFactory: schemaConfig => {
-				console.log({
-					uri: `mongodb://${schemaConfig.get('mongo:username')}:${schemaConfig.get(
-						'mongo:password'
-					)}@${schemaConfig.get('mongo:host')}/${schemaConfig.get('mongo:database')}}`,
-				});
-				return {
-					uri: `mongodb://${schemaConfig.get('mongo:username')}:${schemaConfig.get(
-						'mongo:password'
-					)}@${schemaConfig.get('mongo:host')}/${schemaConfig.get('mongo:database')}}`,
-				};
-			},
+			useFactory: schemaConfig => ({
+				uri: `mongodb://${schemaConfig.get('mongo:username')}:${schemaConfig.get(
+					'mongo:password'
+				)}@${schemaConfig.get('mongo:host')}/${schemaConfig.get('mongo:database')}?authSource=admin`,
+				useNewUrlParser: true,
+			}),
 			imports: [CoreSchemaModule],
 		}),
 	],
