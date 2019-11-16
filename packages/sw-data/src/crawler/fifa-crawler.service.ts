@@ -109,10 +109,7 @@ export class FifaCrawlerService extends ResultsService {
 			const halfStars = span.find('i.fas.fa-star-half-alt').length;
 			const rating = `${activeStars + halfStars / 2}/${maxStars}`;
 
-			const title = bio['title']
-				.replace(this._fifaRegex, '')
-				.replace(/\d+./, '')
-				.trim();
+			const title = this.cleanTeamTitle(bio['title']);
 			result.push({
 				fifaId: parseInt(bio['href'].split('/').filter(s => !!s)[1], 10),
 				image: image['data-src'],
@@ -221,7 +218,7 @@ export class FifaCrawlerService extends ResultsService {
 				.find('a')
 				.attr();
 
-			const teamTitle = club['title'].replace(this._fifaRegex, '').trim();
+			const teamTitle = this.cleanTeamTitle(club['title']);
 
 			result.push({
 				fifaId: parseInt($(row).attr('data-playerid'), 10),
@@ -322,6 +319,13 @@ export class FifaCrawlerService extends ResultsService {
 
 	private resolveNode($: CheerioStatic, dataRow): any {
 		return $(dataRow).eq(0)[0];
+	}
+
+	private cleanTeamTitle(title) {
+		return title
+			.replace(this._fifaRegex, '')
+			.replace(/\d+./, '')
+			.trim();
 	}
 
 	private resolveKey($: CheerioStatic, node): string {

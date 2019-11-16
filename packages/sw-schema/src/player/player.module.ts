@@ -5,12 +5,12 @@ import { SwRepositoryModule } from '@schema/core/repository/sql/providers/reposi
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserPlayersSchema } from '@schema/player/models/user-players.schema';
 import { PlayerService } from '@schema/player/services/player.service';
-import { SchemaUserModule } from '@schema/user/user.module';
+import { SchemaLeagueModule } from '@schema/league/league.module';
 
 @Module({
 	imports: [
 		CoreSchemaModule,
-		SchemaUserModule,
+		SchemaLeagueModule,
 		SwRepositoryModule.forFeature({ entities: [Player] }),
 		MongooseModule.forFeature([{ name: 'UserPlayers', schema: UserPlayersSchema }]),
 	],
