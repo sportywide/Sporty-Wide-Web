@@ -26,4 +26,5 @@ export class PlayerDto {
 	image: string;
 	@Expose()
 	rating: number;
+	age?: number;
 }
