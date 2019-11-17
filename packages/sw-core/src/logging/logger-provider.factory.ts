@@ -1,11 +1,9 @@
 import os from 'os';
-import { log } from 'util';
 import { Inject, Injectable } from '@nestjs/common';
 import { Provider } from 'nconf';
 import { mergeConcatArray } from '@shared/lib/utils/object/merge';
 import log4j, { Configuration } from 'log4js';
 import { CORE_CONFIG } from '@core/config/config.constants';
-import { isProduction } from '@shared/lib/utils/env';
 
 function filenameToken(logEvent) {
 	return logEvent.fileName ? logEvent.fileName.replace(__dirname, '').replace(/^\/webpack:/, '') : '';

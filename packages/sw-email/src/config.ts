@@ -2,7 +2,7 @@ require('dotenv').config();
 export const config = {
 	development: {
 		smtp: {
-			host: 'mailhog',
+			host: '192.168.50.10',
 			port: 1025,
 		},
 		app: {

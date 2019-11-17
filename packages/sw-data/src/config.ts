@@ -24,6 +24,9 @@ export const config = {
 	development: {
 		postgres: {
 			url: '192.168.50.10',
+			username: 'sw-user',
+			password: 'sw-password',
+			database: 'sportywide',
 		},
 	},
 	production: {

@@ -22,7 +22,7 @@ services:
         environment:
             NO_OPTIONAL: 1
             NODE_ENV: development
-        entrypoint: npm run install:dependencies -- -s
+        entrypoint: npm run install:dependencies
         volumes:
             - .:/opt/app
             - node_modules:/opt/app/node_modules

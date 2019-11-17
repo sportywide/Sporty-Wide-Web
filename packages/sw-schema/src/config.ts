@@ -5,22 +5,40 @@ export const config = {
 		postgres: {
 			username: process.env.SW_POSTGRES_USER,
 			password: process.env.SW_POSTGRES_PASSWORD,
-			host: 'postgres',
-			port: 5432,
 			database: process.env.SW_POSTGRES_DB,
 		},
 		mongo: {
 			username: process.env.SW_MONGO_USER,
 			password: process.env.SW_MONGO_PASSWORD,
-			host: 'mongo',
-			port: 27017,
 			database: process.env.SW_MONGO_DB,
-		}
+		},
+	},
+	development: {
+		postgres: {
+			username: 'sw-user',
+			password: 'sw-password',
+			host: '192.168.50.10',
+			database: 'sportywide',
+		},
+		mongo: {
+			username: 'sw-user',
+			password: 'sw-password',
+			host: '192.168.50.10',
+			database: 'sportywide',
+		},
 	},
 	test: {
 		postgres: {
-			host: 'localhost',
+			username: 'sw-user',
+			password: 'sw-password',
+			host: '192.168.50.10',
+			database: 'sportywide',
 		},
-		mongo_url: 'http://localhost:6000',
+		mongo: {
+			username: 'sw-user',
+			password: 'sw-password',
+			host: '192.168.50.10',
+			database: 'sportywide',
+		},
 	},
 };
