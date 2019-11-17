@@ -2,7 +2,7 @@
 
 ### Prerequisites:
 
--   Node 8.x+
+-   Node 10.x+
 -   Vagrant https://www.vagrantup.com/
 
 ### Initial setup:
@@ -67,20 +67,11 @@ The app is structured into multiple packages:
 
 -   Spin up Vagrant development machine: `vagrant up`
 -   Wait for docker core services to run
--   SSH into the machine `vagrant ssh`
--   Start docker application services: `docker compose up`
+-   Run services on your host: lerna run --stream dev
 
 ##### To run just a specified service
 
-`docker-compose up <service>`
-
-##### To debug a service
-
-Run one of the following commands (in Vagrant)
-
--   `docker ps`: This will show you all the running containers
--   `docker-compose run --rm --entrypoint sh <service>`: This will run the container and open an shell session to debug
--   `docker exec -it <containerId> sh`: This will create a shell session to an already running container. Use `docker ps` to find the container ID
+`lerna run --stream dev --scope sportywide-api`
 
 ##### To restart a service
 
@@ -90,55 +81,4 @@ Run one of the following commands (in Vagrant)
 
 Run one of the following commands
 
--   npm run api-test (run this on local)
--   docker-compose -f docker-compose.yml -f docker-test.yml up api-test (run this inside vagrant)
-
-##### Full testing
-
--   docker-compose -f docker-compose.yml -f docker-test.yml up base test (run this inside vagrant)
-
-#### Running locally
-
--   Ensure you have installed all external services on your computer
--   You can override config variables by creating an `.env.development` in `<package>/config` folder. It will override the default variables in config.development.js
--   The following declarations are equivalent
-
-```
-(.env.development)
-SERVER_URL=5000
-```
-
-```
-(config.development.js)
-
-module.exports = {
-	server_url: 'http://localhost:5000'
-};
-```
-
----
-
-```
-(.env.development)
-DEV_SERVER__HOST=localhost
-DEV_SERVER__PORT=1234
-```
-
-```
-(config.development.js)
-
-module.exports = {
-	dev_server: {
-		host: 'localhost',
-		port: 1234,
-	}
-};
-```
-
--   Run npm command with lerna. Use one of the followings
-
-    -   `npx lerna run --scope <package> --stream dev (for only one package)`
-    -   `npx lerna run --stream dev (for all packages)`
-
--   Install a dependency to a sub package
-    -   `lerna add [--dev] --scope <package>`
+-   npm run api-test

@@ -31,3 +31,24 @@ dashboard = true
 [docker]
 endpoint = "tcp:///var/run/docker.sock"
 exposedByDefault = false
+
+[file]
+watch = true
+
+[backends]
+	[backends.swapi]
+		[backends.swapi.servers.swapi]
+				url = "http://192.168.50.1:5000"
+	[backends.swweb]
+        [backends.swweb.servers.swweb]
+            url = "http://192.168.50.1:3000"
+
+[frontends]
+        [frontends.swapi]
+                backend = "swapi"
+        [frontends.swapi.routes.swapi]
+                rule = "Host:api.sportywidedev.com"
+        [frontends.swweb]
+                backend = "swweb"
+        [frontends.swweb.routes.swweb]
+                rule = "Host:www.sportywidedev.com,sportywidedev.com"
