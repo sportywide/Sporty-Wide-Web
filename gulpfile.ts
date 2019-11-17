@@ -11,17 +11,17 @@ export class Gulpfile {
 	@Task('bootstrap')
 	bootstrap() {
 		if (argv.ci) {
-			return spawn('lerna bootstrap -- --ci --no-optional && link-parent-bin');
+			return spawn('npx lerna bootstrap -- --ci --no-optional && link-parent-bin');
 		} else if (argv.production) {
 			return spawn(
-				'lerna bootstrap -- --production --no-optional --ci && link-parent-bin -s true -d false -o false'
+				'npx lerna bootstrap -- --production --no-optional --ci && link-parent-bin -s true -d false -o false'
 			);
 		} else if (argv.packageLockOnly) {
-			return spawn('lerna bootstrap -- --no-optional --package-lock-only');
+			return spawn('npx lerna bootstrap -- --no-optional --package-lock-only');
 		} else if (argv.optional) {
-			return spawn('lerna bootstrap && link-parent-bin');
+			return spawn('npx lerna bootstrap && link-parent-bin');
 		} else {
-			return spawn('lerna bootstrap -- --no-optional && link-parent-bin');
+			return spawn('npx lerna bootstrap -- --no-optional && link-parent-bin');
 		}
 	}
 
@@ -32,12 +32,12 @@ export class Gulpfile {
 
 	@Task('dev:exec')
 	exec() {
-		return spawn(`lerna exec "gulp dev:exec --entry ${argv.entry}" --stream --scope ${argv.scope}`);
+		return spawn(`npx lerna exec "gulp dev:exec --entry ${argv.entry}" --stream --scope ${argv.scope}`);
 	}
 
 	@Task('generate:migration')
 	generateMigration() {
-		return spawn('ts-node -T bin/migration.ts');
+		return spawn('npx ts-node -T bin/migration.ts');
 	}
 
 	/** Test tasks **/
@@ -77,12 +77,12 @@ export class Gulpfile {
 			}
 		}
 
-		return spawn(`jest ${args.join(' ')}`);
+		return spawn(`npx jest ${args.join(' ')}`);
 	}
 
 	@Task('test:api')
 	apiTest() {
-		return spawn('ts-node e2e/api/api-test.ts');
+		return spawn('npx ts-node e2e/api/api-test.ts');
 	}
 
 	/** CI tasks **/

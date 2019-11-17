@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import glob from 'glob';
 
 export function getDependencies({ rootDir = process.cwd(), packageName }) {
 	const packageJson = JSON.parse(
@@ -20,6 +19,7 @@ export function getAllPackages({ rootDir = process.cwd() } = {}) {
 }
 
 export function mergePackageJson({ rootDir = process.cwd() } = {}) {
+	const glob = require('glob');
 	const rootPackageJson = require(path.resolve(rootDir, 'package.json'));
 
 	const subPackageJsonFiles = glob.sync(path.resolve(rootDir, 'packages/**/package.json'), {
