@@ -18,6 +18,12 @@ export class LeagueService extends BaseEntityService<League> {
 		return this.leagueRepository.find();
 	}
 
+	findLeague(id) {
+		return this.leagueRepository.findOne({
+			id,
+		});
+	}
+
 	findUserLeagues(userId) {
 		return this.userLeagueRepository.find({
 			where: {

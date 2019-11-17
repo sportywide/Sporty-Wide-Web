@@ -65,7 +65,7 @@ const playerCard = (player: PlayerDto) => {
 const SwManageProfilePlayersComponent: React.FC<IProps> = ({ profilePlayers, leagueId, fetchProfilePlayers }) => {
 	const user = useUser();
 	useEffect(() => {
-		fetchProfilePlayers({ leagueId: leagueId, userId: user.id });
+		fetchProfilePlayers({ leagueId, userId: user.id });
 	}, [fetchProfilePlayers, leagueId, user.id]);
 
 	if (!profilePlayers || profilePlayers.loading) {
