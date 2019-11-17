@@ -43,7 +43,7 @@ const routeMappings = [
 	},
 	{
 		name: 'profile-players',
-		pattern: '/profile/players',
+		pattern: '/profile/players/:id',
 		page: 'profile/players',
 	},
 	{

@@ -44,6 +44,8 @@ const nextConfig = {
 			},
 		});
 
+		webpackConfig.output.pathinfo = false;
+
 		const originalEntry = webpackConfig.entry;
 		webpackConfig.entry = async () => {
 			let entries = await originalEntry();
