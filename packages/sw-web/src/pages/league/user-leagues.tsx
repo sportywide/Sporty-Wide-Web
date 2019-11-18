@@ -11,7 +11,7 @@ class SwUserLeaguePage extends React.Component<any> {
 				<Head>
 					<title>User Leagues</title>
 				</Head>
-				<SwGreyBackground style={{ paddingTop: 'var(--space-1)' }}>
+				<SwGreyBackground padding={true}>
 					<SwContainer>
 						<Header as={'h3'}>Your Leagues</Header>
 						<SwUserLeagues />

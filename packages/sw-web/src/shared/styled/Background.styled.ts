@@ -14,6 +14,12 @@ export const SwPrimaryBackGround = styled.div`
 export const SwGreyBackground = styled.div`
 	${swBackground};
 	background-color: ${props => props.theme.colors.grey};
+
+	${({ padding }) =>
+		padding &&
+		`
+			 padding-top: var(--space-1);
+		`}
 `;
 
 export const SwTransparentBackground = styled.div`
@@ -28,7 +34,7 @@ export const SwFluidContainer = styled.div`
 export const SwContainer = styled(Container)`
 	&&& {
 		background-color: ${props => props.theme.colors.white};
-		padding: var(--space-3);
-		margin-top: var(--space-3);
+		padding: var(--space-2);
+		margin-top: var(--space-2);
 	}
 `;
