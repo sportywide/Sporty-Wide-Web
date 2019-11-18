@@ -1,6 +1,6 @@
 import React from 'react';
 import Head from 'next/head';
-import { SwFluidContainer, SwGreyBackground } from '@web/shared/styled/Background.styled';
+import { SwContainer, SwGreyBackground } from '@web/shared/styled/Background.styled';
 import { Grid, GridColumn } from 'semantic-ui-react';
 import { SwManageProfilePlayers } from '@web/features/profile/players/components/ManageProfilePlayers';
 
@@ -12,17 +12,13 @@ class SwManagePlayersPage extends React.Component<any> {
 	}
 	render() {
 		return (
-			<SwGreyBackground>
+			<SwGreyBackground padding={true}>
 				<Head>
 					<title>Manage your players</title>
 				</Head>
-				<SwFluidContainer>
-					<Grid verticalAlign={'middle'} centered>
-						<GridColumn mobile={13} tablet={13} computer={13}>
-							<SwManageProfilePlayers leagueId={this.props.leagueId} />
-						</GridColumn>
-					</Grid>
-				</SwFluidContainer>
+				<SwContainer>
+					<SwManageProfilePlayers leagueId={this.props.leagueId} />
+				</SwContainer>
 			</SwGreyBackground>
 		);
 	}
