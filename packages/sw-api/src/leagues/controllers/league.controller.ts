@@ -1,10 +1,11 @@
-import { Controller, Get, Param, ParseIntPipe, Put, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, ParseIntPipe, Put, UseGuards, Query, BadRequestException } from '@nestjs/common';
 import { LeagueService } from '@api/leagues/services/league.service';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { toDto } from '@api/utils/dto/transform';
 import { LeagueDto } from '@shared/lib/dtos/leagues/league.dto';
 import { UserLeagueDto } from '@shared/lib/dtos/leagues/user-league.dto';
 import { ActiveUser } from '@api/auth/decorators/user-check.decorator';
+import { formationMap, FormationName } from '@shared/lib/dtos/formation/formation.dto';
 
 @Controller('/leagues')
 export class LeagueController {
@@ -39,9 +40,14 @@ export class LeagueController {
 	@Put('/:leagueId/user/:userId/join')
 	public async joinLeague(
 		@Param('userId', new ParseIntPipe()) userId: number,
-		@Param('leagueId', new ParseIntPipe()) leagueId: number
+		@Param('leagueId', new ParseIntPipe()) leagueId: number,
+		@Query('formation') formation: FormationName
 	) {
-		await this.leagueService.joinLeague(userId, leagueId);
+		formation = formation || '4-4-2';
+		if (!formationMap[formation]) {
+			throw new BadRequestException('Not a valid formation');
+		}
+		await this.leagueService.joinLeague({ userId, leagueId, formation });
 	}
 
 	@UseGuards(JwtAuthGuard)

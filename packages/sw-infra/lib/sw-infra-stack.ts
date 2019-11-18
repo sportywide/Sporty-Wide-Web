@@ -10,11 +10,11 @@ import {
 	SubnetType,
 	Vpc,
 } from '@aws-cdk/aws-ec2';
-import { ContainerImage, EcsOptimizedImage, Protocol, LogDrivers } from '@aws-cdk/aws-ecs';
+import { ContainerImage, EcsOptimizedImage, Protocol, LogDrivers, Compatibility, NetworkMode } from '@aws-cdk/aws-ecs';
 import { DatabaseInstanceEngine } from '@aws-cdk/aws-rds';
 import { createConfig } from '@shared/lib/config/config-reader';
 import { StackBuilder } from '@root/packages/sw-infra/lib/helper/stack-builder';
-import { Compatibility, NetworkMode } from '@root/node_modules/@aws-cdk/aws-ecs';
+
 import { Effect, ManagedPolicy, PolicyStatement, ServicePrincipal } from '@aws-cdk/aws-iam';
 
 const env = process.env.NODE_ENV || 'production';
