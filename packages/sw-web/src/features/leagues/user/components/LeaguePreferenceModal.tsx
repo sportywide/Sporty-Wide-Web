@@ -9,6 +9,7 @@ import { joinUserLeagueEpic } from '@web/features/leagues/user/store/epics';
 import { joinUserLeague } from '@web/features/leagues/user/store/actions';
 import { LeagueDto } from '@shared/lib/dtos/leagues/league.dto';
 import { FormationName } from '@shared/lib/dtos/formation/formation.dto';
+import { redirect } from '@web/shared/lib/navigation/helper';
 
 interface IProps {
 	onClose: () => void;
@@ -38,7 +39,16 @@ const LeaguePreferenceModalComponent: React.FC<IProps> = function({
 				/>
 			</Modal.Content>
 			<Modal.Actions>
-				<Button onClick={() => joinUserLeague({ leagueId: league.id, userId, formation })} positive>
+				<Button
+					onClick={async () => {
+						await joinUserLeague({ leagueId: league.id, userId, formation });
+						await redirect({
+							refresh: true,
+							route: `profile/players/${league.id}`,
+						});
+					}}
+					positive
+				>
 					Play
 				</Button>
 				<Button onClick={() => onClose()} negative>

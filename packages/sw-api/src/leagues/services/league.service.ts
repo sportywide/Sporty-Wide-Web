@@ -11,7 +11,7 @@ export class LeagueService extends BaseEntityService<League> {
 	constructor(
 		@InjectSwRepository(League) private readonly leagueRepository: SwRepository<League>,
 		@InjectSwRepository(UserLeague) private readonly userLeagueRepository: SwRepository<UserLeague>,
-		@InjectSwRepository(UserLeague) private readonly userLeaguePreferenceService: UserLeaguePreferenceService
+		private readonly userLeaguePreferenceService: UserLeaguePreferenceService
 	) {
 		super(leagueRepository);
 	}
