@@ -33,8 +33,8 @@ export const joinUserLeagueEpic: Epic<ActionType<typeof joinUserLeague>, any, an
 ) => {
 	const userLeagueService = container.get(UserLeagueService);
 	return action$.ofType(JOIN_USER_LEAGUE as any).pipe(
-		mergeMap(({ payload: { userId, leagueId } }) => {
-			return userLeagueService.joinLeague({ leagueId, userId }).pipe(mapTo(fetchUserLeagues(userId)));
+		mergeMap(({ payload: { userId, leagueId, formation } }) => {
+			return userLeagueService.joinLeague({ leagueId, userId, formation }).pipe(mapTo(fetchUserLeagues(userId)));
 		})
 	);
 };

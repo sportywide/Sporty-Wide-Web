@@ -135,6 +135,9 @@ const nextConfig = {
 		};
 		return config;
 	},
+	typescript: {
+		ignoreDevErrors: true,
+	},
 	distDir: path.join('..', 'next-build'),
 	dir: paths.web.src,
 	onDemandEntries: {

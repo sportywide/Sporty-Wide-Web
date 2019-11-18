@@ -17,6 +17,8 @@ import NotificationContainer from '@web/shared/lib/ui/components/notification/No
 import { ucfirst } from '@shared/lib/utils/string/conversion';
 import { LoadingBar } from '@web/shared/lib/ui/components/loading/LoadingBar';
 import { ApiService } from '@web/shared/lib/http/api.service';
+import EventModalManager from '@web/shared/lib/popup/EventModalManager';
+import ConfirmationManager from '@web/shared/lib/popup/ConfirmationManager';
 
 interface IProps {
 	store: ISportyWideStore;
@@ -101,6 +103,8 @@ class SwApp extends App<IProps> {
 							<LoadingBar />
 							<Component {...pageProps} />
 							<NotificationContainer />
+							<ConfirmationManager />
+							<EventModalManager />
 						</ContainerContext.Provider>
 					</ApolloProvider>
 				</Provider>
