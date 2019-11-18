@@ -11,4 +11,4 @@ export interface UserLeaguePreference extends Document {
 	formation: string;
 	leagueId: string;
 }
-UserLeaguePreferenceSchema.index({ userID: 1 });
+UserLeaguePreferenceSchema.index({ userId: 1, leagueId: 1 });

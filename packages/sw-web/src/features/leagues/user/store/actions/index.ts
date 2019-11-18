@@ -3,6 +3,8 @@ import {
 	FETCH_USER_LEAGUE_SUCCESS,
 	FETCH_USER_LEAGUES,
 	JOIN_USER_LEAGUE,
+	JOIN_USER_LEAGUE_ERROR,
+	JOIN_USER_LEAGUE_SUCCESS,
 	LEAVE_USER_LEAGUE,
 } from '@web/features/leagues/user/store/actions/actions.constants';
 import { LeagueDto } from '@shared/lib/dtos/leagues/league.dto';
@@ -14,10 +16,30 @@ export const fetchUserLeaguesSuccess = createSwStandardAction(FETCH_USER_LEAGUE_
 	userId: number;
 }>();
 
-export const joinUserLeague = createSwStandardAction(JOIN_USER_LEAGUE)<{
-	leagueId: number;
+export const joinUserLeague = createSwStandardAction(JOIN_USER_LEAGUE).map<
+	any,
+	{
+		leagueId: number;
+		userId: number;
+		formation: FormationName;
+	}
+>(payload => ({
+	payload,
+	meta: {
+		lifecycle: {
+			resolve: JOIN_USER_LEAGUE_SUCCESS,
+			reject: JOIN_USER_LEAGUE_ERROR,
+		},
+	},
+}));
+
+export const joinUserLeagueSuccess = createSwStandardAction(JOIN_USER_LEAGUE_SUCCESS)<{
 	userId: number;
-	formation: FormationName;
+	leagueId: number;
+}>();
+export const joinUserLeagueError = createSwStandardAction(JOIN_USER_LEAGUE_ERROR)<{
+	userId: number;
+	leagueId: number;
 }>();
 
 export const leaveUserLeague = createSwStandardAction(LEAVE_USER_LEAGUE)<{
