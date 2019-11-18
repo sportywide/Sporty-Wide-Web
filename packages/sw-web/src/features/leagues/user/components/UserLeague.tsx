@@ -16,6 +16,7 @@ import { EventDispatcher } from '@web/shared/lib/events/event-dispatcher';
 import { ContainerContext } from '@web/shared/lib/store';
 import { SHOW_CONFIRM, SHOW_MODAL } from '@web/shared/lib/popup/event.constants';
 import { SHOW_LEAGUE_PREFERENCE } from '@web/shared/lib/popup/modal.constants';
+import { redirect } from '@web/shared/lib/navigation/helper';
 import { fetchUserLeagues, leaveUserLeague } from '../store/actions';
 
 interface IProps {
@@ -32,29 +33,38 @@ const SwUserLeaguesComponent: React.FC<IProps> = ({ leagues, fetchUserLeagues, f
 		fetchUserLeagues(user.id);
 		fetchLeagues();
 	}, [fetchLeagues, fetchUserLeagues, user.id]);
-	const onSelectCallback = useCallback(onSelect, []);
+	const onPlayCallback = useCallback(onPlay, []);
+	const onLeaveCallback = useCallback(onLeave, []);
 	if (!leagues) {
 		return <Loader />;
 	}
 	return (
 		<Grid verticalAlign={'middle'} centered>
 			{leagues.map(league => (
-				<SwLeagueContainer key={league.name} mobile={8} tablet={4} computer={4}>
-					<SwLeague league={league} onSelect={onSelectCallback} />
+				<SwLeagueContainer key={league.name} mobile={8} tablet={6} computer={4}>
+					<SwLeague league={league} onPlay={onPlayCallback} onLeave={onLeaveCallback} />
 				</SwLeagueContainer>
 			))}
 		</Grid>
 	);
 
-	function onSelect(leagueDto: SelectableLeagueDto) {
+	function onLeave(leagueDto: SelectableLeagueDto) {
+		const eventDispatcher = container.get(EventDispatcher);
+		eventDispatcher.trigger(SHOW_CONFIRM, {
+			content: `Do you want to quit league ${leagueDto.title}?`,
+			onConfirm: close => {
+				leaveUserLeague({ leagueId: leagueDto.id, userId: user.id });
+				close();
+			},
+		});
+	}
+
+	async function onPlay(leagueDto: SelectableLeagueDto) {
 		const eventDispatcher = container.get(EventDispatcher);
 		if (leagueDto.selected) {
-			eventDispatcher.trigger(SHOW_CONFIRM, {
-				content: `Do you want to quit league ${leagueDto.title}?`,
-				onConfirm: close => {
-					leaveUserLeague({ leagueId: leagueDto.id, userId: user.id });
-					close();
-				},
+			await redirect({
+				refresh: true,
+				route: `profile/players/${leagueDto.id}`,
 			});
 		} else {
 			eventDispatcher.trigger(SHOW_MODAL, {
