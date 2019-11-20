@@ -20,12 +20,26 @@ export const config = {
 			port: 5432,
 			database: process.env.SW_POSTGRES_DB,
 		},
+		mongo: {
+			username: process.env.SW_MONGO_USER,
+			password: process.env.SW_MONGO_PASSWORD,
+			database: process.env.SW_MONGO_DB,
+		},
 	},
 	development: {
+		puppeteer: {
+			executable: process.env.SW_PUPPETEER_EXECUTABLE,
+		},
 		postgres: {
 			url: '192.168.50.10',
 			username: 'sw-user',
 			password: 'sw-password',
+			database: 'sportywide',
+		},
+		mongo: {
+			username: 'sw-user',
+			password: 'sw-password',
+			host: '192.168.50.10',
 			database: 'sportywide',
 		},
 	},

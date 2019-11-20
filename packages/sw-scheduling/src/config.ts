@@ -16,7 +16,7 @@ export const config = {
 			secretAccessKey: 'S3RVER',
 		},
 		sqs: {
-			url: 'http://localhost:9324',
+			url: 'http://192.168.50.10:9324',
 		},
 		sns: {
 			url: 'http://localhost:4002',

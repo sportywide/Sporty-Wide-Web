@@ -19,6 +19,7 @@ export const SwGreyBackground = styled.div`
 		padding &&
 		`
 			 padding-top: var(--space-1);
+			 padding-bottom: var(--space-1);
 		`}
 `;
 
@@ -34,7 +35,10 @@ export const SwFluidContainer = styled.div`
 export const SwContainer = styled(Container)`
 	&&& {
 		background-color: ${props => props.theme.colors.white};
-		padding: var(--space-2);
-		margin-top: var(--space-2);
+		padding: var(--space-3);
+		margin: var(--space-3) 0;
+		min-height: calc(100vh - 2 * var(--space-3));
+		border-radius: 5px;
+		box-shadow: 0 1px 1px 1px rgba(0, 0, 0, 0.2);
 	}
 `;

@@ -9,12 +9,15 @@ import { TeamPersisterService } from '@data/persister/team/team-persister.servic
 import { FixturePersisterService } from '@data/persister/fixture/fixture-persister.service';
 import { SchemaTeamModule } from '@schema/team/team.module';
 import { SchemaFixtureModule } from '@schema/fixture/fixture.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { SchemaLeagueModule } from '@schema/league/league.module';
 
 @Module({
 	imports: [
 		CoreDataModule,
 		SchemaPlayerModule,
 		SchemaTeamModule,
+		SchemaLeagueModule,
 		SchemaFixtureModule,
 		SqlConnectionModule.forRootAsync({
 			inject: [SCHEMA_CONFIG, DATA_CONFIG],
@@ -27,6 +30,16 @@ import { SchemaFixtureModule } from '@schema/fixture/fixture.module';
 				database: dataConfig.get('postgres:database'),
 			}),
 			imports: [CoreSchemaModule, CoreDataModule],
+		}),
+		MongooseModule.forRootAsync({
+			inject: [SCHEMA_CONFIG],
+			useFactory: schemaConfig => ({
+				uri: `mongodb://${schemaConfig.get('mongo:username')}:${schemaConfig.get(
+					'mongo:password'
+				)}@${schemaConfig.get('mongo:host')}/${schemaConfig.get('mongo:database')}?authSource=admin`,
+				useNewUrlParser: true,
+			}),
+			imports: [CoreSchemaModule],
 		}),
 	],
 	providers: [PlayerPersisterService, TeamPersisterService, FixturePersisterService],

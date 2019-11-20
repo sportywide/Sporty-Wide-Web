@@ -11,7 +11,7 @@ import { COOKIE_CSRF } from '@web/api/auth/constants';
 
 const config = getConfig();
 
-const CSRF_WHITE_LIST = ['login', 'signup'];
+const CSRF_WHITE_LIST = ['login', 'signup', 'refresh_token'];
 
 export function bootstrap(app) {
 	const server = express();

@@ -15,4 +15,11 @@ export class LeagueService {
 			.get('/leagues')
 			.pipe(map(({ data: payload }) => payload.map(league => plainToClass(LeagueDto, league))));
 	}
+
+	fetchLeague(id: number): Observable<LeagueDto> {
+		return this.apiService
+			.api()
+			.get(`/leagues/${id}`)
+			.pipe(map(({ data: payload }) => plainToClass(LeagueDto, payload)));
+	}
 }

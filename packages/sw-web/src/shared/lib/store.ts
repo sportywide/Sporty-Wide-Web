@@ -71,7 +71,7 @@ function registerContainer({ context }) {
 	const appContainer = Container.of(context.req);
 	appContainer.set('context', context);
 	if (context.req) {
-		appContainer.set('baseUrl', `https://${context.req.get('host')}`);
+		appContainer.set('baseUrl', `${context.req.protocol}://${context.req.get('host')}`);
 	} else {
 		appContainer.set('baseUrl', window.location.origin);
 	}
