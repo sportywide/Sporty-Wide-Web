@@ -1,7 +1,6 @@
-import { Readable } from 'stream';
 import util from 'util';
 import { S3 } from 'aws-sdk';
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { SCHEDULING_CONFIG } from '@core/config/config.constants';
 import { Provider } from 'nconf';
 

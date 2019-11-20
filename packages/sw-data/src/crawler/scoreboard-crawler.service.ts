@@ -13,6 +13,7 @@ import { PuppeteerService } from '@data/core/browser/browser.service';
 import { SwPage } from '@data/core/browser/browser.class';
 import { ScoreboardPlayer } from './scoreboard-crawler.service';
 import { BrowserService } from './browser.service';
+
 const MAX_ATTEMPTS = 4;
 const PAGE_TIMEOUT = 60000;
 const PAGE_URL = 'https://www.scoreboard.com/au/soccer';
@@ -82,7 +83,10 @@ export class ScoreboardCrawlerService extends BrowserService {
 				const content = await page.content();
 				await page.close();
 				const $ = Cheerio.load(content);
-				return this.parseTeams($);
+				return {
+					teams: this.parseTeams($),
+					season: this.parseSeason($),
+				};
 			} catch (e) {
 				this.dataLogger.error(`Failed to get teams for ${leagueUrl}`, e);
 				if (page) {
@@ -90,7 +94,15 @@ export class ScoreboardCrawlerService extends BrowserService {
 				}
 			}
 		}
-		return [];
+		return {};
+	}
+
+	private parseSeason($: CheerioStatic): string {
+		const text = $(
+			'body > div.container > div.main > div.main-left > div.center.col-center.tournament_page > .tournament'
+		).text();
+		const parts = text.split('»');
+		return parts[parts.length - 1];
 	}
 
 	private parseTeams($: CheerioStatic): ScoreboardTeam[] {
@@ -224,20 +236,19 @@ export class ScoreboardCrawlerService extends BrowserService {
 	}
 
 	private async waitForTeamResult(page: SwPage) {
-		await page.waitForSelector('#glib-stats-data > div.preload', {
-			hidden: true,
+		await page.waitForSelector('#box-table-type-1', {
+			visible: true,
 			timeout: DATA_TIMEOUT,
 		});
 	}
 
 	private async navigateTo(page: SwPage, url, options = {}) {
-		const response = await page.navigateTo(`${PAGE_URL}${url}`, {
+		return await page.navigateTo(`${PAGE_URL}${url}`, {
 			options: {
 				timeout: PAGE_TIMEOUT,
-				waitUntil: ['domcontentloaded', 'networkidle2'],
+				waitUntil: ['domcontentloaded'],
 				...options,
 			},
 		});
-		return response;
 	}
 }

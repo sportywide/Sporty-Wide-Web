@@ -15,7 +15,11 @@ provider:
     environment:
         SW_POSTGRES_USER: ${file(./secret.${self:provider.stage}.yml):rdsUser}
         SW_POSTGRES_PASSWORD: ${file(./secret.${self:provider.stage}.yml):rdsPassword}
+        SW_MONGO_USER: ${file(./secret.${self:provider.stage}.yml):mongoUser}
+        SW_MONGO_PASSWORD: ${file(./secret.${self:provider.stage}.yml):mongoPassword}
         SW_POSTGRES_DB: sportywide
+        SW_MONGO_DB: sportywide
+        SW_PUPPETEER_EXECUTABLE: ${file(./secret.${self:provider.stage}.yml):puppeteerExecutable}
 
 plugins:
     - serverless-webpack

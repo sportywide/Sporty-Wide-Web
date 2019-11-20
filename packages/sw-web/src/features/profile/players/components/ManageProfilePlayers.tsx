@@ -35,7 +35,7 @@ const playerPosition = (position: string) => {
 
 const playerCard = (player: PlayerDto) => {
 	return (
-		<GridColumn mobile={16} tablet={8} computer={4}>
+		<GridColumn mobile={16} tablet={8} computer={4} key={player.id}>
 			<Card key={player.id}>
 				<Card.Content>
 					<Image floated="right" size="tiny" src={fifaImage(player.image)} />
@@ -71,7 +71,7 @@ const SwManageProfilePlayersComponent: React.FC<IProps> = ({ profilePlayers, lea
 	}, [fetchProfilePlayers, leagueId, user.id]);
 
 	if (!profilePlayers || profilePlayers.loading) {
-		return <Loader />;
+		return <Loader active />;
 	}
 	const players = profilePlayers.players;
 	return (

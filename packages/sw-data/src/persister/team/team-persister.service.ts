@@ -12,13 +12,15 @@ import { Logger } from 'log4js';
 import { fsPromise } from '@shared/lib/utils/promisify/fs';
 import Fuse from 'fuse.js';
 import { ScoreboardTeam } from '@data/crawler/scoreboard-crawler.service';
+import { LeagueResultService } from '@schema/league/services/league-result.service';
 const glob = util.promisify(require('glob'));
 
 @Injectable()
 export class TeamPersisterService {
 	constructor(
 		@Inject(DATA_LOGGER) private readonly logger: Logger,
-		@InjectSwRepository(Team) private readonly teamRepository: SwRepository<Team>
+		@InjectSwRepository(Team) private readonly teamRepository: SwRepository<Team>,
+		private readonly leagueResultService: LeagueResultService
 	) {}
 
 	async saveTeamsFromFifaInfoFiles() {
@@ -46,7 +48,6 @@ export class TeamPersisterService {
 			cwd: path.resolve(process.cwd(), 'resources', 'teams'),
 			absolute: true,
 		});
-		let allMatchedTeams = {};
 		await Promise.all(
 			files.map(async file => {
 				try {
@@ -54,18 +55,39 @@ export class TeamPersisterService {
 					const content = await fsPromise.readFile(file, 'utf8');
 
 					const leagueTeams = JSON.parse(content);
-					const { matchedTeams } = await this.matchScoreboardTeams(leagueTeams);
-					allMatchedTeams = { ...allMatchedTeams, ...matchedTeams };
+					await this.saveScoreboardTeamResult(leagueTeams);
 				} catch (e) {
 					this.logger.error(`Failed to read file ${file}`, e);
 				}
 			})
 		);
-
-		return allMatchedTeams;
 	}
 
-	private async matchScoreboardTeams(leagueTeams: { league: League; teams: ScoreboardTeam[] }) {
+	async saveScoreboardTeamResult(leagueTeams: { league: League; teams: ScoreboardTeam[]; season: string }) {
+		const league = leagueTeams.league;
+		const teamsInfo = leagueTeams.teams;
+		const { matchedTeams } = await this.matchScoreboardTeams(leagueTeams);
+		const teamUrlMap = Object.entries(matchedTeams).reduce((currentObject, [teamId, teamInfo]) => {
+			return {
+				...currentObject,
+				[teamInfo.url]: teamId,
+			};
+		}, {});
+
+		return this.leagueResultService.save({
+			leagueId: league.id,
+			table: teamsInfo.map(team => ({
+				teamId: teamUrlMap[team.url],
+				...team,
+			})),
+			season: leagueTeams.season,
+		});
+	}
+
+	private async matchScoreboardTeams(leagueTeams: {
+		league: League;
+		teams: ScoreboardTeam[];
+	}): Promise<{ matchedTeams: Record<number, ScoreboardTeam>; unresolvedTeams: ScoreboardTeam[] }> {
 		const league = leagueTeams.league;
 		const teamsInfo = leagueTeams.teams;
 		const dbTeams = await this.teamRepository.find({

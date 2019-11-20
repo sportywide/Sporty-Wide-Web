@@ -36,7 +36,7 @@ const SwUserLeaguesComponent: React.FC<IProps> = ({ leagues, fetchUserLeagues, f
 	const onPlayCallback = useCallback(onPlay, []);
 	const onLeaveCallback = useCallback(onLeave, []);
 	if (!leagues) {
-		return <Loader />;
+		return <Loader active />;
 	}
 	return (
 		<Grid verticalAlign={'middle'} centered>

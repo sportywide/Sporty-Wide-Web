@@ -15,9 +15,16 @@ spec:
                   image: wildcat/scylla
                   resources:
                       requests:
-                          cpu: 400m
+                          cpu: 350m
                   ports:
                       - name: proxy
                         containerPort: 8081
                       - name: web
                         containerPort: 8899
+                  volumeMounts:
+                      - name: scylla-volume
+                        mountPath: /var/www/scylla
+            volumes:
+                - name: scylla-volume
+                  persistentVolumeClaim:
+                      claimName: scylla-persistent-volume-claim
