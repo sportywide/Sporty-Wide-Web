@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 env_vars=`awk 'END {
 	for (name in ENVIRON) {
-		if (name ~ /^SW_/) {
+		if (name ~ /^SW_/ || name ~ /^AWS_/) {
 			env[name] = ENVIRON[name]
 		}
 	}

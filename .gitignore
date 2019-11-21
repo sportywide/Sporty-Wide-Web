@@ -16,6 +16,7 @@ certs/*.pem
 out/
 
 .vagrant
+.s3
 
 install.lock
 
@@ -200,5 +201,7 @@ $RECYCLE.BIN/
 .env*
 
 packages/sw-data/resources
+
+secret.*.yml
 
 # End of https://www.gitignore.io/api/node,linux,macos,windows,intellij+all

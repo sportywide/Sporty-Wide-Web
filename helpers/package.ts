@@ -17,3 +17,36 @@ export function getAllPackages({ rootDir = process.cwd() } = {}) {
 	}
 	return fs.readdirSync(packagesDir).filter(packageName => packageName.startsWith('sw-'));
 }
+
+export function mergePackageJson({ rootDir = process.cwd() } = {}) {
+	const glob = require('glob');
+	const rootPackageJson = require(path.resolve(rootDir, 'package.json'));
+
+	const subPackageJsonFiles = glob.sync(path.resolve(rootDir, 'packages/**/package.json'), {
+		absolute: true,
+	});
+
+	const packageJsonContents = subPackageJsonFiles.map(subPackageJsonFile => require(subPackageJsonFile));
+
+	return packageJsonContents.reduce((currentContent, content) => {
+		return {
+			...currentContent,
+			devDependencies: {
+				...(currentContent.devDependencies || {}),
+				...(content.devDependencies || {}),
+			},
+			optionalDependencies: {
+				...(currentContent.optionalDependencies || {}),
+				...(content.optionalDependencies || {}),
+			},
+			dependencies: {
+				...(currentContent.dependencies || {}),
+				...(content.dependencies || {}),
+			},
+			peerDependencies: {
+				...(currentContent.peerDependencies || {}),
+				...(content.peerDependencies || {}),
+			},
+		};
+	}, rootPackageJson);
+}

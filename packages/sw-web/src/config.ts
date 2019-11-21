@@ -3,10 +3,10 @@ require('dotenv').config();
 export const config = {
 	default: {
 		port: 3000,
-		server_url: 'http://api:5000',
 	},
 	development: {
 		cookie_secret: 'testsecret',
+		server_url: 'http://192.168.50.1:5000',
 		a: process.env.A,
 	},
 };

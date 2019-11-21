@@ -8,9 +8,19 @@ import { UserModule } from '@api/user/user.module';
 import { CoreApiModule } from '@api/core/core-api.module';
 import { CoreModule } from '@core/core.module';
 import { LeagueModule } from '@api/leagues/league.module';
+import { PlayerModule } from '@api/players/player.module';
 
 @Module({
-	imports: [AuthModule, SharedModule, SchemaModule, UserModule, LeagueModule, CoreApiModule, CoreModule],
+	imports: [
+		AuthModule,
+		SharedModule,
+		SchemaModule,
+		UserModule,
+		LeagueModule,
+		CoreApiModule,
+		CoreModule,
+		PlayerModule,
+	],
 	controllers: [AppController],
 	providers: [AppService],
 })

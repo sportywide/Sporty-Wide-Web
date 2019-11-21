@@ -55,7 +55,10 @@ Vagrant.configure(2) do |config|
   
 	config.vm.synced_folder ".", "/vagrant", type: "nfs", mount_options: ["rw","async","fsc","nolock","vers=3","udp","rsize=32768","wsize=32768","hard","noatime","actimeo=2"]
 
-	config.vm.provision "shell", inline: "sudo yum clean all && sudo yum makecache fast"
+	config.vm.provision "shell" do |s|
+	  s.env = { AWS_ACCESS_KEY_ID:ENV['AWS_ACCESS_KEY_ID'], AWS_SECRET_ACCESS_KEY:ENV['AWS_SECRET_ACCESS_KEY'] }
+	  s.path = 'vagrant/scripts/set-env.sh'
+	end
 	config.vm.provision "shell", path: "vagrant/scripts/node.sh"
 	config.vm.provision "shell", path: "vagrant/scripts/chromium.sh"
 

@@ -1,7 +1,12 @@
-import { ok } from '@scheduling/lib/http';
+import { error, ok } from '@scheduling/lib/http';
 
 export async function handler() {
-	return ok({
-		message: 'OK',
-	});
+	try {
+		return ok({
+			message: 'OK',
+		});
+	} catch (e) {
+		console.error(e);
+		return error(e);
+	}
 }

@@ -1,6 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { INestApplicationContext } from '@nestjs/common';
-import { FifaCrawlerService } from '@root/packages/sw-data/src/crawler/fifa-crawler.service';
+import { FifaCrawlerService } from '@data/crawler/fifa-crawler.service';
 import { CrawlerModule } from '@data/crawler/crawler.module';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { leagues } from '@data/data.constants';
@@ -11,8 +11,10 @@ async function bootstrap() {
 	// we are fine with fetching each league sequentially
 
 	for (const { id: leagueId } of leagues) {
-		await crawlerService.crawlTeam(leagueId);
-		await crawlerService.crawlPlayers(leagueId);
+		const teams = await crawlerService.crawlTeam(leagueId);
+		await crawlerService.writeResult(`teams/fifa-${leagueId}.json`, teams);
+		const players = await crawlerService.crawlPlayers(leagueId);
+		await crawlerService.writeResult(`players/fifa-${leagueId}.json`, players);
 	}
 
 	return context;

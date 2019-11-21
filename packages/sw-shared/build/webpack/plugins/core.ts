@@ -29,8 +29,6 @@ export function watch() {
 			watch: true,
 			watchOptions: {
 				ignored: /node_modules/,
-				poll: 1000,
-				aggregateTimeout: 300,
 			},
 		});
 }

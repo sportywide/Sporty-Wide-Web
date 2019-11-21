@@ -38,12 +38,7 @@ export class FixtureCrawlerService extends ResultsService {
 				this.getResultsForLeague(name, season),
 				this.getFixturesForLeague(name, season),
 			]);
-			const matches = [...results, ...fixtures].sort((a, b) => a.time.getTime() - b.time.getTime());
-			this.writeResult(`fixtures/${name}.json`, {
-				id: league.id,
-				season: season,
-				matches,
-			});
+			return [...results, ...fixtures].sort((a, b) => a.time.getTime() - b.time.getTime());
 		} catch (e) {
 			this.logger.error(`Failed to get matches for league ${name}`, e);
 		}

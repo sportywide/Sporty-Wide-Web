@@ -15,7 +15,7 @@ export class Gulpfile extends GenericWebpackTasks {
 
 	@Task('dev:start')
 	startDev() {
-		return spawn('wait-on dist/main.js && nodemon --inspect=0.0.0.0 dist/main.js');
+		return spawn('wait-on dist/main.js && nodemon dist/main.js');
 	}
 
 	/** Build tasks **/
