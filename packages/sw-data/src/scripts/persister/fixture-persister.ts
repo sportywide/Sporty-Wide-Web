@@ -7,7 +7,7 @@ import { PersisterModule } from '@data/persister/persister.module';
 async function bootstrap() {
 	const context: INestApplicationContext = await NestFactory.createApplicationContext(PersisterModule);
 	const fixturePersiterService = context.get(FixturePersisterService);
-	await fixturePersiterService.saveFixtures();
+	await fixturePersiterService.saveFixturesFromFiles();
 
 	return context;
 }

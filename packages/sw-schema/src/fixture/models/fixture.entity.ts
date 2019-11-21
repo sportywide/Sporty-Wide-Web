@@ -12,7 +12,10 @@ export class Fixture extends BaseEntity {
 	away: string;
 
 	@Column()
-	fixtureNumber: number;
+	homeFixture: number;
+
+	@Column()
+	awayFixture: number;
 
 	@ManyToOne(type => Team)
 	@JoinColumn({

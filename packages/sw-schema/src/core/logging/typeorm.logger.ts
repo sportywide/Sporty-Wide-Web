@@ -27,6 +27,10 @@ export class TypeormLoggerService implements Logger {
 		this.logger.info(message);
 	}
 
+	public error(message: string, ...args) {
+		this.logger.error(message, ...args);
+	}
+
 	public log(level: 'log' | 'info' | 'warn', message: any) {
 		switch (level) {
 			case 'log':

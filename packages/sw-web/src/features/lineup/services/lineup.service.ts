@@ -1,11 +1,7 @@
 import { Service } from 'typedi';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
-import { FormationDto } from '@shared/lib/dtos/formation/formation.dto';
+import { FormationDto, formationMap } from '@shared/lib/dtos/formation/formation.dto';
 
-const formationMap = {
-	'4-4-2': require('@shared/lib/strategy/4-4-2.json'),
-	'4-3-3': require('@shared/lib/strategy/4-3-3.json'),
-};
 @Service()
 export class LineupService {
 	fillPositions({

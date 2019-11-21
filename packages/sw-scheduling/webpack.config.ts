@@ -5,13 +5,20 @@ import paths from '@build/paths';
 const isDev = slsw.lib.webpack.isLocal;
 process.env.NODE_ENV = isDev ? 'development' : 'production';
 
-module.exports = makeConfig({
+const config = makeConfig({
 	entries: slsw.lib.entries,
-	env: process.env.NODE_ENV,
+	env: 'production',
 	libraryTarget: 'commonjs2',
 	output: paths.scheduling.dist,
 	alias: {
 		'@scheduling': paths.scheduling.src,
+		'@schema': paths.schema.src,
+		'@core': paths.core.src,
+		'@data': paths.data.src,
 		'@shared': paths.shared.src,
 	},
 });
+
+(config.optimization = config.optimization || {}).minimize = false;
+
+module.exports = config;

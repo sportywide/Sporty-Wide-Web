@@ -1,4 +1,4 @@
-import { FormationDto } from '@shared/lib/dtos/formation/formation.dto';
+import { FormationDto, formationMap } from '@shared/lib/dtos/formation/formation.dto';
 import { randomCfRange } from '@shared/lib/utils/random/probability';
 import { range } from '@shared/lib/utils/array/range';
 import { Injectable } from '@nestjs/common';
@@ -8,12 +8,71 @@ import { SwRepository } from '@schema/core/repository/sql/base.repository';
 import { Fixture } from '@schema/fixture/models/fixture.entity';
 import { Brackets } from 'typeorm';
 import { max, min } from 'lodash';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { UserPlayers } from '@schema/player/models/user-players.schema';
+import { getSeason } from '@shared/lib/utils/season';
+import { UserLeaguePreferenceService } from '@schema/league/services/user-league-preference.service';
 
 @Injectable()
 export class PlayerService {
-	constructor(@InjectSwRepository(Player) private readonly playerRepository: SwRepository<Player>) {}
+	constructor(
+		@InjectSwRepository(Player) private readonly playerRepository: SwRepository<Player>,
+		private readonly userLeaguePreferenceService: UserLeaguePreferenceService,
+		@InjectModel('UserPlayers') private readonly userPlayersModel: Model<UserPlayers>
+	) {}
 
-	async generateFormation({
+	async getPlayersForUser({ userId, leagueId, date = new Date() }) {
+		const season = getSeason(date);
+		if (!season) {
+			return null;
+		}
+		let userPlayers = await this.userPlayersModel.findOne({
+			userId,
+			leagueId,
+			week: date,
+		});
+		if (!userPlayers) {
+			const userPreference = await this.userLeaguePreferenceService.find({ userId, leagueId });
+			const formationName = userPreference ? userPreference.formation : '4-4-2';
+			const formation = formationMap[formationName];
+			const playerIds = await this.generateFormationIds({
+				formation,
+				leagueId,
+				date,
+			});
+
+			userPlayers = new this.userPlayersModel({
+				userId,
+				leagueId,
+				week: date,
+				formation: formationName,
+				season: getSeason(date),
+				players: playerIds,
+			});
+
+			await userPlayers.save();
+		}
+
+		return userPlayers;
+	}
+
+	async getPlayerByIds(playerIds) {
+		return this.playerRepository.getByIdsOrdered(playerIds);
+	}
+
+	async generateFormation({ formation, leagueId, maxPlayers = 15, date = new Date() }) {
+		const playerIds = await this.generateFormationIds({
+			formation,
+			leagueId,
+			maxPlayers,
+			date,
+		});
+
+		return this.playerRepository.getByIdsOrdered(playerIds);
+	}
+
+	async generateFormationIds({
 		formation,
 		leagueId,
 		maxPlayers = 15,
@@ -23,12 +82,12 @@ export class PlayerService {
 		leagueId: number;
 		maxPlayers?: number;
 		date?: Date;
-	}): Promise<Player[]> {
-		let queryBuilder = this.playerRepository.createQueryBuilder('player');
+	}): Promise<number[]> {
+		const queryBuilder = this.playerRepository.createQueryBuilder('player');
 		queryBuilder
 			.select(['player.id', 'player.rating', 'player.positions'])
 			.innerJoin('player.team', 'team')
-			.where('team.leagueId = :leagueId AND player.rating >= 70', { leagueId })
+			.where('team.leagueId = :leagueId AND player.rating >= 65', { leagueId })
 			.andWhere(qb => {
 				const subQuery = qb
 					.subQuery()
@@ -50,12 +109,7 @@ export class PlayerService {
 			rating: row.player_rating,
 			positions: row.player_positions,
 		}));
-		const playerIds = this.generateRandomXV(formation, playerDetails, maxPlayers);
-		queryBuilder = this.playerRepository.createQueryBuilder();
-		queryBuilder.where('id IN (:...ids)', { ids: playerIds });
-		queryBuilder.orderBy(`field(id, ARRAY[${playerIds.join(',')}])`);
-
-		return queryBuilder.getMany();
+		return this.generateRandomXV(formation, playerDetails, maxPlayers);
 	}
 
 	async generatePlayersInRange({

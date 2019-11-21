@@ -8,7 +8,7 @@ import { sleep } from '@shared/lib/utils/sleep';
 import { flattenDeep } from 'lodash';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { ResultsService } from '@data/crawler/results.service';
-import { teamMapping, teamAliasMapping } from '../data.constants';
+import { teamAliasMapping, teamMapping } from '../data.constants';
 
 const DEFAULT_PLAYER_PAGES = 5;
 
@@ -74,9 +74,7 @@ export class FifaCrawlerService extends ResultsService {
 		this.logger.info(`Fetching league id ${leagueId}`);
 		const url = `/teams?league=${leagueId}&order=desc`;
 		const result = await this.getParsedResponse(url);
-		const teams = this.parseInfoTeam(result);
-		await this.writeResult(`teams/fifa-${leagueId}.json`, teams);
-		return teams;
+		return this.parseInfoTeam(result);
 	}
 
 	private parseInfoTeam($: CheerioStatic): FifaTeam[] {
@@ -112,10 +110,7 @@ export class FifaCrawlerService extends ResultsService {
 			const halfStars = span.find('i.fas.fa-star-half-alt').length;
 			const rating = `${activeStars + halfStars / 2}/${maxStars}`;
 
-			const title = bio['title']
-				.replace(this._fifaRegex, '')
-				.replace(/\d+./, '')
-				.trim();
+			const title = this.cleanTeamTitle(bio['title']);
 			result.push({
 				fifaId: parseInt(bio['href'].split('/').filter(s => !!s)[1], 10),
 				image: image['data-src'],
@@ -152,7 +147,6 @@ export class FifaCrawlerService extends ResultsService {
 			await sleep(1000);
 		} while (shouldContinue);
 
-		await this.writeResult(`players/fifa-${leagueId}.json`, result);
 		return result;
 	}
 
@@ -225,7 +219,7 @@ export class FifaCrawlerService extends ResultsService {
 				.find('a')
 				.attr();
 
-			const teamTitle = club['title'].replace(this._fifaRegex, '').trim();
+			const teamTitle = this.cleanTeamTitle(club['title']);
 
 			result.push({
 				fifaId: parseInt($(row).attr('data-playerid'), 10),
@@ -342,6 +336,13 @@ export class FifaCrawlerService extends ResultsService {
 
 	private resolveNode($: CheerioStatic, dataRow): any {
 		return $(dataRow).eq(0)[0];
+	}
+
+	private cleanTeamTitle(title) {
+		return title
+			.replace(this._fifaRegex, '')
+			.replace(/\d+./, '')
+			.trim();
 	}
 
 	private resolveKey($: CheerioStatic, node): string {

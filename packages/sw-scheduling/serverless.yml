@@ -1,18 +1,72 @@
-service: sw-scheduling
+service: sw
 
 provider:
     name: aws
+    region: ap-southeast-2
     runtime: nodejs10.x
     stage: ${opt:stage, 'development'}
+    timeout: 600
+    vpc:
+        securityGroupIds:
+            - sg-08019439f1f5670c5
+        subnetIds:
+            - subnet-01b1d03513492a78a
+            - subnet-066942f2f00f492d1
+    environment:
+        SW_POSTGRES_USER: ${file(./secret.${self:provider.stage}.yml):rdsUser}
+        SW_POSTGRES_PASSWORD: ${file(./secret.${self:provider.stage}.yml):rdsPassword}
+        SW_POSTGRES_DB: sportywide
 
 plugins:
     - serverless-webpack
+    - serverless-offline-sqs
+    - serverless-offline-sns
     - serverless-offline
+    - serverless-s3-local
+    - serverless-dynamodb-local
+    - serverless-iam-roles-per-function
 
 custom:
     serverless-offline:
         port: 4000
+        host: 0.0.0.0
+    aws:
+        accountId: 409050499179
     webpack:
-        includeModules: true
+        includeModules:
+            packagePath: '../../package.json'
+            forceInclude:
+                - source-map-support
+                - pg
+    serverless-offline-sqs:
+        autoCreate: true
+        apiVersion: '2012-11-05'
+        endpoint: http://0.0.0.0:9324
+        region: ${self:provider.region}
+        accessKeyId: root
+        secretAccessKey: root
+        skipCacheInvalidation: false
 
+    serverless-offline-sns:
+        port: 4002
+        debug: false
+        host: 0.0.0.0
+        accountId: ${self:custom.aws.accountId}
+
+    s3:
+        port: 6000
+        directory: .s3
+    dynamodb:
+        readCapacity: 5
+        writeCapacity: 5
+        start:
+            port: 5500
+            migrate: true
+            inMemory: false
+            dbPath: .dynamodb
+
+resources:
+    - ${file(resources/s3.yml)}
+    - ${file(resources/sqs.yml)}
+    - ${file(resources/sns.yml)}
 functions: ${file(resources/functions.yml)}

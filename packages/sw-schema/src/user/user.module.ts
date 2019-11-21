@@ -6,6 +6,7 @@ import { SwRepositoryModule } from '@schema/core/repository/sql/providers/reposi
 
 @Module({
 	imports: [CoreSchemaModule, SwRepositoryModule.forFeature({ entities: [User, UserProfile] })],
+	providers: [],
 	exports: [SwRepositoryModule],
 })
 export class SchemaUserModule {}

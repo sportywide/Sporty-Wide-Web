@@ -61,11 +61,40 @@ services:
         networks:
             - sw_net_frontend
             - sw_net_backend
+    mongo:
+        image: mongo:4.0.13-xenial
+        container_name: sw_mongo
+        restart: always
+        environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: ${SW_MONGO_INITDB_ROOT_PASSWORD}
+            MONGO_INITDB_DATABASE: admin
+            SW_MONGO_USER: ${SW_MONGO_USER}
+            SW_MONGO_PASSWORD: ${SW_MONGO_PASSWORD}
+            SW_MONGO_DB: ${SW_MONGO_DB}
+        ports:
+            - 27017:27017
+        networks:
+            - sw_net_backend
+        volumes:
+            - mongo:/data/db
+            - ./scripts/mongo/:/docker-entrypoint-initdb.d/
+    sqs:
+        container_name: sw_sqs
+        image: roribio16/alpine-sqs
+        ports:
+            - 9324:9324
+            - 9325:9325
+        networks:
+            - sw_net_frontend
+            - sw_net_backend
 volumes:
     postgres:
         name: sw_volume_postgres
     redis:
         name: sw_volume_redis
+    mongo:
+        name: sw_volume_mongo
 networks:
     sw_net_frontend:
         driver: bridge
