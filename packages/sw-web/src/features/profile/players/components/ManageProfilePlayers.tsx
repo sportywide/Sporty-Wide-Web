@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { fifaImage } from '@web/shared/lib/images/links';
-import { Card, Image, Button, Loader, GridColumn, Grid } from 'semantic-ui-react';
+import { Button, Card, Grid, GridColumn, Image, Loader, Select } from 'semantic-ui-react';
 import { IProfilePlayers, profilePlayersReducer } from '@web/features/profile/players/store/reducers';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { registerReducer } from '@web/shared/lib/redux/register-reducer';
@@ -10,9 +10,10 @@ import { fetchProfilePlayersEpic } from '@web/features/profile/players/store/epi
 import { fetchProfilePlayers } from '@web/features/profile/players/store/actions';
 import { compose } from '@shared/lib/utils/fp/combine';
 import { connect } from 'react-redux';
-
-import { useUser } from '@web/shared/lib/react/hooks';
+import { useFormationOptions, useUser } from '@web/shared/lib/react/hooks';
 import { safeGet } from '@shared/lib/utils/object/get';
+import { ContainerContext } from '@web/shared/lib/store';
+import { UserLeagueService } from '@web/features/leagues/user/services/user-league.service';
 
 interface IProps {
 	players: PlayerDto[];
@@ -66,19 +67,43 @@ const playerCard = (player: PlayerDto) => {
 
 const SwManageProfilePlayersComponent: React.FC<IProps> = ({ profilePlayers, leagueId, fetchProfilePlayers }) => {
 	const user = useUser();
+	const [isSettingFormation, setIsSettingFormation] = useState(false);
+	const container = useContext(ContainerContext);
 	useEffect(() => {
 		fetchProfilePlayers({ leagueId, userId: user.id });
 	}, [fetchProfilePlayers, leagueId, user.id]);
 
+	const options = useFormationOptions();
 	if (!profilePlayers || profilePlayers.loading) {
 		return <Loader active inline={'centered'} />;
 	}
 	const players = profilePlayers.players;
 	return (
-		<Grid verticalAlign={'middle'} centered>
-			{players.length > 0 ? players.map(playerCard) : <span />}
-		</Grid>
+		<div>
+			<span className={'sw-mr2'}>Your favorite formation</span>
+			<Select
+				className={'sw-mb2'}
+				disabled={isSettingFormation}
+				defaultValue={profilePlayers.preference.formation}
+				options={options}
+				onChange={(e, { value }) => setPreferredFormation(value)}
+			/>
+			<Grid verticalAlign={'middle'} centered>
+				{players.length > 0 ? players.map(playerCard) : <span />}
+			</Grid>
+		</div>
 	);
+
+	async function setPreferredFormation(value) {
+		const leagueService = container.get(UserLeagueService);
+
+		try {
+			setIsSettingFormation(true);
+			await leagueService.setPreferredFormation({ formation: value, leagueId, userId: user.id });
+		} finally {
+			setIsSettingFormation(false);
+		}
+	}
 };
 const enhancer = compose(
 	registerReducer({ profilePlayers: profilePlayersReducer }),

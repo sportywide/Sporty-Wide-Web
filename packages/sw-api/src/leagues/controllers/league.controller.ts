@@ -79,6 +79,35 @@ export class LeagueController {
 
 	@UseGuards(JwtAuthGuard)
 	@ActiveUser()
+	@Put('/:leagueId/user/:userId/formation')
+	public async setPreferredFormation(
+		@Param('userId', new ParseIntPipe()) userId: number,
+		@Param('leagueId', new ParseIntPipe()) leagueId: number,
+		@Query('formation') formation: FormationName,
+		@CurrentUser() currentUser: User
+	) {
+		if (currentUser.id !== userId) {
+			throw new BadRequestException('Denied action');
+		}
+		formation = formation || '4-4-2';
+		if (!formationMap[formation]) {
+			throw new BadRequestException('Not a valid formation');
+		}
+		await this.leagueService.setPreferredFormation({ userId, leagueId, formation });
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@ActiveUser()
+	@Get('/:leagueId/user/:userId/preference')
+	public async getUserLeaguePreference(
+		@Param('userId', new ParseIntPipe()) userId: number,
+		@Param('leagueId', new ParseIntPipe()) leagueId: number
+	) {
+		await this.leagueService.getUserLeaguePreference({ userId, leagueId });
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@ActiveUser()
 	@Put('/:leagueId/user/:userId/leave')
 	public async leaveLeague(
 		@Param('userId', new ParseIntPipe()) userId: number,

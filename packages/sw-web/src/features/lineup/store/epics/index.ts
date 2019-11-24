@@ -29,10 +29,10 @@ export const playerEpic = (action$, state$, { container }: { container: Containe
 		mergeMap(async ({ payload: leagueId }) => {
 			const profilePlayerService = container.get(ProfilePlayersService);
 			const userId = state$.value.auth.user.id;
-			const { players } = await profilePlayerService
+			const { players, formation } = await profilePlayerService
 				.getProfilePlayers({ leagueId, userId, includes: ['team'] })
 				.toPromise();
-			return fetchPlayersSuccess(sortPlayers(players));
+			return fetchPlayersSuccess({ players: sortPlayers(players), formation });
 		})
 	);
 };
