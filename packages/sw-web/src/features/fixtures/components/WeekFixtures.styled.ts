@@ -19,7 +19,7 @@ export const FixtureLine = styled.div`
 	:not(last-child) {
 		border-bottom: 1px solid #dcdcdc;
 	}
-
+	cursor: pointer;
 	padding: 8px 0;
 	display: flex;
 	justify-content: space-between;
@@ -29,6 +29,7 @@ export const FixtureLine = styled.div`
 export const FixtureStatus = styled.div`
 	font-weight: bold;
 	width: 100px;
+	text-align: right;
 `;
 export const FixtureMain = styled.div`
 	flex-grow: 1;
