@@ -5,6 +5,6 @@ export function catchAndThrow(action) {
 		setTimeout(() => {
 			throw error;
 		});
-		return mapTo(action);
+		return mapTo(action(error));
 	});
 }

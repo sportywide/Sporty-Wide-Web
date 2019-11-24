@@ -11,7 +11,7 @@ import { keyBy } from 'lodash';
 import { sleep } from '@shared/lib/utils/sleep';
 import { PuppeteerService } from '@data/core/browser/browser.service';
 import { SwPage } from '@data/core/browser/browser.class';
-import { ScoreboardPlayer } from './scoreboard-crawler.service';
+import { ScoreboardPlayer, ScoreboardTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
 import { BrowserService } from './browser.service';
 
 const MAX_ATTEMPTS = 4;
@@ -19,31 +19,6 @@ const PAGE_TIMEOUT = 60000;
 const PAGE_URL = 'https://www.scoreboard.com/au/soccer';
 
 const DATA_TIMEOUT = 30000;
-
-export type ScoreboardTeam = {
-	name: string;
-	url: string;
-	played: number;
-	wins: number;
-	draws: number;
-	losses: number;
-	scored: number;
-	conceded: number;
-	points: number;
-	forms: { type: string; teams: string; score: string; date: string }[];
-};
-
-export type ScoreboardPlayer = {
-	jersey: number;
-	nationality: string;
-	age: number;
-	played: number;
-	name: string;
-	scored: number;
-	yellow: number;
-	red: number;
-	status: string;
-};
 
 @Injectable()
 export class ScoreboardCrawlerService extends BrowserService {
@@ -142,6 +117,7 @@ export class ScoreboardCrawlerService extends BrowserService {
 					const matches = title.match(/\[b\](.+?)\s*\[\/b\](.+?)\n+(.*?)$/s);
 					if (matches) {
 						[, score, teams, date] = matches;
+						score = score.replace(':', '');
 					}
 				} else {
 					const matches = title.match(/\[b\](.+?)\s*\[\/b\]\((.+?)\)\n*(.*?)$/s);

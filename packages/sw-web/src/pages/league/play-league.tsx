@@ -4,6 +4,7 @@ import { SwContainer, SwGreyBackground } from '@web/shared/styled/Background.sty
 import { Header } from 'semantic-ui-react';
 import { SwManageProfilePlayers } from '@web/features/profile/players/components/ManageProfilePlayers';
 import { LeagueService } from '@web/features/leagues/base/services/league.service';
+import { SwLeagueStandings } from '@web/features/leagues/base/components/LeagueStanding';
 
 class SwManagePlayersPage extends React.Component<any> {
 	static async getInitialProps({ query, store }) {
@@ -26,6 +27,8 @@ class SwManagePlayersPage extends React.Component<any> {
 					<Header as={'h1'}>Welcome to {this.props.league.title}</Header>
 					<Header as={'h3'}>Your players</Header>
 					<SwManageProfilePlayers leagueId={this.props.leagueId} />
+					<Header as={'h3'}>League Standings</Header>
+					<SwLeagueStandings league={this.props.league} />
 				</SwContainer>
 			</SwGreyBackground>
 		);

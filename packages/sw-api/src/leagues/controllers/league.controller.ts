@@ -6,6 +6,7 @@ import { LeagueDto } from '@shared/lib/dtos/leagues/league.dto';
 import { UserLeagueDto } from '@shared/lib/dtos/leagues/user-league.dto';
 import { ActiveUser } from '@api/auth/decorators/user-check.decorator';
 import { formationMap, FormationName } from '@shared/lib/dtos/formation/formation.dto';
+import { LeagueStandingsDto } from '@shared/lib/dtos/leagues/league-standings.dto';
 
 @Controller('/leagues')
 export class LeagueController {
@@ -17,6 +18,19 @@ export class LeagueController {
 	public async getLeagues() {
 		const leagues = await this.leagueService.findAll();
 		return leagues.map(league => toDto({ value: league, dtoType: LeagueDto }));
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@ActiveUser()
+	@Get('/standings/:id')
+	public async getLeagueStandings(@Param('id') leagueId: number) {
+		return toDto({
+			value: await this.leagueService.findLeagueStanding(leagueId),
+			dtoType: LeagueStandingsDto,
+			options: {
+				excludeExtraneousValues: false,
+			},
+		});
 	}
 
 	@UseGuards(JwtAuthGuard)

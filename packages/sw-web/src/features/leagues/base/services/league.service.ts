@@ -4,6 +4,7 @@ import { LeagueDto } from '@shared/lib/dtos/leagues/league.dto';
 import { ApiService } from '@web/shared/lib/http/api.service';
 import { map } from 'rxjs/operators';
 import { plainToClass } from 'class-transformer-imp';
+import { LeagueStandingsDto } from '@shared/lib/dtos/leagues/league-standings.dto';
 
 @Service()
 export class LeagueService {
@@ -21,5 +22,12 @@ export class LeagueService {
 			.api()
 			.get(`/leagues/${id}`)
 			.pipe(map(({ data: payload }) => plainToClass(LeagueDto, payload)));
+	}
+
+	fetchLeagueStandings(id: number): Observable<LeagueStandingsDto> {
+		return this.apiService
+			.api()
+			.get(`/leagues/standings/${id}`)
+			.pipe(map(({ data: payload }) => payload));
 	}
 }

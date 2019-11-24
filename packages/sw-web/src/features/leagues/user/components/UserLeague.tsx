@@ -64,7 +64,7 @@ const SwUserLeaguesComponent: React.FC<IProps> = ({ leagues, fetchUserLeagues, f
 		if (leagueDto.selected) {
 			await redirect({
 				refresh: true,
-				route: `profile/players/${leagueDto.id}`,
+				route: `play-league/${leagueDto.id}`,
 			});
 		} else {
 			eventDispatcher.trigger(SHOW_MODAL, {

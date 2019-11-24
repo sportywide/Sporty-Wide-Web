@@ -15,6 +15,8 @@ export const TeamResultSchema = new mongoose.Schema({
 	losses: Number,
 	scored: Number,
 	conceded: Number,
+	played: Number,
+	name: String,
 	points: Number,
 	forms: [FormSchema],
 });
@@ -40,6 +42,8 @@ interface TeamResult {
 	conceded: number;
 	points: number;
 	forms: Form[];
+	played: number;
+	name: string;
 }
 
 export interface LeagueTable extends Document {

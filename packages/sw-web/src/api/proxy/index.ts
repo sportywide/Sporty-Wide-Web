@@ -1,14 +1,7 @@
 import { getConfig } from '@web/config.provider';
 import { Request } from 'express';
 import modifyResponse from 'node-http-proxy-json';
-import {
-	COOKIE_CSRF,
-	COOKIE_JWT_PAYLOAD,
-	COOKIE_JWT_SIGNATURE,
-	COOKIE_REFERRER,
-	COOKIE_REFRESH_TOKEN,
-} from '@web/api/auth/constants';
-import { isProduction } from '@shared/lib/utils/env';
+import { COOKIE_REFERRER, HEADER_SERVER_SIDE } from '@web/api/auth/constants';
 import { getFullPath, normalizePath } from '@shared/lib/utils/url/format';
 import { noop } from '@shared/lib/utils/functions';
 import {
@@ -18,7 +11,7 @@ import {
 	UNAUTHENTICATED,
 	UNAUTHORIZED,
 } from '@web/shared/lib/http/status-codes';
-import { getHeaders } from '@web/shared/lib/auth/helper';
+import { getHeaders, setAuthCookies } from '@web/shared/lib/auth/helper';
 
 const config = getConfig();
 
@@ -112,29 +105,24 @@ function setCookies(proxyRes, request, response, redirectUrl) {
 	modifyResponse(response, proxyRes, function(tokens) {
 		const { accessToken, refreshToken } = tokens;
 
-		const [header, payload, signature] = accessToken.split('.');
+		const isServerSide = request.headers[HEADER_SERVER_SIDE];
 
-		response.cookie(COOKIE_JWT_PAYLOAD, [header, payload].join('.'), {
-			secure: isProduction(),
-		});
-		response.cookie(COOKIE_JWT_SIGNATURE, signature, {
-			httpOnly: true,
-			secure: isProduction(),
-		});
-		response.cookie(COOKIE_REFRESH_TOKEN, refreshToken, {
-			httpOnly: true,
-			secure: isProduction(),
-		});
-		response.cookie(COOKIE_CSRF, request.csrfToken(), {
-			secure: isProduction(),
-		});
+		if (!isServerSide) {
+			setAuthCookies(
+				{ request, response },
+				{
+					accessToken,
+					refreshToken,
+				}
+			);
 
-		if (redirectUrl) {
-			if (request.cookies && redirectUrl === request.cookies[COOKIE_REFERRER]) {
-				response.clearCookie(COOKIE_REFERRER);
+			if (redirectUrl) {
+				if (request.cookies && redirectUrl === request.cookies[COOKIE_REFERRER]) {
+					response.clearCookie(COOKIE_REFERRER);
+				}
+				response.status(TEMPORARY_REDIRECT);
+				response.location(redirectUrl);
 			}
-			response.status(TEMPORARY_REDIRECT);
-			response.location(redirectUrl);
 		}
 
 		return tokens;

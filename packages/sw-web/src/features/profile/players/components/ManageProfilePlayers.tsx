@@ -71,7 +71,7 @@ const SwManageProfilePlayersComponent: React.FC<IProps> = ({ profilePlayers, lea
 	}, [fetchProfilePlayers, leagueId, user.id]);
 
 	if (!profilePlayers || profilePlayers.loading) {
-		return <Loader active />;
+		return <Loader active inline={'centered'} />;
 	}
 	const players = profilePlayers.players;
 	return (
