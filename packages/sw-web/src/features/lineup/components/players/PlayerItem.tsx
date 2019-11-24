@@ -1,5 +1,5 @@
 import React from 'react';
-import { Label, List } from 'semantic-ui-react';
+import { Label, List, Popup } from 'semantic-ui-react';
 import { useDrag } from 'react-dnd-cjs';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { PLAYER, PLAYER_ITEM_ZONE } from '@web/features/lineup/components/item.constant';
@@ -31,9 +31,7 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 				<SwDraggablePlayer ref={drag} isDragging={isDragging}>
 					<SwPlayerLogo circular avatar src={fifaImage(player.image)} />
 					<div className={'sw-flex-grow'}>
-						<span>
-							{player.shirt}. {player.name}
-						</span>
+						<span>{player.name}</span>
 						<div>
 							{player.positions.map(position => (
 								<Label as="a" key={position} color={getPositionColor(position)} size={'mini'}>
@@ -46,7 +44,16 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 						<SwStatsLabel circular size={'small'} color={getRatingColor(player.rating)}>
 							{player.rating}
 						</SwStatsLabel>
-						<SwTeamLogo avatar src={fifaImage(player.team!.image)} />
+						<Popup
+							trigger={
+								<span>
+									<SwTeamLogo avatar src={fifaImage(player.team!.image)} />
+								</span>
+							}
+							content={player.teamName}
+							inverted
+							position="top center"
+						/>
 					</div>
 				</SwDraggablePlayer>
 			</List.Content>

@@ -78,7 +78,7 @@ export class TeamPersisterService {
 			leagueId: league.id,
 			table: teamsInfo.map(team => ({
 				teamId: teamUrlMap[team.url],
-				name: teamUrlMap[team.url].title,
+				name: team.name,
 				...team,
 			})),
 			season: leagueTeams.season,
