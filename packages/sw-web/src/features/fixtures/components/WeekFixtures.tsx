@@ -34,9 +34,14 @@ const SwWeekFixturesComponent: React.FC<IProps> = ({ leagueId }) => {
 				const timeGroup = new Date(+time);
 				return (
 					<div key={time}>
-						<S.FixtureDateHeadline as={'h4'}>{format(timeGroup, 'yyyy-MM-dd')}</S.FixtureDateHeadline>
+						<S.FixtureDateHeadline as={'h4'}>{format(timeGroup, 'EEEE do MMMM')}</S.FixtureDateHeadline>
 						{fixtures.map(fixture => (
-							<S.FixtureLine key={fixture.id}>
+							<S.FixtureLine
+								key={fixture.id}
+								onClick={() => {
+									window.open(fixture.link, 'blank');
+								}}
+							>
 								<S.FixtureTime>{format(new Date(fixture.time), 'hh:mm')}</S.FixtureTime>
 								<S.FixtureMain>
 									<S.FixtureTeam home>{fixture.home}</S.FixtureTeam>
@@ -47,7 +52,9 @@ const SwWeekFixturesComponent: React.FC<IProps> = ({ leagueId }) => {
 									</S.FixtureScore>
 									<S.FixtureTeam>{fixture.away}</S.FixtureTeam>
 								</S.FixtureMain>
-								<S.FixtureStatus>{fixture.status === 'PENDING' ? '' : fixture.status}</S.FixtureStatus>
+								<S.FixtureStatus>
+									{fixture.status === 'PENDING' ? 'PNDG' : fixture.status}
+								</S.FixtureStatus>
 							</S.FixtureLine>
 						))}
 					</div>
