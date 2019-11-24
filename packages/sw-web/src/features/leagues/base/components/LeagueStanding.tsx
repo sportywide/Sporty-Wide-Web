@@ -98,7 +98,9 @@ const enhance = compose(
 	registerReducer({ leagueStandings: leagueStandingReducer }),
 	registerEpic(fetchLeaguesStandingEpic),
 	connect(
-		(state, ownProps) => ({ leagueStandings: state.leagueStandings[ownProps.league && ownProps.league.id] }),
+		(state, ownProps) => ({
+			leagueStandings: state.leagueStandings && state.leagueStandings[ownProps.league && ownProps.league.id],
+		}),
 		{ fetchLeagueStandings }
 	)
 );

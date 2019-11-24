@@ -5,8 +5,28 @@ import { SwLineupBuilder } from '@web/features/lineup/components/pitch/LineupBui
 import { DndProvider } from 'react-dnd-cjs';
 import html5Backend from 'react-dnd-html5-backend-cjs';
 import { SwDragLayer } from '@web/shared/lib/ui/components/dnd/DragLayer';
+import { LeagueService } from '@web/features/leagues/base/services/league.service';
+import { LeagueDto } from '@shared/lib/dtos/leagues/league.dto';
 
-class SwLineupBuilderPage extends React.Component<any> {
+interface IProps {
+	leagueId: number;
+	league: LeagueDto;
+}
+class SwLineupBuilderPage extends React.Component<IProps> {
+	static async getInitialProps({ query, store }) {
+		const container = store.container;
+		const leagueService = container.get(LeagueService);
+		if (isNaN(query.id)) {
+			return {};
+		}
+		const leagueId = parseInt(query.id, 10);
+		const league = await leagueService.fetchLeague(leagueId).toPromise();
+		return {
+			leagueId,
+			league,
+		};
+	}
+
 	render() {
 		return (
 			<>
@@ -17,7 +37,7 @@ class SwLineupBuilderPage extends React.Component<any> {
 					<SwDragLayer />
 					<SwGreyBackground style={{ paddingTop: 'var(--space-1)' }}>
 						<SwContainer>
-							<SwLineupBuilder />
+							<SwLineupBuilder leagueId={this.props.leagueId} />
 						</SwContainer>
 					</SwGreyBackground>
 				</DndProvider>

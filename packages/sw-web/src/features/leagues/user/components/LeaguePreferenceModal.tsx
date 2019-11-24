@@ -44,7 +44,7 @@ const LeaguePreferenceModalComponent: React.FC<IProps> = function({
 						await joinUserLeague({ leagueId: league.id, userId, formation });
 						await redirect({
 							refresh: true,
-							route: `profile/players/${league.id}`,
+							route: `play-league/${league.id}`,
 						});
 					}}
 					positive

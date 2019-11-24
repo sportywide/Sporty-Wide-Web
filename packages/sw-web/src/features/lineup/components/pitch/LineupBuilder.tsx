@@ -23,6 +23,7 @@ import {
 	playerEpic,
 	substitutePlayersEpic,
 } from '@web/features/lineup/store/epics';
+import { useFormationOptions } from '@web/shared/lib/react/hooks';
 import { SwLineup } from './Lineup';
 import { SwPitch } from './Pitch';
 
@@ -37,11 +38,13 @@ interface IProps {
 	substitutePlayers: typeof substitutePlayers;
 	clearLineup: typeof clearLineup;
 	changeStrategy: typeof changeStrategy;
+	leagueId: number;
 }
 
 const SwLineupBuilderComponent: React.FC<IProps> = function({
 	lineupBuilder,
 	fetchPlayers,
+	leagueId,
 	addPlayerToLineup,
 	swapPlayers,
 	removePlayerFromLineup,
@@ -52,8 +55,9 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 	changeStrategy,
 }) {
 	useEffect(() => {
-		fetchPlayers();
-	}, [fetchPlayers]);
+		fetchPlayers(leagueId);
+	}, [fetchPlayers, leagueId]);
+	const options = useFormationOptions();
 	return (
 		<>
 			<Header as={'h2'}>Manchester United</Header>
@@ -61,16 +65,7 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 				<Select
 					className={'sw-mr2'}
 					defaultValue={'4-4-2'}
-					options={[
-						{
-							text: '4-4-2',
-							value: '4-4-2',
-						},
-						{
-							text: '4-3-3',
-							value: '4-3-3',
-						},
-					]}
+					options={options}
 					onChange={(e, { value }) => changeStrategy(value as string)}
 				/>
 				<Button primary onClick={() => fillPositions()}>

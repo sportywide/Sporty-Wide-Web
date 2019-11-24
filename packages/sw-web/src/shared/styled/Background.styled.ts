@@ -40,5 +40,6 @@ export const SwContainer = styled(Container)`
 		min-height: calc(100vh - 2 * var(--space-3));
 		border-radius: 5px;
 		box-shadow: 0 1px 1px 1px rgba(0, 0, 0, 0.2);
+		position: relative;
 	}
 `;

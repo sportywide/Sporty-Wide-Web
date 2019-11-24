@@ -1,7 +1,6 @@
 import { Inject, Service } from 'typedi';
 import { ApiService } from '@web/shared/lib/http/api.service';
-import { of, Observable } from 'rxjs';
-import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
+import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Service()
@@ -11,10 +10,22 @@ export class ProfilePlayersService {
 		private readonly apiService: ApiService
 	) {}
 
-	getProfilePlayers({ userId, leagueId }: { userId: number; leagueId: number }): Observable<any> {
+	getProfilePlayers({
+		userId,
+		leagueId,
+		includes = [],
+	}: {
+		userId: number;
+		leagueId: number;
+		includes?: string[];
+	}): Observable<any> {
 		return this.apiService
 			.api()
-			.get(`/player/user/${userId}/league/${leagueId}`)
+			.get(`/player/user/${userId}/league/${leagueId}`, {
+				params: {
+					includes,
+				},
+			})
 			.pipe(map(response => response.data));
 	}
 }

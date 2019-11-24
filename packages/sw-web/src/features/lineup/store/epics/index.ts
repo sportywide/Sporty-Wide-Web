@@ -1,4 +1,4 @@
-import { concatMap, map } from 'rxjs/operators';
+import { concatMap, map, mergeMap } from 'rxjs/operators';
 import {
 	CHANGE_STRATEGY,
 	FETCH_PLAYERS,
@@ -18,23 +18,21 @@ import { IDependencies } from '@web/shared/lib/store';
 import { LineupService } from '@web/features/lineup/services/lineup.service';
 import { Epic } from 'redux-observable';
 import { ActionType, PayloadAction } from 'typesafe-actions';
-import teams from '@web/features/lineup/store/epics/teams.json';
-import players from '@web/features/lineup/store/epics/players.json';
-import { keyBy } from 'lodash';
 import { sortPlayers } from '@web/features/players/utility/player';
 import { ILineupState } from '@web/features/lineup/store/reducers/lineup-reducer';
 import { EMPTY } from 'rxjs';
+import { ProfilePlayersService } from '@web/features/profile/players/services/profile-players.service';
+import { ContainerInstance } from 'typedi';
 
-export const playerEpic = action$ => {
+export const playerEpic = (action$, state$, { container }: { container: ContainerInstance }) => {
 	return action$.ofType(FETCH_PLAYERS).pipe(
-		map(() => {
-			const teamMap = keyBy(teams, 'name');
-			const playerDtos = players.map(player => ({
-				...player,
-				team: teamMap[player.teamName],
-			}));
-
-			return fetchPlayersSuccess(sortPlayers(playerDtos));
+		mergeMap(async ({ payload: leagueId }) => {
+			const profilePlayerService = container.get(ProfilePlayersService);
+			const userId = state$.value.auth.user.id;
+			const { players } = await profilePlayerService
+				.getProfilePlayers({ leagueId, userId, includes: ['team'] })
+				.toPromise();
+			return fetchPlayersSuccess(sortPlayers(players));
 		})
 	);
 };
