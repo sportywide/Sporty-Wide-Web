@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Button, Modal, Select } from 'semantic-ui-react';
+import { Button, Modal, Select, Image } from 'semantic-ui-react';
 import { noop } from '@shared/lib/utils/functions';
 import { useFormationOptions } from '@web/shared/lib/react/hooks';
 import { connect } from 'react-redux';
@@ -8,7 +8,7 @@ import { registerEpic } from '@web/shared/lib/redux/register-epic';
 import { joinUserLeagueEpic } from '@web/features/leagues/user/store/epics';
 import { joinUserLeague } from '@web/features/leagues/user/store/actions';
 import { LeagueDto } from '@shared/lib/dtos/leagues/league.dto';
-import { FormationName } from '@shared/lib/dtos/formation/formation.dto';
+import { formationMap, FormationName } from '@shared/lib/dtos/formation/formation.dto';
 import { redirect } from '@web/shared/lib/navigation/helper';
 
 interface IProps {
@@ -32,11 +32,12 @@ const LeaguePreferenceModalComponent: React.FC<IProps> = function({
 			<Modal.Content>
 				<div>Select your favorite formation</div>
 				<Select
-					className={'sw-mr2 sw-mt2'}
+					className={'sw-mr2 sw-mt2 sw-mb2'}
 					value={formation}
 					options={formationOptions}
 					onChange={(e, { value }) => setFormation(value as FormationName)}
 				/>
+				{formation && <Image size={'medium'} src={formationMap[formation].image} />}
 			</Modal.Content>
 			<Modal.Actions>
 				<Button
