@@ -9,6 +9,7 @@ import { CoreApiModule } from '@api/core/core-api.module';
 import { CoreModule } from '@core/core.module';
 import { LeagueModule } from '@api/leagues/league.module';
 import { PlayerModule } from '@api/players/player.module';
+import { FixtureModule } from '@api/fixtures/fixture.module';
 
 @Module({
 	imports: [
@@ -20,6 +21,7 @@ import { PlayerModule } from '@api/players/player.module';
 		CoreApiModule,
 		CoreModule,
 		PlayerModule,
+		FixtureModule,
 	],
 	controllers: [AppController],
 	providers: [AppService],

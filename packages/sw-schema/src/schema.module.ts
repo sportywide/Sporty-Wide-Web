@@ -10,6 +10,7 @@ import { SchemaPlayerModule } from '@schema/player/player.module';
 import { CoreSchemaModule } from '@schema/core/core-schema.module';
 import './core/subscribers';
 import { MongooseModule } from '@nestjs/mongoose';
+import { SchemaFixtureModule } from '@schema/fixture/fixture.module';
 
 @Module({
 	imports: [
@@ -19,6 +20,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 		SchemaLeagueModule,
 		SchemaTeamModule,
 		SchemaPlayerModule,
+		SchemaFixtureModule,
 		CoreSchemaModule,
 		SqlConnectionModule.forRootAsync({
 			inject: [SCHEMA_CONFIG],
@@ -52,6 +54,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 		SchemaLeagueModule,
 		SchemaTeamModule,
 		SchemaPlayerModule,
+		SchemaFixtureModule,
 	],
 })
 export class SchemaModule {}

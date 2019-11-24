@@ -1,3 +1,4 @@
+process.env.TZ = 'UTC';
 import { INestApplicationContext, Module } from '@nestjs/common';
 import { CoreSchedulingModule } from '@scheduling/lib/core/core.module';
 import { NestFactory } from '@nestjs/core';

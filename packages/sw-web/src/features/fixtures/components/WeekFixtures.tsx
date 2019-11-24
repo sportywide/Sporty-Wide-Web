@@ -1,0 +1,60 @@
+import React, { useContext, useEffect, useState } from 'react';
+import { ContainerContext } from '@web/shared/lib/store';
+import { FixtureService } from '@web/features/fixtures/services/fixture.service';
+import { Loader } from 'semantic-ui-react';
+import { groupBy } from 'lodash';
+import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
+import { format, startOfDay } from 'date-fns';
+import * as S from './WeekFixtures.styled';
+
+interface IProps {
+	leagueId: number;
+}
+
+const SwWeekFixturesComponent: React.FC<IProps> = ({ leagueId }) => {
+	const container = useContext(ContainerContext);
+	const [fixtures, setFixtures] = useState<FixtureDto[]>(undefined);
+	useEffect(() => {
+		(async () => {
+			const fixtureService = container.get(FixtureService);
+			const fixtures = await fixtureService.fetchThisWeekFixtures(leagueId).toPromise();
+			setFixtures(fixtures);
+		})();
+	}, [container, leagueId]);
+
+	if (!fixtures) {
+		return <Loader active inline={'centered'} />;
+	}
+	const fixtureGroup = groupBy(fixtures, fixture => {
+		return startOfDay(fixture.time).getTime();
+	});
+	return (
+		<>
+			{Object.entries(fixtureGroup).map(([time, fixtures]) => {
+				const timeGroup = new Date(+time);
+				return (
+					<div key={time}>
+						<S.FixtureDateHeadline as={'h4'}>{format(timeGroup, 'yyyy-MM-dd')}</S.FixtureDateHeadline>
+						{fixtures.map(fixture => (
+							<S.FixtureLine key={fixture.id}>
+								<S.FixtureTime>{format(new Date(fixture.time), 'hh:mm')}</S.FixtureTime>
+								<S.FixtureMain>
+									<S.FixtureTeam home>{fixture.home}</S.FixtureTeam>
+									<S.FixtureScore>
+										{fixture.status === 'PENDING'
+											? 'VS'
+											: `${fixture.homeScore} - ${fixture.awayScore}`}
+									</S.FixtureScore>
+									<S.FixtureTeam>{fixture.away}</S.FixtureTeam>
+								</S.FixtureMain>
+								<S.FixtureStatus>{fixture.status === 'PENDING' ? '' : fixture.status}</S.FixtureStatus>
+							</S.FixtureLine>
+						))}
+					</div>
+				);
+			})}
+		</>
+	);
+};
+
+export const SwWeekFixtures = SwWeekFixturesComponent;

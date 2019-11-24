@@ -36,7 +36,7 @@ export class LeagueController {
 	@UseGuards(JwtAuthGuard)
 	@ActiveUser()
 	@Get('/:id')
-	public async getLeague(@Param('id') leagueId: number) {
+	public async getLeague(@Param('id', new ParseIntPipe()) leagueId: number) {
 		return toDto({ value: await this.leagueService.findById({ id: leagueId }), dtoType: LeagueDto });
 	}
 

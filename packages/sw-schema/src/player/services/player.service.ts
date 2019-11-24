@@ -13,6 +13,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { UserPlayers } from '@schema/player/models/user-players.schema';
 import { getSeason } from '@shared/lib/utils/season';
 import { UserLeaguePreferenceService } from '@schema/league/services/user-league-preference.service';
+import { startOfDay } from 'date-fns';
 
 @Injectable()
 export class PlayerService {
@@ -102,7 +103,7 @@ export class PlayerService {
 				return `EXISTS (${subQuery.getQuery()})`;
 			});
 		queryBuilder.setParameters({
-			date,
+			date: startOfDay(date),
 		});
 		const playerDetails = (await queryBuilder.getRawMany()).map(row => ({
 			id: row.player_id,
