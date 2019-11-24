@@ -33,6 +33,7 @@ export const signupEpic = (action$, state$, { container }: IDependencies) => {
 				tap(() => {
 					redirect({
 						refresh: true,
+						replace: true,
 					});
 				})
 			);
@@ -49,6 +50,7 @@ export const loginEpic = (action$, state$, { container }: IDependencies) => {
 				tap(() => {
 					redirect({
 						refresh: true,
+						replace: true,
 					});
 				})
 			);
