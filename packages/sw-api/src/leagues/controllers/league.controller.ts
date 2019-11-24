@@ -7,6 +7,8 @@ import { UserLeagueDto } from '@shared/lib/dtos/leagues/user-league.dto';
 import { ActiveUser } from '@api/auth/decorators/user-check.decorator';
 import { formationMap, FormationName } from '@shared/lib/dtos/formation/formation.dto';
 import { LeagueStandingsDto } from '@shared/lib/dtos/leagues/league-standings.dto';
+import { CurrentUser } from '@api/core/decorators/user';
+import { User } from '@schema/user/models/user.entity';
 
 @Controller('/leagues')
 export class LeagueController {
@@ -62,8 +64,12 @@ export class LeagueController {
 	public async joinLeague(
 		@Param('userId', new ParseIntPipe()) userId: number,
 		@Param('leagueId', new ParseIntPipe()) leagueId: number,
-		@Query('formation') formation: FormationName
+		@Query('formation') formation: FormationName,
+		@CurrentUser() currentUser: User
 	) {
+		if (currentUser.id !== userId) {
+			throw new BadRequestException('Denied action');
+		}
 		formation = formation || '4-4-2';
 		if (!formationMap[formation]) {
 			throw new BadRequestException('Not a valid formation');
@@ -76,8 +82,12 @@ export class LeagueController {
 	@Put('/:leagueId/user/:userId/leave')
 	public async leaveLeague(
 		@Param('userId', new ParseIntPipe()) userId: number,
-		@Param('leagueId', new ParseIntPipe()) leagueId: number
+		@Param('leagueId', new ParseIntPipe()) leagueId: number,
+		@CurrentUser() currentUser: User
 	) {
+		if (currentUser.id !== userId) {
+			throw new BadRequestException('Denied action');
+		}
 		await this.leagueService.leaveLeague(userId, leagueId);
 	}
 }
