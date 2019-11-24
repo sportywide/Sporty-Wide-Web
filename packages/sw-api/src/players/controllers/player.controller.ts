@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Query, UseGuards, BadRequestException } from '@nestjs/common';
+import { Controller, Get, Param, Query, UseGuards, BadRequestException, ParseIntPipe } from '@nestjs/common';
 import { PlayerService } from '@schema/player/services/player.service';
 import { parse, startOfWeek } from 'date-fns';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
@@ -13,10 +13,14 @@ export class PlayerController {
 	@UseGuards(JwtAuthGuard)
 	@Get('/user/:userId/league/:leagueId')
 	async getUserPlayers(
-		@Param('userId') userId: number,
-		@Param('leagueId') leagueId: number,
-		@Query('date') dateString: string
+		@Param('userId', new ParseIntPipe()) userId: number,
+		@Param('leagueId', new ParseIntPipe()) leagueId: number,
+		@Query('date') dateString: string,
+		@Query('includes') includes: string[]
 	) {
+		if (includes && !Array.isArray(includes)) {
+			throw new BadRequestException('Not a valid include array');
+		}
 		const leagueExists = await this.leagueService.count({
 			where: {
 				id: leagueId,
@@ -38,7 +42,10 @@ export class PlayerController {
 
 		return {
 			...userPlayers.toJSON(),
-			players: toDto({ value: await this.playerService.getPlayerByIds(userPlayers.players), dtoType: PlayerDto }),
+			players: toDto({
+				value: await this.playerService.getPlayerByIds(userPlayers.players, includes),
+				dtoType: PlayerDto,
+			}),
 		};
 	}
 }

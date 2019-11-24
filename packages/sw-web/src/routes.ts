@@ -48,7 +48,7 @@ const routeMappings = [
 	},
 	{
 		name: 'lineup-builder',
-		pattern: '/lineup-builder',
+		pattern: '/lineup-builder/:id',
 		page: 'lineup/builder',
 	},
 	{

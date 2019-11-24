@@ -58,8 +58,8 @@ export class PlayerService {
 		return userPlayers;
 	}
 
-	async getPlayerByIds(playerIds) {
-		return this.playerRepository.getByIdsOrdered(playerIds);
+	async getPlayerByIds(playerIds, includes: string[] = []) {
+		return this.playerRepository.getByIdsOrdered(playerIds, includes);
 	}
 
 	async generateFormation({ formation, leagueId, maxPlayers = 15, date = new Date() }) {

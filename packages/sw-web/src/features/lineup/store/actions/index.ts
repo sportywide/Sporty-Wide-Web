@@ -36,4 +36,4 @@ export const clearLineup = createSwStandardAction(CLEAR_LINEUP)();
 export const fillPositionSuccess = createSwStandardAction(FILL_POSITION_SUCCESS)<PlayerDto[]>();
 
 export const fetchPlayersSuccess = createSwStandardAction(FETCH_PLAYER_SUCCESS)<PlayerDto[]>();
-export const fetchPlayers = createSwStandardAction(FETCH_PLAYERS)();
+export const fetchPlayers = createSwStandardAction(FETCH_PLAYERS)<number>();
