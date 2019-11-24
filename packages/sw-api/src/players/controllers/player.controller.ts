@@ -46,6 +46,7 @@ export class PlayerController {
 				value: await this.playerService.getPlayerByIds(userPlayers.players, includes),
 				dtoType: PlayerDto,
 			}),
+			preference: await this.leagueService.getUserLeaguePreference({ userId, leagueId }),
 		};
 	}
 }

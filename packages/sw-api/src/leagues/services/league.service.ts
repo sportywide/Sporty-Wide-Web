@@ -69,6 +69,21 @@ export class LeagueService extends BaseEntityService<League> {
 		});
 	}
 
+	async setPreferredFormation({ userId, leagueId, formation }) {
+		return this.userLeaguePreferenceService.save({
+			userId,
+			leagueId,
+			formation,
+		});
+	}
+
+	async getUserLeaguePreference({ userId, leagueId }) {
+		return this.userLeaguePreferenceService.find({
+			userId,
+			leagueId,
+		});
+	}
+
 	findLeagueStanding(leagueId: number) {
 		return this.leagueResultService.find({ leagueId });
 	}

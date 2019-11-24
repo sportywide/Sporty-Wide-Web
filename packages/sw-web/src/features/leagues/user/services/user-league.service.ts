@@ -32,4 +32,26 @@ export class UserLeagueService {
 	leaveLeague({ userId, leagueId }: { userId: number; leagueId: number }) {
 		return this.apiService.api().put(`/leagues/${leagueId}/user/${userId}/leave`);
 	}
+
+	async setPreferredFormation({
+		userId,
+		leagueId,
+		formation = '4-4-2',
+	}: {
+		userId: number;
+		leagueId: number;
+		formation: FormationName;
+	}) {
+		return this.apiService
+			.api()
+			.put(`/leagues/${leagueId}/user/${userId}/formation?formation=${formation}`)
+			.toPromise();
+	}
+
+	async getUserLeaguePreference({ userId, leagueId }: { userId: number; leagueId: number }) {
+		return this.apiService
+			.api()
+			.get(`/leagues/${leagueId}/user/${userId}/preference`)
+			.toPromise();
+	}
 }

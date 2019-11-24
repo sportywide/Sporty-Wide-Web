@@ -11,6 +11,7 @@ export interface ILineupState {
 	positions: (PlayerDto | null)[];
 	players: PlayerDto[];
 	originalPlayers: PlayerDto[];
+	formation: string;
 }
 
 export type LineupAction = ActionType<typeof actions>;
@@ -21,6 +22,7 @@ const initialState: ILineupState = {
 	strategy,
 	players: undefined,
 	originalPlayers: undefined,
+	formation: undefined,
 };
 
 export const lineupReducer = createReducer<ILineupState, LineupAction>(initialState)
@@ -58,11 +60,15 @@ export const lineupReducer = createReducer<ILineupState, LineupAction>(initialSt
 			};
 		}
 	)
-	.handleAction(actions.fetchPlayersSuccess, (state, { payload = [] }: PayloadAction<string, PlayerDto[]>) => ({
-		...state,
-		players: payload,
-		originalPlayers: payload,
-	}))
+	.handleAction(
+		actions.fetchPlayersSuccess,
+		(state, { payload: { players = [], formation = '4-4-2' } }: PayloadAction<string, any>) => ({
+			...state,
+			players: players,
+			originalPlayers: players,
+			formation,
+		})
+	)
 	.handleAction(
 		actions.fillPositionSuccess,
 		(state, { payload: filledPositions = [] }: PayloadAction<string, PlayerDto[]>) => {

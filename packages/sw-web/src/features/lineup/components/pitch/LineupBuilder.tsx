@@ -62,12 +62,14 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 		<>
 			<Header as={'h2'}>Manchester United</Header>
 			<div className={'sw-mb3'}>
-				<Select
-					className={'sw-mr2'}
-					defaultValue={'4-4-2'}
-					options={options}
-					onChange={(e, { value }) => changeStrategy(value as string)}
-				/>
+				{lineupBuilder.formation && (
+					<Select
+						className={'sw-mr2'}
+						defaultValue={lineupBuilder.formation}
+						options={options}
+						onChange={(e, { value }) => changeStrategy(value as string)}
+					/>
+				)}
 				<Button primary onClick={() => fillPositions()}>
 					Fill
 				</Button>
