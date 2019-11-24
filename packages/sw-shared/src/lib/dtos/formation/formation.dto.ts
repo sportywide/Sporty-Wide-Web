@@ -53,6 +53,7 @@ export type FormationName = keyof typeof formationMap;
 export class FormationDto {
 	name: string;
 	formation: PositionDto[];
+	image: string;
 }
 
 export class PositionDto {
