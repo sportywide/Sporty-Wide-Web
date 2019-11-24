@@ -39,7 +39,7 @@ export function createRefreshTokenInterceptor(axios: Axios, refreshTokenCall) {
 
 		// When response code is 401 (Unauthorized), try to refresh the token.
 		return refreshCall
-			.then(() => {
+			.then(({ headers }) => {
 				axios.interceptors.request.eject(requestQueueInterceptorId);
 				let url;
 				if (config.url.startsWith(config.baseUrl)) {
@@ -47,12 +47,14 @@ export function createRefreshTokenInterceptor(axios: Axios, refreshTokenCall) {
 				} else {
 					url = config.url;
 				}
-				return axios
-					.request({
-						...config,
-						url,
-					})
-					.toPromise();
+				const newConfig = {
+					...config,
+					url,
+				};
+				if (headers) {
+					newConfig.headers = { ...(newConfig.headers || {}), ...headers };
+				}
+				return axios.request(newConfig).toPromise();
 			})
 			.catch(error => {
 				axios.interceptors.request.eject(requestQueueInterceptorId);

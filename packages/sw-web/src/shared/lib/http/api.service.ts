@@ -3,7 +3,7 @@ import { Inject, Service } from 'typedi';
 import { ApolloClient } from 'apollo-client';
 import axios, { Axios } from 'axios-observable';
 import { createHttpLink } from 'apollo-link-http';
-import { COOKIE_CSRF, HEADER_SERVER_SIDE } from '@web/api/auth/constants';
+import { COOKIE_CSRF, COOKIE_REFRESH_TOKEN, HEADER_SERVER_SIDE } from '@web/api/auth/constants';
 import { createRefreshTokenInterceptor } from '@web/shared/lib/http/refresh-token';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { getHeaders, parseContext, setAuthCookies } from '@web/shared/lib/auth/helper';
@@ -22,19 +22,12 @@ export class ApiService {
 	private apiErrorSubscription = new Subject<Error>();
 	private refreshTokenCall: any;
 	private readonly apolloClient: ApolloClient<any>;
-	private readonly headers: any = {};
 
 	constructor(
 		@Inject('baseUrl') private readonly baseUrl: string,
 		@Inject('context') private readonly context,
 		@Inject('store') private readonly store
 	) {
-		const headers = getHeaders(context.req);
-		if (headers) {
-			this.headers = axios.defaults.headers = filterValues(headers, value => {
-				return value != undefined;
-			});
-		}
 		this.apiBase = this.restClient(`${baseUrl}/api`);
 		this.authBase = this.restClient(`${baseUrl}/auth`);
 		this.apolloClient = this.graphqlClient(this.apiBase);
@@ -82,7 +75,13 @@ export class ApiService {
 						setAuthCookies({ request: this.context.req, response: this.context.res }, tokens);
 					}
 					this.store.dispatch(setAuth(parseContext(this.context)));
-					return result;
+					return {
+						tokens,
+						headers: tokens && {
+							Authorization: `Bearer ${tokens.accessToken}`,
+							'Refresh-Token': tokens.refreshToken,
+						},
+					};
 				})
 				.finally(() => {
 					this.refreshTokenCall = null;
@@ -96,6 +95,7 @@ export class ApiService {
 			baseURL: url,
 			xsrfCookieName: COOKIE_CSRF,
 			httpsAgent: new https.Agent({ rejectUnauthorized: false }),
+			headers: this.getHeaders(),
 		});
 		axiosInstance = createRefreshTokenInterceptor(axiosInstance, this.retryCall());
 
@@ -124,10 +124,20 @@ export class ApiService {
 			ssrMode: this.context.req,
 			link: createHttpLink({
 				uri: `${this.baseUrl}/api/graphql`,
-				headers: this.headers,
+				headers: this.getHeaders(),
 				fetch: axiosFetch(axiosInstance),
 			}),
 			cache: new InMemoryCache(),
 		});
+	}
+
+	private getHeaders() {
+		let headers = getHeaders(this.context.req);
+		if (headers) {
+			headers = axios.defaults.headers = filterValues(headers, value => {
+				return value != undefined;
+			});
+		}
+		return headers;
 	}
 }
