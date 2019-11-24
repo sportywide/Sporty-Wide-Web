@@ -67,20 +67,26 @@ export class TeamPersisterService {
 		const league = leagueTeams.league;
 		const teamsInfo = leagueTeams.teams;
 		const { matchedTeams } = await this.matchScoreboardTeams(leagueTeams);
-		const teamUrlMap = Object.entries(matchedTeams).reduce((currentObject, [teamId, teamInfo]) => {
+		const teamUrlMap = Array.from(matchedTeams.entries()).reduce((currentObject, [teamInfo, team]) => {
 			return {
 				...currentObject,
-				[teamInfo.url]: teamId,
+				[teamInfo.url]: team,
 			};
 		}, {});
 
 		return this.leagueResultService.save({
 			leagueId: league.id,
-			table: teamsInfo.map(team => ({
-				teamId: teamUrlMap[team.url],
-				name: team.name,
-				...team,
-			})),
+			table: teamsInfo.map(team => {
+				const dbTeam = teamUrlMap[team.url];
+				if (!dbTeam) {
+					return team;
+				}
+				return {
+					...team,
+					teamId: dbTeam.id,
+					name: dbTeam.title,
+				};
+			}),
 			season: leagueTeams.season,
 		});
 	}
@@ -88,7 +94,7 @@ export class TeamPersisterService {
 	private async matchScoreboardTeams(leagueTeams: {
 		league: League;
 		teams: ScoreboardTeam[];
-	}): Promise<{ matchedTeams: Record<number, ScoreboardTeam>; unresolvedTeams: ScoreboardTeam[] }> {
+	}): Promise<{ matchedTeams: Map<ScoreboardTeam, Team>; unresolvedTeams: ScoreboardTeam[] }> {
 		const league = leagueTeams.league;
 		const teamsInfo = leagueTeams.teams;
 		const dbTeams = await this.teamRepository.find({
@@ -99,7 +105,7 @@ export class TeamPersisterService {
 			keys: ['title', 'alias'],
 		};
 		const unresolvedTeams: any[] = [];
-		const matchedTeams = {};
+		const matchedTeams = new Map<ScoreboardTeam, Team>();
 		const fuse = new Fuse(dbTeams, fuzzyOptions);
 		for (const teamInfo of teamsInfo) {
 			const foundTeam = fuse.search(teamInfo.name);
@@ -109,7 +115,7 @@ export class TeamPersisterService {
 				continue;
 			}
 			this.logger.debug(`Match ${foundTeam[0].title} with ${teamInfo.name}`);
-			matchedTeams[foundTeam[0].id] = teamInfo;
+			matchedTeams.set(teamInfo, foundTeam[0]);
 		}
 
 		return {

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { ContainerContext } from '@web/shared/lib/store';
 import { FixtureService } from '@web/features/fixtures/services/fixture.service';
 import { Loader } from 'semantic-ui-react';
-import { groupBy } from 'lodash';
+import { groupBy, sortBy } from 'lodash';
 import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
 import { format, startOfDay } from 'date-fns';
 import * as S from './WeekFixtures.styled';
@@ -30,36 +30,38 @@ const SwWeekFixturesComponent: React.FC<IProps> = ({ leagueId }) => {
 	});
 	return (
 		<>
-			{Object.entries(fixtureGroup).map(([time, fixtures]) => {
-				const timeGroup = new Date(+time);
-				return (
-					<div key={time}>
-						<S.FixtureDateHeadline as={'h4'}>{format(timeGroup, 'EEEE do MMMM')}</S.FixtureDateHeadline>
-						{fixtures.map(fixture => (
-							<S.FixtureLine
-								key={fixture.id}
-								onClick={() => {
-									window.open(fixture.link, 'blank');
-								}}
-							>
-								<S.FixtureTime>{format(new Date(fixture.time), 'hh:mm')}</S.FixtureTime>
-								<S.FixtureMain>
-									<S.FixtureTeam home>{fixture.home}</S.FixtureTeam>
-									<S.FixtureScore>
-										{fixture.status === 'PENDING'
-											? 'VS'
-											: `${fixture.homeScore} - ${fixture.awayScore}`}
-									</S.FixtureScore>
-									<S.FixtureTeam>{fixture.away}</S.FixtureTeam>
-								</S.FixtureMain>
-								<S.FixtureStatus>
-									{fixture.status === 'PENDING' ? 'PNDG' : fixture.status}
-								</S.FixtureStatus>
-							</S.FixtureLine>
-						))}
-					</div>
-				);
-			})}
+			{Object.entries(fixtureGroup)
+				.sort()
+				.map(([time, fixtures]) => {
+					const timeGroup = new Date(+time);
+					return (
+						<div key={time}>
+							<S.FixtureDateHeadline as={'h4'}>{format(timeGroup, 'EEEE do MMMM')}</S.FixtureDateHeadline>
+							{sortBy(fixtures, 'time').map(fixture => (
+								<S.FixtureLine
+									key={fixture.id}
+									onClick={() => {
+										window.open(fixture.link, 'blank');
+									}}
+								>
+									<S.FixtureTime>{format(new Date(fixture.time), 'hh:mm')}</S.FixtureTime>
+									<S.FixtureMain>
+										<S.FixtureTeam home>{fixture.home}</S.FixtureTeam>
+										<S.FixtureScore>
+											{fixture.status === 'PENDING'
+												? 'VS'
+												: `${fixture.homeScore} - ${fixture.awayScore}`}
+										</S.FixtureScore>
+										<S.FixtureTeam>{fixture.away}</S.FixtureTeam>
+									</S.FixtureMain>
+									<S.FixtureStatus>
+										{fixture.status === 'PENDING' ? 'PNDG' : fixture.status}
+									</S.FixtureStatus>
+								</S.FixtureLine>
+							))}
+						</div>
+					);
+				})}
 		</>
 	);
 };
