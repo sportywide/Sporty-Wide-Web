@@ -3,10 +3,10 @@ import { Inject, Service } from 'typedi';
 import { ApolloClient } from 'apollo-client';
 import axios, { Axios } from 'axios-observable';
 import { createHttpLink } from 'apollo-link-http';
-import { COOKIE_CSRF } from '@web/api/auth/constants';
+import { COOKIE_CSRF, HEADER_SERVER_SIDE } from '@web/api/auth/constants';
 import { createRefreshTokenInterceptor } from '@web/shared/lib/http/refresh-token';
 import { BehaviorSubject, Subject } from 'rxjs';
-import { getHeaders, parseContext } from '@web/shared/lib/auth/helper';
+import { getHeaders, parseContext, setAuthCookies } from '@web/shared/lib/auth/helper';
 import { isBrowser } from '@web/shared/lib/environment';
 import { filterValues } from '@shared/lib/utils/object/filter';
 import { setAuth } from '@web/features/auth/store/actions';
@@ -66,11 +66,23 @@ export class ApiService {
 			if (this.refreshTokenCall) {
 				return this.refreshTokenCall;
 			}
+			const headers = {};
+			const isServerSide = this.context.req && this.context.res;
+			if (isServerSide) {
+				headers[HEADER_SERVER_SIDE] = 1;
+			}
 			this.refreshTokenCall = this.authBase
-				.post('/refresh-token')
+				.post('/refresh-token', undefined, {
+					headers,
+				})
 				.toPromise()
-				.then(() => {
+				.then(result => {
+					const tokens = result.data;
+					if (isServerSide && tokens) {
+						setAuthCookies({ request: this.context.req, response: this.context.res }, tokens);
+					}
 					this.store.dispatch(setAuth(parseContext(this.context)));
+					return result;
 				})
 				.finally(() => {
 					this.refreshTokenCall = null;

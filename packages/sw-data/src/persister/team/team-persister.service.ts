@@ -11,8 +11,8 @@ import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import { fsPromise } from '@shared/lib/utils/promisify/fs';
 import Fuse from 'fuse.js';
-import { ScoreboardTeam } from '@data/crawler/scoreboard-crawler.service';
 import { LeagueResultService } from '@schema/league/services/league-result.service';
+import { ScoreboardTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
 const glob = util.promisify(require('glob'));
 
 @Injectable()
@@ -78,6 +78,7 @@ export class TeamPersisterService {
 			leagueId: league.id,
 			table: teamsInfo.map(team => ({
 				teamId: teamUrlMap[team.url],
+				name: teamUrlMap[team.url].title,
 				...team,
 			})),
 			season: leagueTeams.season,

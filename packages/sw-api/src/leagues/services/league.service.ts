@@ -5,13 +5,15 @@ import { SwRepository } from '@schema/core/repository/sql/base.repository';
 import { BaseEntityService } from '@api/core/services/entity/base-entity.service';
 import { UserLeague } from '@schema/league/models/user-league.entity';
 import { UserLeaguePreferenceService } from '@schema/league/services/user-league-preference.service';
+import { LeagueResultService } from '@schema/league/services/league-result.service';
 
 @Injectable()
 export class LeagueService extends BaseEntityService<League> {
 	constructor(
 		@InjectSwRepository(League) private readonly leagueRepository: SwRepository<League>,
 		@InjectSwRepository(UserLeague) private readonly userLeagueRepository: SwRepository<UserLeague>,
-		private readonly userLeaguePreferenceService: UserLeaguePreferenceService
+		private readonly userLeaguePreferenceService: UserLeaguePreferenceService,
+		private readonly leagueResultService: LeagueResultService
 	) {
 		super(leagueRepository);
 	}
@@ -62,5 +64,9 @@ export class LeagueService extends BaseEntityService<League> {
 			leagueId,
 			formation,
 		});
+	}
+
+	findLeagueStanding(leagueId: number) {
+		return this.leagueResultService.find({ leagueId });
 	}
 }

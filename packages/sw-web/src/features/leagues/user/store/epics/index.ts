@@ -1,4 +1,4 @@
-import { map, mapTo, mergeMap, catchError } from 'rxjs/operators';
+import { map, mapTo, mergeMap } from 'rxjs/operators';
 import {
 	FETCH_USER_LEAGUES,
 	JOIN_USER_LEAGUE,
@@ -7,12 +7,12 @@ import {
 import { IDependencies } from '@web/shared/lib/store';
 import { UserLeagueService } from '@web/features/leagues/user/services/user-league.service';
 import {
-	joinUserLeague,
-	leaveUserLeague,
 	fetchUserLeagues,
 	fetchUserLeaguesSuccess,
-	joinUserLeagueSuccess,
+	joinUserLeague,
 	joinUserLeagueError,
+	joinUserLeagueSuccess,
+	leaveUserLeague,
 } from '@web/features/leagues/user/store/actions';
 import { ActionType } from 'typesafe-actions';
 import { Epic } from 'redux-observable';
@@ -39,7 +39,7 @@ export const joinUserLeagueEpic: Epic<ActionType<typeof joinUserLeague>, any, an
 		mergeMap(({ payload: { userId, leagueId, formation } }) => {
 			return userLeagueService.joinLeague({ leagueId, userId, formation }).pipe(
 				mapTo(joinUserLeagueSuccess({ leagueId, userId })),
-				catchAndThrow(joinUserLeagueError({ leagueId, userId }))
+				catchAndThrow(() => joinUserLeagueError({ leagueId, userId }))
 			);
 		})
 	);
