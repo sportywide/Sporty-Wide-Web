@@ -6,6 +6,7 @@ import { BaseEntityService } from '@api/core/services/entity/base-entity.service
 import { UserLeague } from '@schema/league/models/user-league.entity';
 import { UserLeaguePreferenceService } from '@schema/league/services/user-league-preference.service';
 import { LeagueResultService } from '@schema/league/services/league-result.service';
+import { PlayerService } from '@schema/player/services/player.service';
 
 @Injectable()
 export class LeagueService extends BaseEntityService<League> {
@@ -13,6 +14,7 @@ export class LeagueService extends BaseEntityService<League> {
 		@InjectSwRepository(League) private readonly leagueRepository: SwRepository<League>,
 		@InjectSwRepository(UserLeague) private readonly userLeagueRepository: SwRepository<UserLeague>,
 		private readonly userLeaguePreferenceService: UserLeaguePreferenceService,
+		private readonly playerService: PlayerService,
 		private readonly leagueResultService: LeagueResultService
 	) {
 		super(leagueRepository);
@@ -37,11 +39,12 @@ export class LeagueService extends BaseEntityService<League> {
 		});
 	}
 
-	leaveLeague(userId, leagueId) {
-		return this.userLeagueRepository.delete({
+	async leaveLeague(userId, leagueId) {
+		await this.userLeagueRepository.delete({
 			userId,
 			leagueId,
 		});
+		await this.playerService.deletePlayersForUser({ leagueId, userId });
 	}
 
 	async joinLeague({ userId, leagueId, formation }) {

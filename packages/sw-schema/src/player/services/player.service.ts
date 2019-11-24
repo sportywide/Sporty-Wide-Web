@@ -13,7 +13,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { UserPlayers } from '@schema/player/models/user-players.schema';
 import { getSeason } from '@shared/lib/utils/season';
 import { UserLeaguePreferenceService } from '@schema/league/services/user-league-preference.service';
-import { startOfDay } from 'date-fns';
+import { startOfDay, startOfWeek } from 'date-fns';
 
 @Injectable()
 export class PlayerService {
@@ -56,6 +56,13 @@ export class PlayerService {
 		}
 
 		return userPlayers;
+	}
+
+	async deletePlayersForUser({ leagueId, userId }) {
+		return this.userPlayersModel.remove({
+			leagueId,
+			userId,
+		});
 	}
 
 	async getPlayerByIds(playerIds, includes: string[] = []) {
