@@ -51,7 +51,7 @@ const LeaguePreferenceModalComponent: React.FC<IProps> = function({
 				>
 					Play
 				</Button>
-				<Button onClick={() => onClose()} negative>
+				<Button onClick={() => onClose(null)} negative>
 					Close
 				</Button>
 			</Modal.Actions>

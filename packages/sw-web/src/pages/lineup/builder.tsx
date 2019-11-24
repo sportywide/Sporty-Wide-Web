@@ -35,7 +35,7 @@ class SwLineupBuilderPage extends React.Component<IProps> {
 				</Head>
 				<DndProvider backend={html5Backend}>
 					<SwDragLayer />
-					<SwGreyBackground style={{ paddingTop: 'var(--space-1)' }}>
+					<SwGreyBackground padding>
 						<SwContainer>
 							<SwLineupBuilder leagueId={this.props.leagueId} />
 						</SwContainer>
