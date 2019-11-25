@@ -78,19 +78,18 @@ export class FifaCrawlerService extends ResultsService {
 
 	private parseInfoTeam($: CheerioStatic): FifaTeam[] {
 		const result: any[] = [];
-		const rows = $('table tbody tr');
-
+		const rows = $('table.table-teams tbody tr');
 		rows.each((i, row) => {
 			const columns = $(row).find('td');
+			if (columns.length <= 1) {
+				return;
+			}
 
 			const image = columns
 				.eq(0)
 				.find('img')
 				.attr();
-			const bio = columns
-				.eq(1)
-				.find('a')
-				.attr();
+			const teamLink = columns.eq(1).find('a');
 
 			const league = columns
 				.eq(2)
@@ -109,12 +108,21 @@ export class FifaCrawlerService extends ResultsService {
 			const halfStars = span.find('i.fas.fa-star-half-alt').length;
 			const rating = `${activeStars + halfStars / 2}/${maxStars}`;
 
-			const title = this.cleanTeamTitle(bio['title']);
+			const title = teamLink.text();
 			result.push({
-				fifaId: parseInt(bio['href'].split('/').filter(s => !!s)[1], 10),
+				fifaId: parseInt(
+					teamLink
+						.attr('href')
+						.split('/')
+						.filter(s => !!s)[1],
+					10
+				),
 				image: image['data-src'],
 				title: teamMapping[title] || title,
-				name: bio['href'].split('/').filter(s => !!s)[2],
+				name: teamLink
+					.attr('href')
+					.split('/')
+					.filter(s => !!s)[2],
 				league: {
 					title: league['title'].replace(this._fifaRegex, '').trim(),
 					fifaId: parseInt(league['href'].split('league=')[1], 10),
@@ -182,6 +190,9 @@ export class FifaCrawlerService extends ResultsService {
 
 		rows.each((i, row) => {
 			const columns = $(row).find('td');
+			if (columns.length <= 1) {
+				return;
+			}
 
 			const image = columns
 				.eq(0)
