@@ -41,4 +41,12 @@ export const config = {
 			database: 'sportywide',
 		},
 	},
+	production: {
+		postgres: {
+			host: 'swrds.c81wigl77r6q.ap-southeast-2.rds.amazonaws.com',
+		},
+		mongo: {
+			host: 'cluster0-e5lls.mongodb.net',
+		},
+	},
 };

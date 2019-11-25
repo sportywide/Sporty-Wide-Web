@@ -11,6 +11,7 @@ import { CoreSchemaModule } from '@schema/core/core-schema.module';
 import './core/subscribers';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SchemaFixtureModule } from '@schema/fixture/fixture.module';
+import { isProduction } from '@shared/lib/utils/env';
 
 @Module({
 	imports: [
@@ -37,9 +38,11 @@ import { SchemaFixtureModule } from '@schema/fixture/fixture.module';
 		MongooseModule.forRootAsync({
 			inject: [SCHEMA_CONFIG],
 			useFactory: schemaConfig => ({
-				uri: `mongodb://${schemaConfig.get('mongo:username')}:${schemaConfig.get(
-					'mongo:password'
-				)}@${schemaConfig.get('mongo:host')}/${schemaConfig.get('mongo:database')}?authSource=admin`,
+				uri: `${isProduction() ? 'mongodb+srv' : 'mongodb'}://${schemaConfig.get(
+					'mongo:username'
+				)}:${schemaConfig.get('mongo:password')}@${schemaConfig.get('mongo:host')}/${schemaConfig.get(
+					'mongo:database'
+				)}?authSource=admin`,
 				useNewUrlParser: true,
 			}),
 			imports: [CoreSchemaModule],

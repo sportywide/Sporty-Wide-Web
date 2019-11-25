@@ -3,10 +3,10 @@ require('dotenv').config();
 export const config = {
 	default: {
 		puppeteer: {
-			executable: '/usr/bin/chromium-browser',
+			executable: process.env.SW_PUPPETEER_EXECUTABLE,
 		},
 		proxy: {
-			url: '35.244.102.108:8081',
+			url: 'http://35.244.96.23:9300',
 		},
 		rapidapi: {
 			api_key: [
@@ -27,11 +27,8 @@ export const config = {
 		},
 	},
 	development: {
-		puppeteer: {
-			executable: process.env.SW_PUPPETEER_EXECUTABLE,
-		},
 		postgres: {
-			url: '192.168.50.10',
+			host: '192.168.50.10',
 			username: 'sw-user',
 			password: 'sw-password',
 			database: 'sportywide',
@@ -45,7 +42,10 @@ export const config = {
 	},
 	production: {
 		postgres: {
-			url: 'swrds.c81wigl77r6q.ap-southeast-2.rds.amazonaws.com',
+			host: 'swrds.c81wigl77r6q.ap-southeast-2.rds.amazonaws.com',
+		},
+		mongo: {
+			host: 'cluster0-e5lls.mongodb.net',
 		},
 	},
 };
