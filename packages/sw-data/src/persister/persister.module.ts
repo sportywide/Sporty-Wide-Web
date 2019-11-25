@@ -11,6 +11,7 @@ import { SchemaTeamModule } from '@schema/team/team.module';
 import { SchemaFixtureModule } from '@schema/fixture/fixture.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SchemaLeagueModule } from '@schema/league/league.module';
+import { isProduction } from '@shared/lib/utils/env';
 
 @Module({
 	imports: [
@@ -23,7 +24,7 @@ import { SchemaLeagueModule } from '@schema/league/league.module';
 			inject: [SCHEMA_CONFIG, DATA_CONFIG],
 			useFactory: (schemaConfig, dataConfig) => ({
 				type: 'postgres',
-				host: dataConfig.get('postgres:url'),
+				host: dataConfig.get('postgres:host'),
 				port: dataConfig.get('postgres:port'),
 				username: dataConfig.get('postgres:username'),
 				password: dataConfig.get('postgres:password'),
@@ -34,9 +35,11 @@ import { SchemaLeagueModule } from '@schema/league/league.module';
 		MongooseModule.forRootAsync({
 			inject: [SCHEMA_CONFIG],
 			useFactory: schemaConfig => ({
-				uri: `mongodb://${schemaConfig.get('mongo:username')}:${schemaConfig.get(
-					'mongo:password'
-				)}@${schemaConfig.get('mongo:host')}/${schemaConfig.get('mongo:database')}?authSource=admin`,
+				uri: `${isProduction() ? 'mongodb+srv' : 'mongodb'}://${schemaConfig.get(
+					'mongo:username'
+				)}:${schemaConfig.get('mongo:password')}@${schemaConfig.get('mongo:host')}/${schemaConfig.get(
+					'mongo:database'
+				)}?authSource=admin`,
 				useNewUrlParser: true,
 			}),
 			imports: [CoreSchemaModule],
