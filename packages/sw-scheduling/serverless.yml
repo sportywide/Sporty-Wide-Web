@@ -20,6 +20,7 @@ provider:
         SW_POSTGRES_DB: sportywide
         SW_MONGO_DB: sportywide
         SW_PUPPETEER_EXECUTABLE: ${file(./secret.${self:provider.stage}.yml):puppeteerExecutable}
+        IS_LAMBDA: 1
 
 plugins:
     - serverless-webpack
@@ -70,7 +71,6 @@ custom:
             dbPath: .dynamodb
 
 resources:
-    - ${file(resources/s3.yml)}
     - ${file(resources/sqs.yml)}
     - ${file(resources/sns.yml)}
 functions: ${file(resources/functions.yml)}

@@ -15,15 +15,21 @@ export class SqlConnectionModule {
 			imports: [
 				TypeOrmModule.forRootAsync({
 					inject: [TypeormLoggerService],
-					useFactory: logger => ({
-						type: 'postgres',
-						entities: getEntities(),
-						subscribers: getSubscribers(),
-						namingStrategy: new SnakeNamingStrategy(),
-						logging: isDevelopment() ? ['query', 'error'] : ['error'],
-						logger,
-						...connectionOptions,
-					}),
+					useFactory: async logger => {
+						let options: any = await maybeExistingCloseConnection(logger);
+						if (!options) {
+							options = {
+								type: 'postgres',
+								entities: getEntities(),
+								subscribers: getSubscribers(),
+								namingStrategy: new SnakeNamingStrategy(),
+								logging: isDevelopment() ? ['query', 'error'] : ['error'],
+								logger,
+								...connectionOptions,
+							};
+						}
+						return options;
+					},
 					imports: [CoreSchemaModule],
 				}),
 			],
@@ -38,19 +44,8 @@ export class SqlConnectionModule {
 				TypeOrmModule.forRootAsync({
 					inject: [TypeormLoggerService, ...connectionOptions.inject],
 					useFactory: async (logger, ...args) => {
-						const connectionManager: ConnectionManager = getConnectionManager();
-						let options: ConnectionOptions;
-						if (connectionManager.has('default')) {
-							options = connectionManager.get('default').options;
-							const connection = await connectionManager.get('default');
-							try {
-								if (connection.isConnected) {
-									await connectionManager.get('default').close();
-								}
-							} catch (e) {
-								logger.error('Failed to close existing connection');
-							}
-						} else {
+						let options: any = await maybeExistingCloseConnection(logger);
+						if (!options) {
 							const useFactory: any = connectionOptions.useFactory || noop;
 							// eslint-disable-next-line react-hooks/rules-of-hooks
 							const connectionProperties = (await useFactory(...args)) || {};
@@ -72,6 +67,24 @@ export class SqlConnectionModule {
 			exports: [TypeOrmModule],
 		};
 	}
+}
+
+async function maybeExistingCloseConnection(logger): Promise<ConnectionOptions | null> {
+	const connectionManager: ConnectionManager = getConnectionManager();
+	if (!connectionManager.has('default')) {
+		return null;
+	}
+	const options = connectionManager.get('default').options;
+	const connection = await connectionManager.get('default');
+	try {
+		logger.error('Closing existing connectioin');
+		if (connection.isConnected) {
+			await connectionManager.get('default').close();
+		}
+	} catch (e) {
+		logger.error('Failed to close existing connection');
+	}
+	return options;
 }
 
 function getEntities() {

@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/camelcase */
 const findup = require('find-up');
-require('dotenv').config({
+require('@shared/lib/utils/env/dotenv').config({
 	path: findup.sync('.env'),
 });
 

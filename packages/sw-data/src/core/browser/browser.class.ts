@@ -5,6 +5,22 @@ import { Logger } from 'log4js';
 const MAX_ATTEMPTS = 3;
 import { Provider } from 'nconf';
 
+let extraArgs: string[] = [];
+
+if (process.env.IS_LAMBDA) {
+	// https://github.com/alixaxel/chrome-aws-lambda/blob/3779715fdc197a245af662725977133b2d676bf9/source/index.js#L6
+	// required for node10 support - makes sure fonts and shared libraries are loaded correctly
+	if (process.env.FONTCONFIG_PATH === undefined) {
+		process.env.FONTCONFIG_PATH = '/opt/lib';
+	}
+
+	if (process.env.LD_LIBRARY_PATH && !process.env.LD_LIBRARY_PATH.startsWith('/opt/lib:')) {
+		process.env.LD_LIBRARY_PATH = [...new Set(['/opt/lib', ...process.env.LD_LIBRARY_PATH.split(':')])].join(':');
+	}
+
+	extraArgs = ['--disable-dev-shm-usage', '--disable-gpu', '--no-zygote', '--single-process', '--hide-scrollbars'];
+}
+
 export type SwBrowser = SwBrowserWrapper & Browser;
 
 export class SwBrowserWrapper {
@@ -34,6 +50,7 @@ export class SwBrowserWrapper {
 				'--disable-setuid-sandbox',
 				'--lang=en-US,en;q=0.9',
 				proxyServer ? `--proxy-server=${proxyServer}` : null,
+				...extraArgs,
 			].filter(arg => arg),
 			executablePath: config.get('puppeteer:executable'),
 			...options,

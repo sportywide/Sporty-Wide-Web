@@ -32,6 +32,7 @@ export async function buildSwStack() {
 	stackBuilder.attachRolesToInstance('natInstanceProfileRole', natInstance, associateEIPRole);
 	createRds(stackBuilder, vpc);
 	createRedis(stackBuilder, vpc);
+	createS3(stackBuilder);
 	//createECSCluster(stackBuilder, vpc);
 
 	return stackBuilder.stack;
@@ -42,6 +43,12 @@ function createVpc(stackBuilder: StackBuilder) {
 		maxAzs: 2,
 		cidr: '10.0.0.0/16',
 		natGateways: 0,
+	});
+}
+
+function createS3(stackBuilder: StackBuilder) {
+	return stackBuilder.s3('dataBucket', {
+		bucketName: 'sw-data-bucket',
 	});
 }
 
