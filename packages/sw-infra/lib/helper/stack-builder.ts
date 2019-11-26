@@ -12,6 +12,7 @@ import {
 	CfnEIPProps,
 	CfnEIP,
 } from '@aws-cdk/aws-ec2';
+import { Bucket, BucketProps } from '@aws-cdk/aws-s3';
 import { Role, RoleProps, CfnInstanceProfileProps, CfnInstanceProfile } from '@aws-cdk/aws-iam';
 import { ucfirst } from '@shared/lib/utils/string/conversion';
 import { DatabaseInstance, DatabaseInstanceProps } from '@aws-cdk/aws-rds';
@@ -183,6 +184,16 @@ export class StackBuilder {
 			name,
 			new CfnCacheCluster(this.stack, resourceName, {
 				clusterName: resourceName,
+				...props,
+			})
+		);
+	}
+
+	s3(name, props: BucketProps) {
+		return this.register(
+			name,
+			new Bucket(this.stack, this.getName(name), {
+				bucketName: this.getName(name),
 				...props,
 			})
 		);

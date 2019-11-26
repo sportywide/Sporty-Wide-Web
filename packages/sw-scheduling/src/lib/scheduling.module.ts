@@ -32,7 +32,7 @@ export async function initModule(moduleClass) {
 	}
 
 	module = await NestFactory.createApplicationContext(moduleClass, {
-		logger: isDevelopment() ? undefined : undefined,
+		logger: false,
 	});
 	moduleMap.set(moduleClass, module);
 	return module;

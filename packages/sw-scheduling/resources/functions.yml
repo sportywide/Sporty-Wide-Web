@@ -49,7 +49,7 @@ fetch-league-result:
               - s3:putObject
           Resource: arn:aws:s3:::sw-data-bucket/*
     layers:
-        - arn:aws:lambda:ap-southeast-2:409050499179:layer:chrome:1
+        - arn:aws:lambda:ap-southeast-2:409050499179:layer:puppeteer:1
 
 save-teams:
     handler: src/lambda/persist/save-teams.handler
