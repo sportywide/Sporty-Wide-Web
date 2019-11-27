@@ -1,5 +1,5 @@
 import { error, ok } from '@scheduling/lib/http';
-import { initModule, SchedulingPersisterModule } from '@scheduling/lib/scheduling.module';
+import { cleanup, initModule, SchedulingPersisterModule } from '@scheduling/lib/scheduling.module';
 import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
 import { PlayerPersisterService } from '@data/persister/player/player-persister.service';
 import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
@@ -22,5 +22,7 @@ export async function handler(event, context) {
 	} catch (e) {
 		console.error(e);
 		return error(e);
+	} finally {
+		await cleanup();
 	}
 }
