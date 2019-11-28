@@ -16,7 +16,8 @@ export const config = {
 			},
 			jwt: {
 				secret_key: 'jwtsecret',
-				expiration_time: 60 * 60,
+				access_token_expiration_time: 60 * 60,
+				refresh_token_expiration_time: 60 * 60 * 24 * 30,
 			},
 		},
 	},

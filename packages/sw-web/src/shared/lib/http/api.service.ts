@@ -3,13 +3,13 @@ import { Inject, Service } from 'typedi';
 import { ApolloClient } from 'apollo-client';
 import axios, { Axios } from 'axios-observable';
 import { createHttpLink } from 'apollo-link-http';
-import { COOKIE_CSRF, COOKIE_REFRESH_TOKEN, HEADER_SERVER_SIDE } from '@web/api/auth/constants';
+import { COOKIE_CSRF, HEADER_SERVER_SIDE } from '@web/api/auth/constants';
 import { createRefreshTokenInterceptor } from '@web/shared/lib/http/refresh-token';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { getHeaders, parseContext, setAuthCookies } from '@web/shared/lib/auth/helper';
 import { isBrowser } from '@web/shared/lib/environment';
 import { filterValues } from '@shared/lib/utils/object/filter';
-import { setAuth } from '@web/features/auth/store/actions';
+import { logout, setAuth } from '@web/features/auth/store/actions';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { autobind } from 'core-decorators';
 import { axiosFetch } from '@web/shared/lib/http/axios-fetch';
@@ -90,6 +90,11 @@ export class ApiService {
 		};
 	}
 
+	@autobind
+	private refreshTokenFailed() {
+		this.store.dispatch(logout());
+	}
+
 	private restClient(url) {
 		let axiosInstance = axios.create({
 			baseURL: url,
@@ -97,7 +102,7 @@ export class ApiService {
 			httpsAgent: new https.Agent({ rejectUnauthorized: false }),
 			headers: this.getHeaders(),
 		});
-		axiosInstance = createRefreshTokenInterceptor(axiosInstance, this.retryCall());
+		axiosInstance = createRefreshTokenInterceptor(axiosInstance, this.retryCall(), this.refreshTokenFailed);
 
 		if (isBrowser()) {
 			axiosInstance.interceptors.request.use(config => {
