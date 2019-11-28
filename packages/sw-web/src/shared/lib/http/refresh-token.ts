@@ -1,8 +1,8 @@
 import path from 'path';
 import { Axios } from 'axios-observable';
-import { UNAUTHENTICATED } from '@web/shared/lib/http/status-codes';
+import { UNAUTHENTICATED, UNAUTHORIZED } from '@web/shared/lib/http/status-codes';
 
-export function createRefreshTokenInterceptor(axios: Axios, refreshTokenCall) {
+export function createRefreshTokenInterceptor(axios: Axios, refreshTokenCall, onRefreshTokenFailed) {
 	const statusCodes = [UNAUTHENTICATED];
 	const id = axios.interceptors.response.use(
 		async res => {
@@ -37,7 +37,6 @@ export function createRefreshTokenInterceptor(axios: Axios, refreshTokenCall) {
 
 		const requestQueueInterceptorId = axios.interceptors.request.use(request => refreshCall.then(() => request));
 
-		// When response code is 401 (Unauthorized), try to refresh the token.
 		return refreshCall
 			.then(({ headers }) => {
 				axios.interceptors.request.eject(requestQueueInterceptorId);
@@ -58,10 +57,13 @@ export function createRefreshTokenInterceptor(axios: Axios, refreshTokenCall) {
 			})
 			.catch(error => {
 				axios.interceptors.request.eject(requestQueueInterceptorId);
+				if (error && error.response.status === UNAUTHORIZED) {
+					onRefreshTokenFailed(error);
+				}
 				return Promise.reject(error);
 			})
 			.finally(() => {
-				createRefreshTokenInterceptor(axios, refreshTokenCall);
+				createRefreshTokenInterceptor(axios, refreshTokenCall, onRefreshTokenFailed);
 			});
 	}
 }
