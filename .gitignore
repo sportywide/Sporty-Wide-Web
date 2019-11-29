@@ -205,5 +205,6 @@ packages/sw-data/resources
 secret.*.yml
 
 .terraform
+.next
 
 # End of https://www.gitignore.io/api/node,linux,macos,windows,intellij+all
