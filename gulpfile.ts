@@ -1,7 +1,12 @@
+import { mergePackageJson } from '@root/helpers/package';
+
 require('reflect-metadata');
 require('tsconfig-paths/register');
 import { Gulpclass, Task } from 'gulpclass';
 import { spawn } from '@root/helpers/process';
+import paths from '@build/paths';
+import * as fs from 'fs';
+import * as path from 'path';
 
 const argv = require('yargs').argv;
 
@@ -14,7 +19,7 @@ export class Gulpfile {
 			return spawn('npx lerna bootstrap -- --ci --no-optional && link-parent-bin');
 		} else if (argv.production) {
 			return spawn(
-				'npx lerna bootstrap -- --production --no-optional --ci && link-parent-bin -s true -d false -o false'
+				'npx lerna bootstrap -- --production --no-optional && link-parent-bin -s true -d false -o false'
 			);
 		} else if (argv.packageLockOnly) {
 			return spawn('npx lerna bootstrap -- --no-optional --package-lock-only');

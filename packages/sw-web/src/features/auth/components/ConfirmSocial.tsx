@@ -15,7 +15,12 @@ const SwConfirmSocialComponent: React.FC<any> = () => {
 	const container = useContext(ContainerContext);
 	return (
 		<Segment className={'sw-flex sw-flex-column'}>
-			<Image className={'sw-align-self-center'} circular size={'tiny'} src={require('@web/static/logo.svg')} />
+			<Image
+				className={'sw-align-self-center'}
+				circular
+				size={'tiny'}
+				src={require('@web/public/static/logo.svg')}
+			/>
 			<Header as={'h3'} className={'sw-align-self-center'}>
 				Complete your profiles
 			</Header>
