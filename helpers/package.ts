@@ -1,3 +1,4 @@
+/* global __non_webpack_require__ */
 import fs from 'fs';
 import path from 'path';
 
@@ -20,13 +21,13 @@ export function getAllPackages({ rootDir = process.cwd() } = {}) {
 
 export function mergePackageJson({ rootDir = process.cwd() } = {}) {
 	const glob = require('glob');
-	const rootPackageJson = require(path.resolve(rootDir, 'package.json'));
+	const rootPackageJson = customRequire(path.resolve(rootDir, 'package.json'));
 
 	const subPackageJsonFiles = glob.sync(path.resolve(rootDir, 'packages/**/package.json'), {
 		absolute: true,
 	});
 
-	const packageJsonContents = subPackageJsonFiles.map(subPackageJsonFile => require(subPackageJsonFile));
+	const packageJsonContents = subPackageJsonFiles.map(subPackageJsonFile => customRequire(subPackageJsonFile));
 
 	return packageJsonContents.reduce((currentContent, content) => {
 		return {
@@ -49,4 +50,10 @@ export function mergePackageJson({ rootDir = process.cwd() } = {}) {
 			},
 		};
 	}, rootPackageJson);
+}
+
+function customRequire(path) {
+	// @ts-ignore
+	// eslint-disable-next-line @typescript-eslint/camelcase
+	return typeof __non_webpack_require__ !== 'undefined' ? __non_webpack_require__(path) : require(path);
 }

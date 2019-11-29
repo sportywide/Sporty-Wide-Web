@@ -27,7 +27,12 @@ const SwForgotPasswordComponent: React.FC<any> = () => {
 	`;
 	return (
 		<Segment className={'sw-flex sw-flex-column'}>
-			<Image className={'sw-align-self-center'} circular size={'tiny'} src={require('@web/static/logo.svg')} />
+			<Image
+				className={'sw-align-self-center'}
+				circular
+				size={'tiny'}
+				src={require('@web/public/static/logo.svg')}
+			/>
 			<Header as={'h3'} className={'sw-align-self-center'}>
 				Reset your password
 			</Header>

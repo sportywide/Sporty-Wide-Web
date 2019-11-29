@@ -7,6 +7,9 @@ export const config = {
 	development: {
 		cookie_secret: 'testsecret',
 		server_url: 'http://192.168.50.1:5000',
-		a: process.env.A,
+	},
+	production: {
+		cookie_secret: process.env.COOKIE_SECRET,
+		server_url: 'https://api.sportywide.com',
 	},
 };

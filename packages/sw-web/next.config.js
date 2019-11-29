@@ -146,6 +146,7 @@ const nextConfig = {
 		// number of pages that should be kept simultaneously without being disposed
 		pagesBufferLength: 10,
 	},
+	experimental: { publicDirectory: true },
 };
 
 module.exports = withPlugins(
