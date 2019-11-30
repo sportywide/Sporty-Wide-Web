@@ -203,6 +203,7 @@ $RECYCLE.BIN/
 packages/sw-data/resources
 
 secret.*.yml
+secret.tfvars
 
 .terraform
 .next
