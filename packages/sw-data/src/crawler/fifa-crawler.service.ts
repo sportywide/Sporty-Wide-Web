@@ -169,7 +169,7 @@ export class FifaCrawlerService extends ResultsService {
 					.catch(error => {
 						this.logger.error(
 							`Failed to fetch player page ${page} for league id ${leagueId}`,
-							error.response.status
+							(error.response && error.response.status) || error.message
 						);
 						return { error: true, response: error.response };
 					})

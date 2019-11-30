@@ -8,10 +8,10 @@ provider:
     timeout: 600
     vpc:
         securityGroupIds:
-            - sg-08019439f1f5670c5
+            - sg-0741977d20d161609
         subnetIds:
-            - subnet-01b1d03513492a78a
-            - subnet-066942f2f00f492d1
+            - subnet-03673f37a665e5a78
+            - subnet-0944a6be111502367
     environment:
         SW_POSTGRES_USER: ${file(./secret.${self:provider.stage}.yml):rdsUser}
         SW_POSTGRES_PASSWORD: ${file(./secret.${self:provider.stage}.yml):rdsPassword}
