@@ -29,8 +29,9 @@ import { isProduction } from '@shared/lib/utils/env';
 				username: dataConfig.get('postgres:username'),
 				password: dataConfig.get('postgres:password'),
 				database: dataConfig.get('postgres:database'),
+				extra: { max: 1 },
 			}),
-			keepConnectionAlive: true,
+			keepConnectionAlive: false,
 			imports: [CoreSchemaModule, CoreDataModule],
 		}),
 		MongooseModule.forRootAsync({
