@@ -9,9 +9,9 @@ resource "aws_eip" "nat_eip" {
 
 resource "aws_security_group" "nat_security_group" {
   ingress {
-    from_port = 22
-    protocol = "TCP"
-    to_port = 22
+    from_port = 0
+    protocol = "-1"
+    to_port = 0
     cidr_blocks = [
       "0.0.0.0/0"]
   }
@@ -31,6 +31,7 @@ resource "aws_security_group" "nat_security_group" {
 resource "aws_instance" "nat_instance" {
   ami = "ami-00c1445796bc0a29f"
   instance_type = "t2.nano"
+  source_dest_check = false
   depends_on = [
     aws_key_pair.ec2_key_pair]
   tags = merge(var.tags, {

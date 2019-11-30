@@ -1,13 +1,12 @@
 process.env.TZ = 'UTC';
 
-import { INestApplicationContext, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { CoreSchedulingModule } from '@scheduling/lib/core/core.module';
 import { NestFactory } from '@nestjs/core';
 import { AwsModule } from '@scheduling/lib/aws/aws.module';
 import { PersisterModule } from '@data/persister/persister.module';
 import { CrawlerModule } from '@data/crawler/crawler.module';
 import { getConnectionManager } from 'typeorm';
-import mongoose from 'mongoose';
 
 @Module({
 	imports: [CoreSchedulingModule, CrawlerModule, AwsModule],
@@ -26,7 +25,6 @@ export async function cleanup() {
 		if (defaultConnection.isConnected) {
 			await defaultConnection.close();
 		}
-		await mongoose.disconnect();
 	} catch (e) {
 		console.error('Failed to clean up', e);
 	}

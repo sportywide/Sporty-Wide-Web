@@ -9,16 +9,22 @@ import { noop } from '@shared/lib/utils/functions';
 import { CoreSchemaModule } from '@schema/core/core-schema.module';
 
 export class SqlConnectionModule {
-	static forRoot(connectionOptions: Partial<TypeOrmModuleAsyncOptions> = {}): DynamicModule {
+	static forRoot(
+		connectionOptions: Partial<TypeOrmModuleAsyncOptions & { keepConnectionAlive?: boolean }> = {}
+	): DynamicModule {
 		return {
 			module: SqlConnectionModule,
 			imports: [
 				TypeOrmModule.forRootAsync({
 					inject: [TypeormLoggerService],
 					useFactory: async logger => {
-						let options: any = await maybeExistingCloseConnection(logger);
+						let options: any;
+						if (!connectionOptions.keepConnectionAlive) {
+							options = await maybeExistingCloseConnection(logger);
+						}
 						if (!options) {
 							options = {
+								keepConnectionAlive: connectionOptions.keepConnectionAlive,
 								type: 'postgres',
 								entities: getEntities(),
 								subscribers: getSubscribers(),
@@ -38,7 +44,7 @@ export class SqlConnectionModule {
 	}
 
 	static forRootAsync(
-		connectionInitOptions: Partial<TypeOrmModuleAsyncOptions> & { keepConnectionAlive?: boolean } = {}
+		connectionInitOptions: Partial<TypeOrmModuleAsyncOptions & { keepConnectionAlive?: boolean }> = {}
 	): DynamicModule {
 		return {
 			module: SqlConnectionModule,
