@@ -21,7 +21,5 @@ export async function handler(event, context) {
 	} catch (e) {
 		console.error(e);
 		return error(e);
-	} finally {
-		await cleanup();
 	}
 }

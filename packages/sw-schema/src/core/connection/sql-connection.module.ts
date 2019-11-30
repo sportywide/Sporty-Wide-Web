@@ -37,19 +37,26 @@ export class SqlConnectionModule {
 		};
 	}
 
-	static forRootAsync(connectionOptions: Partial<TypeOrmModuleAsyncOptions> = {}): DynamicModule {
+	static forRootAsync(
+		connectionInitOptions: Partial<TypeOrmModuleAsyncOptions> & { keepConnectionAlive?: boolean } = {}
+	): DynamicModule {
 		return {
 			module: SqlConnectionModule,
 			imports: [
 				TypeOrmModule.forRootAsync({
-					inject: [TypeormLoggerService, ...connectionOptions.inject],
+					inject: [TypeormLoggerService, ...connectionInitOptions.inject],
 					useFactory: async (logger, ...args) => {
-						let options: any = await maybeExistingCloseConnection(logger);
+						let options: ConnectionOptions = null;
+						if (!connectionInitOptions.keepConnectionAlive) {
+							options = await maybeExistingCloseConnection(logger);
+						}
+
 						if (!options) {
-							const useFactory: any = connectionOptions.useFactory || noop;
+							const useFactory: any = connectionInitOptions.useFactory || noop;
 							// eslint-disable-next-line react-hooks/rules-of-hooks
 							const connectionProperties = (await useFactory(...args)) || {};
 							options = {
+								keepConnectionAlive: connectionInitOptions.keepConnectionAlive,
 								type: 'postgres',
 								entities: getEntities(),
 								subscribers: getSubscribers(),
@@ -61,7 +68,7 @@ export class SqlConnectionModule {
 						}
 						return options;
 					},
-					imports: [CoreSchemaModule, ...connectionOptions.imports],
+					imports: [CoreSchemaModule, ...connectionInitOptions.imports],
 				}),
 			],
 			exports: [TypeOrmModule],
