@@ -45,7 +45,7 @@ export class UserController {
 		return toDto({
 			value: user,
 			dtoType: UserDto,
-		});
+		}) as UserDto;
 	}
 
 	@ApiOkResponse({ description: 'User has been retrieved' })
@@ -74,7 +74,7 @@ export class UserController {
 		return toDto({
 			value: user,
 			dtoType: UserDto,
-		});
+		}) as UserDto;
 	}
 
 	@ApiOkResponse({ description: 'User has been deleted' })
@@ -117,7 +117,7 @@ export class UserController {
 		return toDto({
 			value: updatedUser,
 			dtoType: UserDto,
-		});
+		}) as UserDto;
 	}
 
 	@AuthorizedApiOperation({ title: 'Update user profile endpoint' })
@@ -168,7 +168,7 @@ export class UserController {
 		return toDto({
 			value: userProfile,
 			dtoType: UserProfileDto,
-		});
+		}) as UserProfileDto;
 	}
 
 	@AuthorizedApiOperation({ title: 'Get user profile endpoint' })
@@ -193,6 +193,6 @@ export class UserController {
 		return toDto({
 			value: user.profile || {},
 			dtoType: UserProfileDto,
-		});
+		}) as UserProfileDto;
 	}
 }

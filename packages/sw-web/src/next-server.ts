@@ -1,5 +1,6 @@
 import 'reflect-metadata';
 import http from 'http';
+import path from 'path';
 import next from 'next';
 import { isDevelopment } from '@shared/lib/utils/env';
 import { getConfig } from '@web/config.provider';
@@ -10,8 +11,14 @@ declare const module: any;
 const config = getConfig();
 const env = process.env.NODE_ENV;
 const nextApp = next({
-	dir: './src',
+	dir: isDevelopment() ? './src' : './dist',
 	dev: isDevelopment(),
+	conf: isDevelopment()
+		? undefined
+		: {
+				distDir: path.join('..', 'next-build'),
+				experimental: { publicDirectory: true },
+		  },
 });
 
 let server, express;

@@ -177,11 +177,15 @@ class SwBaseRepository<T> {
 		return rows.map(({ id }) => id);
 	}
 
-	async getByIdsOrdered(ids: number[]) {
-		const queryBuilder = this.createQueryBuilder();
-		queryBuilder.where('id IN (:...ids)', { ids });
-		queryBuilder.orderBy(`field(id, ARRAY[${ids.join(',')}])`);
+	async getByIdsOrdered(ids: number[], includes: string[] = []) {
+		const tableName = this.getTableName();
+		let queryBuilder = this.createQueryBuilder(tableName);
+		queryBuilder.where(`${tableName}.id IN (:...ids)`, { ids });
+		queryBuilder.orderBy(`field(${tableName}.id, ARRAY[${ids.join(',')}])`);
 
+		includes.forEach(include => {
+			queryBuilder = queryBuilder.leftJoinAndSelect(`${tableName}.${include}`, include);
+		});
 		return queryBuilder.getMany();
 	}
 }

@@ -11,4 +11,6 @@ export const fetchProfilePlayersSuccess = createSwStandardAction(FETCH_PROFILE_P
 	players: PlayerDto[];
 	userId: number;
 	leagueId: number;
+	formation: string;
+	preference: any;
 }>();

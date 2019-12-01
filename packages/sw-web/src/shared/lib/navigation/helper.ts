@@ -3,7 +3,7 @@ import { findPathForRoute, Router } from '@web/routes';
 export async function redirect({
 	context = {},
 	route,
-	replace = true,
+	replace = false,
 	refresh,
 	params = undefined,
 }: {

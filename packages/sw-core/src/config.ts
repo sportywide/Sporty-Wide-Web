@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('@shared/lib/utils/env/dotenv').config();
 /* eslint-disable */
 export const config = {
 	default: {
@@ -9,10 +9,6 @@ export const config = {
 	},
 	development: {
 		logging: {
-			// logstash: {
-			// 	host: 'localhost',
-			// 	port: 1234,
-			// },
 			default: 'DEBUG',
 			file: {
 				max_log_size: 5242880,
@@ -32,6 +28,10 @@ export const config = {
 		},
 	},
 	production: {
+		redis: {
+			host: 'sw-redis-cluster.mkvqjz.0001.apse2.cache.amazonaws.com',
+			port: 6379,
+		},
 		logging: {
 			default: 'INFO',
 		},

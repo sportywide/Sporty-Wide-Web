@@ -1,5 +1,5 @@
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-export const noop = function(...args) {
+export const noop: (arg: any) => any = function(...args) {
 	//do nothing
 };
 

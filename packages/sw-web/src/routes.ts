@@ -42,13 +42,13 @@ const routeMappings = [
 		page: 'profile/edit',
 	},
 	{
-		name: 'profile-players',
-		pattern: '/profile/players',
-		page: 'profile/players',
+		name: 'play-league',
+		pattern: '/play-league/:id',
+		page: 'league/play-league',
 	},
 	{
 		name: 'lineup-builder',
-		pattern: '/lineup-builder',
+		pattern: '/lineup-builder/:id',
 		page: 'lineup/builder',
 	},
 	{

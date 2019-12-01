@@ -27,7 +27,7 @@ import { SchemaModule } from '@schema/schema.module';
 			useFactory: config => ({
 				secret: config.get('auth:jwt:secret_key'),
 				signOptions: {
-					expiresIn: config.get('auth:jwt:expiration_time'),
+					expiresIn: config.get('auth:jwt:access_token_expiration_time'),
 				},
 			}),
 		}),
