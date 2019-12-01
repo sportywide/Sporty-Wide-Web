@@ -72,6 +72,25 @@ resource "aws_route_table_association" "private_subnet_2_route_association" {
   route_table_id = aws_route_table.private_route_table.id
 }
 
+resource "aws_security_group" "lambda_security_group" {
+  ingress {
+    from_port = 0
+    protocol = "-1"
+    to_port = 0
+    cidr_blocks = [aws_vpc.vpc.cidr_block]
+  }
+
+  egress {
+    from_port = 0
+    protocol = "-1"
+    to_port = 0
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  vpc_id = aws_vpc.vpc.id
+  tags = var.tags
+  name = "sw-lambda-security-group"
+}
+
 module "rds" {
   source = "./rds"
   tags = var.tags
@@ -80,6 +99,7 @@ module "rds" {
   private_subnet_ids = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
   vpc_id = aws_vpc.vpc.id
   nat_security_group_id = module.ec2.nat_security_group_id
+  lambda_security_group_id = aws_security_group.lambda_security_group.id
 }
 
 module "redis" {
@@ -88,6 +108,7 @@ module "redis" {
   private_subnet_ids = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
   vpc_id = aws_vpc.vpc.id
   nat_security_group_id = module.ec2.nat_security_group_id
+  lambda_security_group_id = aws_security_group.lambda_security_group.id
 }
 
 module "ec2" {
@@ -95,6 +116,7 @@ module "ec2" {
   public_subnet_id = aws_subnet.public_subnet.id
   tags = var.tags
   vpc_id = aws_vpc.vpc.id
+  vpc_cidr_block = aws_vpc.vpc.cidr_block
 }
 
 module "ssm" {
