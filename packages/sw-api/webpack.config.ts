@@ -3,7 +3,7 @@ import { makeConfig } from '@build/webpack/node/config';
 import paths from '@build/paths';
 const argv = require('yargs').argv;
 
-module.exports = makeConfig({
+const config = makeConfig({
 	env: argv.env,
 	entries: path.resolve(paths.api.src, 'main'),
 	output: paths.api.dist,
@@ -15,3 +15,7 @@ module.exports = makeConfig({
 		'@api': paths.api.src,
 	},
 });
+
+(config.optimization = config.optimization || {}).minimize = false;
+
+module.exports = config;
