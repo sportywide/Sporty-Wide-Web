@@ -11,9 +11,8 @@ async function bootstrap() {
 	// we are fine with fetching each league sequentially
 
 	for (const { id: leagueId } of leagues) {
-		const teams = await crawlerService.crawlTeam(leagueId);
+		const { players, teams } = await crawlerService.crawlByLeague(leagueId);
 		await crawlerService.writeResult(`teams/fifa-${leagueId}.json`, teams);
-		const players = await crawlerService.crawlPlayers(leagueId);
 		await crawlerService.writeResult(`players/fifa-${leagueId}.json`, players);
 	}
 
