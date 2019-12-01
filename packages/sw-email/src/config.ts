@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('@shared/lib/utils/env/dotenv').config();
 export const config = {
 	development: {
 		smtp: {
@@ -7,6 +7,15 @@ export const config = {
 		},
 		app: {
 			url: 'https://www.sportywidedev.com',
+		},
+	},
+	production: {
+		smtp: {
+			host: '192.168.50.10',
+			port: 1025,
+		},
+		app: {
+			url: 'https://www.sportywide.com',
 		},
 	},
 };

@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { BaseEntity, BaseGeneratedEntity } from '@schema/core/base.entity';
+import { BaseEntity } from '@schema/core/base.entity';
 import { Team } from '@schema/team/models/team.entity';
 import { League } from '@schema/league/models/league.entity';
 

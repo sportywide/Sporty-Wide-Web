@@ -12,7 +12,9 @@ async function bootstrap() {
 	try {
 		await crawlerService.init();
 		const leagueTeams = (await Promise.all(
-			leagues.map(league => crawlerService.crawlTeams(league.scoreboardUrl).then(teams => ({ teams, league })))
+			leagues.map(league =>
+				crawlerService.crawlTeams(league.scoreboardUrl).then(({ teams, season }) => ({ teams, season, league }))
+			)
 		)).filter(teamResult => !!teamResult);
 		await crawlerService.close();
 		for (const leagueTeam of leagueTeams) {

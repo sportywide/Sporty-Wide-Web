@@ -1,0 +1,61 @@
+{
+	"name": "4-4-2 Flat",
+	"image": "https://www.fifplay.com/img/fifa/19/formations/fifa-4-4-2-flat.jpg",
+	"formation": [
+		{
+			"name": "LS",
+			"top": 20,
+			"left": 35
+		},
+		{
+			"name": "RS",
+			"top": 20,
+			"left": 65
+		},
+		{
+			"name": "LM",
+			"top": 40,
+			"left": 20
+		},
+		{
+			"name": "CM",
+			"top": 45,
+			"left": 35
+		},
+		{
+			"name": "CM",
+			"top": 45,
+			"left": 65
+		},
+		{
+			"name": "RM",
+			"top": 40,
+			"left": 80
+		},
+		{
+			"name": "LB",
+			"top": 75,
+			"left": 20
+		},
+		{
+			"name": "CB",
+			"top": 85,
+			"left": 35
+		},
+		{
+			"name": "CB",
+			"top": 85,
+			"left": 65
+		},
+		{
+			"name": "RB",
+			"top": 75,
+			"left": 80
+		},
+		{
+			"name": "GK",
+			"top": 90,
+			"left": 50
+		}
+	]
+}

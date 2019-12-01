@@ -13,6 +13,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { UserPlayers } from '@schema/player/models/user-players.schema';
 import { getSeason } from '@shared/lib/utils/season';
 import { UserLeaguePreferenceService } from '@schema/league/services/user-league-preference.service';
+import { startOfDay, startOfWeek } from 'date-fns';
 
 @Injectable()
 export class PlayerService {
@@ -57,8 +58,15 @@ export class PlayerService {
 		return userPlayers;
 	}
 
-	async getPlayerByIds(playerIds) {
-		return this.playerRepository.getByIdsOrdered(playerIds);
+	async deletePlayersForUser({ leagueId, userId }) {
+		return this.userPlayersModel.remove({
+			leagueId,
+			userId,
+		});
+	}
+
+	async getPlayerByIds(playerIds, includes: string[] = []) {
+		return this.playerRepository.getByIdsOrdered(playerIds, includes);
 	}
 
 	async generateFormation({ formation, leagueId, maxPlayers = 15, date = new Date() }) {
@@ -102,7 +110,7 @@ export class PlayerService {
 				return `EXISTS (${subQuery.getQuery()})`;
 			});
 		queryBuilder.setParameters({
-			date,
+			date: startOfDay(date),
 		});
 		const playerDetails = (await queryBuilder.getRawMany()).map(row => ({
 			id: row.player_id,
@@ -186,7 +194,7 @@ export class PlayerService {
 			.concat(range(0, maxPlayers - strategy.formation.length).map(i => extraPositions[i]));
 
 		for (const position of requiredPositions) {
-			const availablePlayers: any[] = positionMap[position].players;
+			const availablePlayers: any[] = (positionMap[position] || {}).players;
 			if (!availablePlayers || !availablePlayers.length) {
 				throw new Error(`Not a valid formation ${strategy.name}. Position not found ${position}`);
 			}

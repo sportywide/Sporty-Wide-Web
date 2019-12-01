@@ -27,7 +27,7 @@ try {
 	fs.writeFileSync(packageJSONPath, newContent, {
 		encoding: 'utf8',
 	});
-	spawnSync(`npx sls deploy --stage ${stage}`);
+	spawnSync(`npx sls deploy --stage ${stage} --force`);
 } catch (e) {
 	console.error(e);
 } finally {

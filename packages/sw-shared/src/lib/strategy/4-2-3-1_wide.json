@@ -1,0 +1,61 @@
+{
+	"name": "4-2-3-1 Wide",
+	"image": "https://www.fifplay.com/img/fifa/19/formations/fifa-4-2-3-1-wide.jpg",
+	"formation": [
+		{
+			"name": "ST",
+			"top": 20,
+			"left": 50
+		},
+		{
+			"name": "LM",
+			"top": 40,
+			"left": 15
+		},
+		{
+			"name": "CAM",
+			"top": 35,
+			"left": 50
+		},
+		{
+			"name": "RM",
+			"top": 40,
+			"left": 85
+		},
+		{
+			"name": "CDM",
+			"top": 50,
+			"left": 35
+		},
+		{
+			"name": "CDM",
+			"top": 50,
+			"left": 65
+		},
+		{
+			"name": "LB",
+			"top": 75,
+			"left": 20
+		},
+		{
+			"name": "CB",
+			"top": 85,
+			"left": 35
+		},
+		{
+			"name": "CB",
+			"top": 85,
+			"left": 65
+		},
+		{
+			"name": "RB",
+			"top": 75,
+			"left": 80
+		},
+		{
+			"name": "GK",
+			"top": 90,
+			"left": 50
+		}
+	]
+}

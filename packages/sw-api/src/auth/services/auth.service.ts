@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Injectable, Inject, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
@@ -7,6 +7,7 @@ import { UserService } from '@api/user/services/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@schema/user/models/user.entity';
 import uuid from 'uuid/v4';
+import { Provider } from 'nconf';
 import { EmailService } from '@api/email/email.service';
 import { ApiModelProperty } from '@nestjs/swagger';
 import { plainToClass } from 'class-transformer-imp';
@@ -16,7 +17,8 @@ import { TokenService } from '@api/auth/services/token.service';
 import { CompleteSocialProfileDto } from '@shared/lib/dtos/user/complete-social-profile.dto';
 import { TokenType } from '@schema/auth/models/enums/token-type.token';
 import { ResetPasswordDto } from '@shared/lib/dtos/user/reset-password-dto';
-import { TokenExpiredError } from 'jsonwebtoken';
+import jwt, { TokenExpiredError } from 'jsonwebtoken';
+import { API_CONFIG } from '@core/config/config.constants';
 
 export class Tokens {
 	@ApiModelProperty() accessToken: string;
@@ -31,7 +33,8 @@ export class AuthService {
 		private readonly cryptoService: CryptoService,
 		private readonly jwtService: JwtService,
 		private readonly tokenService: TokenService,
-		private readonly emailService: EmailService
+		private readonly emailService: EmailService,
+		@Inject(API_CONFIG) private readonly config: Provider
 	) {}
 
 	public async signUp(createUserDto: CreateUserDto): Promise<Tokens> {
@@ -187,10 +190,29 @@ export class AuthService {
 		});
 	}
 
-	private async createRefreshToken(user: User) {
-		const refreshToken = uuid();
-		user.refreshToken = refreshToken;
-		await this.userService.saveOne(user);
+	private async createRefreshToken(user: User): Promise<string> {
+		let refreshToken = user.refreshToken as string;
+		let needsNewToken;
+		if (refreshToken) {
+			const decodedPayload: any = this.jwtService.decode(refreshToken);
+			const exp = (decodedPayload && decodedPayload.exp) || 0;
+			if (exp * 1000 < Date.now()) {
+				needsNewToken = true;
+			}
+		} else {
+			needsNewToken = true;
+		}
+		if (needsNewToken) {
+			refreshToken = jwt.sign(
+				{
+					id: user.id,
+				},
+				this.config.get('auth:jwt:secret_key'),
+				{ expiresIn: this.config.get('auth:jwt:refresh_token_expiration_time') }
+			);
+			user.refreshToken = refreshToken;
+			await this.userService.saveOne(user);
+		}
 
 		return refreshToken;
 	}

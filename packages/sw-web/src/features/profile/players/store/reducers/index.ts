@@ -7,6 +7,8 @@ export type ProfilePlayersAction = ActionType<typeof actions>;
 export interface IProfilePlayers {
 	players: PlayerDto[];
 	loading: boolean;
+	formation: string;
+	preference: any;
 }
 
 interface IState {
@@ -20,16 +22,21 @@ const initialState = {
 };
 
 export const profilePlayersReducer = createReducer<IState, ProfilePlayersAction>(initialState)
-	.handleAction(actions.fetchProfilePlayersSuccess, (state, { payload: { userId, leagueId, players } }) => ({
-		...state,
-		[userId]: {
-			...(state[userId] || {}),
-			[leagueId]: {
-				loading: false,
-				players,
+	.handleAction(
+		actions.fetchProfilePlayersSuccess,
+		(state, { payload: { userId, leagueId, players, formation, preference } }) => ({
+			...state,
+			[userId]: {
+				...(state[userId] || {}),
+				[leagueId]: {
+					loading: false,
+					formation,
+					players,
+					preference,
+				},
 			},
-		},
-	}))
+		})
+	)
 	.handleAction(actions.fetchProfilePlayers, (state, { payload: { userId, leagueId } }) => ({
 		...state,
 		[userId]: {

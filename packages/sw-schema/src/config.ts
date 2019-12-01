@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('@shared/lib/utils/env/dotenv').config();
 /* eslint-disable */
 export const config = {
 	default: {
@@ -39,6 +39,14 @@ export const config = {
 			password: 'sw-password',
 			host: '192.168.50.10',
 			database: 'sportywide',
+		},
+	},
+	production: {
+		postgres: {
+			host: 'sw-rds.c81wigl77r6q.ap-southeast-2.rds.amazonaws.com',
+		},
+		mongo: {
+			host: 'cluster0-e5lls.mongodb.net',
 		},
 	},
 };
