@@ -4,7 +4,7 @@ import { makeConfig } from '@build/webpack/node/config';
 import paths from '@build/paths';
 const argv = require('yargs').argv;
 
-module.exports = makeConfig({
+const config = makeConfig({
 	hot: isDevelopment(argv.env),
 	env: argv.env,
 	entries: path.resolve(paths.web.src, 'next-server'),
@@ -15,3 +15,7 @@ module.exports = makeConfig({
 		'@web': paths.web.src,
 	},
 });
+
+(config.optimization = config.optimization || {}).minimize = false;
+
+module.exports = config;
