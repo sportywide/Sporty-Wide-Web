@@ -8,7 +8,7 @@ provider:
     timeout: 600
     vpc:
         securityGroupIds:
-            - sg-0741977d20d161609
+            - sg-0041f89e3e7ba59e0
         subnetIds:
             - subnet-03673f37a665e5a78
             - subnet-0944a6be111502367
