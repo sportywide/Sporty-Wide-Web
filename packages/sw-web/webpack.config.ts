@@ -14,8 +14,9 @@ const config = makeConfig({
 		'@shared': paths.shared.src,
 		'@web': paths.web.src,
 	},
+	optimizationOptions: {
+		minimize: false,
+	},
 });
-
-(config.optimization = config.optimization || {}).minimize = false;
 
 module.exports = config;

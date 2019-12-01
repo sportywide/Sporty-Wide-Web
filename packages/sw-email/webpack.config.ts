@@ -16,14 +16,15 @@ const nodeConfig = makeNodeConfig({
 		'@email': paths.email.src,
 		'@schema': paths.schema.src,
 	},
+	optimizationOptions: {
+		minimize: false,
+	},
 });
 const styleConfig = makeStyleConfig({
 	env: argv.env,
 	entries: getStylesEntries(),
 	output: path.resolve(paths.email.dist, 'styles'),
 });
-
-(nodeConfig.optimization = nodeConfig.optimization || {}).minimize = false;
 
 module.exports = [nodeConfig, styleConfig];
 
