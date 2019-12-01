@@ -164,15 +164,23 @@ export class FifaCrawlerService extends ResultsService {
 	}
 
 	private parseInfoPlayersOfTeam($, teamId): FifaPlayer[] {
-		const teamName = $('title').text().split('- FIFA ')[0].trim();
-		const rows = $('div.responsive-table table tbody tr');
+		const teamName = $('title')
+			.text()
+			.split('- FIFA ')[0]
+			.trim();
+		const rows = $('div.responsive-table table')
+			.first()
+			.find('tbody tr');
 		const result: FifaPlayer[] = [];
 		rows.each((i, row) => {
 			const shirt = $($(row).find('td[data-title="Kit Number"]')).text();
 
 			const $name = $($(row).find('td[data-title="Name"] a'));
 			const url = $name.attr()['href'];
-			const name = $name.text();
+			const name = $name
+				.contents()
+				.first()
+				.text();
 
 			const image = $($(row).find('td a img')).attr()['data-src'];
 
