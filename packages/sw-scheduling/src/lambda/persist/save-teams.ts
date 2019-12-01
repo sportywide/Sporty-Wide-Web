@@ -1,12 +1,13 @@
 import { error, ok } from '@scheduling/lib/http';
-import { initModule, SchedulingPersisterModule } from '@scheduling/lib/scheduling.module';
+import { cleanup, initModule, SchedulingPersisterModule } from '@scheduling/lib/scheduling.module';
 import { TeamPersisterService } from '@data/persister/team/team-persister.service';
 import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
 import { SnsService } from '@scheduling/lib/aws/sns/sns.service';
 import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
 
-export async function handler(event) {
+export async function handler(event, context) {
 	try {
+		context.callbackWaitsForEmptyEventLoop = false;
 		const { key, bucketName } = parseBody(event);
 		const module = await initModule(SchedulingPersisterModule);
 		const s3Service = module.get(S3Service);
@@ -28,5 +29,7 @@ export async function handler(event) {
 	} catch (e) {
 		console.error(e);
 		return error(e);
+	} finally {
+		await cleanup();
 	}
 }

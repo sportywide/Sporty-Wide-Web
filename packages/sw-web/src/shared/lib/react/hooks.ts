@@ -1,8 +1,9 @@
-import { MutableRefObject, useCallback, useEffect, useRef, useState } from 'react';
+import { MutableRefObject, useCallback, useEffect, useRef, useState, useMemo } from 'react';
 import { keyBy } from 'lodash';
 import { useSelector } from 'react-redux';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { getEmptyImage } from 'react-dnd-html5-backend-cjs';
+import { formationMap } from '@shared/lib/dtos/formation/formation.dto';
 
 export function usePrevious<T>(value) {
 	const ref = useRef<T>();
@@ -16,6 +17,15 @@ export function usePrevious<T>(value) {
 
 export function useUser(): IUser {
 	return useSelector(state => state.auth && state.auth.user);
+}
+
+export function useFormationOptions() {
+	return useMemo(() => {
+		return Object.entries(formationMap).map(([key, formation]) => ({
+			text: formation.name,
+			value: key,
+		}));
+	}, []);
 }
 
 export function useLocation() {

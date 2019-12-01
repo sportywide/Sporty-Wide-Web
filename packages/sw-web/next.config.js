@@ -44,6 +44,8 @@ const nextConfig = {
 			},
 		});
 
+		webpackConfig.output.pathinfo = false;
+
 		const originalEntry = webpackConfig.entry;
 		webpackConfig.entry = async () => {
 			let entries = await originalEntry();
@@ -133,6 +135,9 @@ const nextConfig = {
 		};
 		return config;
 	},
+	typescript: {
+		ignoreDevErrors: true,
+	},
 	distDir: path.join('..', 'next-build'),
 	dir: paths.web.src,
 	onDemandEntries: {
@@ -141,6 +146,7 @@ const nextConfig = {
 		// number of pages that should be kept simultaneously without being disposed
 		pagesBufferLength: 10,
 	},
+	experimental: { publicDirectory: true },
 };
 
 module.exports = withPlugins(

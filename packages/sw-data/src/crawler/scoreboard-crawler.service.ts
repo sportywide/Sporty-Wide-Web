@@ -11,38 +11,14 @@ import { keyBy } from 'lodash';
 import { sleep } from '@shared/lib/utils/sleep';
 import { PuppeteerService } from '@data/core/browser/browser.service';
 import { SwPage } from '@data/core/browser/browser.class';
-import { ScoreboardPlayer } from './scoreboard-crawler.service';
+import { ScoreboardPlayer, ScoreboardTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
 import { BrowserService } from './browser.service';
+
 const MAX_ATTEMPTS = 4;
 const PAGE_TIMEOUT = 60000;
 const PAGE_URL = 'https://www.scoreboard.com/au/soccer';
 
 const DATA_TIMEOUT = 30000;
-
-export type ScoreboardTeam = {
-	name: string;
-	url: string;
-	played: number;
-	wins: number;
-	draws: number;
-	losses: number;
-	scored: number;
-	conceded: number;
-	points: number;
-	forms: { type: string; teams: string; score: string; date: string }[];
-};
-
-export type ScoreboardPlayer = {
-	jersey: number;
-	nationality: string;
-	age: number;
-	played: number;
-	name: string;
-	scored: number;
-	yellow: number;
-	red: number;
-	status: string;
-};
 
 @Injectable()
 export class ScoreboardCrawlerService extends BrowserService {
@@ -82,7 +58,10 @@ export class ScoreboardCrawlerService extends BrowserService {
 				const content = await page.content();
 				await page.close();
 				const $ = Cheerio.load(content);
-				return this.parseTeams($);
+				return {
+					teams: this.parseTeams($),
+					season: this.parseSeason($),
+				};
 			} catch (e) {
 				this.dataLogger.error(`Failed to get teams for ${leagueUrl}`, e);
 				if (page) {
@@ -90,7 +69,15 @@ export class ScoreboardCrawlerService extends BrowserService {
 				}
 			}
 		}
-		return [];
+		return {};
+	}
+
+	private parseSeason($: CheerioStatic): string {
+		const text = $(
+			'body > div.container > div.main > div.main-left > div.center.col-center.tournament_page > .tournament'
+		).text();
+		const parts = text.split('»');
+		return parts[parts.length - 1];
 	}
 
 	private parseTeams($: CheerioStatic): ScoreboardTeam[] {
@@ -130,6 +117,7 @@ export class ScoreboardCrawlerService extends BrowserService {
 					const matches = title.match(/\[b\](.+?)\s*\[\/b\](.+?)\n+(.*?)$/s);
 					if (matches) {
 						[, score, teams, date] = matches;
+						score = score.replace(':', '');
 					}
 				} else {
 					const matches = title.match(/\[b\](.+?)\s*\[\/b\]\((.+?)\)\n*(.*?)$/s);
@@ -224,20 +212,19 @@ export class ScoreboardCrawlerService extends BrowserService {
 	}
 
 	private async waitForTeamResult(page: SwPage) {
-		await page.waitForSelector('#glib-stats-data > div.preload', {
-			hidden: true,
+		await page.waitForSelector('#box-table-type-1', {
+			visible: true,
 			timeout: DATA_TIMEOUT,
 		});
 	}
 
 	private async navigateTo(page: SwPage, url, options = {}) {
-		const response = await page.navigateTo(`${PAGE_URL}${url}`, {
+		return await page.navigateTo(`${PAGE_URL}${url}`, {
 			options: {
 				timeout: PAGE_TIMEOUT,
-				waitUntil: ['domcontentloaded', 'networkidle2'],
+				waitUntil: ['domcontentloaded'],
 				...options,
 			},
 		});
-		return response;
 	}
 }

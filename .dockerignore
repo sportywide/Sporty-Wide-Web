@@ -6,3 +6,4 @@
 **/next-build
 **/.idea
 **/.vagrant
+**/.terraform

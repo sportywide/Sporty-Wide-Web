@@ -30,7 +30,7 @@ class SwEditProfilePage extends React.Component<IProps> {
 
 	render() {
 		if (!(this.props.userProfile && this.props.userProfile.basic)) {
-			return <Loader />;
+			return <Loader active />;
 		}
 		return (
 			<SwGreyBackground>

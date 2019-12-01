@@ -1,0 +1,61 @@
+{
+	"name": "5-3-2",
+	"image": "https://www.fifplay.com/img/fifa/19/formations/fifa-5-3-2.jpg",
+	"formation": [
+		{
+			"name": "ST",
+			"top": 20,
+			"left": 35
+		},
+		{
+			"name": "ST",
+			"top": 20,
+			"left": 65
+		},
+		{
+			"name": "CM",
+			"top": 40,
+			"left": 15
+		},
+		{
+			"name": "CM",
+			"top": 40,
+			"left": 50
+		},
+		{
+			"name": "CM",
+			"top": 40,
+			"left": 85
+		},
+		{
+			"name": "LWB",
+			"top": 75,
+			"left": 20
+		},
+		{
+			"name": "CB",
+			"top": 85,
+			"left": 35
+		},
+		{
+			"name": "CB",
+			"top": 80,
+			"left": 50
+		},
+		{
+			"name": "CB",
+			"top": 85,
+			"left": 65
+		},
+		{
+			"name": "RWB",
+			"top": 75,
+			"left": 80
+		},
+		{
+			"name": "GK",
+			"top": 90,
+			"left": 50
+		}
+	]
+}

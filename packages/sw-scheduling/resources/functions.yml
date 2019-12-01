@@ -39,6 +39,18 @@ fetch-fixtures:
               - s3:putObject
           Resource: arn:aws:s3:::sw-data-bucket/*
 
+fetch-league-result:
+    handler: src/lambda/crawl/fetch-league-result.handler
+    events:
+        - sns: arn:aws:sns:ap-southeast-2:409050499179:FifaTeamSns
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:putObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
+    layers:
+        - arn:aws:lambda:ap-southeast-2:409050499179:layer:puppeteer:1
+
 save-teams:
     handler: src/lambda/persist/save-teams.handler
     events:
@@ -83,6 +95,22 @@ save-fixtures:
               event: s3:ObjectCreated:*
               rules:
                   - prefix: fixtures
+                  - suffix: .json
+              existing: true
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:getObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
+
+save-league-result:
+    handler: src/lambda/persist/save-league-result.handler
+    events:
+        - s3:
+              bucket: sw-data-bucket
+              event: s3:ObjectCreated:*
+              rules:
+                  - prefix: teams/scoreboard
                   - suffix: .json
               existing: true
     iamRoleStatements:

@@ -2,6 +2,7 @@ import { BaseEntity, BaseGeneratedEntity } from '@schema/core/base.entity';
 import { ClassTransformOptions, plainToClass } from 'class-transformer-imp';
 import { filterValues } from '@shared/lib/utils/object/filter';
 import { Type } from '@nestjs/common';
+import { Document } from 'mongoose';
 
 const defaultOptions: ClassTransformOptions = {
 	excludeExtraneousValues: true,
@@ -26,6 +27,10 @@ export function toDto<T>({
 					options,
 				}) as T
 		);
+	}
+
+	if (value instanceof Document) {
+		plain = (value as any).toJSON();
 	}
 	if (value instanceof BaseGeneratedEntity || value instanceof BaseEntity) {
 		plain = value.toPlain();

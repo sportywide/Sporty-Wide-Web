@@ -1,0 +1,61 @@
+{
+	"name": "4-3-3 False 9",
+	"image": "https://www.fifplay.com/img/fifa/19/formations/fifa-4-3-3-false-9.jpg",
+	"formation": [
+		{
+			"name": "LW",
+			"top": 20,
+			"left": 15
+		},
+		{
+			"name": "CF",
+			"top": 25,
+			"left": 50
+		},
+		{
+			"name": "RW",
+			"top": 20,
+			"left": 85
+		},
+		{
+			"name": "CM",
+			"top": 40,
+			"left": 35
+		},
+		{
+			"name": "CDM",
+			"top": 50,
+			"left": 50
+		},
+		{
+			"name": "CM",
+			"top": 40,
+			"left": 65
+		},
+		{
+			"name": "LB",
+			"top": 75,
+			"left": 20
+		},
+		{
+			"name": "CB",
+			"top": 85,
+			"left": 35
+		},
+		{
+			"name": "CB",
+			"top": 85,
+			"left": 65
+		},
+		{
+			"name": "RB",
+			"top": 75,
+			"left": 80
+		},
+		{
+			"name": "GK",
+			"top": 90,
+			"left": 50
+		}
+	]
+}

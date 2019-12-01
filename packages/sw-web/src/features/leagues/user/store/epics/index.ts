@@ -7,13 +7,16 @@ import {
 import { IDependencies } from '@web/shared/lib/store';
 import { UserLeagueService } from '@web/features/leagues/user/services/user-league.service';
 import {
-	joinUserLeague,
-	leaveUserLeague,
 	fetchUserLeagues,
 	fetchUserLeaguesSuccess,
+	joinUserLeague,
+	joinUserLeagueError,
+	joinUserLeagueSuccess,
+	leaveUserLeague,
 } from '@web/features/leagues/user/store/actions';
 import { ActionType } from 'typesafe-actions';
 import { Epic } from 'redux-observable';
+import { catchAndThrow } from '@web/shared/lib/observable';
 
 export const fetchUserLeagueEpic = (action$, state$, { container }: IDependencies) => {
 	const userLeagueService = container.get(UserLeagueService);
@@ -33,8 +36,11 @@ export const joinUserLeagueEpic: Epic<ActionType<typeof joinUserLeague>, any, an
 ) => {
 	const userLeagueService = container.get(UserLeagueService);
 	return action$.ofType(JOIN_USER_LEAGUE as any).pipe(
-		mergeMap(({ payload: { userId, leagueId } }) => {
-			return userLeagueService.joinLeague({ leagueId, userId }).pipe(mapTo(fetchUserLeagues(userId)));
+		mergeMap(({ payload: { userId, leagueId, formation } }) => {
+			return userLeagueService.joinLeague({ leagueId, userId, formation }).pipe(
+				mapTo(joinUserLeagueSuccess({ leagueId, userId })),
+				catchAndThrow(() => joinUserLeagueError({ leagueId, userId }))
+			);
 		})
 	);
 };

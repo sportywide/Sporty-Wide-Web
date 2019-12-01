@@ -13,11 +13,11 @@ export async function handler() {
 		const s3Service = module.get(S3Service);
 		await Promise.all(
 			leagues.map(async league => {
-				const team = await fifaCrawler.crawlTeam(league.id);
+				const teams = await fifaCrawler.crawlTeam(league.id);
 				await s3Service.uploadFile({
 					Bucket: config.get('s3:data_bucket_name'),
 					Key: `teams/fifa/${league.id}.json`,
-					Body: JSON.stringify(team),
+					Body: JSON.stringify(teams),
 					Metadata: {
 						league: league.id.toString(),
 					},

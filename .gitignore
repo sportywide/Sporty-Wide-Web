@@ -203,5 +203,9 @@ $RECYCLE.BIN/
 packages/sw-data/resources
 
 secret.*.yml
+secret.tfvars
+
+.terraform
+.next
 
 # End of https://www.gitignore.io/api/node,linux,macos,windows,intellij+all

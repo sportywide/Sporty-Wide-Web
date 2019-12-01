@@ -4,7 +4,7 @@ import { LeagueDto } from '@shared/lib/dtos/leagues/league.dto';
 
 export type LeagueActions = ActionType<typeof actions>;
 
-const initialState: LeagueDto[] = [];
+const initialState: LeagueDto[] = null;
 
 export const leagueReducer = createReducer<LeagueDto[], LeagueActions>(initialState).handleAction(
 	actions.fetchLeaguesSuccess,

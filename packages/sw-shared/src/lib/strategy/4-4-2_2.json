@@ -1,0 +1,61 @@
+{
+	"name": "4-4-2 (2)",
+	"image": "https://www.fifplay.com/img/fifa/19/formations/fut-4-4-2-(2).jpg",
+	"formation": [
+		{
+			"name": "ST",
+			"top": 20,
+			"left": 35
+		},
+		{
+			"name": "ST",
+			"top": 20,
+			"left": 65
+		},
+		{
+			"name": "LM",
+			"top": 40,
+			"left": 20
+		},
+		{
+			"name": "CDM",
+			"top": 45,
+			"left": 35
+		},
+		{
+			"name": "CDM",
+			"top": 45,
+			"left": 65
+		},
+		{
+			"name": "RM",
+			"top": 40,
+			"left": 80
+		},
+		{
+			"name": "LB",
+			"top": 75,
+			"left": 20
+		},
+		{
+			"name": "CB",
+			"top": 85,
+			"left": 35
+		},
+		{
+			"name": "CB",
+			"top": 85,
+			"left": 65
+		},
+		{
+			"name": "RB",
+			"top": 75,
+			"left": 80
+		},
+		{
+			"name": "GK",
+			"top": 90,
+			"left": 50
+		}
+	]
+}

@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/camelcase */
-require('dotenv').config();
+require('@shared/lib/utils/env/dotenv').config();
 export const config = {
 	default: {
 		puppeteer: {
-			executable: '/usr/bin/chromium-browser',
+			executable: process.env.SW_PUPPETEER_EXECUTABLE,
 		},
 		proxy: {
-			url: '35.244.102.108:8081',
+			url: 'http://35.244.96.23:9300',
 		},
 		rapidapi: {
 			api_key: [
@@ -20,18 +20,32 @@ export const config = {
 			port: 5432,
 			database: process.env.SW_POSTGRES_DB,
 		},
+		mongo: {
+			username: process.env.SW_MONGO_USER,
+			password: process.env.SW_MONGO_PASSWORD,
+			database: process.env.SW_MONGO_DB,
+		},
 	},
 	development: {
 		postgres: {
-			url: '192.168.50.10',
+			host: '192.168.50.10',
 			username: 'sw-user',
 			password: 'sw-password',
+			database: 'sportywide',
+		},
+		mongo: {
+			username: 'sw-user',
+			password: 'sw-password',
+			host: '192.168.50.10',
 			database: 'sportywide',
 		},
 	},
 	production: {
 		postgres: {
-			url: 'swrds.c81wigl77r6q.ap-southeast-2.rds.amazonaws.com',
+			host: 'sw-rds.c81wigl77r6q.ap-southeast-2.rds.amazonaws.com',
+		},
+		mongo: {
+			host: 'cluster0-e5lls.mongodb.net',
 		},
 	},
 };

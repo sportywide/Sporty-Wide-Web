@@ -1,3 +1,4 @@
+process.env.TZ = 'UTC';
 import { NestFactory } from '@nestjs/core';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -15,6 +16,11 @@ async function bootstrap() {
 	app.use(cookieParser());
 	app.use(passport.initialize());
 	app.use(cors());
+	app.use((req, res, next) => {
+		res.setHeader('Expires', '-1');
+		res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+		next();
+	});
 	const log4js = app.get(LOG4J_PROVIDER);
 	app.use(
 		log4js.connectLogger(log4js.getLogger('http'), {
