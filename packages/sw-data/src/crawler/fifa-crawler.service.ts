@@ -70,17 +70,18 @@ export class FifaCrawlerService extends ResultsService {
 	}
 
 	// region crawl by league
-	async crawlByLeague(leagueId): Promise<{ teams: FifaTeam[]; players: FifaPlayer[] }> {
-		this.logger.info(`Fetching league id ${leagueId}`);
+	async crawlTeamsByLeague(leagueId: number): Promise<FifaTeam[]> {
+		this.logger.info(`Fetching teams of league id ${leagueId}`);
 		const url = `/teams?league=${leagueId}&order=desc`;
 		const $ = await this.getParsedResponse(url);
+		return this.parseInfoTeamsOfLeague($);
+	}
+
+	private parseInfoTeamsOfLeague($: CheerioStatic): FifaTeam[] {
+		const result: FifaTeam[] = [];
 		const rows = $('table tbody tr');
-
-		const teams: FifaTeam[] = [];
-		const players: FifaPlayer[] = [];
-
-		const teamRows: any[] = [];
 		rows.each((i, row) => {
+			// Invalid row
 			if (row.children.length === 0) {
 				return;
 			}
@@ -89,77 +90,81 @@ export class FifaCrawlerService extends ResultsService {
 			if (!!rowAttrs && !!rowAttrs['class'] && rowAttrs['class'].indexOf('none') >= 0) {
 				return;
 			}
-			teamRows.push(row);
+
+			// Valid row
+			const columns = $(row).find('td');
+
+			const image = columns
+				.eq(0)
+				.find('img')
+				.attr();
+			const bio = columns
+				.eq(1)
+				.find('a')
+				.attr();
+
+			const league = columns
+				.eq(2)
+				.find('a')
+				.attr();
+
+			const att = columns.eq(3);
+			const mid = columns.eq(4);
+			const def = columns.eq(5);
+			const ovr = columns.eq(6);
+
+			// Ratio - content as `{active} / {max}`
+			const span = columns.eq(7).find('span.star');
+			const maxStars = span.find('i').length;
+			const activeStars = span.find('i.fas.fa-star').length;
+			const halfStars = span.find('i.fas.fa-star-half-alt').length;
+			const rating = `${activeStars + halfStars / 2}/${maxStars}`;
+
+			const title = this.cleanTeamTitle(bio['title']);
+			result.push({
+				fifaId: parseInt(bio['href'].split('/').filter(s => !!s)[1], 10),
+				image: image['data-src'],
+				title: teamMapping[title] || title,
+				name: bio['href'].split('/').filter(s => !!s)[2],
+				league: {
+					title: league['title'].replace(this._fifaRegex, '').trim(),
+					fifaId: parseInt(league['href'].split('league=')[1], 10),
+				},
+				alias: !teamMapping[title] ? [] : teamAliasMapping[teamMapping[title]],
+				[att.attr('data-title').toLowerCase()]: parseInt(att.eq(0).text(), 10),
+				[mid.attr('data-title').toLowerCase()]: parseInt(mid.eq(0).text(), 10),
+				[def.attr('data-title').toLowerCase()]: parseInt(def.eq(0).text(), 10),
+				[ovr.attr('data-title').toLowerCase()]: parseInt(ovr.eq(0).text(), 10),
+				rating: parseFloat(rating),
+			} as FifaTeam);
 		});
+
+		return result;
+	}
+
+	async crawlPlayersByTeams(teamIds: number[]): Promise<FifaPlayer[]> {
+		this.logger.info(`Fetching new batch of players`);
+		const players: FifaPlayer[] = [];
 
 		let index = 0;
 		do {
-			const row = teamRows[index];
-			const teamOfLeague = this.parseInfoTeamOfLeague($, row);
+			const teamId = teamIds[index];
 
-			this.logger.info(`Fetching team ${teamOfLeague.title} from league id ${leagueId}`);
-			const teamUrl = `/team/${teamOfLeague.fifaId}`;
-			const $OfTeam = await this.getParsedResponse(teamUrl);
-			const playersOfTeam = this.parseInfoPlayersOfTeam($OfTeam, teamOfLeague.fifaId, teamOfLeague.title);
+			this.logger.info(`Fetching team ${teamId}`);
+			const teamUrl = `/team/${teamId}`;
+			const $ = await this.getParsedResponse(teamUrl);
+			const playersOfTeam = this.parseInfoPlayersOfTeam($, teamId);
 
-			teams.push(teamOfLeague);
 			players.push(...playersOfTeam);
 			await sleep(100);
 			index++;
-		} while (index < teamRows.length);
+		} while (index < teamIds.length);
 
-		return { teams, players };
+		return players;
 	}
 
-	private parseInfoTeamOfLeague($: CheerioStatic, row): FifaTeam {
-		const columns = $(row).find('td');
-
-		const image = columns
-			.eq(0)
-			.find('img')
-			.attr();
-		const bio = columns
-			.eq(1)
-			.find('a')
-			.attr();
-
-		const league = columns
-			.eq(2)
-			.find('a')
-			.attr();
-
-		const att = columns.eq(3);
-		const mid = columns.eq(4);
-		const def = columns.eq(5);
-		const ovr = columns.eq(6);
-
-		// Ratio - content as `{active} / {max}`
-		const span = columns.eq(7).find('span.star');
-		const maxStars = span.find('i').length;
-		const activeStars = span.find('i.fas.fa-star').length;
-		const halfStars = span.find('i.fas.fa-star-half-alt').length;
-		const rating = `${activeStars + halfStars / 2}/${maxStars}`;
-
-		const title = this.cleanTeamTitle(bio['title']);
-		return {
-			fifaId: parseInt(bio['href'].split('/').filter(s => !!s)[1], 10),
-			image: image['data-src'],
-			title: teamMapping[title] || title,
-			name: bio['href'].split('/').filter(s => !!s)[2],
-			league: {
-				title: league['title'].replace(this._fifaRegex, '').trim(),
-				fifaId: parseInt(league['href'].split('league=')[1], 10),
-			},
-			alias: !teamMapping[title] ? [] : teamAliasMapping[teamMapping[title]],
-			[att.attr('data-title').toLowerCase()]: parseInt(att.eq(0).text(), 10),
-			[mid.attr('data-title').toLowerCase()]: parseInt(mid.eq(0).text(), 10),
-			[def.attr('data-title').toLowerCase()]: parseInt(def.eq(0).text(), 10),
-			[ovr.attr('data-title').toLowerCase()]: parseInt(ovr.eq(0).text(), 10),
-			rating: parseFloat(rating),
-		} as FifaTeam;
-	}
-
-	private parseInfoPlayersOfTeam($, teamId, teamName): FifaPlayer[] {
+	private parseInfoPlayersOfTeam($, teamId): FifaPlayer[] {
+		const teamName = $('title').text().split('- FIFA ')[0].trim();
 		const rows = $('div.responsive-table table tbody tr');
 		const result: FifaPlayer[] = [];
 		rows.each((i, row) => {
