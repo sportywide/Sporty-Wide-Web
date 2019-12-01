@@ -1,3 +1,5 @@
+import { SimpleLoggerService } from '@scheduling/lib/simple-logger.service';
+
 process.env.TZ = 'UTC';
 
 import { Module } from '@nestjs/common';
@@ -31,5 +33,7 @@ export async function cleanup() {
 }
 
 export async function initModule(moduleClass) {
-	return NestFactory.createApplicationContext(moduleClass);
+	return NestFactory.createApplicationContext(moduleClass, {
+		logger: new SimpleLoggerService(),
+	});
 }
