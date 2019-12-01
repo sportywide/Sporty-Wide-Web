@@ -78,10 +78,18 @@ export class LeagueService extends BaseEntityService<League> {
 	}
 
 	async getUserLeaguePreference({ userId, leagueId }) {
-		return this.userLeaguePreferenceService.find({
+		let preference = await this.userLeaguePreferenceService.find({
 			userId,
 			leagueId,
 		});
+		if (!preference) {
+			preference = await this.userLeaguePreferenceService.save({
+				leagueId,
+				userId,
+				formation: '4-4-2',
+			});
+		}
+		return preference;
 	}
 
 	findLeagueStanding(leagueId: number) {
