@@ -195,7 +195,7 @@ export class AuthService {
 		let needsNewToken;
 		if (refreshToken) {
 			const decodedPayload: any = this.jwtService.decode(refreshToken);
-			const exp = decodedPayload.exp;
+			const exp = (decodedPayload && decodedPayload.exp) || 0;
 			if (exp * 1000 < Date.now()) {
 				needsNewToken = true;
 			}

@@ -11,12 +11,14 @@ declare const module: any;
 const config = getConfig();
 const env = process.env.NODE_ENV;
 const nextApp = next({
-	dir: isDevelopment() ? 'src' : 'dist',
+	dir: isDevelopment() ? './src' : './dist',
 	dev: isDevelopment(),
-	conf: {
-		distDir: path.join('..', 'next-build'),
-		experimental: { publicDirectory: true },
-	},
+	conf: isDevelopment()
+		? undefined
+		: {
+				distDir: path.join('..', 'next-build'),
+				experimental: { publicDirectory: true },
+		  },
 });
 
 let server, express;
