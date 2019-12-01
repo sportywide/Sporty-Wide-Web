@@ -21,7 +21,8 @@ resource "aws_security_group" "rds_security_group" {
     to_port = 5432
     protocol = "TCP"
     security_groups = [
-      var.nat_security_group_id
+      var.nat_security_group_id,
+      var.lambda_security_group_id
     ]
   }
   vpc_id = var.vpc_id
