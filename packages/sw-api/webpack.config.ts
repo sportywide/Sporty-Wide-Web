@@ -14,8 +14,9 @@ const config = makeConfig({
 		'@core': paths.core.src,
 		'@api': paths.api.src,
 	},
+	optimizationOptions: {
+		minimize: false,
+	},
 });
-
-(config.optimization = config.optimization || {}).minimize = false;
 
 module.exports = config;

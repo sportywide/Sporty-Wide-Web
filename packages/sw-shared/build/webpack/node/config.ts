@@ -13,6 +13,7 @@ import {
 	setMode,
 	setOutput,
 	sourceMaps,
+	optimization,
 } from '@webpack-blocks/webpack';
 import paths from '@build/paths';
 import { babelHelper } from '../plugins/transpile';
@@ -27,6 +28,7 @@ export function makeConfig({
 	hot,
 	envFile,
 	watchMode,
+	optimizationOptions,
 }: {
 	entries: any;
 	output: string;
@@ -36,6 +38,7 @@ export function makeConfig({
 	envFile?: string;
 	watchMode?: boolean;
 	libraryTarget?: string;
+	optimizationOptions?: any;
 }) {
 	watchMode = isDevelopment(environment) ? (watchMode === undefined ? true : watchMode) : false;
 	const packageName = path.basename(path.dirname(output));
@@ -68,6 +71,7 @@ export function makeConfig({
 			sourceMaps('inline-source-map'),
 			hot ? addPlugins([new webpack.HotModuleReplacementPlugin()]) : none(),
 		]),
+		optimization(optimizationOptions),
 		env('production', [sourceMaps('source-map')]),
 		addPlugins([
 			new webpack.BannerPlugin({
