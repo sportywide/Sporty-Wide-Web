@@ -16,24 +16,19 @@ stages:
 install_dependencies:
     stage: install_dependencies
     script:
-        - npm cache clear --force
         - lerna bootstrap -- --ci --no-optional && npx link-parent-bin
     cache:
-        key: $CI_COMMIT_REF_SLUG-$CI_PROJECT_DIR
         paths:
             - node_modules/
             - packages/*/node_modules
     only:
         <<: *only-default
-        changes:
-            - package-lock.json
 
 build:
     stage: build
     only:
         <<: *only-default
     cache:
-        key: $CI_COMMIT_REF_SLUG-$CI_PROJECT_DIR
         paths:
             - node_modules/
             - packages/*/node_modules
@@ -45,7 +40,6 @@ test:
     only:
         <<: *only-default
     cache:
-        key: $CI_COMMIT_REF_SLUG-$CI_PROJECT_DIR
         paths:
             - node_modules/
             - packages/*/node_modules
