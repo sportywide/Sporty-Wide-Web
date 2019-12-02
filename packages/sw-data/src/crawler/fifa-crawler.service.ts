@@ -5,7 +5,7 @@ import { Logger } from 'log4js';
 import cheerio from 'cheerio';
 import { range } from '@shared/lib/utils/array/range';
 import { sleep } from '@shared/lib/utils/sleep';
-import { flattenDeep } from 'lodash';
+import { flattenDeep, chunk } from 'lodash';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { ResultsService } from '@data/crawler/results.service';
 import { teamAliasMapping, teamMapping } from '../data.constants';
@@ -146,19 +146,20 @@ export class FifaCrawlerService extends ResultsService {
 		this.logger.info(`Fetching new batch of players`);
 		const players: FifaPlayer[] = [];
 
-		let index = 0;
-		do {
-			const teamId = teamIds[index];
+		const teamChunks = chunk(teamIds, 10);
 
-			this.logger.info(`Fetching team ${teamId}`);
-			const teamUrl = `/team/${teamId}`;
-			const $ = await this.getParsedResponse(teamUrl);
-			const playersOfTeam = this.parseInfoPlayersOfTeam($, teamId);
-
-			players.push(...playersOfTeam);
-			await sleep(100);
-			index++;
-		} while (index < teamIds.length);
+		for (const chunk of teamChunks) {
+			await Promise.all(
+				chunk.map(async teamId => {
+					this.logger.info(`Fetching team ${teamId}`);
+					const teamUrl = `/team/${teamId}`;
+					const $ = await this.getParsedResponse(teamUrl);
+					const playersOfTeam = this.parseInfoPlayersOfTeam($, teamId);
+					players.push(...playersOfTeam);
+				})
+			);
+			await sleep(500);
+		}
 
 		return players;
 	}
@@ -404,15 +405,6 @@ export class FifaCrawlerService extends ResultsService {
 				},
 			});
 		});
-
-		// Crawl each player page for extra data
-		let index = 0;
-		do {
-			const { shirt } = await this.crawlPlayerLimitedDetail(result[index].fifaId);
-			result[index].shirt = shirt;
-			index++;
-			await sleep(500);
-		} while (index < result.length);
 
 		return result;
 	}
