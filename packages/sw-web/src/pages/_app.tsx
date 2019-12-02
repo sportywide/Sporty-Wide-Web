@@ -28,11 +28,12 @@ interface IProps {
 
 const theme = {
 	colors: {
-		primary: '#4da88a',
-		accent: '#ee4c50',
+		primary: '#0288D1',
+		accent: '#FF5722',
 		grey: '#e9ebee',
 		white: '#fff',
 		transparent: 'rgba(0, 0, 0, 0)',
+		black: '#000',
 	},
 };
 
