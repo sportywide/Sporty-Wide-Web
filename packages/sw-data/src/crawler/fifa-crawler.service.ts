@@ -5,7 +5,7 @@ import { Logger } from 'log4js';
 import cheerio from 'cheerio';
 import { range } from '@shared/lib/utils/array/range';
 import { sleep } from '@shared/lib/utils/sleep';
-import { flattenDeep } from 'lodash';
+import { flattenDeep, chunk } from 'lodash';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { ResultsService } from '@data/crawler/results.service';
 import { teamAliasMapping, teamMapping } from '../data.constants';
@@ -31,6 +31,7 @@ export type FifaTeam = {
 
 export type FifaPlayer = {
 	fifaId: number;
+	shirt: number;
 	image: string;
 	nationality: {
 		title: string;
@@ -67,6 +68,161 @@ export class FifaCrawlerService extends ResultsService {
 			httpsAgent: new https.Agent({ rejectUnauthorized: false }),
 		});
 	}
+
+	// region crawl by league
+	async crawlTeamsByLeague(leagueId: number): Promise<FifaTeam[]> {
+		this.logger.info(`Fetching teams of league id ${leagueId}`);
+		const url = `/teams?league=${leagueId}&order=desc`;
+		const $ = await this.getParsedResponse(url);
+		return this.parseInfoTeamsOfLeague($);
+	}
+
+	private parseInfoTeamsOfLeague($: CheerioStatic): FifaTeam[] {
+		const result: FifaTeam[] = [];
+		const rows = $('table tbody tr');
+		rows.each((i, row) => {
+			// Invalid row
+			if (row.children.length === 0) {
+				return;
+			}
+
+			const rowAttrs = $(row).attr();
+			if (!!rowAttrs && !!rowAttrs['class'] && rowAttrs['class'].indexOf('none') >= 0) {
+				return;
+			}
+
+			// Valid row
+			const columns = $(row).find('td');
+
+			const image = columns
+				.eq(0)
+				.find('img')
+				.attr();
+			const bio = columns
+				.eq(1)
+				.find('a')
+				.attr();
+
+			const league = columns
+				.eq(2)
+				.find('a')
+				.attr();
+
+			const att = columns.eq(3);
+			const mid = columns.eq(4);
+			const def = columns.eq(5);
+			const ovr = columns.eq(6);
+
+			// Ratio - content as `{active} / {max}`
+			const span = columns.eq(7).find('span.star');
+			const maxStars = span.find('i').length;
+			const activeStars = span.find('i.fas.fa-star').length;
+			const halfStars = span.find('i.fas.fa-star-half-alt').length;
+			const rating = `${activeStars + halfStars / 2}/${maxStars}`;
+
+			const title = this.cleanTeamTitle(bio['title']);
+			result.push({
+				fifaId: parseInt(bio['href'].split('/').filter(s => !!s)[1], 10),
+				image: image['data-src'],
+				title: teamMapping[title] || title,
+				name: bio['href'].split('/').filter(s => !!s)[2],
+				league: {
+					title: league['title'].replace(this._fifaRegex, '').trim(),
+					fifaId: parseInt(league['href'].split('league=')[1], 10),
+				},
+				alias: !teamMapping[title] ? [] : teamAliasMapping[teamMapping[title]],
+				[att.attr('data-title').toLowerCase()]: parseInt(att.eq(0).text(), 10),
+				[mid.attr('data-title').toLowerCase()]: parseInt(mid.eq(0).text(), 10),
+				[def.attr('data-title').toLowerCase()]: parseInt(def.eq(0).text(), 10),
+				[ovr.attr('data-title').toLowerCase()]: parseInt(ovr.eq(0).text(), 10),
+				rating: parseFloat(rating),
+			} as FifaTeam);
+		});
+
+		return result;
+	}
+
+	async crawlPlayersByTeams(teamIds: number[]): Promise<FifaPlayer[]> {
+		this.logger.info(`Fetching new batch of players`);
+		const players: FifaPlayer[] = [];
+
+		const teamChunks = chunk(teamIds, 10);
+
+		for (const chunk of teamChunks) {
+			await Promise.all(
+				chunk.map(async teamId => {
+					this.logger.info(`Fetching team ${teamId}`);
+					const teamUrl = `/team/${teamId}`;
+					const $ = await this.getParsedResponse(teamUrl);
+					const playersOfTeam = this.parseInfoPlayersOfTeam($, teamId);
+					players.push(...playersOfTeam);
+				})
+			);
+			await sleep(500);
+		}
+
+		return players;
+	}
+
+	private parseInfoPlayersOfTeam($, teamId): FifaPlayer[] {
+		const teamName = $('title')
+			.text()
+			.split('- FIFA ')[0]
+			.trim();
+		const rows = $('div.responsive-table table')
+			.first()
+			.find('tbody tr');
+		const result: FifaPlayer[] = [];
+		rows.each((i, row) => {
+			const shirt = $($(row).find('td[data-title="Kit Number"]')).text();
+
+			const $name = $($(row).find('td[data-title="Name"] a'));
+			const url = $name.attr()['href'];
+			const name = $name
+				.contents()
+				.first()
+				.text();
+
+			const image = $($(row).find('td a img')).attr()['data-src'];
+
+			const rating = $($(row).find('td[data-title="OVR / POT"] span'))
+				.eq(0)
+				.text();
+
+			const $nationality = $($(row).find('td[data-title="Nationality"] a'));
+			const nationalityId = $nationality.attr()['href'].split('nationality=')[1];
+			const nationality = $nationality.attr()['title'];
+
+			const age = $($(row).find('td[data-title="Age"]')).text();
+
+			const positions: string[] = [];
+			const positionLinks = $($(row).find('td[data-title="Preferred Positions"] a span'));
+			positionLinks.each((pli, positionLink) => {
+				positions.push($(positionLink).text());
+			});
+
+			result.push({
+				fifaId: parseInt(url.split('/').filter(s => !!s)[1], 10),
+				shirt,
+				image,
+				nationality: {
+					title: nationality,
+					fifaId: parseInt(nationalityId, 10),
+				},
+				rating: parseInt(rating, 10),
+				name,
+				url,
+				positions,
+				age: parseInt(age, 10),
+				team: {
+					title: teamName,
+					fifaId: teamId,
+				},
+			});
+		});
+		return result;
+	}
+	// endregion
 
 	// region Crawl teams
 	async crawlTeam(leagueId): Promise<FifaTeam[]> {
@@ -184,7 +340,7 @@ export class FifaCrawlerService extends ResultsService {
 		return this.parseInfoBulk(result);
 	}
 
-	private parseInfoBulk($: CheerioStatic): FifaPlayer[] {
+	private async parseInfoBulk($: CheerioStatic): Promise<FifaPlayer[]> {
 		const result: any[] = [];
 		const rows = $('table tbody tr');
 
@@ -255,81 +411,11 @@ export class FifaCrawlerService extends ResultsService {
 	// endregion Crawl from listing page
 
 	// region Crawl from detail page
-	async crawlPlayerDetail(url): Promise<any> {
-		const result = await this.getParsedResponse(url);
-		return this.parseInfo(result);
-	}
-
-	private parseInfo($: CheerioStatic): any {
-		let result = {};
-		const cards = $('div.container div.card');
-		let isInfoCard = true;
-
-		cards.each((i, row) => {
-			const header = this.resolveHeader($, row);
-			if (!header) {
-				return;
-			}
-
-			if (isInfoCard) {
-				isInfoCard = false;
-				result = {
-					Info: {
-						Name: header,
-						Rating: $('span.rating')
-							.eq(0)
-							.text(),
-						...this.resolveStats($, row),
-					},
-				};
-			} else {
-				result[header] = ['Traits', 'Specialities'].includes(header)
-					? this.resolveSkills($, row)
-					: this.resolveStats($, row);
-			}
-		});
-
-		return result;
-	}
-
-	private resolveHeader($: CheerioStatic, row): string | null {
-		const headerTag = $(row).find('h5.card-header');
-		const node = this.resolveNode($, headerTag);
-		if (!node) {
-			return null;
-		}
-
-		return this.resolveKey($, node);
-	}
-
-	private resolveStats($: CheerioStatic, row): any {
-		const dataRows = $(row).find('p');
-		const content = {};
-		dataRows.each((di, dataRow) => {
-			const node = this.resolveNode($, dataRow);
-			if (!node) {
-				return;
-			}
-
-			const key = this.resolveKey($, node);
-			if (!content.hasOwnProperty(key)) {
-				content[key] = this.resolveValue($, node);
-			}
-		});
-		return content;
-	}
-
-	private resolveSkills($: CheerioStatic, row): any {
-		const dataRows = $(row).find('p');
-		const content: string[] = [];
-		dataRows.each((di, dataRow) => {
-			content.push($(dataRow).text());
-		});
-		return content;
-	}
-
-	private resolveNode($: CheerioStatic, dataRow): any {
-		return $(dataRow).eq(0)[0];
+	async crawlPlayerLimitedDetail(playerId: number): Promise<any> {
+		const $ = await this.getParsedResponse(`player/${playerId}`);
+		const tag = $('div.container div.card div.card-body p:contains("Kit Number") span');
+		const shirt = !!tag ? parseInt(tag.last().text(), 10) : null;
+		return { shirt };
 	}
 
 	private cleanTeamTitle(title) {
@@ -337,47 +423,6 @@ export class FifaCrawlerService extends ResultsService {
 			.replace(this._fifaRegex, '')
 			.replace(/\d+./, '')
 			.trim();
-	}
-
-	private resolveKey($: CheerioStatic, node): string {
-		const children = $(node.children);
-		return $(children)
-			.eq(0)
-			.text();
-	}
-
-	private resolveValue($: CheerioStatic, node): any {
-		const span = $(node).find('span.float-right')[0];
-
-		// Normal case - content as text
-		if (span.children.length === 1 && span.children[0].type === 'text') {
-			return $(span.children)
-				.eq(0)
-				.text();
-		}
-
-		// Link list - content as array of link label
-		const links = $(span).find('a');
-		if (links.length > 0) {
-			const valueList: string[] = [];
-			links.each((i, link) => {
-				valueList.push($(link).text());
-			});
-			return valueList;
-		}
-
-		// Ratio - content as `{active} / {max}`
-		const stars = $(span).find('span.star');
-		if (stars.length > 0) {
-			const maxStars = stars.find('i').length;
-			const activeStars = stars.find('i.fas').length;
-			return `${activeStars}/${maxStars}`;
-		}
-
-		// Fallback to raw text
-		return $(span.children)
-			.eq(0)
-			.text();
 	}
 	// endregion Crawl from detail page
 
