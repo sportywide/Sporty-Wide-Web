@@ -25,6 +25,9 @@ export class Player extends BaseEntity {
 	@Column()
 	teamId: number;
 
+	@Column()
+	shirt: number;
+
 	@ManyToOne(type => Team)
 	@JoinColumn({
 		name: 'team_id',

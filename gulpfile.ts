@@ -1,12 +1,7 @@
-import { mergePackageJson } from '@root/helpers/package';
-
 require('reflect-metadata');
 require('tsconfig-paths/register');
 import { Gulpclass, Task } from 'gulpclass';
 import { spawn } from '@root/helpers/process';
-import paths from '@build/paths';
-import * as fs from 'fs';
-import * as path from 'path';
 
 const argv = require('yargs').argv;
 
@@ -88,6 +83,11 @@ export class Gulpfile {
 	@Task('test:api')
 	apiTest() {
 		return spawn('npx ts-node e2e/api/api-test.ts');
+	}
+
+	@Task('typecheck')
+	typeCheck() {
+		return spawn('node --max-old-space-size=4096 node_modules/.bin/tsc --noEmit');
 	}
 
 	/** CI tasks **/

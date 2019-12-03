@@ -194,7 +194,7 @@ export class PlayerService {
 			.concat(range(0, maxPlayers - strategy.formation.length).map(i => extraPositions[i]));
 
 		for (const position of requiredPositions) {
-			const availablePlayers: any[] = (positionMap[position] || {}).players;
+			const availablePlayers: any[] = (positionMap[position] || { players: [] }).players;
 			if (!availablePlayers || !availablePlayers.length) {
 				throw new Error(`Not a valid formation ${strategy.name}. Position not found ${position}`);
 			}

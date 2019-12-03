@@ -11,7 +11,8 @@ import { Player } from '@schema/player/models/player.entity';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import Fuse from 'fuse.js';
-import { ScoreboardPlayer } from '@data/crawler/scoreboard-crawler.service';
+import { ScoreboardPlayer } from '@shared/lib/dtos/leagues/league-standings.dto';
+import { chunk, keyBy } from 'lodash';
 const glob = util.promisify(require('glob'));
 
 @Injectable()
@@ -138,27 +139,43 @@ export class PlayerPersisterService {
 		};
 	}
 
-	saveFifaPlayers(players: FifaPlayer[]) {
-		return Promise.all(
-			players.map(async player => {
-				const dbObj = {
-					...player,
-					id: player.fifaId,
-					nationality: player.nationality.title,
-					nationalityId: player.nationality.fifaId,
-					positions: player.positions,
-					teamName: player.team.title,
-					teamId: player.team.fifaId,
-				};
-				delete dbObj['fifaId'];
-				delete dbObj['team'];
-				try {
-					await this.playerRepository.save(dbObj);
-					this.logger.trace(`Persisted player ${dbObj.name} from ${dbObj.team}`);
-				} catch (e) {
-					this.logger.error(`Failed to save player ${dbObj.name}`, e);
-				}
-			})
-		);
+	async saveFifaPlayers(players: FifaPlayer[]) {
+		const playerGroups = chunk(players, 50);
+		const updatedFields = ['id', 'name', 'rating', 'url', 'image'];
+		for (const playerGroup of playerGroups) {
+			const playerIds = playerGroup.map(player => player.fifaId);
+			const dbPlayers = await this.playerRepository.findByIds(playerIds);
+			const playerMap = keyBy(dbPlayers, 'id');
+			await Promise.all(
+				playerGroup.map(async player => {
+					const updated = {
+						...player,
+						id: player.fifaId,
+						nationality: player.nationality.title,
+						nationalityId: player.nationality.fifaId,
+						positions: player.positions,
+						teamName: player.team.title,
+						teamId: player.team.fifaId,
+					};
+					delete updated['fifaId'];
+					delete updated['team'];
+					const existingDbPlayer = playerMap[updated.id];
+
+					if (existingDbPlayer) {
+						for (const key of Object.keys(existingDbPlayer.toPlain())) {
+							if (!updatedFields.includes(key) && existingDbPlayer[key]) {
+								delete updated[key];
+							}
+						}
+					}
+					try {
+						await this.playerRepository.save(updated);
+						this.logger.trace(`Persisted player ${updated.name} from ${updated.team}`);
+					} catch (e) {
+						this.logger.error(`Failed to save player ${updated.name}`, e);
+					}
+				})
+			);
+		}
 	}
 }
