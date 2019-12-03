@@ -11,7 +11,7 @@ interface IProps {
 	context: ReactReduxContext;
 }
 
-export function registerReducer(reducers: { [key: string]: Reducer<any, AnyAction> }) {
+export function registerReducer(reducers: { [key: string]: Reducer<any, any> }) {
 	return WrappedComponent => {
 		class NewComponent extends React.Component<IProps> {
 			reducerManager: ReducerManager;

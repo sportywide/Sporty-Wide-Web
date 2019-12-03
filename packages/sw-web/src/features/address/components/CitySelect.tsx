@@ -95,11 +95,11 @@ const SwCitySelectComponent: React.FC<IProps> = ({
 		/>
 	);
 
-	function handleAddition(e, { value }) {
+	function handleAddition(e, { value = undefined }) {
 		onCityChange(newCity(value, stateId));
 	}
 
-	function handleChange(e, { value }) {
+	function handleChange(e, { value = undefined }) {
 		onCityChange(cityMap[value]);
 	}
 };

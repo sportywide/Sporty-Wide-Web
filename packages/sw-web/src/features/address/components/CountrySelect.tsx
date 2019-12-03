@@ -82,11 +82,11 @@ const SwCountrySelectComponent: React.FC<IProps> = ({
 		/>
 	);
 
-	function handleAddition(e, { value }) {
+	function handleAddition(e, { value = undefined }) {
 		onCountryChange(newCountry(value));
 	}
 
-	function handleChange(e, { value }) {
+	function handleChange(e, { value = undefined }) {
 		onCountryChange(countryMap[value]);
 	}
 };
