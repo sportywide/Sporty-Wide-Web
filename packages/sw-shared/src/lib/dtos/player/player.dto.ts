@@ -7,7 +7,7 @@ export class PlayerDto {
 	@Expose()
 	name: string;
 	@Expose()
-	age: number;
+	age?: number;
 	@Expose()
 	nationality: string;
 	@Expose()
@@ -26,5 +26,4 @@ export class PlayerDto {
 	image: string;
 	@Expose()
 	rating: number;
-	age?: number;
 }
