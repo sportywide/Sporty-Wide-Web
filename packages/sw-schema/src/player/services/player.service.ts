@@ -10,17 +10,21 @@ import { Brackets } from 'typeorm';
 import { max, min } from 'lodash';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
-import { UserPlayers } from '@schema/player/models/user-players.schema';
+import { UserPlayersDocument } from '@schema/player/models/user-players.schema';
 import { getSeason } from '@shared/lib/utils/season';
 import { UserLeaguePreferenceService } from '@schema/league/services/user-league-preference.service';
-import { startOfDay, startOfWeek } from 'date-fns';
+import { startOfDay } from 'date-fns';
+import { PlayerStatDocument } from '@schema/player/models/player-stat.schema';
+import { PlayerStatDto } from '@shared/lib/dtos/player/player-stat.dto';
+import { Diff, MongooseDocument } from '@shared/lib/utils/types';
 
 @Injectable()
 export class PlayerService {
 	constructor(
 		@InjectSwRepository(Player) private readonly playerRepository: SwRepository<Player>,
 		private readonly userLeaguePreferenceService: UserLeaguePreferenceService,
-		@InjectModel('UserPlayers') private readonly userPlayersModel: Model<UserPlayers>
+		@InjectModel('UserPlayers') private readonly userPlayersModel: Model<UserPlayersDocument>,
+		@InjectModel('PlayerStat') private readonly playerStatModel: Model<PlayerStatDocument>
 	) {}
 
 	async getPlayersForUser({ userId, leagueId, date = new Date() }) {
@@ -221,5 +225,19 @@ export class PlayerService {
 				);
 			}
 		}
+	}
+
+	savePlayerStat(playerStat: Diff<PlayerStatDto, MongooseDocument>) {
+		return this.playerStatModel.findOneAndUpdate(
+			{
+				playerId: playerStat.playerId,
+				season: playerStat.season,
+			},
+			playerStat,
+			{
+				upsert: true,
+				new: true,
+			}
+		);
 	}
 }

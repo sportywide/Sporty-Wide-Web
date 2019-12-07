@@ -92,7 +92,7 @@ export class LeagueService extends BaseEntityService<League> {
 		return preference;
 	}
 
-	findLeagueStanding(leagueId: number) {
-		return this.leagueResultService.find({ leagueId });
+	findLeagueStanding(leagueId: number, season: string) {
+		return this.leagueResultService.find({ leagueId, season });
 	}
 }

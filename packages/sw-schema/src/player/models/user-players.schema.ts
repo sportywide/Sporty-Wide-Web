@@ -14,7 +14,7 @@ UserPlayersSchema.index({
 	leagueId: 1,
 });
 
-export interface UserPlayers extends Document {
+export interface UserPlayersDocument extends Document {
 	userId: number;
 	week: Date;
 	formation: string;

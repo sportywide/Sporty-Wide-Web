@@ -6,8 +6,8 @@
 	"license": "ISC",
 	"scripts": {},
 	"dependencies": {
-		"@nestjs/core": "6.5.3",
 		"@nestjs/common": "6.5.3",
+		"@nestjs/core": "6.5.3",
 		"@nestjs/swagger": "3.1.0",
 		"acorn": "7.1.0",
 		"class-transformer-imp": "0.2.4",
