@@ -19,19 +19,10 @@ async function bootstrap() {
 		await crawlerService.close();
 		for (const leagueTeam of leagueTeams) {
 			await crawlerService.writeResult(`teams/scoreboard-${leagueTeam.league.id}.json`, leagueTeam);
-		}
-
-		const allTeams: any[] = [];
-		for (const leagueTeam of leagueTeams) {
-			for (const team of leagueTeam.teams!) {
-				allTeams.push({
-					league: leagueTeam.league,
-					...team,
-				});
-			}
-		}
-		const playersMap = await crawlerService.crawlPlayers(allTeams.map(team => ({ url: team.url, id: team.url })));
-		for (const leagueTeam of leagueTeams) {
+			const playersMap = await crawlerService.crawlPlayers(
+				leagueTeam.teams.map(team => ({ url: team.url, id: team.url })),
+				leagueTeam.season
+			);
 			const result = {};
 			for (const team of leagueTeam.teams!) {
 				result[team.name] = playersMap[team.url];

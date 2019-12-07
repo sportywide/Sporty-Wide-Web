@@ -21,7 +21,7 @@ export async function handler(event, context) {
 		const leagueId = (objectDetails.Metadata || {}).league;
 		const snsService = module.get(SnsService);
 		await snsService.publish({
-			Topic: 'FifaTeamSns',
+			Topic: 'fifa-team-topic',
 			Message: leagueId,
 		});
 

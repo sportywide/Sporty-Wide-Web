@@ -1,13 +1,5 @@
 Resources:
-    FifaTeamQueue:
+    ScoreboardTeamQueue:
         Type: AWS::SQS::Queue
         Properties:
-            QueueName: FifaTeamQueue
-    FifaPlayerQueue:
-        Type: AWS::SQS::Queue
-        Properties:
-            QueueName: FifaPlayerQueue
-    FixtureQueue:
-        Type: AWS::SQS::Queue
-        Properties:
-            QueueName: FixtureQueue
+            QueueName: scoreboard-team-queue

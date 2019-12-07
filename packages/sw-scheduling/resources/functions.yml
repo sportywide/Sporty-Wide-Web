@@ -13,6 +13,7 @@ fetch-teams:
               cors: true
               path: teams
               method: get
+        - schedule: cron(0 0 * * ? *)
     iamRoleStatements:
         - Effect: 'Allow'
           Action:
@@ -42,7 +43,9 @@ fetch-fixtures:
 fetch-league-result:
     handler: src/lambda/crawl/fetch-league-result.handler
     events:
-        - sns: arn:aws:sns:ap-southeast-2:409050499179:FifaTeamSns
+        - sqs:
+              arn:
+                  Fn::GetAtt: [ScoreboardTeamQueue, Arn]
     iamRoleStatements:
         - Effect: 'Allow'
           Action:
@@ -118,3 +121,8 @@ save-league-result:
           Action:
               - s3:getObject
           Resource: arn:aws:s3:::sw-data-bucket/*
+fetch-scoreboard:
+    handler: src/lambda/crawl/fetch-scoreboard-cron.handler
+    events:
+        - schedule:
+              rate: rate(15 minutes)

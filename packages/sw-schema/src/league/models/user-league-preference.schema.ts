@@ -1,4 +1,6 @@
 import mongoose, { Document } from 'mongoose';
+import { UserLeaguePreferenceDto } from '@shared/lib/dtos/leagues/user-league-preference.dto';
+import { Diff, MongooseDocument } from '@shared/lib/utils/types';
 
 export const UserLeaguePreferenceSchema = new mongoose.Schema({
 	userId: Number,
@@ -6,9 +8,6 @@ export const UserLeaguePreferenceSchema = new mongoose.Schema({
 	leagueId: Number,
 });
 
-export interface UserLeaguePreference extends Document {
-	userId: number;
-	formation: string;
-	leagueId: string;
-}
+export interface UserLeaguePreferenceDocument extends Diff<UserLeaguePreferenceDto, MongooseDocument>, Document {}
+
 UserLeaguePreferenceSchema.index({ userId: 1, leagueId: 1 });

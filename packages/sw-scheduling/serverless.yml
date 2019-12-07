@@ -46,7 +46,7 @@ custom:
     serverless-offline-sqs:
         autoCreate: true
         apiVersion: '2012-11-05'
-        endpoint: http://0.0.0.0:9324
+        endpoint: http://192.168.50.10:9324
         region: ${self:provider.region}
         accessKeyId: root
         secretAccessKey: root
