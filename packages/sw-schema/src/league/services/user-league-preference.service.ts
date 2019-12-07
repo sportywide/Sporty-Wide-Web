@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { UserLeaguePreference } from '@schema/league/models/user-league-preference.schema';
+import { UserLeaguePreferenceDocument } from '@schema/league/models/user-league-preference.schema';
 
 @Injectable()
 export class UserLeaguePreferenceService {
 	constructor(
-		@InjectModel('UserLeaguePreference') private readonly userPreferenceModel: Model<UserLeaguePreference>
+		@InjectModel('UserLeaguePreference') private readonly userPreferenceModel: Model<UserLeaguePreferenceDocument>
 	) {}
 
-	async save(userPreferenceDto): Promise<UserLeaguePreference> {
-		return this.userPreferenceModel.updateOne(
+	async save(userPreferenceDto): Promise<UserLeaguePreferenceDocument> {
+		return this.userPreferenceModel.findOneAndUpdate(
 			{
 				userId: userPreferenceDto.userId,
 				leagueId: userPreferenceDto.leagueId,
@@ -18,11 +18,12 @@ export class UserLeaguePreferenceService {
 			userPreferenceDto,
 			{
 				upsert: true,
+				new: true,
 			}
 		);
 	}
 
-	async find({ userId, leagueId }): Promise<UserLeaguePreference | null> {
+	async find({ userId, leagueId }): Promise<UserLeaguePreferenceDocument | null> {
 		return await this.userPreferenceModel
 			.findOne({
 				userId,

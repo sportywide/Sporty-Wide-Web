@@ -5,10 +5,12 @@ import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
 import { SCHEDULING_CONFIG } from '@core/config/config.constants';
 import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
 import { ScoreboardCrawlerService } from '@data/crawler/scoreboard-crawler.service';
+import { SQSEvent } from '@root/node_modules/@types/aws-lambda';
 
-export async function handler(event) {
+export async function handler(event: SQSEvent) {
 	try {
-		const leagueId = parseInt(parseBody(event), 10);
+		const message = parseBody(event);
+		const leagueId = parseInt(message[0] && message[0].body, 10);
 		const module = await initModule(SchedulingCrawlerModule);
 		const s3Service = module.get(S3Service);
 		const scoreboardCrawler = module.get(ScoreboardCrawlerService);

@@ -1,4 +1,6 @@
 import mongoose, { Document } from 'mongoose';
+import { LeagueStandingsDto } from '@root/packages/sw-shared/src/lib/dtos/leagues/league-standings.dto';
+import { Diff, Interface, MongooseDocument } from '@shared/lib/utils/types';
 
 export const FormSchema = new mongoose.Schema({
 	type: String,
@@ -27,27 +29,4 @@ export const LeagueTableSchema = new mongoose.Schema({
 	season: String,
 });
 
-interface Form {
-	type: string;
-	teams: string;
-	score: string;
-	date: string;
-}
-interface TeamResult {
-	url: string;
-	wins: number;
-	draws: number;
-	losses: number;
-	scored: number;
-	conceded: number;
-	points: number;
-	forms: Form[];
-	played: number;
-	name: string;
-}
-
-export interface LeagueTable extends Document {
-	leagueId: number;
-	table: TeamResult[];
-	season: string;
-}
+export interface LeagueTableDocument extends Diff<LeagueStandingsDto, MongooseDocument>, Document {}

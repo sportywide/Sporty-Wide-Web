@@ -11,7 +11,8 @@ import { keyBy } from 'lodash';
 import { sleep } from '@shared/lib/utils/sleep';
 import { PuppeteerService } from '@data/core/browser/browser.service';
 import { SwPage } from '@data/core/browser/browser.class';
-import { ScoreboardPlayer, ScoreboardTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
+import { ScoreboardTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
+import { ScoreboardPlayer } from '@shared/lib/dtos/player/player.dto';
 import { BrowserService } from './browser.service';
 
 const MAX_ATTEMPTS = 4;
@@ -77,7 +78,7 @@ export class ScoreboardCrawlerService extends BrowserService {
 			'body > div.container > div.main > div.main-left > div.center.col-center.tournament_page > .tournament'
 		).text();
 		const parts = text.split('»');
-		return parts[parts.length - 1];
+		return parts[parts.length - 1].replace('/', '-').trim();
 	}
 
 	private parseTeams($: CheerioStatic): ScoreboardTeam[] {
@@ -148,7 +149,10 @@ export class ScoreboardCrawlerService extends BrowserService {
 		});
 	}
 
-	async crawlPlayers(teams: { url: string; id: any }[]): Promise<{ [key: string]: ScoreboardPlayer[] }> {
+	async crawlPlayers(
+		teams: { url: string; id: any }[],
+		season: string
+	): Promise<{ [key: string]: ScoreboardPlayer[] }> {
 		const teamUrls = teams.map(team => team.url);
 		const teamUrlMap = keyBy(teams, 'url');
 		const workerQueue = this.workerQueueService.newWorker({
@@ -165,7 +169,7 @@ export class ScoreboardCrawlerService extends BrowserService {
 					try {
 						this.dataLogger.info(`Attempt ${i + 1}: Getting players for team`, link);
 						const $ = await worker.get(`${link}squad`).then(({ data }) => data);
-						result[id] = this.parsePlayers($);
+						result[id] = this.parsePlayers($, season);
 						break;
 					} catch (e) {
 						this.dataLogger.error(`Failed to get players for team ${link}`, e);
@@ -183,7 +187,7 @@ export class ScoreboardCrawlerService extends BrowserService {
 		return result;
 	}
 
-	private parsePlayers($: CheerioStatic): ScoreboardPlayer[] {
+	private parsePlayers($: CheerioStatic, season: string): ScoreboardPlayer[] {
 		const playerRows = $('#fsbody > table > tbody > tr.player');
 		return Array.from(playerRows).map(playerNode => {
 			const playerRow = $(playerNode);
@@ -194,6 +198,7 @@ export class ScoreboardCrawlerService extends BrowserService {
 			const tds = playerRow.find('td');
 			const played = parseInt(tds.eq(3).text(), 10);
 			const scored = parseInt(tds.eq(4).text(), 10);
+			const url = playerRow.find('.player-name a').attr('href');
 			const yellow = parseInt(tds.eq(5).text(), 10);
 			const red = parseInt(tds.eq(6).text(), 10);
 			const injured = !!playerRow.find('.absence.injury').length;
@@ -207,6 +212,8 @@ export class ScoreboardCrawlerService extends BrowserService {
 				yellow,
 				red,
 				status: injured ? 'injured' : 'active',
+				url,
+				season,
 			};
 		});
 	}
