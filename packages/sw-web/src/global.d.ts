@@ -1,4 +1,4 @@
-declare module '*.svg' {
+declare module '*.isvg' {
 	const content: React.ReactHTMLElement;
 	export default content;
 }
