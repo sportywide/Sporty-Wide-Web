@@ -113,13 +113,9 @@ export class PlayerService {
 					.subQuery()
 					.select(['fixture.id'])
 					.from(Fixture, 'fixture')
-					.where(
-						new Brackets(() => {
-							return 'team.id = fixture.home_id OR team.id = fixture.away_id';
-						})
-					)
+					.where(new Brackets(qb => qb.where('team.id = fixture.home_id OR team.id = fixture.away_id')))
 					.andWhere(
-						"fixture.time <= select_next_interval(:date) AND fixture.status = 'PENDING' AND fixture.league_id = :leagueId"
+						"fixture.time <= select_next_interval(:date) AND fixture.time >= NOW() AND fixture.status = 'PENDING' AND fixture.league_id = :leagueId"
 					);
 				return `EXISTS (${subQuery.getQuery()})`;
 			});
@@ -127,6 +123,9 @@ export class PlayerService {
 			date: startOfDay(date),
 			leagueId,
 		});
+
+		queryBuilder.orderBy('RANDOM()');
+
 		const playerDetails = (await queryBuilder.getRawMany()).map(row => ({
 			id: row.player_id,
 			rating: row.player_rating,
