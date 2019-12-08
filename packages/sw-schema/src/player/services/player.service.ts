@@ -118,11 +118,14 @@ export class PlayerService {
 							return 'team.id = fixture.home_id OR team.id = fixture.away_id';
 						})
 					)
-					.andWhere("fixture.time <= select_next_interval(:date) AND fixture.status = 'PENDING'");
+					.andWhere(
+						"fixture.time <= select_next_interval(:date) AND fixture.status = 'PENDING' AND fixture.league_id = :leagueId"
+					);
 				return `EXISTS (${subQuery.getQuery()})`;
 			});
 		queryBuilder.setParameters({
 			date: startOfDay(date),
+			leagueId,
 		});
 		const playerDetails = (await queryBuilder.getRawMany()).map(row => ({
 			id: row.player_id,
