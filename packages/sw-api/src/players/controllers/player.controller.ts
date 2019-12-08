@@ -5,6 +5,7 @@ import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { toDto } from '@api/utils/dto/transform';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { LeagueService } from '@api/leagues/services/league.service';
+import { keyBy } from 'lodash';
 
 @Controller('/player')
 export class PlayerController {
@@ -18,7 +19,8 @@ export class PlayerController {
 		@Query('date') dateString: string,
 		@Query('includes') includes: string[]
 	) {
-		if (includes && !Array.isArray(includes)) {
+		includes = includes || [];
+		if (!Array.isArray(includes)) {
 			throw new BadRequestException('Not a valid include array');
 		}
 		const leagueExists = await this.leagueService.count({
@@ -40,12 +42,25 @@ export class PlayerController {
 			return userPlayers;
 		}
 
+		const players = await this.playerService.getPlayerByIds(
+			userPlayers.players,
+			includes.filter(include => include !== 'stats')
+		);
+		let playerDtos = toDto({
+			value: players,
+			dtoType: PlayerDto,
+		}) as PlayerDto[];
+		if (includes.includes('stats')) {
+			const playerStats = await this.playerService.getPlayerStats(players.map(player => player.id));
+			const statMap = keyBy(playerStats, 'playerId');
+			playerDtos = playerDtos.map(player => ({
+				...player,
+				stats: statMap[player.id] && statMap[player.id].toJSON(),
+			}));
+		}
 		return {
 			...userPlayers.toJSON(),
-			players: toDto({
-				value: await this.playerService.getPlayerByIds(userPlayers.players, includes),
-				dtoType: PlayerDto,
-			}),
+			players: playerDtos,
 			preference: await this.leagueService.getUserLeaguePreference({ userId, leagueId }),
 		};
 	}

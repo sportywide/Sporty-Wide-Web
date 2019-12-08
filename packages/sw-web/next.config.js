@@ -20,7 +20,22 @@ const nextConfig = {
 			},
 		};
 		webpackConfig.module.rules.push({
-			test: /\.(png|svg|eot|otf|ttf|woff|woff2)$/,
+			test: /\.svg$/,
+			use: [
+				'babel-loader',
+				{
+					loader: 'react-svg-loader',
+					options: {
+						svgo: {
+							plugins: [{ removeTitle: false }],
+							floatPrecision: 2,
+						},
+					},
+				},
+			],
+		});
+		webpackConfig.module.rules.push({
+			test: /\.(png|eot|otf|ttf|woff|woff2)$/,
 			use: {
 				loader: 'url-loader',
 				options: {

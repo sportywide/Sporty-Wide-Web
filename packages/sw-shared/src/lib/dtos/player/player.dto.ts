@@ -28,6 +28,8 @@ export class PlayerDto {
 	image: string;
 	@Expose()
 	rating: number;
+	@Expose()
+	stats?: PlayerStatDto;
 }
 
 export interface ScoreboardPlayer extends Omit<Diff<PlayerStatDto, MongooseDocument>, 'playerId'> {

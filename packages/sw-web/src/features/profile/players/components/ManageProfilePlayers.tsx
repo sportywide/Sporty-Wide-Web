@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { fifaImage } from '@web/shared/lib/images/links';
-import { Button, Card, Grid, GridColumn, Image, Loader, Select } from 'semantic-ui-react';
+import { Button, Card, Grid, GridColumn, Image, Loader, Select, Icon, Label } from 'semantic-ui-react';
 import { IProfilePlayers, profilePlayersReducer } from '@web/features/profile/players/store/reducers';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { registerReducer } from '@web/shared/lib/redux/register-reducer';
@@ -14,6 +14,9 @@ import { useFormationOptions, useUser } from '@web/shared/lib/react/hooks';
 import { safeGet } from '@shared/lib/utils/object/get';
 import { ContainerContext } from '@web/shared/lib/store';
 import { UserLeagueService } from '@web/features/leagues/user/services/user-league.service';
+import { SwIcon } from '@web/shared/lib/icon';
+import { getPositionColor, getRatingColor } from '@web/shared/lib/color';
+import { SwStatsLabel } from '@web/features/lineup/components/players/PlayerItem.styled';
 
 interface IProps {
 	players: PlayerDto[];
@@ -28,9 +31,9 @@ interface IProps {
 }
 const playerPosition = (position: string) => {
 	return (
-		<Button key={position} size="mini">
+		<Label as="a" key={position} color={getPositionColor(position)} size={'mini'}>
 			{position}
-		</Button>
+		</Label>
 	);
 };
 
@@ -38,26 +41,53 @@ const playerCard = (player: PlayerDto) => {
 	return (
 		<GridColumn mobile={16} tablet={8} computer={4} key={player.id}>
 			<Card key={player.id}>
-				<Card.Content>
+				<Card.Content style={{ height: '180px' }}>
 					<Image floated="right" size="tiny" src={fifaImage(player.image)} />
-					<Card.Header>{player.name}</Card.Header>
-					<Card.Meta>{player.teamName}</Card.Meta>
+					<Card.Header>
+						<div className={'sw-truncate'} data-tooltip={player.name}>
+							{player.name}
+						</div>
+					</Card.Header>
+					<Card.Meta>
+						<div>{player.teamName}</div>
+						<div>{player.age} years old</div>
+					</Card.Meta>
 					<Card.Description>
-						<strong>Age:</strong> {player.age}
-						<br />
-						<strong>Rating:</strong> {player.rating}
-						<br />
-						<strong>Positions:</strong> <div>{player.positions.map(playerPosition)}</div>
+						<div>
+							{player.stats && (
+								<>
+									<strong>Stats:</strong>
+									<div className={'sw-flex sw-flex-center sw-flex-justify sw-mt1'}>
+										<div className={'sw-flex sw-flex-center'}>
+											<SwIcon name={'foot-ware'} width={18} className={'sw-mr1'} />{' '}
+											{player.stats.played}
+										</div>
+										<div className={'sw-flex sw-flex-center'}>
+											<SwIcon name={'soccer-ball'} width={18} className={'sw-mr1'} />{' '}
+											{player.stats.scored}
+										</div>
+										<div className={'sw-flex sw-flex-center'}>
+											<SwIcon name={'red-card'} width={18} className={'sw-mr1'} />{' '}
+											{player.stats.red}
+										</div>
+										<div className={'sw-flex sw-flex-center'}>
+											<SwIcon name={'yellow-card'} width={18} className={'sw-mr1'} />{' '}
+											{player.stats.yellow}
+										</div>
+									</div>
+								</>
+							)}
+						</div>
 					</Card.Description>
 				</Card.Content>
 				<Card.Content extra>
-					<div className="ui two buttons">
-						<Button basic color="green">
-							Renew
-						</Button>
-						<Button basic color="red">
-							Sell
-						</Button>
+					<div className={'sw-flex sw-flex-center sw-flex-justify'}>
+						<div>{player.positions.map(playerPosition)}</div>
+						<span>
+							<Label circular size={'small'} color={getRatingColor(player.rating)}>
+								{player.rating}
+							</Label>
+						</span>
 					</div>
 				</Card.Content>
 			</Card>
