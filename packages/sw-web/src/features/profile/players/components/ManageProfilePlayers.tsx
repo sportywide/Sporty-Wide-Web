@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { fifaImage } from '@web/shared/lib/images/links';
-import { Button, Card, Grid, GridColumn, Image, Loader, Select, Icon, Label } from 'semantic-ui-react';
+import { Button, Card, Grid, GridColumn, Image, Loader, Select, Label, Popup } from 'semantic-ui-react';
 import { IProfilePlayers, profilePlayersReducer } from '@web/features/profile/players/store/reducers';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { registerReducer } from '@web/shared/lib/redux/register-reducer';
@@ -16,7 +16,6 @@ import { ContainerContext } from '@web/shared/lib/store';
 import { UserLeagueService } from '@web/features/leagues/user/services/user-league.service';
 import { SwIcon } from '@web/shared/lib/icon';
 import { getPositionColor, getRatingColor } from '@web/shared/lib/color';
-import { SwStatsLabel } from '@web/features/lineup/components/players/PlayerItem.styled';
 
 interface IProps {
 	players: PlayerDto[];
@@ -44,9 +43,11 @@ const playerCard = (player: PlayerDto) => {
 				<Card.Content style={{ height: '180px' }}>
 					<Image floated="right" size="tiny" src={fifaImage(player.image)} />
 					<Card.Header>
-						<div className={'sw-truncate'} data-tooltip={player.name}>
-							{player.name}
-						</div>
+						<Popup
+							trigger={<div className={'sw-truncate'}>{player.name}</div>}
+							content={player.name}
+							position="top center"
+						/>
 					</Card.Header>
 					<Card.Meta>
 						<div>{player.teamName}</div>

@@ -32,7 +32,9 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 				<SwDraggablePlayer ref={drag} isDragging={isDragging}>
 					<SwPlayerLogo circular avatar src={fifaImage(player.image)} />
 					<div className={'sw-flex-grow'}>
-						<span>{player.name}</span>
+						<span>
+							{player.shirt}. {player.name}
+						</span>
 						<div>
 							{player.positions.map(position => (
 								<Label as="a" key={position} color={getPositionColor(position)} size={'mini'}>
