@@ -11,7 +11,7 @@ export const fetchProfilePlayersEpic = (action$, state$, { container }: { contai
 		.pipe(
 			switchMap(({ payload: { userId, leagueId } }) =>
 				profilePlayersService
-					.getProfilePlayers({ userId, leagueId })
+					.getProfilePlayers({ userId, leagueId, includes: ['stats'] })
 					.pipe(
 						map(({ players, formation, preference }) =>
 							fetchProfilePlayersSuccess({ players, userId, leagueId, formation, preference })
