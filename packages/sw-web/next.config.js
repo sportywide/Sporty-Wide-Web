@@ -21,6 +21,7 @@ const nextConfig = {
 		};
 		webpackConfig.module.rules.push({
 			test: /\.svg$/,
+			include: path.resolve('src', 'shared', 'lib', 'icon', 'images'),
 			use: [
 				'babel-loader',
 				{
@@ -35,7 +36,8 @@ const nextConfig = {
 			],
 		});
 		webpackConfig.module.rules.push({
-			test: /\.(png|eot|otf|ttf|woff|woff2)$/,
+			test: /\.(png|svg|eot|otf|ttf|woff|woff2)$/,
+			exclude: path.resolve('src', 'shared', 'lib', 'icon', 'images'),
 			use: {
 				loader: 'url-loader',
 				options: {
