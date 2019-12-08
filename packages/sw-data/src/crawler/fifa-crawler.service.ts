@@ -8,6 +8,7 @@ import { sleep } from '@shared/lib/utils/sleep';
 import { flattenDeep, chunk } from 'lodash';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { ResultsService } from '@data/crawler/results.service';
+import { unaccent } from '@shared/lib/utils/string/conversion';
 import { teamAliasMapping, teamMapping } from '../data.constants';
 
 const DEFAULT_PLAYER_PAGES = 5;
@@ -146,7 +147,7 @@ export class FifaCrawlerService extends ResultsService {
 		this.logger.info(`Fetching new batch of players`);
 		const players: FifaPlayer[] = [];
 
-		const teamChunks = chunk(teamIds, 10);
+		const teamChunks = chunk(teamIds, 5);
 
 		for (const chunk of teamChunks) {
 			await Promise.all(
@@ -158,7 +159,7 @@ export class FifaCrawlerService extends ResultsService {
 					players.push(...playersOfTeam);
 				})
 			);
-			await sleep(500);
+			await sleep(1000);
 		}
 
 		return players;
@@ -419,10 +420,12 @@ export class FifaCrawlerService extends ResultsService {
 	}
 
 	private cleanTeamTitle(title) {
-		return title
-			.replace(this._fifaRegex, '')
-			.replace(/\d+./, '')
-			.trim();
+		return unaccent(
+			title
+				.replace(this._fifaRegex, '')
+				.replace(/\d+./, '')
+				.trim()
+		);
 	}
 	// endregion Crawl from detail page
 

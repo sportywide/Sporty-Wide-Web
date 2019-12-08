@@ -73,6 +73,14 @@ export class PlayerService {
 		return this.playerRepository.getByIdsOrdered(playerIds, includes);
 	}
 
+	async getPlayerStats(playerIds) {
+		return this.playerStatModel
+			.find({
+				playerId: { $in: playerIds },
+			})
+			.exec();
+	}
+
 	async generateFormation({ formation, leagueId, maxPlayers = 15, date = new Date() }) {
 		const playerIds = await this.generateFormationIds({
 			formation,

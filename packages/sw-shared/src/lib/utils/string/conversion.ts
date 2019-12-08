@@ -36,3 +36,7 @@ export function toCamel(str) {
 			.replace('_', '');
 	});
 }
+
+export function unaccent(str) {
+	return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}

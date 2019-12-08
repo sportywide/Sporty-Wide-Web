@@ -21,16 +21,17 @@ export const teamAliasMapping = {
 	Bordeaux: ['Girondins de Bx'],
 	'Olympic Lyon': ['OL'],
 	'Olympique de Marseille': ['OM'],
-	'Saint-Étienne': ['ASSE', 'St Etienne'],
+	'Saint-Etienne': ['ASSE', 'St Etienne'],
 	'Stade Rennais': ['Rennes'],
 	'Athletic Bilbao': ['Athletic Club'],
-	'Atlético Madrid': ['Atl. Madrid'],
+	'Atletico Madrid': ['Atl. Madrid'],
 };
 export const teamMapping = Object.keys(teamAliasMapping).reduce((currentMapping, team) => {
 	const aliases = teamAliasMapping[team];
 	for (const alias of aliases) {
 		currentMapping[alias] = team;
 	}
+	currentMapping[team] = team;
 	return currentMapping;
 }, {});
 export const leagues: League[] = [

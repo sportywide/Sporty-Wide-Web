@@ -11,6 +11,7 @@ import {
 } from '@web/features/lineup/components/players/PlayerItem.styled';
 import { useEmptyPreviewImage } from '@web/shared/lib/react/hooks';
 import { fifaImage } from '@web/shared/lib/images/links';
+import { getPositionColor, getRatingColor } from '@web/shared/lib/color';
 
 interface IProps {
 	player: PlayerDto;
@@ -62,24 +63,3 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 };
 
 export const SwPlayerItem = SwPlayerItemComponent;
-
-function getRatingColor(rating: number): any {
-	if (rating >= 90) {
-		return 'red';
-	} else if (80 <= rating && rating < 90) {
-		return 'blue';
-	} else if (70 <= rating && rating < 80) {
-		return 'green';
-	}
-	return 'yellow';
-}
-function getPositionColor(position: string): any {
-	const map: { [name: string]: string } = {
-		GK: 'red',
-		CM: 'green',
-		LM: 'green',
-		RM: 'green',
-		ST: 'blue',
-	};
-	return map[position] || 'blue';
-}
