@@ -98,7 +98,7 @@ export class AuthController {
 	@Get('facebook')
 	@UseGuards(AuthenticatedGuard)
 	public facebookAuth(@Req() req, @Res() res) {
-		const referrer = req.get('Referrer') || '';
+		const referrer = req.get('Referer') || '';
 		passport.authenticate('facebook', {
 			scope: ['email'],
 			callbackURL: `${referrer}/auth/facebook/callback`,
@@ -114,7 +114,7 @@ export class AuthController {
 	@Get('google')
 	@UseGuards(AuthenticatedGuard)
 	public googleAuth(@Req() req, @Res() res) {
-		const referrer = req.get('Referrer') || '';
+		const referrer = req.get('Referer') || '';
 		passport.authenticate('google', {
 			scope: ['profile', 'email'],
 			callbackURL: `${referrer}/auth/google/callback`,

@@ -1,8 +1,9 @@
+import urlParser from 'url';
 import { getConfig } from '@web/config.provider';
 import { Request } from 'express';
 import modifyResponse from 'node-http-proxy-json';
 import { COOKIE_REFERRER, HEADER_SERVER_SIDE } from '@web/api/auth/constants';
-import { getFullPath, normalizePath } from '@shared/lib/utils/url/format';
+import { normalizePath } from '@shared/lib/utils/url/format';
 import { noop } from '@shared/lib/utils/functions';
 import {
 	BAD_REQUEST,
@@ -40,10 +41,10 @@ export const devProxy = {
 			handleAuthHeader(proxyReq, req);
 			const path = normalizePath(req.path, 'auth');
 			const pathMapping = {
-				'/facebook': setReferrerHeader,
-				'/facebook/callback': setReferrerHeader,
-				'/google': setReferrerHeader,
-				'/google/callback': setReferrerHeader,
+				'/facebook': setRefererHeader,
+				'/facebook/callback': setRefererHeader,
+				'/google': setRefererHeader,
+				'/google/callback': setRefererHeader,
 			};
 
 			const handler = pathMapping[path] || noop;
@@ -73,11 +74,10 @@ export const devProxy = {
 	},
 };
 
-function setReferrerHeader(proxyReq, req: Request, path?: string) {
-	const referrerUrl = getFullPath(req, path, {
-		protocol: 'https',
-	});
-	proxyReq.setHeader('Referrer', referrerUrl);
+function setRefererHeader(proxyReq, req: Request) {
+	const referer = req.header('referer');
+	const url = urlParser.parse(referer);
+	proxyReq.setHeader('Referer', `${url.protocol}//${url.host}`);
 }
 
 function handleAuthHeader(proxyReq, req: Request) {
