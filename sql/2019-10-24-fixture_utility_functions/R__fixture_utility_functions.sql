@@ -17,8 +17,10 @@ CREATE OR REPLACE FUNCTION select_next_match(team_id NUMERIC)
 BEGIN
   RETURN (SELECT fixture.id
                FROM fixture
-               WHERE fixture.status = 'PENDING' AND
+               WHERE fixture.status != 'FT' AND
                      fixture.time < select_next_interval(NOW())
+                     AND (fixture.home_id = team_id
+                     OR fixture.away_id = team_id)
                LIMIT 1);
 END;$$
 LANGUAGE 'plpgsql';
