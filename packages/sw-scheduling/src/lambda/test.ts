@@ -6,7 +6,7 @@ export async function handler() {
 			message: 'OK',
 		});
 	} catch (e) {
-		console.error(e);
+		console.error(__filename, e);
 		return error(e);
 	}
 }
