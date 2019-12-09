@@ -3,8 +3,9 @@ import { cleanup, initModule, SchedulingPersisterModule } from '@scheduling/lib/
 import { TeamPersisterService } from '@data/persister/team/team-persister.service';
 import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
 import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
+import { S3Event } from 'aws-lambda';
 
-export async function handler(event, context) {
+export async function handler(event: S3Event, context) {
 	try {
 		context.callbackWaitsForEmptyEventLoop = false;
 		const { key, bucketName } = parseBody(event);
