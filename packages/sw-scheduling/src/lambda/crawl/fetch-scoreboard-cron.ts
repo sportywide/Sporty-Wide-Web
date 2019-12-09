@@ -6,12 +6,16 @@ import { SqsService } from '@scheduling/lib/aws/sqs/sqs.service';
 export async function handler() {
 	const awsModule = await initModule(AwsModule);
 	const sqsService = awsModule.get(SqsService);
-	await Promise.all(
-		leagues.map(league => {
-			sqsService.sendMessage({
-				Queue: 'scoreboard-team-queue',
-				MessageBody: String(league.id),
-			});
-		})
-	);
+	try {
+		await Promise.all(
+			leagues.map(async league =>
+				sqsService.sendMessage({
+					Queue: 'scoreboard-team-queue',
+					MessageBody: String(league.id),
+				})
+			)
+		);
+	} catch (e) {
+		console.error(__filename, e);
+	}
 }

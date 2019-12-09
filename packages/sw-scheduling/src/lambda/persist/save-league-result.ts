@@ -4,6 +4,7 @@ import { TeamPersisterService } from '@data/persister/team/team-persister.servic
 import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
 import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
 import { S3Event } from 'aws-lambda';
+import { SqsService } from '@scheduling/lib/aws/sqs/sqs.service';
 
 export async function handler(event: S3Event, context) {
 	try {
@@ -15,9 +16,15 @@ export async function handler(event: S3Event, context) {
 			Key: key,
 			Bucket: bucketName,
 		});
+		const leagueId = (objectDetails.Metadata || {}).league;
 		const content = JSON.parse(objectDetails.Body!.toString('utf8'));
 		const teamPersister = module.get(TeamPersisterService);
 		await teamPersister.saveScoreboardTeamResult(content);
+		const sqsService = module.get(SqsService);
+		await sqsService.sendMessage({
+			Queue: 'scoreboard-player-queue',
+			MessageBody: leagueId,
+		});
 		return ok('SUCCESS');
 	} catch (e) {
 		console.error(__filename, e);
