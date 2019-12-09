@@ -23,7 +23,7 @@ fetch-teams:
 fetch-players:
     handler: src/lambda/crawl/fetch-players.handler
     events:
-        - sns: arn:aws:sns:ap-southeast-2:409050499179:fifa-team-topic
+        - sns: arn:aws:sns:ap-southeast-2:${self:custom.aws.accountId}:fifa-team-topic
     iamRoleStatements:
         - Effect: 'Allow'
           Action:
@@ -33,7 +33,7 @@ fetch-players:
 fetch-fixtures:
     handler: src/lambda/crawl/fetch-fixture.handler
     events:
-        - sns: arn:aws:sns:ap-southeast-2:409050499179:fifa-team-topic
+        - sns: arn:aws:sns:ap-southeast-2:${self:custom.aws.accountId}:fifa-team-topic
     iamRoleStatements:
         - Effect: 'Allow'
           Action:
@@ -46,24 +46,22 @@ fetch-league-result:
         - sqs:
               arn:
                   Fn::GetAtt: [ScoreboardTeamQueue, Arn]
+              batchSize: 1
     iamRoleStatements:
         - Effect: 'Allow'
           Action:
               - s3:putObject
           Resource: arn:aws:s3:::sw-data-bucket/*
     layers:
-        - arn:aws:lambda:ap-southeast-2:409050499179:layer:puppeteer:1
+        - arn:aws:lambda:ap-southeast-2:${self:custom.aws.accountId}:layer:puppeteer:1
 
 fetch-player-stat:
     handler: src/lambda/crawl/fetch-player-stat.handler
     events:
-        - s3:
-              bucket: sw-data-bucket
-              event: s3:ObjectCreated:*
-              rules:
-                  - prefix: teams/scoreboard/
-                  - suffix: .json
-              existing: true
+        - sqs:
+              arn:
+                  Fn::GetAtt: [ScoreboardPlayerQueue, Arn]
+              batchSize: 1
     iamRoleStatements:
         - Effect: 'Allow'
           Action:
@@ -137,6 +135,10 @@ save-league-result:
           Action:
               - s3:getObject
           Resource: arn:aws:s3:::sw-data-bucket/*
+        - Effect: 'Allow'
+          Action:
+              - sqs:*
+          Resource: arn:aws:sqs:ap-southeast-2:${self:custom.aws.accountId}:scoreboard-player-queue
 
 save-player-stat:
     handler: src/lambda/persist/save-player-stat.handler
@@ -159,3 +161,8 @@ fetch-scoreboard:
     events:
         - schedule:
               rate: rate(15 minutes)
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - sqs:*
+          Resource: arn:aws:sqs:ap-southeast-2:${self:custom.aws.accountId}:scoreboard-team-queue

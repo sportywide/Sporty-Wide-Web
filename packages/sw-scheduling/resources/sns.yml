@@ -7,7 +7,8 @@ Resources:
         DependsOn: ScoreboardTeamQueue
         Type: 'AWS::SNS::Subscription'
         Properties:
-            TopicArn: !Ref FifaTeamSns
+            TopicArn: !Ref FifaTeamTopic
+            Region: ${self:provider.region}
             Endpoint: !GetAtt
                 - ScoreboardTeamQueue
                 - Arn
