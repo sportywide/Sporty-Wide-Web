@@ -23,7 +23,7 @@ fetch-teams:
 fetch-players:
     handler: src/lambda/crawl/fetch-players.handler
     events:
-        - sns: arn:aws:sns:ap-southeast-2:409050499179:FifaTeamSns
+        - sns: arn:aws:sns:ap-southeast-2:409050499179:fifa-team-topic
     iamRoleStatements:
         - Effect: 'Allow'
           Action:
@@ -33,7 +33,7 @@ fetch-players:
 fetch-fixtures:
     handler: src/lambda/crawl/fetch-fixture.handler
     events:
-        - sns: arn:aws:sns:ap-southeast-2:409050499179:FifaTeamSns
+        - sns: arn:aws:sns:ap-southeast-2:409050499179:fifa-team-topic
     iamRoleStatements:
         - Effect: 'Allow'
           Action:
@@ -68,7 +68,7 @@ save-teams:
         - Effect: 'Allow'
           Action:
               - sns:*
-          Resource: arn:aws:sns:${self:provider.region}:${self:custom.aws.accountId}:FifaTeamSns
+          Resource: arn:aws:sns:${self:provider.region}:${self:custom.aws.accountId}:fifa-team-topic
         - Effect: 'Allow'
           Action:
               - s3:getObject
