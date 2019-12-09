@@ -29,7 +29,7 @@ try {
 	});
 	spawnSync(`npx sls deploy --stage ${stage} --force`);
 } catch (e) {
-	console.error(e);
+	console.error(__filename, e);
 } finally {
 	restorePackageJson();
 }

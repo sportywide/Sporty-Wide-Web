@@ -149,12 +149,7 @@ export class ScoreboardCrawlerService extends BrowserService {
 		});
 	}
 
-	async crawlPlayers(
-		teams: { url: string; id: any }[],
-		season: string
-	): Promise<{ [key: string]: ScoreboardPlayer[] }> {
-		const teamUrls = teams.map(team => team.url);
-		const teamUrlMap = keyBy(teams, 'url');
+	async crawlPlayers(teamUrls: string[], season: string): Promise<{ [key: string]: ScoreboardPlayer[] }> {
 		const workerQueue = this.workerQueueService.newWorker({
 			worker: async () => {
 				return this.axios;
@@ -164,16 +159,15 @@ export class ScoreboardCrawlerService extends BrowserService {
 		const result = {};
 		await workerQueue.submit(
 			async (worker: AxiosInstance, link: string) => {
-				const id = teamUrlMap[link].id;
 				for (let i = 0; i < MAX_ATTEMPTS; i++) {
 					try {
 						this.dataLogger.info(`Attempt ${i + 1}: Getting players for team`, link);
 						const $ = await worker.get(`${link}squad`).then(({ data }) => data);
-						result[id] = this.parsePlayers($, season);
+						result[link] = this.parsePlayers($, season);
 						break;
 					} catch (e) {
 						this.dataLogger.error(`Failed to get players for team ${link}`, e);
-						result[id] = null;
+						result[link] = null;
 						await sleep(1500 * (i + 1));
 					}
 				}

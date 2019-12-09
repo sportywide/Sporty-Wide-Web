@@ -21,7 +21,7 @@ export async function handler(event: S3Event, context) {
 
 		return ok('SUCCESS');
 	} catch (e) {
-		console.error(e);
+		console.error(__filename, e);
 		return error(e);
 	} finally {
 		await cleanup();

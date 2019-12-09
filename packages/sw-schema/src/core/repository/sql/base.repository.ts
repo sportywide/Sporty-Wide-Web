@@ -241,7 +241,7 @@ class SwQueryBaseBuilder<T> {
 				selectQuery.expressionMap.nativeParameters = {};
 				entityIds = (await selectQuery.getRawMany()).map(({ id }) => id);
 			} catch (e) {
-				console.error(e);
+				console.error(__filename, e);
 			}
 		}
 
