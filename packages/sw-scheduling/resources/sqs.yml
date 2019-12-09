@@ -3,3 +3,31 @@ Resources:
         Type: AWS::SQS::Queue
         Properties:
             QueueName: scoreboard-team-queue
+            VisibilityTimeout: 600
+    ScoreboardPlayerQueue:
+        Type: AWS::SQS::Queue
+        Properties:
+            QueueName: scoreboard-player-queue
+            VisibilityTimeout: 600
+    ScoreboardTeamQueuePolicy:
+        Type: AWS::SQS::QueuePolicy
+        Properties:
+            PolicyDocument:
+                Version: '2012-10-17'
+                Id: sns-queue-subscription
+                Statement:
+                    - Sid: Allow-SNS-SendMessage
+                      Effect: Allow
+                      Principal: '*'
+                      Action:
+                          - sqs:SendMessage
+                      Resource:
+                          Fn::GetAtt:
+                              - ScoreboardTeamQueue
+                              - Arn
+                      Condition:
+                          ArnEquals:
+                              aws:SourceArn:
+                                  Ref: FifaTeamTopic
+            Queues:
+                - Ref: ScoreboardTeamQueue
