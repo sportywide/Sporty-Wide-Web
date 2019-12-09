@@ -38,6 +38,7 @@ export function node() {
 		util.merge({
 			node: {
 				__dirname: false,
+				__filename: false,
 			},
 		});
 }

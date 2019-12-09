@@ -27,7 +27,7 @@ export async function handler() {
 
 		return ok('SUCCESS');
 	} catch (e) {
-		console.error(e);
+		console.error(__filename, e);
 		return error(e);
 	}
 }

@@ -20,7 +20,7 @@ async function bootstrap() {
 		for (const leagueTeam of leagueTeams) {
 			await crawlerService.writeResult(`teams/scoreboard-${leagueTeam.league.id}.json`, leagueTeam);
 			const playersMap = await crawlerService.crawlPlayers(
-				leagueTeam.teams.map(team => ({ url: team.url, id: team.url })),
+				leagueTeam.teams.map(team => team.url),
 				leagueTeam.season
 			);
 			const result = {};

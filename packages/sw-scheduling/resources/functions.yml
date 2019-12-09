@@ -27,7 +27,7 @@ fetch-players:
     iamRoleStatements:
         - Effect: 'Allow'
           Action:
-              - s3:putObject
+              - s3:*
           Resource: arn:aws:s3:::sw-data-bucket/*
 
 fetch-fixtures:
@@ -53,6 +53,22 @@ fetch-league-result:
           Resource: arn:aws:s3:::sw-data-bucket/*
     layers:
         - arn:aws:lambda:ap-southeast-2:409050499179:layer:puppeteer:1
+
+fetch-player-stat:
+    handler: src/lambda/crawl/fetch-player-stat.handler
+    events:
+        - s3:
+              bucket: sw-data-bucket
+              event: s3:ObjectCreated:*
+              rules:
+                  - prefix: teams/scoreboard/
+                  - suffix: .json
+              existing: true
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:*
+          Resource: arn:aws:s3:::sw-data-bucket/*
 
 save-teams:
     handler: src/lambda/persist/save-teams.handler
@@ -121,6 +137,23 @@ save-league-result:
           Action:
               - s3:getObject
           Resource: arn:aws:s3:::sw-data-bucket/*
+
+save-player-stat:
+    handler: src/lambda/persist/save-player-stat.handler
+    events:
+        - s3:
+              bucket: sw-data-bucket
+              event: s3:ObjectCreated:*
+              rules:
+                  - prefix: players/scoreboard
+                  - suffix: .json
+              existing: true
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:getObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
+
 fetch-scoreboard:
     handler: src/lambda/crawl/fetch-scoreboard-cron.handler
     events:

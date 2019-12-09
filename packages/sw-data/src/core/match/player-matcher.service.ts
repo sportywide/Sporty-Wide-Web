@@ -23,7 +23,7 @@ export class PlayerMatcherService {
 				matchedPlayer &&
 				(matchedPlayer.shirt === searchPlayer.shirt || similarity(matchedPlayer.name, searchPlayer.name) <= 0.3)
 			) {
-				this.logger.info(`Match ${matchedPlayer.name} with ${searchPlayer.name}`);
+				this.logger.trace(`Match ${matchedPlayer.name} with ${searchPlayer.name}`);
 				result[searchPlayer.id] = matchedPlayer;
 			} else {
 				matchedPlayer = this.players.find(player => player.shirt === searchPlayer.shirt);
