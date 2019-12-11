@@ -3,7 +3,7 @@ import { TeamApiService } from '@data/api/api-football/api-team.service';
 import { DataModule } from '@data/data.module';
 import { INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { leagues } from '@data/data.constants';
+import { leagues } from '@shared/lib/data/data.constants';
 
 async function bootstrap() {
 	const context: INestApplicationContext = await NestFactory.createApplicationContext(DataModule);

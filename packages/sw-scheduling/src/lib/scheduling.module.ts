@@ -9,11 +9,17 @@ import { AwsModule } from '@scheduling/lib/aws/aws.module';
 import { PersisterModule } from '@data/persister/persister.module';
 import { CrawlerModule } from '@data/crawler/crawler.module';
 import { getConnectionManager } from 'typeorm';
+import { DataModule } from '@data/data.module';
 
 @Module({
 	imports: [CoreSchedulingModule, CrawlerModule, AwsModule],
 })
 export class SchedulingCrawlerModule {}
+
+@Module({
+	imports: [CoreSchedulingModule, DataModule, AwsModule],
+})
+export class SchedulingModule {}
 
 @Module({
 	imports: [CoreSchedulingModule, PersisterModule, AwsModule],
@@ -34,6 +40,6 @@ export async function cleanup() {
 
 export async function initModule(moduleClass) {
 	return NestFactory.createApplicationContext(moduleClass, {
-		logger: new SimpleLoggerService(),
+		// logger: new SimpleLoggerService(),
 	});
 }

@@ -166,3 +166,6 @@ fetch-scoreboard:
           Action:
               - sqs:*
           Resource: arn:aws:sqs:ap-southeast-2:${self:custom.aws.accountId}:scoreboard-team-queue
+
+fetch-live-score:
+    handler: src/lambda/crawl/fetch-live-score.handler

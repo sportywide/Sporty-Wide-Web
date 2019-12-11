@@ -1,7 +1,7 @@
 import path from 'path';
 import util from 'util';
 import { FifaPlayer } from '@data/crawler/fifa-crawler.service';
-import { defaultFuzzyOptions } from '@data/data.constants';
+import { defaultFuzzyOptions } from '@shared/lib/data/data.constants';
 import { Team } from '@schema/team/models/team.entity';
 import { Injectable, Inject } from '@nestjs/common';
 import { InjectSwRepository } from '@schema/core/repository/sql/inject-repository.decorator';

@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { UniqueService } from '@api/core/services/entity/unique.service';
+import { UniqueService } from '@schema/core/entity/unique.service';
 
 @Controller('/util')
 export class UtilController {

@@ -1,7 +1,7 @@
 import { error, ok } from '@scheduling/lib/http';
 import { initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
 import { FifaCrawlerService } from '@data/crawler/fifa-crawler.service';
-import { leagues } from '@data/data.constants';
+import { leagues } from '@shared/lib/data/data.constants';
 import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
 import { SCHEDULING_CONFIG } from '@core/config/config.constants';
 
