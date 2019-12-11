@@ -2,25 +2,23 @@ import util from 'util';
 import path from 'path';
 import { FifaTeam } from '@data/crawler/fifa-crawler.service';
 import { League } from '@schema/league/models/league.entity';
-import { defaultFuzzyOptions } from '@data/data.constants';
-import { Injectable, Inject } from '@nestjs/common';
-import { InjectSwRepository } from '@schema/core/repository/sql/inject-repository.decorator';
-import { SwRepository } from '@schema/core/repository/sql/base.repository';
+import { Inject, Injectable } from '@nestjs/common';
 import { Team } from '@schema/team/models/team.entity';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import { fsPromise } from '@shared/lib/utils/promisify/fs';
-import Fuse from 'fuse.js';
 import { LeagueResultService } from '@schema/league/services/league-result.service';
 import { ScoreboardTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
+import { TeamService } from '@schema/team/services/team.service';
+
 const glob = util.promisify(require('glob'));
 
 @Injectable()
 export class TeamPersisterService {
 	constructor(
 		@Inject(DATA_LOGGER) private readonly logger: Logger,
-		@InjectSwRepository(Team) private readonly teamRepository: SwRepository<Team>,
-		private readonly leagueResultService: LeagueResultService
+		private readonly leagueResultService: LeagueResultService,
+		private readonly teamService: TeamService
 	) {}
 
 	async saveTeamsFromFifaInfoFiles() {
@@ -97,25 +95,22 @@ export class TeamPersisterService {
 	}): Promise<{ matchedTeams: Map<ScoreboardTeam, Team>; unresolvedTeams: ScoreboardTeam[] }> {
 		const league = leagueTeams.league;
 		const teamsInfo = leagueTeams.teams;
-		const dbTeams = await this.teamRepository.find({
-			leagueId: league.id,
+		const dbTeams = await this.teamService.find({
+			where: {
+				leagueId: league.id,
+			},
 		});
-		const fuzzyOptions = {
-			...defaultFuzzyOptions,
-			keys: ['title', 'alias'],
-		};
 		const unresolvedTeams: any[] = [];
 		const matchedTeams = new Map<ScoreboardTeam, Team>();
-		const fuse = new Fuse(dbTeams, fuzzyOptions);
 		for (const teamInfo of teamsInfo) {
-			const foundTeam = fuse.search(teamInfo.name);
-			if (!foundTeam.length) {
+			const foundTeam = this.teamService.fuzzySearch(dbTeams, teamInfo.name);
+			if (!foundTeam) {
 				unresolvedTeams.push(teamInfo);
 				this.logger.error('Cannot find the team', teamInfo.name);
 				continue;
 			}
-			this.logger.debug(`Match ${foundTeam[0].title} with ${teamInfo.name}`);
-			matchedTeams.set(teamInfo, foundTeam[0]);
+			this.logger.debug(`Match ${foundTeam.title} with ${teamInfo.name}`);
+			matchedTeams.set(teamInfo, foundTeam);
 		}
 
 		return {
@@ -137,7 +132,7 @@ export class TeamPersisterService {
 				delete dbObj['fifaId'];
 
 				try {
-					await this.teamRepository.save(dbObj);
+					await this.teamService.saveOne(dbObj);
 					this.logger.trace(`Persisted team ${dbObj.name}`);
 				} catch (e) {
 					this.logger.error(`Failed to save team ${dbObj.name}`, e);

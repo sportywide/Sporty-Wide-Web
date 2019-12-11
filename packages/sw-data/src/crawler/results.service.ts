@@ -1,5 +1,5 @@
 import path from 'path';
-import { resourcesPath } from '@data/data.constants';
+import { resourcesPath } from '@shared/lib/data/data.constants';
 import { fsPromise } from '@shared/lib/utils/promisify/fs';
 import fsExtra from 'fs-extra';
 

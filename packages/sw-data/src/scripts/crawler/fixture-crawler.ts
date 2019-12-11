@@ -3,7 +3,7 @@ import { INestApplicationContext } from '@nestjs/common';
 import { FixtureCrawlerService } from '@data/crawler/fixture-crawler.service';
 import { CrawlerModule } from '@data/crawler/crawler.module';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
-import { leagues } from '@data/data.constants';
+import { leagues } from '@shared/lib/data/data.constants';
 import { getSeason } from '@shared/lib/utils/season';
 
 async function bootstrap() {

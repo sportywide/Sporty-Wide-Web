@@ -1,9 +1,9 @@
 import { Controller, Get, Param, UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { ActiveUser } from '@api/auth/decorators/user-check.decorator';
-import { FixtureService } from '@api/fixtures/services/fixture.service';
 import { toDto } from '@api/utils/dto/transform';
 import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
+import { FixtureService } from '@schema/fixture/services/fixture.service';
 
 @Controller('/fixtures')
 export class FixtureController {

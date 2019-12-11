@@ -64,4 +64,10 @@ export class Fixture extends BaseEntity {
 
 	@Column({ type: 'timestamptz' })
 	time: Date;
+
+	@Column({ type: 'jsonb' })
+	incidents: object;
+
+	@Column()
+	whoscoreUrl: string;
 }

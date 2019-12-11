@@ -4,7 +4,7 @@ import { WorkerQueueService } from '@core/worker/worker-queue.service';
 import { SwPage } from '@data/core/browser/browser.class';
 import { PuppeteerService } from '@data/core/browser/browser.service';
 import { Inject, Injectable } from '@nestjs/common';
-import { leagues as popularLeagues } from '@data/data.constants';
+import { leagues as popularLeagues } from '@shared/lib/data/data.constants';
 import { sleep } from '@shared/lib/utils/sleep';
 import { AxiosInstance } from 'axios';
 import Cheerio from 'cheerio';
@@ -234,7 +234,7 @@ export class WhoScoreCrawlerService extends BrowserService {
 					away,
 					homeScore,
 					link,
-					whoscoreLeagueId,
+					whoscoreLeagueId: parseInt(whoscoreLeagueId),
 					league,
 					awayScore,
 					current,

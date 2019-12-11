@@ -1,1 +1,1 @@
-ALTER TABLE player DROP COLUMN shirt int2;
+ALTER TABLE player DROP COLUMN shirt;

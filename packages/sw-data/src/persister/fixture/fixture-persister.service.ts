@@ -9,7 +9,7 @@ import { Logger } from 'log4js';
 import { Fixture } from '@schema/fixture/models/fixture.entity';
 import { Team } from '@schema/team/models/team.entity';
 import Fuse from 'fuse.js';
-import { defaultFuzzyOptions } from '@data/data.constants';
+import { defaultFuzzyOptions } from '@shared/lib/data/data.constants';
 
 const glob = util.promisify(require('glob'));
 

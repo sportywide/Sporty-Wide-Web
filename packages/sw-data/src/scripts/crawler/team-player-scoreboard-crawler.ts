@@ -2,7 +2,7 @@ import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { CrawlerModule } from '@data/crawler/crawler.module';
 import { INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import { leagues } from '@data/data.constants';
+import { leagues } from '@shared/lib/data/data.constants';
 import { ScoreboardCrawlerService } from '@data/crawler/scoreboard-crawler.service';
 
 async function bootstrap() {

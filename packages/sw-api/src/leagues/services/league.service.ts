@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectSwRepository } from '@schema/core/repository/sql/inject-repository.decorator';
 import { League } from '@schema/league/models/league.entity';
 import { SwRepository } from '@schema/core/repository/sql/base.repository';
-import { BaseEntityService } from '@api/core/services/entity/base-entity.service';
+import { BaseEntityService } from '@schema/core/entity/base-entity.service';
 import { UserLeague } from '@schema/league/models/user-league.entity';
 import { UserLeaguePreferenceService } from '@schema/league/services/user-league-preference.service';
 import { LeagueResultService } from '@schema/league/services/league-result.service';
