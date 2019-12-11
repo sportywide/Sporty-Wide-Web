@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { BaseEntityService } from '@api/core/services/entity/base-entity.service';
+import { BaseEntityService } from '@schema/core/entity/base-entity.service';
 import { Token } from '@schema/auth/models/token.entity';
 import uuid from 'uuid';
 import { addDays } from 'date-fns';

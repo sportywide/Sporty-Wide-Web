@@ -1,4 +1,4 @@
-import { leagues } from '@data/data.constants';
+import { leagues } from '@shared/lib/data/data.constants';
 import { initModule } from '@scheduling/lib/scheduling.module';
 import { AwsModule } from '@scheduling/lib/aws/aws.module';
 import { SqsService } from '@scheduling/lib/aws/sqs/sqs.service';

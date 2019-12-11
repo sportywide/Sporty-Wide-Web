@@ -1,6 +1,6 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { User } from '@schema/user/models/user.entity';
-import { BaseEntityService } from '@api/core/services/entity/base-entity.service';
+import { BaseEntityService } from '@schema/core/entity/base-entity.service';
 import { InjectSwRepository } from '@schema/core/repository/sql/inject-repository.decorator';
 import { SwRepository } from '@schema/core/repository/sql/base.repository';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';

@@ -6,7 +6,7 @@ import { parse } from 'date-fns';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import { ResultsService } from '@data/crawler/results.service';
-import { League } from '@data/data.constants';
+import { League } from '@shared/lib/data/data.constants';
 import { getSeasonYears, isInSeason } from '@shared/lib/utils/season';
 
 @Injectable()

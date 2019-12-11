@@ -1,4 +1,4 @@
-import { defaultFuzzyOptions } from '@data/data.constants';
+import { defaultFuzzyOptions } from '@shared/lib/data/data.constants';
 import Fuse from 'fuse.js';
 import { unaccent } from '@shared/lib/utils/string/conversion';
 

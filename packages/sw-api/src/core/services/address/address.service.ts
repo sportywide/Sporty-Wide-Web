@@ -4,7 +4,7 @@ import { City } from '@schema/address/models/city.entity';
 import { State } from '@schema/address/models/state.entity';
 import { Country } from '@schema/address/models/country.entity';
 import { Injectable } from '@nestjs/common';
-import { BaseEntityService } from '@api/core/services/entity/base-entity.service';
+import { BaseEntityService } from '@schema/core/entity/base-entity.service';
 import { Address } from '@schema/address/models/address.entity';
 
 @Injectable()

@@ -1,6 +1,6 @@
 import { Player } from '@schema/player/models/player.entity';
 import { Logger } from 'log4js';
-import { defaultFuzzyOptions } from '@data/data.constants';
+import { defaultFuzzyOptions } from '@shared/lib/data/data.constants';
 import Fuse from 'fuse.js';
 import { similarity } from '@data/core/match/similarity';
 

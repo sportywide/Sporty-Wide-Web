@@ -9,7 +9,7 @@ import { flattenDeep, chunk } from 'lodash';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { ResultsService } from '@data/crawler/results.service';
 import { unaccent } from '@shared/lib/utils/string/conversion';
-import { teamAliasMapping, teamMapping } from '../data.constants';
+import { teamAliasMapping, teamMapping } from '@shared/lib/data/data.constants';
 
 const DEFAULT_PLAYER_PAGES = 5;
 
