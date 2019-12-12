@@ -17,6 +17,7 @@ out/
 
 .vagrant
 .s3
+.dynamodb
 
 install.lock
 

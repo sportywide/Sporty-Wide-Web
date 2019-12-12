@@ -6,6 +6,7 @@ import { leagues } from '@shared/lib/data/data.constants';
 import { FixtureService } from '@schema/fixture/services/fixture.service';
 import { TeamService } from '@schema/team/services/team.service';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
+import { FixtureProcessInput, FixtureProcessService } from '@scheduling/lib/fixture/services/fixture-process.service';
 
 export async function handler(event, context) {
 	let whoscoreCrawler;
@@ -13,7 +14,7 @@ export async function handler(event, context) {
 		context.callbackWaitsForEmptyEventLoop = false;
 		const module = await initModule(SchedulingModule);
 		whoscoreCrawler = module.get(WhoScoreCrawlerService);
-		const date = new Date();
+		const date = new Date('2019-12-08');
 		const matches = await whoscoreCrawler.getLiveMatches(date);
 		const leagueMatches = groupBy(matches, 'whoscoreLeagueId');
 		const logger = module.get(DATA_LOGGER);
@@ -22,6 +23,7 @@ export async function handler(event, context) {
 		const teamsService = module.get(TeamService);
 		const relevantLeagues = leagues.filter(league => whoscoreLeagueIds.includes(String(league.whoscoreId)));
 
+		const processingMatches: FixtureProcessInput[] = [];
 		for (const league of relevantLeagues) {
 			const dbFixtures = await fixtureService.findMatchesForDay({
 				leagueId: league.id,
@@ -50,8 +52,16 @@ export async function handler(event, context) {
 				dbFixture.incidents = match.incidents;
 				await fixtureService.saveOne(dbFixture);
 				logger.debug('Saving fixture', dbFixture.id);
+				processingMatches.push({
+					matchUrl: match.link,
+					matchId: dbFixture.id,
+					time: dbFixture.time,
+				});
 			}
 		}
+		const fixtureProcessService = module.get(FixtureProcessService);
+
+		await fixtureProcessService.process(processingMatches);
 	} catch (e) {
 		console.error(__filename, e);
 		return error(e);

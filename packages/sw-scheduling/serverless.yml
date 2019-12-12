@@ -24,17 +24,25 @@ provider:
 
 plugins:
     - serverless-webpack
+    - serverless-dynamodb-local
     - serverless-offline-sqs
     - serverless-offline-sns
     - serverless-offline
     - serverless-s3-local
-    - serverless-dynamodb-local
     - serverless-iam-roles-per-function
 
 custom:
     serverless-offline:
         port: 4000
         host: 0.0.0.0
+    dynamodb:
+        stages:
+            - development
+        start:
+            port: 7000
+            migrate: true
+            inMemory: false
+            dbPath: .dynamodb
     aws:
         accountId: 409050499179
     webpack:
@@ -61,16 +69,9 @@ custom:
     s3:
         port: 6000
         directory: .s3
-    dynamodb:
-        readCapacity: 5
-        writeCapacity: 5
-        start:
-            port: 5500
-            migrate: true
-            inMemory: false
-            dbPath: .dynamodb
 
 resources:
     - ${file(resources/sqs.yml)}
     - ${file(resources/sns.yml)}
+    - ${file(resources/dynamodb.yml)}
 functions: ${file(resources/functions.yml)}
