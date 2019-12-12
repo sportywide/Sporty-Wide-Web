@@ -10,6 +10,7 @@ import { PersisterModule } from '@data/persister/persister.module';
 import { CrawlerModule } from '@data/crawler/crawler.module';
 import { getConnectionManager } from 'typeorm';
 import { DataModule } from '@data/data.module';
+import mongoose from 'mongoose';
 
 @Module({
 	imports: [CoreSchedulingModule, CrawlerModule, AwsModule],
@@ -33,6 +34,7 @@ export async function cleanup() {
 		if (defaultConnection.isConnected) {
 			await defaultConnection.close();
 		}
+		await mongoose.disconnect();
 	} catch (e) {
 		console.error('Failed to clean up', e);
 	}
@@ -40,6 +42,6 @@ export async function cleanup() {
 
 export async function initModule(moduleClass) {
 	return NestFactory.createApplicationContext(moduleClass, {
-		// logger: new SimpleLoggerService(),
+		logger: new SimpleLoggerService(),
 	});
 }
