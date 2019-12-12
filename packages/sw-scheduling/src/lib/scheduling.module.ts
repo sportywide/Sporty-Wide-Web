@@ -11,19 +11,20 @@ import { CrawlerModule } from '@data/crawler/crawler.module';
 import { getConnectionManager } from 'typeorm';
 import { DataModule } from '@data/data.module';
 import mongoose from 'mongoose';
+import { FixtureModule } from '@scheduling/lib/fixture/fixture.module';
 
 @Module({
-	imports: [CoreSchedulingModule, CrawlerModule, AwsModule],
+	imports: [CoreSchedulingModule, FixtureModule, CrawlerModule, AwsModule],
 })
 export class SchedulingCrawlerModule {}
 
 @Module({
-	imports: [CoreSchedulingModule, DataModule, AwsModule],
+	imports: [CoreSchedulingModule, FixtureModule, DataModule, AwsModule],
 })
 export class SchedulingModule {}
 
 @Module({
-	imports: [CoreSchedulingModule, PersisterModule, AwsModule],
+	imports: [CoreSchedulingModule, FixtureModule, PersisterModule, AwsModule],
 })
 export class SchedulingPersisterModule {}
 
