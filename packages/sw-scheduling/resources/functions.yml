@@ -169,3 +169,8 @@ fetch-scoreboard:
 
 fetch-live-score:
     handler: src/lambda/crawl/fetch-live-score.handler
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - dynamodb:*
+          Resource: arn:aws:dynamodb:ap-southeast-2:${self:custom.aws.accountId}:table/fixture-process
