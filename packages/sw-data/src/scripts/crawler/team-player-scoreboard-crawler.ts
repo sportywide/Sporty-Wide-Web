@@ -4,19 +4,18 @@ import { INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { leagues } from '@shared/lib/data/data.constants';
 import { ScoreboardCrawlerService } from '@data/crawler/scoreboard-crawler.service';
+import { BrowserService } from '@data/crawler/browser.service';
 
 async function bootstrap() {
 	const context: INestApplicationContext = await NestFactory.createApplicationContext(CrawlerModule);
 	const crawlerService = context.get(ScoreboardCrawlerService);
 
 	try {
-		await crawlerService.init();
 		const leagueTeams = (await Promise.all(
 			leagues.map(league =>
 				crawlerService.crawlTeams(league.scoreboardUrl).then(({ teams, season }) => ({ teams, season, league }))
 			)
 		)).filter(teamResult => !!teamResult);
-		await crawlerService.close();
 		for (const leagueTeam of leagueTeams) {
 			await crawlerService.writeResult(`teams/scoreboard-${leagueTeam.league.id}.json`, leagueTeam);
 			const playersMap = await crawlerService.crawlPlayers(
@@ -33,7 +32,8 @@ async function bootstrap() {
 			});
 		}
 	} finally {
-		await crawlerService.close();
+		const browserService = context.get(BrowserService);
+		await browserService.close();
 	}
 
 	return context;

@@ -7,13 +7,12 @@ import axios, { AxiosInstance } from 'axios';
 import Cheerio from 'cheerio';
 import { Logger } from 'log4js';
 import { Provider } from 'nconf';
-import { keyBy } from 'lodash';
 import { sleep } from '@shared/lib/utils/sleep';
-import { PuppeteerService } from '@data/core/browser/browser.service';
 import { SwPage } from '@data/core/browser/browser.class';
 import { ScoreboardTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
 import { ScoreboardPlayer } from '@shared/lib/dtos/player/player.dto';
-import { BrowserService } from './browser.service';
+import { ResultsService } from '@data/crawler/results.service';
+import { BrowserService } from '@data/crawler/browser.service';
 
 const MAX_ATTEMPTS = 4;
 const PAGE_TIMEOUT = 60000;
@@ -22,16 +21,16 @@ const PAGE_URL = 'https://www.scoreboard.com/au/soccer';
 const DATA_TIMEOUT = 30000;
 
 @Injectable()
-export class ScoreboardCrawlerService extends BrowserService {
+export class ScoreboardCrawlerService extends ResultsService {
 	private axios: AxiosInstance;
 
 	constructor(
-		puppeteerService: PuppeteerService,
+		private readonly browserService: BrowserService,
 		@Inject(DATA_CONFIG) config: Provider,
 		private readonly workerQueueService: WorkerQueueService,
 		@Inject(DATA_LOGGER) private readonly dataLogger: Logger
 	) {
-		super(puppeteerService, config);
+		super();
 		this.axios = axios.create({
 			baseURL: 'https://www.scoreboard.com/',
 			transformResponse: (data, headers) => {
@@ -50,11 +49,9 @@ export class ScoreboardCrawlerService extends BrowserService {
 		for (let i = 0; i < MAX_ATTEMPTS; i++) {
 			try {
 				this.dataLogger.info(`Attempt ${i + 1}: Getting teams for league`, leagueUrl);
-				const browser = await this.browser();
+				const browser = await this.browserService.browser();
 				page = await browser.newPage();
-				browser.setQuiet(true);
 				await this.navigateTo(page, `${leagueUrl}standings`);
-				browser.setQuiet(false);
 				await this.waitForTeamResult(page);
 				const content = await page.content();
 				await page.close();
@@ -220,12 +217,15 @@ export class ScoreboardCrawlerService extends BrowserService {
 	}
 
 	private async navigateTo(page: SwPage, url, options = {}) {
-		return await page.navigateTo(`${PAGE_URL}${url}`, {
+		page.browser().setQuiet(true);
+		const result = await page.navigateTo(`${PAGE_URL}${url}`, {
 			options: {
 				timeout: PAGE_TIMEOUT,
 				waitUntil: ['domcontentloaded'],
 				...options,
 			},
 		});
+		page.browser().setQuiet(false);
+		return result;
 	}
 }
