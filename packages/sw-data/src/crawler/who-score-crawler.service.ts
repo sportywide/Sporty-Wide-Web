@@ -2,7 +2,6 @@ import { DATA_CONFIG } from '@core/config/config.constants';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { WorkerQueueService } from '@core/worker/worker-queue.service';
 import { SwPage } from '@data/core/browser/browser.class';
-import { PuppeteerService } from '@data/core/browser/browser.service';
 import { Inject, Injectable } from '@nestjs/common';
 import { leagues as popularLeagues } from '@shared/lib/data/data.constants';
 import { sleep } from '@shared/lib/utils/sleep';
@@ -11,7 +10,8 @@ import Cheerio from 'cheerio';
 import { format, isSameDay } from 'date-fns';
 import { Logger } from 'log4js';
 import { Provider } from 'nconf';
-import { BrowserService } from './browser.service';
+import { ResultsService } from '@data/crawler/results.service';
+import { BrowserService } from '@data/crawler/browser.service';
 
 const popularLeagueIds = popularLeagues.map(({ whoscoreId }) => whoscoreId);
 
@@ -21,15 +21,16 @@ const DATA_TIMEOUT = 30000;
 const MAX_ATTEMPTS = 4;
 
 @Injectable()
-export class WhoScoreCrawlerService extends BrowserService {
+export class WhoScoreCrawlerService extends ResultsService {
 	private readonly axios: AxiosInstance;
+
 	constructor(
-		puppeteerService: PuppeteerService,
 		@Inject(DATA_CONFIG) config: Provider,
 		private readonly workerQueueService: WorkerQueueService,
-		@Inject(DATA_LOGGER) private readonly dataLogger: Logger
+		@Inject(DATA_LOGGER) private readonly dataLogger: Logger,
+		private readonly browserService: BrowserService
 	) {
-		super(puppeteerService, config);
+		super();
 	}
 
 	async getLiveMatches(date: Date) {
@@ -38,11 +39,9 @@ export class WhoScoreCrawlerService extends BrowserService {
 		for (let i = 0; i < MAX_ATTEMPTS; i++) {
 			try {
 				this.dataLogger.info(`Attempt ${i + 1}: Getting matches for date`, dateString);
-				const browser = await this.browser();
+				const browser = await this.browserService.browser();
 				page = await browser.newPage();
-				browser.setQuiet(true);
 				await this.navigateTo(page, '/LiveScores#');
-				browser.setQuiet(false);
 				await this.selectDate(page, date);
 				const leagueMap = await this.expandIncidents(page);
 				const content = await page.content();
@@ -65,17 +64,15 @@ export class WhoScoreCrawlerService extends BrowserService {
 		for (let i = 0; i < MAX_ATTEMPTS; i++) {
 			try {
 				this.dataLogger.info(`Attempt ${i + 1}: Getting leagues`);
-				const browser = await this.browser();
+				const browser = await this.browserService.browser();
 				page = await browser.newPage();
-				browser.setQuiet(true);
 				await this.navigateTo(page, '/', {
 					waitUntil: ['domcontentloaded'],
 				});
-				browser.setQuiet(false);
 				const content = await page.content();
 				return this.parseLeagues(Cheerio.load(content));
 			} catch (e) {
-				this.dataLogger.error(`Failed to get leagues`);
+				this.dataLogger.error(`Failed to get leagues`, e);
 				if (page) {
 					await page.close();
 				}
@@ -246,7 +243,7 @@ export class WhoScoreCrawlerService extends BrowserService {
 	}
 
 	async getRatings(matchLinks) {
-		const browser = await this.browser();
+		const browser = await this.browserService.browser();
 		const workerQueue = this.workerQueueService.newWorker({
 			worker: async () => {
 				return browser.newPage();
@@ -260,9 +257,7 @@ export class WhoScoreCrawlerService extends BrowserService {
 				for (let i = 0; i < MAX_ATTEMPTS; i++) {
 					try {
 						this.dataLogger.info(`Attempt ${i + 1}: Getting ratings for match`, link);
-						browser.setQuiet(true);
 						await this.navigateTo(page, link);
-						browser.setQuiet(false);
 						await this.waitForRatings(page);
 						const content = await page.content();
 						const $ = Cheerio.load(content);
@@ -358,6 +353,7 @@ export class WhoScoreCrawlerService extends BrowserService {
 	}
 
 	private async navigateTo(page: SwPage, url, options = {}) {
+		page.browser().setQuiet(true);
 		const response = await page.navigateTo(`${WHOSCORE_URL}${url}`, {
 			cookieSelector: '#qcCmpButtons > button:nth-child(2)',
 			options: {
@@ -373,6 +369,7 @@ export class WhoScoreCrawlerService extends BrowserService {
 		if (page.url().includes('404.html')) {
 			throw new NonRecoverable('404');
 		}
+		page.browser().setQuiet(true);
 		return response;
 	}
 

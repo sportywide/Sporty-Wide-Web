@@ -5,7 +5,7 @@ import { Logger } from 'log4js';
 import cheerio from 'cheerio';
 import { range } from '@shared/lib/utils/array/range';
 import { sleep } from '@shared/lib/utils/sleep';
-import { flattenDeep, chunk } from 'lodash';
+import { chunk, flattenDeep } from 'lodash';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { ResultsService } from '@data/crawler/results.service';
 import { unaccent } from '@shared/lib/utils/string/conversion';

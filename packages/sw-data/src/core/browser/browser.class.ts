@@ -123,7 +123,7 @@ export class SwBrowserWrapper {
 			});
 		});
 
-		const pageWrapper = new SwPageWrapper({ page, logger: this.logger });
+		const pageWrapper = new SwPageWrapper({ page, logger: this.logger, browser: this });
 
 		return wrap(pageWrapper, page);
 	}
@@ -141,9 +141,16 @@ export type SwPage = SwPageWrapper & Page;
 class SwPageWrapper {
 	private readonly page: Page;
 	private readonly logger: Logger;
-	constructor({ page, logger }) {
+	private readonly browserWrapper: SwBrowser;
+
+	constructor({ page, logger, browser }) {
 		this.page = page;
 		this.logger = logger;
+		this.browserWrapper = browser;
+	}
+
+	browser() {
+		return this.browserWrapper;
 	}
 
 	async retryGoTo({ url, opts, maxAttempts = MAX_ATTEMPTS }) {

@@ -6,15 +6,17 @@ import { SCHEDULING_CONFIG } from '@core/config/config.constants';
 import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
 import { ScoreboardCrawlerService } from '@data/crawler/scoreboard-crawler.service';
 import { SQSEvent } from '@root/node_modules/@types/aws-lambda';
+import { INestApplicationContext } from '@nestjs/common';
+import { BrowserService } from '@data/crawler/browser.service';
 
 export async function handler(event: SQSEvent) {
-	let scoreboardCrawler: ScoreboardCrawlerService;
+	let module: INestApplicationContext;
 	try {
 		const message = parseBody(event);
 		const leagueId = parseInt(message[0] && message[0].body, 10);
-		const module = await initModule(SchedulingCrawlerModule);
+		module = await initModule(SchedulingCrawlerModule);
 		const s3Service = module.get(S3Service);
-		scoreboardCrawler = module.get(ScoreboardCrawlerService);
+		const scoreboardCrawler = module.get(ScoreboardCrawlerService);
 		const league = leagues.find(league => league.id === leagueId);
 		if (!league) {
 			throw new Error('Not a valid league');
@@ -38,8 +40,7 @@ export async function handler(event: SQSEvent) {
 		console.error(__filename, e);
 		return error(e);
 	} finally {
-		if (scoreboardCrawler) {
-			await scoreboardCrawler.close();
-		}
+		const browserService = module.get(BrowserService);
+		await browserService.close();
 	}
 }
