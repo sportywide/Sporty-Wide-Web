@@ -1,22 +1,22 @@
 import { Provider } from 'nconf';
+import { Injectable, Inject } from '@nestjs/common';
+import { DATA_CONFIG } from '@core/config/config.constants';
 import { PuppeteerService } from './../core/browser/browser.service';
 import { SwBrowser } from './../core/browser/browser.class';
-import { ResultsService } from './results.service';
 
-export class BrowserService extends ResultsService {
-	protected swBrowser: SwBrowser | null;
-	constructor(private readonly puppeteerService: PuppeteerService, private readonly config: Provider) {
-		super();
-	}
+@Injectable()
+export class BrowserService {
+	protected swBrowser: Promise<SwBrowser>;
+	constructor(
+		private readonly puppeteerService: PuppeteerService,
+		@Inject(DATA_CONFIG) private readonly config: Provider
+	) {}
 
-	async init() {
-		return this.browser();
-	}
 	async browser(): Promise<SwBrowser> {
 		if (this.swBrowser) {
 			return this.swBrowser;
 		}
-		this.swBrowser = await this.puppeteerService.startBrowser({
+		this.swBrowser = this.puppeteerService.startBrowser({
 			proxyServer: this.config.get('proxy:url'),
 		});
 		return this.swBrowser;
@@ -26,7 +26,7 @@ export class BrowserService extends ResultsService {
 		if (!this.swBrowser) {
 			return;
 		}
-		await this.swBrowser.close();
+		(await this.swBrowser).close();
 		this.swBrowser = null;
 	}
 }
