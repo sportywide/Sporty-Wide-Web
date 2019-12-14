@@ -2,7 +2,7 @@ import dynamoose from 'dynamoose-improved';
 import { isDevelopment } from '@shared/lib/utils/env';
 
 dynamoose.AWS.config.update({
-	region: process.env.AWS_REGION,
+	region: 'ap-southeast-2',
 });
 
 dynamoose.setDefaults({

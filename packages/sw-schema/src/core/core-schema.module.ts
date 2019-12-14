@@ -14,6 +14,6 @@ import { LoggingModule } from '@core/logging/logging.module';
 		LoggingModule,
 	],
 	providers: [TypeormLoggerService],
-	exports: [TypeormLoggerService, ConfigModule],
+	exports: [LoggingModule, TypeormLoggerService, ConfigModule],
 })
 export class CoreSchemaModule {}

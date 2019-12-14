@@ -1,6 +1,5 @@
 import { WhoScoreCrawlerService } from '@data/crawler/who-score-crawler.service';
 import { INestApplicationContext } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
 import { BrowserService } from '@data/crawler/browser.service';
 import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
 import { SCHEDULING_CONFIG } from '@core/config/config.constants';
