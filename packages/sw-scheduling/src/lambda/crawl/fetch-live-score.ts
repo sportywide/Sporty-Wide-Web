@@ -4,8 +4,6 @@ import { WhoScoreCrawlerService } from '@data/crawler/who-score-crawler.service'
 import { groupBy } from 'lodash';
 import { leagues } from '@shared/lib/data/data.constants';
 import { FixtureService } from '@schema/fixture/services/fixture.service';
-import { TeamService } from '@schema/team/services/team.service';
-import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { FixtureProcessInput, FixtureProcessService } from '@scheduling/lib/fixture/services/fixture-process.service';
 import { BrowserService } from '@data/crawler/browser.service';
 
@@ -35,10 +33,8 @@ async function crawlLiveScores(module, date) {
 }
 
 async function matchDbFixtures(module, leagueMatches, date) {
-	const logger = module.get(DATA_LOGGER);
 	const whoscoreLeagueIds = Object.keys(leagueMatches);
 	const fixtureService = module.get(FixtureService);
-	const teamsService = module.get(TeamService);
 	const relevantLeagues = leagues.filter(league => whoscoreLeagueIds.includes(String(league.whoscoreId)));
 
 	const processingMatches: FixtureProcessInput[] = [];
@@ -47,35 +43,14 @@ async function matchDbFixtures(module, leagueMatches, date) {
 			leagueId: league.id,
 			date,
 		});
-		const dbTeams = await teamsService.findByLeague(league.id);
-		for (const match of leagueMatches[league.whoscoreId]) {
-			const homeDbTeam = teamsService.fuzzySearch(dbTeams, match.home);
-			if (!homeDbTeam) {
-				logger.error('Cannot find the team', match.home);
-				continue;
-			}
-			logger.debug(`Matching ${match.home} with ${homeDbTeam.title}`);
-			const awayDbTeam = teamsService.fuzzySearch(dbTeams, match.away);
-			if (!awayDbTeam) {
-				logger.error('Cannot find the team', match.away);
-				continue;
-			}
-			logger.debug(`Matching ${match.away} with ${awayDbTeam.title}`);
-
-			const dbFixture = dbFixtures.find(
-				fixture => fixture.awayId === awayDbTeam.id && fixture.homeId === homeDbTeam.id
-			);
-			if (!dbFixture) {
-				logger.error(`Cannot find fixture for teams ${match.home} - ${match.away}`);
-				continue;
-			}
-			dbFixture.whoscoreUrl = match.link;
-			dbFixture.incidents = match.incidents;
-			await fixtureService.saveOne(dbFixture);
-			logger.debug('Saving fixture', dbFixture.id);
-
+		const mapping = await fixtureService.saveWhoscoreFixtures(
+			league.id,
+			dbFixtures,
+			leagueMatches[league.whoscoreId]
+		);
+		for (const [fixture, dbFixture] of mapping.entries()) {
 			processingMatches.push({
-				matchUrl: match.link,
+				matchUrl: fixture.link,
 				matchId: dbFixture.id,
 				time: dbFixture.time,
 			});

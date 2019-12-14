@@ -14,6 +14,7 @@ import { ResultsService } from '@data/crawler/results.service';
 import { BrowserService } from '@data/crawler/browser.service';
 import { keyBy } from 'lodash';
 import { nothing } from '@shared/lib/utils/functions';
+import { WhoscoreFixture } from '@shared/lib/dtos/fixture/fixture.dto';
 
 const popularLeagueIds = popularLeagues.map(({ whoscoreId }) => whoscoreId);
 const whoscoreLeagueMap = keyBy(popularLeagues, 'whoscoreId');
@@ -106,7 +107,9 @@ export class WhoScoreCrawlerService extends ResultsService {
 				});
 				await this.expandFixtureIncidents(page);
 				const content = await page.content();
-				return this.parseFixtureTable(Cheerio.load(content));
+				let [, leagueId] = leagueUrl.match(/Regions\/\d+\/Tournaments\/(\d+)\//);
+				leagueId = parseInt(leagueId, 10);
+				return this.parseFixtureTable(leagueId, Cheerio.load(content));
 			} catch (e) {
 				this.dataLogger.error(`Failed to get leagues`, e);
 				if (page) {
@@ -131,7 +134,7 @@ export class WhoScoreCrawlerService extends ResultsService {
 		);
 	}
 
-	private parseFixtureTable($: CheerioStatic) {
+	private parseFixtureTable(leagueId: number, $: CheerioStatic): WhoscoreFixture[] {
 		const fixtureTable = $('#tournament-fixture');
 		const fixtureRows = fixtureTable.find('tr.item');
 		return Array.from(fixtureRows).map(fixtureNode => {
@@ -148,6 +151,7 @@ export class WhoScoreCrawlerService extends ResultsService {
 
 			return {
 				...matchDetails,
+				whoscoreLeagueId: leagueId,
 				incidents,
 			};
 		});
@@ -252,7 +256,7 @@ export class WhoScoreCrawlerService extends ResultsService {
 		await this.waitForResults(page, date, !isToday);
 	}
 
-	private parseLiveScores($: CheerioStatic, date, leagueMap): any[] {
+	private parseLiveScores($: CheerioStatic, date, leagueMap): WhoscoreFixture[] {
 		const resultTable = $('#livescores > table');
 		const scores = resultTable.find('tr.item');
 		return Array.from(scores)
@@ -276,7 +280,6 @@ export class WhoScoreCrawlerService extends ResultsService {
 				return {
 					...matchDetails,
 					whoscoreLeagueId: parseInt(whoscoreLeagueId),
-					league,
 					incidents,
 				};
 			})
@@ -303,7 +306,7 @@ export class WhoScoreCrawlerService extends ResultsService {
 		const resultLinkElement = matchElement.find('.result .rc');
 		const result = resultLinkElement.text();
 		const link = (resultLinkElement.attr('href') || '').replace(
-			/^\/Matches\/(.*)\/Live/,
+			/^\/Matches\/(.*)\/(Live|Show)/,
 			'/Matches/$1/LiveStatistics'
 		);
 		let homeScore = 0,
@@ -480,7 +483,7 @@ export class WhoScoreCrawlerService extends ResultsService {
 			},
 		});
 
-		if (response!.status() === 403) {
+		if (response && response.status() === 403) {
 			throw new Error(`Failed to access page ${url}`);
 		}
 		if (page.url().includes('404.html')) {
