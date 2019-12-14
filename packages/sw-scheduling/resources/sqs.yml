@@ -9,6 +9,11 @@ Resources:
         Properties:
             QueueName: scoreboard-player-queue
             VisibilityTimeout: 600
+    WhoscoreLeagueQueue:
+        Type: AWS::SQS::Queue
+        Properties:
+            QueueName: whoscore-league-link
+            VisibilityTimeout: 600
     ScoreboardTeamQueuePolicy:
         Type: AWS::SQS::QueuePolicy
         Properties:
