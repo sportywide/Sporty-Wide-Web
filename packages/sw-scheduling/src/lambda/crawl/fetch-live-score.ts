@@ -7,13 +7,14 @@ import { FixtureService } from '@schema/fixture/services/fixture.service';
 import { TeamService } from '@schema/team/services/team.service';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { FixtureProcessInput, FixtureProcessService } from '@scheduling/lib/fixture/services/fixture-process.service';
+import { BrowserService } from '@data/crawler/browser.service';
 
 export async function handler(event, context) {
-	let whoscoreCrawler;
+	let module;
 	try {
 		context.callbackWaitsForEmptyEventLoop = false;
-		const module = await initModule(SchedulingModule);
-		const date = new Date('2019-12-08');
+		module = await initModule(SchedulingModule);
+		const date = new Date();
 		const leagueMatches = await crawlLiveScores(module, date);
 		const matches = await matchDbFixtures(module, leagueMatches, date);
 		await processMatches(module, matches);
@@ -21,9 +22,8 @@ export async function handler(event, context) {
 		console.error(__filename, e);
 		return error(e);
 	} finally {
-		if (whoscoreCrawler) {
-			await whoscoreCrawler.close();
-		}
+		const browserService = module.get(BrowserService);
+		await browserService.close();
 		await cleanup();
 	}
 }
@@ -54,17 +54,20 @@ async function matchDbFixtures(module, leagueMatches, date) {
 				logger.error('Cannot find the team', match.home);
 				continue;
 			}
+			logger.debug(`Matching ${match.home} with ${homeDbTeam.title}`);
 			const awayDbTeam = teamsService.fuzzySearch(dbTeams, match.away);
 			if (!awayDbTeam) {
 				logger.error('Cannot find the team', match.away);
 				continue;
 			}
+			logger.debug(`Matching ${match.away} with ${awayDbTeam.title}`);
 
 			const dbFixture = dbFixtures.find(
 				fixture => fixture.awayId === awayDbTeam.id && fixture.homeId === homeDbTeam.id
 			);
 			if (!dbFixture) {
 				logger.error(`Cannot find fixture for teams ${match.home} - ${match.away}`);
+				continue;
 			}
 			dbFixture.whoscoreUrl = match.link;
 			dbFixture.incidents = match.incidents;

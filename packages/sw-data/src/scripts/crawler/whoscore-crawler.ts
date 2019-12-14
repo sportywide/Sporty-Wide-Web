@@ -12,6 +12,9 @@ async function bootstrap() {
 	try {
 		const leagues = await crawlerService.getLeagues();
 		logger.info(leagues);
+		const league = leagues[0];
+		const fixtures = await crawlerService.getMonthlyFixtures(league.link);
+		logger.info(fixtures);
 	} finally {
 		const browserService = context.get(BrowserService);
 		await browserService.close();

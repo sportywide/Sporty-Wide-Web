@@ -11,7 +11,7 @@ export type League = {
 };
 
 export const teamAliasMapping = {
-	Cologne: ['Köln', 'Koln'],
+	Cologne: ['Köln', 'Koln', 'FC Koeln'],
 	'Paris Saint-Germain': ['Paris', 'PSG'],
 	'Tottenham Hotspur': ['Spurs'],
 	'Brighton and Hove Albion': ['Brighton'],
