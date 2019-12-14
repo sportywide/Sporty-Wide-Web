@@ -30,8 +30,8 @@ fetch-players:
               - s3:*
           Resource: arn:aws:s3:::sw-data-bucket/*
 
-fetch-fixtures:
-    handler: src/lambda/crawl/fetch-fixture.handler
+fetch-all-fixtures:
+    handler: src/lambda/crawl/fetch-all-fixtures.handler
     events:
         - sns: arn:aws:sns:ap-southeast-2:${self:custom.aws.accountId}:fifa-team-topic
     iamRoleStatements:
@@ -174,3 +174,24 @@ fetch-live-score:
           Action:
               - dynamodb:*
           Resource: arn:aws:dynamodb:ap-southeast-2:${self:custom.aws.accountId}:table/fixture-process
+
+fetch-whoscore-league:
+    handler: src/lambda/crawl/fetch-whoscore-league.handler
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - sqs:*
+          Resource: arn:aws:sqs:ap-southeast-2:${self:custom.aws.accountId}:whoscore-league-link
+
+fetch-monthly-fixture:
+    handler: src/lambda/crawl/fetch-monthly-fixture.handler
+    events:
+        - sqs:
+              arn:
+                  Fn::GetAtt: [WhoscoreLeagueQueue, Arn]
+              batchSize: 1
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:putObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
