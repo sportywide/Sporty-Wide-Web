@@ -16,3 +16,16 @@ export class FixtureDto {
 	@Type(() => Date)
 	time: Date;
 }
+
+export class WhoscoreFixture {
+	time: Date;
+	home: string;
+	away: string;
+	homeScore: number;
+	link: string;
+	awayScore: number;
+	current: number;
+	status: string;
+	whoscoreLeagueId: number;
+	incidents: any;
+}
