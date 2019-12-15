@@ -2,28 +2,25 @@ import path from 'path';
 import util from 'util';
 import { FifaPlayer } from '@data/crawler/fifa-crawler.service';
 import { defaultFuzzyOptions } from '@shared/lib/data/data.constants';
-import { Team } from '@schema/team/models/team.entity';
-import { Injectable, Inject } from '@nestjs/common';
-import { InjectSwRepository } from '@schema/core/repository/sql/inject-repository.decorator';
-import { SwRepository } from '@schema/core/repository/sql/base.repository';
+import { Inject, Injectable } from '@nestjs/common';
 import { fsPromise } from '@shared/lib/utils/promisify/fs';
-import { Player } from '@schema/player/models/player.entity';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import Fuse from 'fuse.js';
 import { ScoreboardPlayer } from '@shared/lib/dtos/player/player.dto';
-import { chunk, keyBy } from 'lodash';
-import { PlayerMatcherService } from '@data/core/match/player-matcher.service';
+import { chunk, keyBy, omit } from 'lodash';
 import { PlayerService } from '@schema/player/services/player.service';
+import { WhoscorePlayerRating } from '@shared/lib/dtos/player/player-rating.dto';
+import { TeamService } from '@schema/team/services/team.service';
+
 const glob = util.promisify(require('glob'));
 
 @Injectable()
 export class PlayerPersisterService {
 	constructor(
 		@Inject(DATA_LOGGER) private readonly logger: Logger,
-		@InjectSwRepository(Player) private readonly playerRepository: SwRepository<Player>,
 		private readonly playerService: PlayerService,
-		@InjectSwRepository(Team) private readonly teamRepository: SwRepository<Team>
+		private readonly teamService: TeamService
 	) {}
 
 	async saveFifaPlayersFromPlayerInfoFiles() {
@@ -77,9 +74,7 @@ export class PlayerPersisterService {
 	}) {
 		const playerMap: { [key: string]: ScoreboardPlayer[] } = playerTeamMap.players;
 		const leagueId = playerTeamMap.leagueId;
-		const dbTeams = await this.teamRepository.find({
-			leagueId: leagueId,
-		});
+		const dbTeams = await this.teamService.findByLeague(leagueId);
 		const teamFuse = new Fuse(dbTeams, {
 			...defaultFuzzyOptions,
 			keys: ['title', 'alias'],
@@ -100,24 +95,23 @@ export class PlayerPersisterService {
 					.reverse()
 					.join(' '),
 			}));
-			const dbPlayers = await this.playerRepository.find({
+			const dbPlayers = await this.playerService.getPlayersByTeam({
 				teamId: foundTeams[0].id,
 			});
-			const playerMatcherService = new PlayerMatcherService(dbPlayers, this.logger);
-			const result = playerMatcherService.matchPlayers(
+			const result = this.playerService.fuzzySearch(
+				dbPlayers,
 				transformedPlayers.map(player => ({
-					id: player.url,
 					shirt: player.jersey,
 					name: player.name,
 					team: teamName,
 				}))
 			);
 			await Promise.all(
-				players.map(async player => {
-					if (!result[player.url]) {
+				transformedPlayers.map(async (player, index) => {
+					if (!result[index]) {
 						return;
 					}
-					const dbPlayer = result[player.url];
+					const dbPlayer = result[index];
 					await this.playerService.savePlayerStat({
 						...player,
 						playerId: dbPlayer.id,
@@ -133,7 +127,7 @@ export class PlayerPersisterService {
 		const updatedFields = ['id', 'name', 'rating', 'url', 'image'];
 		for (const playerGroup of playerGroups) {
 			const playerIds = playerGroup.map(player => player.fifaId);
-			const dbPlayers = await this.playerRepository.findByIds(playerIds);
+			const dbPlayers = await this.playerService.findByIds(playerIds);
 			const playerMap = keyBy(dbPlayers, 'id');
 			await Promise.all(
 				playerGroup.map(async player => {
@@ -158,7 +152,7 @@ export class PlayerPersisterService {
 						}
 					}
 					try {
-						await this.playerRepository.save(updated);
+						await this.playerService.saveOne(updated);
 						this.logger.trace(`Persisted player ${updated.name} from ${updated.team}`);
 					} catch (e) {
 						this.logger.error(`Failed to save player ${updated.name}`, e);
@@ -166,5 +160,31 @@ export class PlayerPersisterService {
 				})
 			);
 		}
+	}
+
+	async savePlayerRatings(fixtureId, team: { id: number; name: string }, playerRatings: WhoscorePlayerRating[]) {
+		const dbPlayers = await this.playerService.getPlayersByTeam(team.id);
+		const matchedPlayers = this.playerService.fuzzySearch(
+			dbPlayers,
+			playerRatings.map(playerRating => ({
+				name: playerRating.name,
+				shirt: playerRating.shirt,
+				team: team.name,
+			}))
+		);
+
+		await Promise.all(
+			playerRatings.map(async (playerRating, index) => {
+				const matchedPlayer = matchedPlayers[index];
+				if (!matchedPlayer) {
+					return;
+				}
+				await this.playerService.savePlayerRating({
+					...omit(playerRating, 'name', 'shirt'),
+					playerId: matchedPlayer.id,
+					fixtureId,
+				});
+			})
+		);
 	}
 }

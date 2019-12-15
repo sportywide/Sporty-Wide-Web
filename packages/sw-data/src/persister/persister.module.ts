@@ -42,6 +42,7 @@ import { isProduction } from '@shared/lib/utils/env';
 				)}:${schemaConfig.get('mongo:password')}@${schemaConfig.get('mongo:host')}/${schemaConfig.get(
 					'mongo:database'
 				)}?authSource=admin`,
+				useFindAndModify: false,
 				useNewUrlParser: true,
 			}),
 			imports: [CoreSchemaModule],

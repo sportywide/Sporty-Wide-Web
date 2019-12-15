@@ -1,6 +1,5 @@
 import { error, ok } from '@scheduling/lib/http';
 import { cleanup, initModule, SchedulingPersisterModule } from '@scheduling/lib/scheduling.module';
-import { TeamPersisterService } from '@data/persister/team/team-persister.service';
 import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
 import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
 import { S3Event } from 'aws-lambda';

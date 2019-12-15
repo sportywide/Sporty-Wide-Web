@@ -15,6 +15,7 @@ import { BrowserService } from '@data/crawler/browser.service';
 import { keyBy } from 'lodash';
 import { nothing } from '@shared/lib/utils/functions';
 import { WhoscoreFixture } from '@shared/lib/dtos/fixture/fixture.dto';
+import { WhoscorePlayerRating } from '@shared/lib/dtos/player/player-rating.dto';
 
 const popularLeagueIds = popularLeagues.map(({ whoscoreId }) => whoscoreId);
 const whoscoreLeagueMap = keyBy(popularLeagues, 'whoscoreId');
@@ -371,7 +372,7 @@ export class WhoScoreCrawlerService extends ResultsService {
 			logger: this.dataLogger,
 			maximumWorkers: 3,
 		});
-		const result = {};
+		const result: { [key: string]: { home: WhoscorePlayerRating[]; away: WhoscorePlayerRating[] } } = {};
 		await workerQueue.submit(
 			async (page: SwPage, link: string) => {
 				for (let i = 0; i < MAX_ATTEMPTS; i++) {
@@ -385,10 +386,10 @@ export class WhoScoreCrawlerService extends ResultsService {
 						break;
 					} catch (e) {
 						this.dataLogger.error(`Failed to get ratings for match ${link}`, e);
+						result[link] = null;
 						if (e.nonRecoverable) {
 							break;
 						}
-						result[link] = null;
 						await sleep(1500 * (i + 1));
 					}
 				}
@@ -421,9 +422,17 @@ export class WhoScoreCrawlerService extends ResultsService {
 		};
 	}
 
-	private parseRatingTable(playerElements: Cheerio, $: CheerioStatic) {
+	private parseRatingTable(playerElements: Cheerio, $: CheerioStatic): WhoscorePlayerRating[] {
 		return Array.from(playerElements).map(playerNode => {
 			const playerElement = $(playerNode);
+			const playerShirt = parseInt(
+				playerElement
+					.find('td')
+					.eq(0)
+					.text()
+					.trim(),
+				10
+			);
 			const playerName = playerElement
 				.find('.player-link')
 				.text()
@@ -437,7 +446,7 @@ export class WhoScoreCrawlerService extends ResultsService {
 				.trim();
 			let rating: string | number = parseFloat(playerElement.find('.rating').text());
 			if (isNaN(rating)) {
-				rating = 'N/A';
+				rating = -1;
 			}
 			const touches = parseInt(playerElement.find('.Touches').text(), 10);
 			const shotsTotal = parseInt(playerElement.find('.ShotsTotal').text(), 10);
@@ -449,6 +458,7 @@ export class WhoScoreCrawlerService extends ResultsService {
 			return {
 				name: playerName,
 				position: playerPosition,
+				shirt: playerShirt,
 				rating,
 				touches,
 				shotsTotal,

@@ -12,7 +12,7 @@ export async function handler(event, context) {
 	try {
 		context.callbackWaitsForEmptyEventLoop = false;
 		module = await initModule(SchedulingModule);
-		const date = new Date();
+		const date = new Date('2019-12-14');
 		const leagueMatches = await crawlLiveScores(module, date);
 		const matches = await matchDbFixtures(module, leagueMatches, date);
 		await processMatches(module, matches);
@@ -49,11 +49,13 @@ async function matchDbFixtures(module, leagueMatches, date) {
 			leagueMatches[league.whoscoreId]
 		);
 		for (const [fixture, dbFixture] of mapping.entries()) {
-			processingMatches.push({
-				matchUrl: fixture.link,
-				matchId: dbFixture.id,
-				time: dbFixture.time,
-			});
+			if (dbFixture.status === 'FT') {
+				processingMatches.push({
+					matchUrl: fixture.link,
+					matchId: dbFixture.id,
+					time: dbFixture.time,
+				});
+			}
 		}
 	}
 	return processingMatches;
