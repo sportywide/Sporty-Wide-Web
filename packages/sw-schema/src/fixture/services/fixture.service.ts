@@ -96,9 +96,11 @@ export class FixtureService extends BaseEntityService<Fixture> {
 					this.logger.error(`Cannot find fixture for teams ${fixture.home} - ${fixture.away}`);
 					return;
 				}
-				mapping.set(fixture, dbFixture);
 				dbFixture.whoscoreUrl = fixture.link;
+				dbFixture.status = fixture.status;
+				dbFixture.current = fixture.current;
 				dbFixture.incidents = fixture.incidents;
+				mapping.set(fixture, dbFixture);
 				await this.saveOne(dbFixture);
 			})
 		);

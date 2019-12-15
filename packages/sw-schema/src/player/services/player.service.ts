@@ -1,7 +1,7 @@
 import { FormationDto, formationMap } from '@shared/lib/dtos/formation/formation.dto';
 import { randomCfRange } from '@shared/lib/utils/random/probability';
 import { range } from '@shared/lib/utils/array/range';
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject } from '@nestjs/common';
 import { Player } from '@schema/player/models/player.entity';
 import { InjectSwRepository } from '@schema/core/repository/sql/inject-repository.decorator';
 import { SwRepository } from '@schema/core/repository/sql/base.repository';
@@ -17,15 +17,27 @@ import { startOfDay } from 'date-fns';
 import { PlayerStatDocument } from '@schema/player/models/player-stat.schema';
 import { PlayerStatDto } from '@shared/lib/dtos/player/player-stat.dto';
 import { Diff, MongooseDocument } from '@shared/lib/utils/types';
+import { PlayerRatingDto } from '@shared/lib/dtos/player/player-rating.dto';
+import { defaultFuzzyOptions } from '@shared/lib/data/data.constants';
+import Fuse from 'fuse.js';
+import { similarity } from '@schema/core/match/similarity';
+import { SCHEMA_LOGGER } from '@core/logging/logging.constant';
+import { Logger } from 'log4js';
+import { BaseEntityService } from '@schema/core/entity/base-entity.service';
+import { PlayerRatingDocument } from '@schema/player/models/player-rating.schema';
 
 @Injectable()
-export class PlayerService {
+export class PlayerService extends BaseEntityService<Player> {
 	constructor(
 		@InjectSwRepository(Player) private readonly playerRepository: SwRepository<Player>,
 		private readonly userLeaguePreferenceService: UserLeaguePreferenceService,
 		@InjectModel('UserPlayers') private readonly userPlayersModel: Model<UserPlayersDocument>,
-		@InjectModel('PlayerStat') private readonly playerStatModel: Model<PlayerStatDocument>
-	) {}
+		@InjectModel('PlayerStat') private readonly playerStatModel: Model<PlayerStatDocument>,
+		@InjectModel('PlayerRating') private readonly playerRatingModel: Model<PlayerRatingDocument>,
+		@Inject(SCHEMA_LOGGER) private readonly logger: Logger
+	) {
+		super(playerRepository);
+	}
 
 	async getPlayersForUser({ userId, leagueId, date = new Date() }) {
 		const season = getSeason(date);
@@ -249,5 +261,59 @@ export class PlayerService {
 				new: true,
 			}
 		);
+	}
+
+	savePlayerRating(playerRating: Diff<PlayerRatingDto, MongooseDocument>) {
+		return this.playerRatingModel.findOneAndUpdate(
+			{
+				playerId: playerRating.playerId,
+				fixtureId: playerRating.fixtureId,
+			},
+			playerRating,
+			{
+				upsert: true,
+				new: true,
+			}
+		);
+	}
+
+	getPlayersByTeam(teamId) {
+		return this.playerRepository.find({
+			where: {
+				teamId,
+			},
+		});
+	}
+
+	fuzzySearch(
+		dbPlayers: Player[],
+		searchPlayers: { name: string; shirt: number; team: string }[]
+	): (Player | null)[] {
+		const playerFuse = new Fuse(dbPlayers, {
+			...defaultFuzzyOptions,
+			threshold: 0.5,
+			keys: ['name'],
+		});
+
+		return searchPlayers.map(searchPlayer => {
+			const matchedPlayers = playerFuse.search(searchPlayer.name);
+			let matchedPlayer = (matchedPlayers && matchedPlayers[0]) as Player;
+			if (
+				matchedPlayer &&
+				(matchedPlayer.shirt === searchPlayer.shirt || similarity(matchedPlayer.name, searchPlayer.name) <= 0.3)
+			) {
+				this.logger.trace(`Match ${matchedPlayer.name} with ${searchPlayer.name}`);
+				return matchedPlayer;
+			} else {
+				matchedPlayer = dbPlayers.find(player => player.shirt === searchPlayer.shirt);
+				if (matchedPlayer && similarity(matchedPlayer.name, searchPlayer.name) <= 0.7) {
+					this.logger.warn(`Match ${matchedPlayer.name} with ${searchPlayer.name} by shirt`);
+					return matchedPlayer;
+				} else {
+					this.logger.warn(`${searchPlayer.team} Not able to find ${searchPlayer.name}`);
+					return null;
+				}
+			}
+		});
 	}
 }

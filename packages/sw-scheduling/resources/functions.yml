@@ -215,3 +215,26 @@ save-monthly-fixture:
           Action:
               - dynamodb:*
           Resource: arn:aws:dynamodb:ap-southeast-2:${self:custom.aws.accountId}:table/fixture-process
+
+rating-scheduler:
+    handler: src/lambda/worker/rating-scheduler.handler
+    events:
+        - schedule: rate(15 minutes)
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - dynamodb:*
+          Resource: arn:aws:dynamodb:ap-southeast-2:${self:custom.aws.accountId}:table/fixture-process
+
+fetch-rating:
+    handler: src/lambda/crawl/fetch-rating.handler
+    events:
+        - sqs:
+              arn:
+                  Fn::GetAtt: [RatingQueue, Arn]
+              batchSize: 10
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - dynamodb:*
+          Resource: arn:aws:dynamodb:ap-southeast-2:${self:custom.aws.accountId}:table/fixture-process
