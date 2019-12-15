@@ -4,6 +4,7 @@ import { CrawlerModule } from '@data/crawler/crawler.module';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { WhoScoreCrawlerService } from '@data/crawler/who-score-crawler.service';
 import { format } from 'date-fns';
+import { BrowserService } from '@data/crawler/browser.service';
 
 async function bootstrap() {
 	const context: INestApplicationContext = await NestFactory.createApplicationContext(CrawlerModule);
@@ -29,7 +30,8 @@ async function bootstrap() {
 		});
 		await crawlerService.writeResult(`matches/${format(date, 'yyyyMMdd')}.json`, matches);
 	} finally {
-		await crawlerService.close();
+		const browserService = context.get(BrowserService);
+		await browserService.close();
 	}
 	return context;
 }

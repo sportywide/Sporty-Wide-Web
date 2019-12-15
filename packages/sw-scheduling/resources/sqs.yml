@@ -14,6 +14,11 @@ Resources:
         Properties:
             QueueName: whoscore-league-link
             VisibilityTimeout: 600
+    RatingQueue:
+        Type: AWS::SQS::Queue
+        Properties:
+            QueueName: rating-queue
+            VisibilityTimeout: 600
     ScoreboardTeamQueuePolicy:
         Type: AWS::SQS::QueuePolicy
         Properties:

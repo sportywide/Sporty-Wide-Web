@@ -67,4 +67,29 @@ export class FixtureProcessService {
 		}
 		return fixtureProcess.save();
 	}
+
+	async findReadyFixtures() {
+		const [pendingFixtures, retryFixtures] = await Promise.all([
+			FixtureProcessModel.query('status')
+				.using('statusIndex')
+				.eq(FixtureProcessStatus.PENDING)
+				.exec(),
+			FixtureProcessModel.query('status')
+				.using('statusIndex')
+				.eq(FixtureProcessStatus.RETRY)
+				.filter('attempt')
+				.lt(3)
+				.exec(),
+		]);
+		const fixtures = [...pendingFixtures, ...retryFixtures];
+		for (const fixture of fixtures) {
+			fixture.status = FixtureProcessStatus.PROCESSING;
+		}
+		await FixtureProcessModel.batchPut(
+			fixtures.map(fixture => ({ ...fixture }), {
+				overwrite: true,
+			})
+		);
+		return fixtures;
+	}
 }
