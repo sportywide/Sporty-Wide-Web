@@ -24,11 +24,13 @@ export async function handler(event: S3Event, context) {
 		const processingMatches: FixtureProcessInput[] = [];
 		const mapping = await fixtureService.saveWhoscoreFixtures(leagueId, dbFixtures, monthlyFixtures);
 		for (const [fixture, dbFixture] of mapping.entries()) {
-			processingMatches.push({
-				matchUrl: fixture.link,
-				matchId: dbFixture.id,
-				time: dbFixture.time,
-			});
+			if (dbFixture.status === 'FT') {
+				processingMatches.push({
+					matchUrl: fixture.link,
+					matchId: dbFixture.id,
+					time: dbFixture.time,
+				});
+			}
 		}
 		await fixtureProcessService.process(processingMatches);
 		return ok('SUCCESS');

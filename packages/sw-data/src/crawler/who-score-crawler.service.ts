@@ -12,7 +12,7 @@ import { Logger } from 'log4js';
 import { Provider } from 'nconf';
 import { ResultsService } from '@data/crawler/results.service';
 import { BrowserService } from '@data/crawler/browser.service';
-import { keyBy } from 'lodash';
+import { keyBy, last, sum } from 'lodash';
 import { nothing } from '@shared/lib/utils/functions';
 import { WhoscoreFixture } from '@shared/lib/dtos/fixture/fixture.dto';
 import { WhoscorePlayerRating } from '@shared/lib/dtos/player/player-rating.dto';
@@ -307,8 +307,8 @@ export class WhoScoreCrawlerService extends ResultsService {
 		const resultLinkElement = matchElement.find('.result .rc');
 		const result = resultLinkElement.text();
 		const link = (resultLinkElement.attr('href') || '').replace(
-			/^\/Matches\/(.*)\/(Live|Show)/,
-			'/Matches/$1/LiveStatistics'
+			/^\/Matches\/(.*)\/(Live|Show|LiveStatistics)/,
+			'/Matches/$1/Live'
 		);
 		let homeScore = 0,
 			awayScore = 0;
@@ -380,9 +380,11 @@ export class WhoScoreCrawlerService extends ResultsService {
 						this.dataLogger.info(`Attempt ${i + 1}: Getting ratings for match`, link);
 						await this.navigateTo(page, link);
 						await this.waitForRatings(page);
-						const content = await page.content();
-						const $ = Cheerio.load(content);
-						result[link] = this.parseRatingPage($);
+						const matchCentreData = await page.evaluate(() => {
+							// eslint-disable-next-line no-undef
+							return (window as any).matchCentreData;
+						});
+						result[link] = this.parseMatchRatings(matchCentreData);
 						break;
 					} catch (e) {
 						this.dataLogger.error(`Failed to get ratings for match ${link}`, e);
@@ -403,82 +405,50 @@ export class WhoScoreCrawlerService extends ResultsService {
 		return result;
 	}
 
-	private parseRatingPage($: CheerioStatic) {
-		const homePlayers = $(
-			'#live-player-home-summary #top-player-stats-summary-grid #player-table-statistics-body > tr'
-		);
-		if (homePlayers.length <= 1) {
-			throw new Error('Failed to fetch data');
-		}
-		const awayPlayers = $(
-			'#live-player-away-summary #top-player-stats-summary-grid #player-table-statistics-body > tr'
-		);
-		if (awayPlayers.length <= 1) {
-			throw new Error('Failed to fetch data');
-		}
+	private parseMatchRatings(matchCenterData) {
 		return {
-			home: this.parseRatingTable(homePlayers, $),
-			away: this.parseRatingTable(awayPlayers, $),
+			home: this.parsePlayerRatings(matchCenterData.home),
+			away: this.parsePlayerRatings(matchCenterData.away),
 		};
 	}
 
-	private parseRatingTable(playerElements: Cheerio, $: CheerioStatic): WhoscorePlayerRating[] {
-		return Array.from(playerElements).map(playerNode => {
-			const playerElement = $(playerNode);
-			const playerShirt = parseInt(
-				playerElement
-					.find('td')
-					.eq(0)
-					.text()
-					.trim(),
-				10
-			);
-			const playerName = playerElement
-				.find('.player-link')
-				.text()
-				.replace(/\(.*\)/, '')
-				.trim();
-			const playerPosition = playerElement
-				.find('.pn > .player-meta-data')
-				.eq(1)
-				.text()
-				.replace(',', '')
-				.trim();
-			let rating: string | number = parseFloat(playerElement.find('.rating').text());
-			if (isNaN(rating)) {
-				rating = -1;
-			}
-			const touches = parseInt(playerElement.find('.Touches').text(), 10);
-			const shotsTotal = parseInt(playerElement.find('.ShotsTotal').text(), 10);
-			const shotsOnTarget = parseInt(playerElement.find('.ShotOnTarget').text(), 10);
-			const keyPassTotal = parseInt(playerElement.find('.KeyPassTotal').text(), 10);
-			const passSuccessInMatch = parseFloat(playerElement.find('.PassSuccessInMatch').text());
-			const duelAerialWon = parseInt(playerElement.find('.DuelAerialWon').text(), 10);
-
-			return {
-				name: playerName,
-				position: playerPosition,
-				shirt: playerShirt,
-				rating,
-				touches,
-				shotsTotal,
-				shotsOnTarget,
-				keyPassTotal,
-				passSuccessInMatch,
-				duelAerialWon,
-			};
-		});
+	private parsePlayerRatings(teamData): WhoscorePlayerRating[] {
+		return Array.from(teamData.players)
+			.map((playerData: any) => {
+				const stats = playerData.stats;
+				if (!Object.values(stats).length) {
+					return null;
+				}
+				return {
+					name: playerData.name,
+					position: playerData.position,
+					shirt: playerData.shirtNo,
+					rating: last<number>(Object.values(stats.ratings || {})) || -1,
+					touches: sum(Object.values(stats.touches || {})),
+					shotsTotal: sum(Object.values(stats.shotsTotal || {})),
+					shotsOffTarget: sum(Object.values(stats.shotsOffTarget || {})),
+					tacklesTotal: sum(Object.values(stats.tacklesTotal || {})),
+					tackleSuccessful: sum(Object.values(stats.tackleSuccessful || {})),
+					keyPassTotal: sum(Object.values(stats.passesKey || {})),
+					totalPasses: sum(Object.values(stats.passesTotal || {})),
+					passesAccurate: sum(Object.values(stats.passesAccurate || {})),
+					duelAerialTotal: sum(Object.values(stats.aerialsTotal || {})),
+					duelAerialWon: sum(Object.values(stats.aerialsWon || {})),
+				};
+			})
+			.filter(data => data);
 	}
 
 	private async waitForRatings(page: SwPage) {
-		await page.waitForSelector('#statistics-table-home-summary-loading', {
+		const status = await page.$eval('#match-header > table > tbody dl > dd.status > span', element =>
+			element.textContent.trim()
+		);
+		if (status !== 'FT') {
+			throw new NonRecoverable('Match not finished');
+		}
+		await page.waitForSelector('#live-match', {
 			timeout: DATA_TIMEOUT,
-			hidden: true,
-		});
-
-		await page.waitForSelector('#statistics-table-away-summary-loading', {
-			timeout: DATA_TIMEOUT,
-			hidden: true,
+			visible: true,
 		});
 	}
 
@@ -486,11 +456,7 @@ export class WhoScoreCrawlerService extends ResultsService {
 		page.browser().setQuiet(true);
 		const response = await page.navigateTo(`${WHOSCORE_URL}${url}`, {
 			cookieSelector: '#qcCmpButtons > button:nth-child(2)',
-			options: {
-				timeout: PAGE_TIMEOUT,
-				waitUntil: ['domcontentloaded'],
-				...options,
-			},
+			options: { timeout: PAGE_TIMEOUT, waitUntil: ['domcontentloaded'], ...options },
 		});
 
 		if (response && response.status() === 403) {

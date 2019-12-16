@@ -3,22 +3,22 @@ Resources:
         Type: AWS::SQS::Queue
         Properties:
             QueueName: scoreboard-team-queue
-            VisibilityTimeout: 600
+            VisibilityTimeout: '600'
     ScoreboardPlayerQueue:
         Type: AWS::SQS::Queue
         Properties:
             QueueName: scoreboard-player-queue
-            VisibilityTimeout: 600
+            VisibilityTimeout: '600'
     WhoscoreLeagueQueue:
         Type: AWS::SQS::Queue
         Properties:
             QueueName: whoscore-league-link
-            VisibilityTimeout: 600
+            VisibilityTimeout: '600'
     RatingQueue:
         Type: AWS::SQS::Queue
         Properties:
             QueueName: rating-queue
-            VisibilityTimeout: 600
+            VisibilityTimeout: '600'
     ScoreboardTeamQueuePolicy:
         Type: AWS::SQS::QueuePolicy
         Properties:

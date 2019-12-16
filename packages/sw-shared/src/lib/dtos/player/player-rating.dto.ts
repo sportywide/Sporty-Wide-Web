@@ -11,9 +11,13 @@ export class PlayerRating {
 	rating: number;
 	touches: number;
 	shotsTotal: number;
-	shotsOnTarget: number;
+	shotsOffTarget: number;
+	tacklesTotal: number;
+	tackleSuccessful: number;
 	keyPassTotal: number;
-	passSuccessInMatch: number;
+	totalPasses: number;
+	passesAccurate: number;
+	duelAerialTotal: number;
 	duelAerialWon: number;
 }
 
