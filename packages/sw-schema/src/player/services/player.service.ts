@@ -20,7 +20,7 @@ import { Diff, MongooseDocument } from '@shared/lib/utils/types';
 import { PlayerRatingDto } from '@shared/lib/dtos/player/player-rating.dto';
 import { defaultFuzzyOptions } from '@shared/lib/data/data.constants';
 import Fuse from 'fuse.js';
-import { similarity } from '@schema/core/match/similarity';
+import { similarity, similarityTokenize } from '@schema/core/match/similarity';
 import { SCHEMA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import { BaseEntityService } from '@schema/core/entity/base-entity.service';
@@ -306,12 +306,17 @@ export class PlayerService extends BaseEntityService<Player> {
 				return matchedPlayer;
 			} else {
 				matchedPlayer = dbPlayers.find(player => player.shirt === searchPlayer.shirt);
-				if (matchedPlayer && similarity(matchedPlayer.name, searchPlayer.name) <= 0.7) {
-					this.logger.warn(`Match ${matchedPlayer.name} with ${searchPlayer.name} by shirt`);
-					return matchedPlayer;
+				if (matchedPlayer) {
+					const similarityScore = similarityTokenize(matchedPlayer.name, searchPlayer.name);
+					if (similarityScore <= 0.75) {
+						this.logger.warn(`Match ${matchedPlayer.name} with ${searchPlayer.name} by shirt`);
+					} else {
+						this.logger.warn(
+							`${searchPlayer.team} Not able to find ${searchPlayer.name}. Tried ${matchedPlayer.name} (${similarityScore})`
+						);
+					}
 				} else {
-					this.logger.warn(`${searchPlayer.team} Not able to find ${searchPlayer.name}`);
-					return null;
+					this.logger.warn(`${searchPlayer.team} Not able to find ${searchPlayer.name}.`);
 				}
 			}
 		});
