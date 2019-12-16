@@ -8,9 +8,13 @@ export const PlayerRatingSchema = new mongoose.Schema({
 	rating: Number,
 	touches: Number,
 	shotsTotal: Number,
-	shotsOnTarget: Number,
+	shotsOffTarget: Number,
+	tacklesTotal: Number,
+	tackleSuccessful: Number,
 	keyPassTotal: Number,
-	passSuccessInMatch: Number,
+	totalPasses: Number,
+	passesAccurate: Number,
+	duelAerialTotal: Number,
 	duelAerialWon: Number,
 });
 

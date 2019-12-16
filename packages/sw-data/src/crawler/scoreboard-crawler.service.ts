@@ -112,13 +112,13 @@ export class ScoreboardCrawlerService extends ResultsService {
 				let score, date, teams;
 				const title = formElement.attr('title');
 				if (type === 's') {
-					const matches = title.match(/\[b\](.+?)\s*\[\/b\](.+?)\n+(.*?)$/s);
+					const matches = title.match(/\[b](.+?)\s*\[\/b](.+?)\n+(.*?)$/s);
 					if (matches) {
 						[, score, teams, date] = matches;
 						score = score.replace(':', '');
 					}
 				} else {
-					const matches = title.match(/\[b\](.+?)\s*\[\/b\]\((.+?)\)\n*(.*?)$/s);
+					const matches = title.match(/\[b](.+?)\s*\[\/b]\((.+?)\)\n*(.*?)$/s);
 					if (matches) {
 						[, score, teams, date] = matches;
 					}
