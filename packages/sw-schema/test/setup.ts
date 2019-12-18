@@ -1,5 +1,5 @@
 import path from 'path';
-import { createConnection } from 'typeorm';
+import { Connection, createConnection } from 'typeorm';
 import { Post } from '@schema-test/entities/post.entity';
 import { Category } from '@schema-test/entities/category.entity';
 import { Test } from '@nestjs/testing';
@@ -10,6 +10,12 @@ import { config } from '@schema/config';
 import { SwRepositoryModule } from '@schema/core/repository/sql/providers/repository.module';
 import { TypeormLoggerService } from '@schema/core/logging/typeorm.logger';
 import { createSpyObj } from 'jest-createspyobj';
+import { CoreSchemaModule } from '@schema/core/core-schema.module';
+import { MongooseModule } from '@nestjs/mongoose';
+import { SCHEMA_LOGGER } from '@core/logging/logging.constant';
+import Logger from 'log4js/lib/Logger';
+import mongoose from 'mongoose';
+import { LoggingModule } from '@core/logging/logging.module';
 
 export async function setupMemoryConnection() {
 	const connection = await createConnection({
@@ -25,7 +31,7 @@ export async function setupMemoryConnection() {
 	return connection;
 }
 
-export function setupDatabaseModule({ entities, modules = [], ...options }) {
+export function setupDatabaseModule({ entities, schemas = {}, modules = [], ...options }) {
 	return Test.createTestingModule({
 		imports: [
 			ConfigModule.forRoot({
@@ -46,11 +52,28 @@ export function setupDatabaseModule({ entities, modules = [], ...options }) {
 				}),
 				imports: [ConfigModule],
 			}),
+			MongooseModule.forRootAsync({
+				inject: [SCHEMA_CONFIG],
+				useFactory: schemaConfig => ({
+					uri: `mongodb://${schemaConfig.get('mongo:username')}:${schemaConfig.get(
+						'mongo:password'
+					)}@${schemaConfig.get('mongo:host')}/${schemaConfig.get('mongo:database')}?authSource=admin`,
+					useFindAndModify: false,
+					useNewUrlParser: true,
+				}),
+				imports: [CoreSchemaModule],
+			}),
+			...Object.entries(schemas).map(([name, schema]) =>
+				MongooseModule.forFeature([{ name: name as string, schema }])
+			),
+			LoggingModule,
 			SwRepositoryModule.forFeature({
 				entities,
 			}),
 			...modules,
 		],
+		providers: [TypeormLoggerService, ...(options.providers || [])],
+		exports: [LoggingModule],
 		...options,
 	})
 		.overrideProvider(TypeormLoggerService)
@@ -58,4 +81,10 @@ export function setupDatabaseModule({ entities, modules = [], ...options }) {
 			...createSpyObj(TypeormLoggerService),
 			logQueryError: console.error,
 		});
+}
+
+export async function cleanup(module) {
+	const connection = module.get(Connection);
+	await connection.close();
+	await mongoose.disconnect();
 }

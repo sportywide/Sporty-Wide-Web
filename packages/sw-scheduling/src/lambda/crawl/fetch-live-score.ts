@@ -6,6 +6,8 @@ import { leagues } from '@shared/lib/data/data.constants';
 import { FixtureService } from '@schema/fixture/services/fixture.service';
 import { FixtureProcessInput, FixtureProcessService } from '@scheduling/lib/fixture/services/fixture-process.service';
 import { BrowserService } from '@data/crawler/browser.service';
+import { INestApplicationContext } from '@nestjs/common';
+import { addMinutes } from 'date-fns';
 
 export async function handler(event, context) {
 	let module;
@@ -16,6 +18,7 @@ export async function handler(event, context) {
 		const leagueMatches = await crawlLiveScores(module, date);
 		const matches = await matchDbFixtures(module, leagueMatches, date);
 		await processMatches(module, matches);
+		await scheduleNextCall(module);
 	} catch (e) {
 		console.error(__filename, e);
 		return error(e);
@@ -65,4 +68,13 @@ async function processMatches(module, matches) {
 	const fixtureProcessService = module.get(FixtureProcessService);
 
 	await fixtureProcessService.process(matches);
+}
+
+async function scheduleNextCall(module: INestApplicationContext) {
+	const fixtureService = module.get(FixtureService);
+	const hasActiveMatches = fixtureService.hasActiveMatches();
+	let date: Date;
+	if (hasActiveMatches) {
+		date = addMinutes(new Date(), 1);
+	}
 }

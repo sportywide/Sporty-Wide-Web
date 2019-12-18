@@ -1,11 +1,15 @@
 import { Fixture } from '@schema/fixture/models/fixture.entity';
-import { Connection } from 'typeorm';
-import { setupDatabaseModule } from '@schema-test/setup';
+import { cleanup, setupDatabaseModule } from '@schema-test/setup';
 import { Player } from '@schema/player/models/player.entity';
 import { PlayerService } from '@schema/player/services/player.service';
 import { Team } from '@schema/team/models/team.entity';
 import { TestingModule } from '@nestjs/testing';
 import { League } from '@schema/league/models/league.entity';
+import { UserPlayersSchema } from '@schema/player/models/user-players.schema';
+import { PlayerStatSchema } from '@schema/player/models/player-stat.schema';
+import { PlayerRatingSchema } from '@schema/player/models/player-rating.schema';
+import { UserLeaguePreferenceService } from '@schema/league/services/user-league-preference.service';
+import { createSpyObj } from 'jest-createspyobj';
 
 const formation = require('@shared/lib/strategy/4-4-2');
 
@@ -15,14 +19,21 @@ describe('Testing player service', () => {
 	beforeAll(async () => {
 		module = await setupDatabaseModule({
 			entities: [Player, Team, Fixture, League],
-			providers: [PlayerService],
-		}).compile();
+			providers: [PlayerService, UserLeaguePreferenceService],
+			schemas: {
+				UserPlayers: UserPlayersSchema,
+				PlayerStat: PlayerStatSchema,
+				PlayerRating: PlayerRatingSchema,
+			},
+		})
+			.overrideProvider(UserLeaguePreferenceService)
+			.useValue(createSpyObj(UserLeaguePreferenceService))
+			.compile();
 		playerService = module.get(PlayerService);
 	});
 
 	afterAll(async () => {
-		const connection = module.get(Connection);
-		await connection.close();
+		await cleanup(module);
 	});
 	describe('#generateRandomPlayers', () => {
 		it('should generate players in the rating range', async () => {
@@ -65,7 +76,7 @@ describe('Testing player service', () => {
 			const players = await playerService.generateFormation({
 				formation,
 				leagueId: 19,
-				date: new Date('2019-10-25 00:00:00Z'),
+				date: new Date('2019-10-20 00:00:00Z'),
 			});
 
 			expect(players.length).toBe(15);
