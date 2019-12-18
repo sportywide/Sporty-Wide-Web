@@ -44,4 +44,7 @@ export class Player extends BaseEntity {
 
 	@Column()
 	nationalityId: number;
+
+	@Column('text', { array: true })
+	alias: string[];
 }
