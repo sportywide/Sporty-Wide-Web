@@ -4,7 +4,7 @@ import { SwRepository } from '@schema/core/repository/sql/base.repository';
 import { BaseEntityService } from '@schema/core/entity/base-entity.service';
 import { Fixture } from '@schema/fixture/models/fixture.entity';
 import { addDays, addMonths, addWeeks, format, startOfDay, startOfMonth, startOfWeek } from 'date-fns';
-import { Between } from 'typeorm';
+import { Between, Not, In, MoreThan } from 'typeorm';
 import { Logger } from 'log4js';
 import { SCHEMA_LOGGER } from '@core/logging/logging.constant';
 import { TeamService } from '@schema/team/services/team.service';
@@ -18,6 +18,24 @@ export class FixtureService extends BaseEntityService<Fixture> {
 		private readonly teamService: TeamService
 	) {
 		super(fixtureRepository);
+	}
+
+	hasActiveMatches() {
+		return this.fixtureRepository.count({
+			where: {
+				status: Not(In(['FT', 'PENDING'])),
+			},
+		});
+	}
+
+	getNextPendingMatch() {
+		const queryBuilder = this.fixtureRepository.createQueryBuilder();
+		queryBuilder.orderBy('time - NOW()', 'ASC');
+		queryBuilder.where({
+			status: 'PENDING',
+			time: MoreThan('NOW()'),
+		});
+		return queryBuilder.getOne();
 	}
 
 	findMatchesForWeek({ leagueId, date = new Date() }) {

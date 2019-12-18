@@ -1,0 +1,9 @@
+Resources:
+    CloudwatchInvokePermission:
+        DependsOn: fetchDashLiveDashScoreLambdaFunction
+        Type: AWS::Lambda::Permission
+        FunctionName:
+            Get::Att: [fetchDashLiveDashScoreLambdaFunction, Arn]
+        Action: 'lambda:InvokeFunction'
+        SourceArn: '*'
+        Principal: 'events.amazonaws.com'

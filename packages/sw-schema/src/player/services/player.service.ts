@@ -1,7 +1,7 @@
 import { FormationDto, formationMap } from '@shared/lib/dtos/formation/formation.dto';
 import { randomCfRange } from '@shared/lib/utils/random/probability';
 import { range } from '@shared/lib/utils/array/range';
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { Player } from '@schema/player/models/player.entity';
 import { InjectSwRepository } from '@schema/core/repository/sql/inject-repository.decorator';
 import { SwRepository } from '@schema/core/repository/sql/base.repository';
@@ -20,7 +20,7 @@ import { Diff, MongooseDocument } from '@shared/lib/utils/types';
 import { PlayerRatingDto } from '@shared/lib/dtos/player/player-rating.dto';
 import { defaultFuzzyOptions } from '@shared/lib/data/data.constants';
 import Fuse from 'fuse.js';
-import { similarity, similarityTokenize } from '@schema/core/match/similarity';
+import { similarityTokenize } from '@schema/core/match/similarity';
 import { SCHEMA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import { BaseEntityService } from '@schema/core/entity/base-entity.service';
