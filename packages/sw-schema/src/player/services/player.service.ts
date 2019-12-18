@@ -291,17 +291,15 @@ export class PlayerService extends BaseEntityService<Player> {
 	): (Player | null)[] {
 		const playerFuse = new Fuse(dbPlayers, {
 			...defaultFuzzyOptions,
+			includeScore: true,
 			threshold: 0.5,
-			keys: ['name'],
+			keys: ['name', 'alias'],
 		});
 
 		return searchPlayers.map(searchPlayer => {
 			const matchedPlayers = playerFuse.search(searchPlayer.name);
-			let matchedPlayer = (matchedPlayers && matchedPlayers[0]) as Player;
-			if (
-				matchedPlayer &&
-				(matchedPlayer.shirt === searchPlayer.shirt || similarity(matchedPlayer.name, searchPlayer.name) <= 0.3)
-			) {
+			let matchedPlayer: any = matchedPlayers && matchedPlayers[0];
+			if (matchedPlayer && (matchedPlayer.shirt === searchPlayer.shirt || matchedPlayer.score <= 0.3)) {
 				this.logger.trace(`Match ${matchedPlayer.name} with ${searchPlayer.name}`);
 				return matchedPlayer;
 			} else {
