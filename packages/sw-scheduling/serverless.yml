@@ -74,4 +74,5 @@ resources:
     - ${file(resources/sqs.yml)}
     - ${file(resources/sns.yml)}
     - ${file(resources/dynamodb.yml)}
+    - ${file(resources/iam.yml)}
 functions: ${file(resources/functions.yml)}
