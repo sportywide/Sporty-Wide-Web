@@ -24,9 +24,9 @@ export class CloudwatchService {
 				Targets: [
 					{
 						Id: 'lambda-target',
-						Arn: `arn:aws:${this.config.get('aws:region')}:${this.config.get(
+						Arn: `arn:aws:lambda:${this.config.get('aws:region')}:${this.config.get(
 							'aws:accountId'
-						)}:function/${lambda}`,
+						)}:function:${lambda}`,
 					},
 				],
 				Rule: ruleName,
