@@ -297,9 +297,10 @@ export class PlayerService extends BaseEntityService<Player> {
 		});
 
 		return searchPlayers.map(searchPlayer => {
-			const matchedPlayers = playerFuse.search(searchPlayer.name);
-			let matchedPlayer: any = matchedPlayers && matchedPlayers[0];
-			if (matchedPlayer && (matchedPlayer.shirt === searchPlayer.shirt || matchedPlayer.score <= 0.3)) {
+			const matchedResults = playerFuse.search(searchPlayer.name);
+			const matchedItem: any = matchedResults && matchedResults[0];
+			let matchedPlayer = matchedItem && matchedItem.item;
+			if (matchedPlayer && (matchedPlayer.shirt === searchPlayer.shirt || matchedItem.score <= 0.3)) {
 				this.logger.trace(`Match ${matchedPlayer.name} with ${searchPlayer.name}`);
 				return matchedPlayer;
 			} else {
@@ -308,6 +309,7 @@ export class PlayerService extends BaseEntityService<Player> {
 					const similarityScore = similarityTokenize(matchedPlayer.name, searchPlayer.name);
 					if (similarityScore <= 0.75) {
 						this.logger.warn(`Match ${matchedPlayer.name} with ${searchPlayer.name} by shirt`);
+						return matchedPlayer;
 					} else {
 						this.logger.warn(
 							`${searchPlayer.team} Not able to find ${searchPlayer.name}. Tried ${matchedPlayer.name} (${similarityScore})`

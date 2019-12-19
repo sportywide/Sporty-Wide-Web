@@ -90,8 +90,8 @@ async function maybeExistingCloseConnection(logger): Promise<ConnectionOptions |
 	const options = connectionManager.get('default').options;
 	const connection = await connectionManager.get('default');
 	try {
-		logger.error('Closing existing connectioin');
 		if (connection.isConnected) {
+			logger.error('Closing existing connection');
 			await connectionManager.get('default').close();
 		}
 	} catch (e) {
