@@ -8,13 +8,14 @@ import { FixtureProcessInput, FixtureProcessService } from '@scheduling/lib/fixt
 import { BrowserService } from '@data/crawler/browser.service';
 import { INestApplicationContext } from '@nestjs/common';
 import { addMinutes } from 'date-fns';
+import { CloudwatchService } from '@scheduling/lib/aws/cloudwatch/cloudwatch.service';
 
 export async function handler(event, context) {
 	let module;
 	try {
 		context.callbackWaitsForEmptyEventLoop = false;
 		module = await initModule(SchedulingModule);
-		const date = new Date('2019-12-14');
+		const date = new Date();
 		const leagueMatches = await crawlLiveScores(module, date);
 		const matches = await matchDbFixtures(module, leagueMatches, date);
 		await processMatches(module, matches);
@@ -72,9 +73,20 @@ async function processMatches(module, matches) {
 
 async function scheduleNextCall(module: INestApplicationContext) {
 	const fixtureService = module.get(FixtureService);
-	const hasActiveMatches = fixtureService.hasActiveMatches();
+	const hasActiveMatches = await fixtureService.hasActiveMatches();
 	let date: Date;
 	if (hasActiveMatches) {
 		date = addMinutes(new Date(), 1);
+	} else {
+		const pendingMatch = await fixtureService.getNextPendingMatch();
+		if (pendingMatch) {
+			date = pendingMatch.time;
+		}
 	}
+	const cloudWatchService = module.get(CloudwatchService);
+	await cloudWatchService.putRule({
+		ruleName: 'schedule-fetch-livescore',
+		lambda: 'sw-production-fetch-livescore',
+		date,
+	});
 }
