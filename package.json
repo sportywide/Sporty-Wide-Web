@@ -1,6 +1,7 @@
 {
 	"name": "sportywide-parent",
 	"private": true,
+	"version": "1.0.0",
 	"description": "A Social network for Sports",
 	"author": "Sporty Wide",
 	"scripts": {

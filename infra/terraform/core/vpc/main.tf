@@ -18,7 +18,7 @@ resource "aws_subnet" "public_subnet_2" {
   vpc_id = aws_vpc.vpc.id
   cidr_block = "172.16.3.0/24"
   map_public_ip_on_launch = "true"
-  availability_zone = "ap-southeast-2a"
+  availability_zone = "ap-southeast-2b"
   tags = merge(var.tags, { "Name" = "sw-public-subnet" })
 }
 
@@ -104,6 +104,45 @@ resource "aws_security_group" "lambda_security_group" {
   name = "sw-lambda-security-group"
 }
 
+resource "aws_security_group" "app_security_group" {
+  ingress {
+    from_port = 22
+    protocol = "TCP"
+    to_port = 22
+    cidr_blocks = [
+      "0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port = 80
+    protocol = "TCP"
+    to_port = 80
+    cidr_blocks = [
+      "0.0.0.0/0"
+    ]
+  }
+
+  ingress {
+    from_port = 5000
+    protocol = "TCP"
+    to_port = 5000
+    cidr_blocks = [
+      "0.0.0.0/0"
+    ]
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "-1"
+    cidr_blocks = [
+      "0.0.0.0/0"]
+  }
+  vpc_id = aws_vpc.vpc.id
+  tags = var.tags
+  name = "sw-app-security-group"
+}
+
 module "rds" {
   source = "./rds"
   tags = var.tags
@@ -113,6 +152,7 @@ module "rds" {
   vpc_id = aws_vpc.vpc.id
   nat_security_group_id = module.ec2.nat_security_group_id
   lambda_security_group_id = aws_security_group.lambda_security_group.id
+  app_security_group_id = aws_security_group.app_security_group.id
 }
 
 module "redis" {
@@ -122,6 +162,7 @@ module "redis" {
   vpc_id = aws_vpc.vpc.id
   nat_security_group_id = module.ec2.nat_security_group_id
   lambda_security_group_id = aws_security_group.lambda_security_group.id
+  app_security_group_id = aws_security_group.app_security_group.id
 }
 
 module "ec2" {
