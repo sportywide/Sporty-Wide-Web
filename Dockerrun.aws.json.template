@@ -1,0 +1,35 @@
+{
+  "AWSEBDockerrunVersion": "2",
+  "containerDefinitions": [
+    {
+      "name": "sportywide-email",
+      "image": "sportywide/sportywide-email:<EMAIL_VERSION>",
+      "essential": false,
+      "memory": 128
+    },
+    {
+      "name": "sportywide-web",
+      "image": "sportywide/sportywide-web:<WEB_VERSION>",
+      "essential": true,
+      "portMappings": [
+        {
+          "hostPort": 80,
+          "containerPort": 3000
+        }
+      ],
+      "memory": 256
+    },
+    {
+      "name": "sportywide-api",
+      "image": "sportywide/sportywide-api:<API_VERSION>",
+      "essential": true,
+      "portMappings": [
+        {
+          "hostPort": 5000,
+          "containerPort": 5000
+        }
+      ],
+      "memory": 256
+    }
+  ]
+}

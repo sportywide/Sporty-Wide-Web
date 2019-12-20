@@ -1,0 +1,11 @@
+#! /usr/bin/env node
+const packageName = process.argv[2];
+
+let packageJson;
+if (packageName) {
+	packageJson = require(`${__dirname}/packages/${packageName}/package.json`);
+} else {
+	packageJson = require(`${__dirname}/package.json`);
+}
+
+console.info(packageJson.version);
