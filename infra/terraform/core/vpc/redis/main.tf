@@ -24,6 +24,7 @@ resource "aws_security_group" "redis_security_group" {
     to_port = 6379
     security_groups = [
       var.nat_security_group_id,
+      var.app_security_group_id,
       var.lambda_security_group_id
     ]
   }

@@ -12,6 +12,8 @@ variable "public_subnet_ids" {
 
 variable "security_group_id" {}
 
+variable "common_tags" {}
+
 variable "env_vars" {
   type = object({
     postgres_username: string,

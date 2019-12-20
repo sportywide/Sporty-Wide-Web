@@ -11,3 +11,5 @@ variable "vpc_id" {}
 variable "nat_security_group_id" {}
 
 variable "lambda_security_group_id" {}
+
+variable "app_security_group_id" {}

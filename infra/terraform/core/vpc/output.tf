@@ -14,6 +14,10 @@ output "nat_security_group_id" {
   value = module.ec2.nat_security_group_id
 }
 
+output "app_security_group_id" {
+  value = aws_security_group.app_security_group.id
+}
+
 output "public_subnet_ids" {
   value = [aws_subnet.public_subnet_1.id, aws_subnet.public_subnet_2.id]
 }
