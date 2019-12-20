@@ -6,9 +6,17 @@ resource "aws_vpc" "vpc" {
   tags = merge(var.tags, { "Name" = "sw-vpc" })
 }
 
-resource "aws_subnet" "public_subnet" {
+resource "aws_subnet" "public_subnet_1" {
   vpc_id = aws_vpc.vpc.id
   cidr_block = "172.16.0.0/24"
+  map_public_ip_on_launch = "true"
+  availability_zone = "ap-southeast-2a"
+  tags = merge(var.tags, { "Name" = "sw-public-subnet" })
+}
+
+resource "aws_subnet" "public_subnet_2" {
+  vpc_id = aws_vpc.vpc.id
+  cidr_block = "172.16.3.0/24"
   map_public_ip_on_launch = "true"
   availability_zone = "ap-southeast-2a"
   tags = merge(var.tags, { "Name" = "sw-public-subnet" })
@@ -31,7 +39,12 @@ resource "aws_route_table" "public_route_table" {
 }
 
 resource "aws_route_table_association" "public_subnet_route_association" {
-  subnet_id = aws_subnet.public_subnet.id
+  subnet_id = aws_subnet.public_subnet_1.id
+  route_table_id = aws_route_table.public_route_table.id
+}
+
+resource "aws_route_table_association" "public_subnet_route_association" {
+  subnet_id = aws_subnet.public_subnet_2.id
   route_table_id = aws_route_table.public_route_table.id
 }
 
@@ -113,7 +126,7 @@ module "redis" {
 
 module "ec2" {
   source = "./ec2"
-  public_subnet_id = aws_subnet.public_subnet.id
+  public_subnet_id = aws_subnet.public_subnet_1.id
   tags = var.tags
   vpc_id = aws_vpc.vpc.id
   vpc_cidr_block = aws_vpc.vpc.cidr_block
