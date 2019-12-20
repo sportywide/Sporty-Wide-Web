@@ -9,7 +9,7 @@ export const config = {
 		server_url: 'http://192.168.50.1:5000',
 	},
 	production: {
-		cookie_secret: process.env.COOKIE_SECRET,
+		cookie_secret: process.env.SW_COOKIE_SECRET,
 		server_url: 'https://api.sportywide.com',
 	},
 };

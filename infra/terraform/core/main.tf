@@ -19,4 +19,5 @@ module "vpc" {
   source = "./vpc"
   db_password = var.db_password
   db_username = var.db_username
+  deployment_bucket_arn = module.s3.deployment_bucket_arn
 }
