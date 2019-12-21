@@ -46,7 +46,9 @@ export function makeConfig({
 	// @ts-ignore
 	process.env.NODE_ENV = environment;
 
-	envFile = envFile || path.resolve(paths.project.root, 'packages', packageName, '.env');
+	envFile = envFile
+		? path.resolve(paths.project.root, 'packages', packageName, envFile)
+		: path.resolve(paths.project.root, 'packages', packageName, '.env');
 
 	return createConfig([
 		setOutput(output),
@@ -92,7 +94,8 @@ export function makeConfig({
 							[
 								{
 									from: envFile,
-									to: path.resolve(output),
+									to: path.resolve(output, '.env'),
+									toType: 'file',
 								},
 							],
 							{
