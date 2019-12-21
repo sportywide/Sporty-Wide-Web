@@ -186,6 +186,8 @@ fetch-live-score:
 
 fetch-whoscore-league:
     handler: src/lambda/crawl/fetch-whoscore-league.handler
+    events:
+        - schedule: cron(0 0 * * ? *)
     iamRoleStatements:
         - Effect: 'Allow'
           Action:
@@ -201,7 +203,6 @@ fetch-monthly-fixture:
               arn:
                   Fn::GetAtt: [WhoscoreLeagueQueue, Arn]
               batchSize: 1
-        - schedule: cron(0 0 * * ? *)
     iamRoleStatements:
         - Effect: 'Allow'
           Action:
