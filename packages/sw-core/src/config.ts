@@ -18,7 +18,7 @@ export const config = {
 			},
 		},
 		support_user: {
-			email: 'norepy@sportywide.com',
+			email: 'support@mg.sportywide.com',
 			name: 'Sporty Wide',
 		},
 	},
@@ -34,6 +34,10 @@ export const config = {
 		},
 		logging: {
 			default: 'INFO',
+		},
+		support_user: {
+			email: 'support@mg.sportywide.com',
+			name: 'Sporty Wide',
 		},
 	},
 };

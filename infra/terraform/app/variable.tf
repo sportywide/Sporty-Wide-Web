@@ -10,5 +10,7 @@ variable "env_vars" {
     facebook_client_secret: string,
     google_client_secret: string,
     cookie_secret: string,
+    smtp_username: string,
+    smtp_password: string
   })
 }
