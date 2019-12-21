@@ -4,6 +4,8 @@
 .sw-email-table {
 	border-collapse: collapse;
 	width: 100vw;
+	max-width: 600px;
+	margin: 0 auto;
 	border: 1px solid get($colors, 'grey');
 
 	&__logo {

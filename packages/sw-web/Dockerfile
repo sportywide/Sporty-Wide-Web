@@ -1,4 +1,4 @@
-FROM sportywide/sportywide-base AS base
+FROM sportywide/sportywide-base AS dev
 
 CMD "dev"
 WORKDIR $PROJECT_ROOT/packages/sw-web

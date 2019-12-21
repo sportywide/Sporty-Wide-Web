@@ -7,8 +7,9 @@ import {
 	resendVerificationEmailSuccess,
 	signupSuccess,
 } from '@web/features/auth/store/actions';
-import { IDependencies } from '@web/shared/lib/store';
+import { IDependencies, ISportyWideStore } from '@web/shared/lib/store';
 import { redirect } from '@web/shared/lib/navigation/helper';
+import { success } from 'react-notification-system-redux';
 
 export const logoutEpic = (action$, state$, { container }: IDependencies) => {
 	return action$.ofType(LOGOUT).pipe(
@@ -62,7 +63,17 @@ export const resendVerificationEpic = (action$, state$, { container }: IDependen
 	return action$.ofType(RESEND_VERIFICATION_EMAIL).pipe(
 		mergeMap(({ payload }) => {
 			const authService = container.get(AuthService);
-			return authService.resendVerficationEmail(payload).pipe(mapTo(resendVerificationEmailSuccess));
+			const observable = authService.resendVerficationEmail(payload).pipe(mapTo(resendVerificationEmailSuccess));
+			observable.subscribe(() => {
+				const store: ISportyWideStore = container.get('store');
+				store.dispatch(
+					success({
+						message: 'An email has been sent',
+						title: 'Success',
+					})
+				);
+			});
+			return observable;
 		})
 	);
 };

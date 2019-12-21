@@ -17,6 +17,7 @@ const config = makeConfig({
 	optimizationOptions: {
 		minimize: false,
 	},
+	envFile: argv.env !== 'production' ? '.env.dev' : '.env',
 });
 
 module.exports = config;

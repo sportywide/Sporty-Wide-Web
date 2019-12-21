@@ -1,7 +1,7 @@
 {
 	"name": "sportywide-parent",
-	"private": true,
 	"version": "1.0.0",
+	"private": true,
 	"description": "A Social network for Sports",
 	"author": "Sporty Wide",
 	"scripts": {
@@ -86,6 +86,7 @@
 		"node-sass": "4.12.0",
 		"nodemon": "1.19.1",
 		"null-loader": "3.0.0",
+		"postcss-css-variables": "0.14.0",
 		"postcss-loader": "3.0.0",
 		"postcss-preset-env": "6.7.0",
 		"sass-loader": "8.0.0",
