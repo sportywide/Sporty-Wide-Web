@@ -8,24 +8,12 @@
       "memory": 128
     },
     {
-      "name": "sportywide-web",
-      "image": "sportywide/sportywide-web:<WEB_VERSION>",
-      "essential": true,
-      "portMappings": [
-        {
-          "hostPort": 80,
-          "containerPort": 3000
-        }
-      ],
-      "memory": 256
-    },
-    {
       "name": "sportywide-api",
       "image": "sportywide/sportywide-api:<API_VERSION>",
       "essential": true,
       "portMappings": [
         {
-          "hostPort": 5000,
+          "hostPort": 80,
           "containerPort": 5000
         }
       ],

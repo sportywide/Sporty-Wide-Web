@@ -31,6 +31,7 @@ export function bootstrap(app) {
 			},
 		})
 	);
+	server.get('/healthcheck', (req, res) => res.send('OK'));
 	server.use('/auth', authRouter);
 	setupProxy(devProxy);
 	server.use((req, res, next) => {
