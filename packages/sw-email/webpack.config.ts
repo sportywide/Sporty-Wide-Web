@@ -19,6 +19,7 @@ const nodeConfig = makeNodeConfig({
 	optimizationOptions: {
 		minimize: false,
 	},
+	envFile: argv.env !== 'production' ? '.env.dev' : '.env',
 });
 const styleConfig = makeStyleConfig({
 	env: argv.env,

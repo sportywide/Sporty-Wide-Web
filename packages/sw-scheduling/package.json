@@ -13,9 +13,9 @@
 	},
 	"dependencies": {
 		"aws-lambda": "0.1.2",
+		"dynamoose-improved": "1.10.2",
 		"source-map-support": "0.5.13",
-		"sportywide-data": "1.0.3",
-		"dynamoose-improved": "1.10.2"
+		"sportywide-data": "1.0.3"
 	},
 	"devDependencies": {
 		"@types/aws-lambda": "8.10.36",
