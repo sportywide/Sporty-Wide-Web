@@ -29,7 +29,7 @@ export function mergePackageJson({ rootDir = process.cwd() } = {}) {
 
 	const packageJsonContents = subPackageJsonFiles.map(subPackageJsonFile => customRequire(subPackageJsonFile));
 
-	return packageJsonContents.reduce((currentContent, content) => {
+	const reducedPackage = packageJsonContents.reduce((currentContent, content) => {
 		return {
 			...currentContent,
 			devDependencies: {
@@ -50,6 +50,14 @@ export function mergePackageJson({ rootDir = process.cwd() } = {}) {
 			},
 		};
 	}, rootPackageJson);
+	for (const dependencyType of ['devDependencies', 'optionalDependencies', 'dependencies', 'peerDependencies']) {
+		for (const key of Object.keys(reducedPackage[dependencyType])) {
+			if (key.startsWith('sportywide')) {
+				delete reducedPackage[dependencyType][key];
+			}
+		}
+	}
+	return reducedPackage;
 }
 
 function customRequire(path) {

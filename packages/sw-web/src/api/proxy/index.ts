@@ -75,7 +75,7 @@ export const devProxy = {
 };
 
 function setRefererHeader(proxyReq, req: Request) {
-	const referer = req.header('x-forwarded-host');
+	const referer = req.get('host');
 	proxyReq.setHeader('Referer', `https://${referer}`);
 }
 

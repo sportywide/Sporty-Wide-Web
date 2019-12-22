@@ -3,7 +3,9 @@
 **/node_modules
 **/.docker-sync
 **/dist
+**/logs
 **/next-build
 **/.idea
 **/.vagrant
 **/.terraform
+**/Dockerfile
