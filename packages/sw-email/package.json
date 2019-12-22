@@ -1,7 +1,7 @@
 {
 	"name": "sportywide-email",
 	"version": "1.0.3",
-	"description": "Email microservice",
+	"description": "Email micro service",
 	"license": "ISC",
 	"scripts": {
 		"build": "gulp build --color",
