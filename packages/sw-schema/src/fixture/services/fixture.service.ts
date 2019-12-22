@@ -3,7 +3,7 @@ import { InjectSwRepository } from '@schema/core/repository/sql/inject-repositor
 import { SwRepository } from '@schema/core/repository/sql/base.repository';
 import { BaseEntityService } from '@schema/core/entity/base-entity.service';
 import { Fixture } from '@schema/fixture/models/fixture.entity';
-import { addDays, addMonths, addWeeks, format, startOfDay, startOfMonth, startOfWeek } from 'date-fns';
+import { addDays, addMonths, addWeeks, addHours, format, startOfDay, startOfMonth, startOfWeek } from 'date-fns';
 import { Between, Not, In, MoreThan } from 'typeorm';
 import { Logger } from 'log4js';
 import { SCHEMA_LOGGER } from '@core/logging/logging.constant';
@@ -22,9 +22,10 @@ export class FixtureService extends BaseEntityService<Fixture> {
 
 	hasActiveMatches() {
 		return this.fixtureRepository.count({
-			where: {
-				status: Not(In(['FT', 'PENDING'])),
-			},
+			where: [
+				{ status: Not(In(['FT', 'PENDING'])) },
+				{ status: 'PENDING', time: MoreThan(addHours(new Date(), -2)) },
+			],
 		});
 	}
 

@@ -7,6 +7,9 @@ const webpack = require('webpack');
 const { importAutoDllPlugin } = require('next/dist/build/webpack/plugins/dll-import');
 const scss = require('./src/build/plugins/with-sass');
 const css = require('./src/build/plugins/with-css');
+
+process.env.WEB = 1;
+
 const nextConfig = {
 	webpack: (webpackConfig, options) => {
 		const { dir, config: nextConfig, isServer } = options;

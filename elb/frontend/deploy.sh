@@ -8,6 +8,7 @@ EB_BUCKET=sportywide-deployment
 ENV_NAME=sw-frontend-prod
 APP_NAME=sportywide
 
+rm *.zip
 sed -e "s/<WEB_VERSION>/$WEB_VERSION/" Dockerrun.aws.json.template > Dockerrun.aws.json
 
 zip -r $ZIP Dockerrun.aws.json
