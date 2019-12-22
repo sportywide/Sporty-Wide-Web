@@ -86,7 +86,7 @@ async function scheduleNextCall(module: INestApplicationContext) {
 	const cloudWatchService = module.get(CloudwatchService);
 	await cloudWatchService.putRule({
 		ruleName: 'schedule-fetch-livescore',
-		lambda: 'sw-production-fetch-livescore',
+		lambda: 'sw-production-fetch-live-score',
 		date,
 	});
 }

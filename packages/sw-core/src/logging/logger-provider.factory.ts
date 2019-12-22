@@ -4,6 +4,7 @@ import { Provider } from 'nconf';
 import { mergeConcatArray } from '@shared/lib/utils/object/merge';
 import log4j, { Configuration } from 'log4js';
 import { CORE_CONFIG } from '@core/config/config.constants';
+import logz from 'logzio-nodejs';
 
 function filenameToken(logEvent) {
 	return logEvent.fileName ? logEvent.fileName.replace(__dirname, '').replace(/^\/webpack:/, '') : '';
@@ -59,8 +60,8 @@ export class LoggerProviderFactory {
 			log4jsConfig = this.buildFileLoggingConfig(coreConfig, log4jsConfig);
 		}
 
-		if (this.isLogstashEnabled(coreConfig)) {
-			log4jsConfig = this.buildLogStashConfig(log4jsConfig, coreConfig);
+		if (this.isLogzEnabled(coreConfig)) {
+			log4jsConfig = this.buildLogzConfig(log4jsConfig, coreConfig);
 		}
 
 		log4jsConfig = this.buildConsoleConfig(log4jsConfig);
@@ -86,33 +87,53 @@ export class LoggerProviderFactory {
 				default: {
 					appenders: ['console'],
 				},
+				http: {
+					appenders: [],
+				},
 			},
 		});
 		return log4jsConfig;
 	}
 
-	private buildLogStashConfig(log4jsConfig: Configuration, coreConfig) {
+	private buildLogzConfig(log4jsConfig: Configuration, coreConfig) {
+		const logzAppender = {
+			configure(config, layouts) {
+				const logger = logz.createLogger({
+					token: coreConfig.get('logging:logz:token'),
+					host: 'listener.logz.io',
+					type: 'nodejs',
+				});
+				let layout = layouts.messagePassThrough;
+				if (config.layout) {
+					// load the layout
+					layout = layouts.layout(config.layout.type, config.layout);
+				}
+
+				return loggingEvent => {
+					const message = layout(loggingEvent);
+					logger.log({
+						message,
+						level: loggingEvent.level.levelStr,
+						category: loggingEvent.categoryName,
+						hostname: os.hostname().toString(),
+						env: process.env.NODE_ENV,
+					});
+				};
+			},
+		};
 		log4jsConfig = mergeConcatArray(log4jsConfig, {
 			appenders: {
-				logstash: {
-					type: 'log4js-logstash-tcp',
-					category: 'default',
-					host: coreConfig.get('logging:logstash:host'),
-					port: coreConfig.get('logging:logstash:port'),
-					fields: {
-						source: 'sportywide',
-						environment: os.hostname(),
-						group: process.env.NODE_ENV,
-					},
+				logz: {
+					type: logzAppender,
 					layout: defaultPatternLayout,
 				},
 			},
 			categories: {
 				default: {
-					appenders: ['logstash'],
+					appenders: ['logz'],
 				},
 				http: {
-					appenders: ['logstash'],
+					appenders: ['logz'],
 				},
 			},
 		});
@@ -171,7 +192,7 @@ export class LoggerProviderFactory {
 		return !!config.get('logging:file');
 	}
 
-	private isLogstashEnabled(config) {
-		return !!config.get('logging:logstash');
+	private isLogzEnabled(config) {
+		return !!config.get('logging:logz');
 	}
 }

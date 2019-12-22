@@ -9,3 +9,6 @@
 **/.vagrant
 **/.terraform
 **/Dockerfile
+**/.serverless
+**/.dynamodb
+**/.s3

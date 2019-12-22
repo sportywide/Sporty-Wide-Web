@@ -11,6 +11,7 @@ variable "env_vars" {
     google_client_secret: string,
     cookie_secret: string,
     smtp_username: string,
-    smtp_password: string
+    smtp_password: string,
+    logz_token: string
   })
 }
