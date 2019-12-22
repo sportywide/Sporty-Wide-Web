@@ -1,4 +1,4 @@
-import { BadRequestException, Injectable, Inject, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
@@ -59,6 +59,10 @@ export class AuthService {
 		const user = await this.userService.findOne({ email });
 		if (!user) {
 			throw new NotFoundException(`User with email ${email} cannot be found`);
+		}
+
+		if (user.status !== UserStatus.PENDING) {
+			throw new BadRequestException('User is not pending');
 		}
 
 		// Delete token dedicated for previous verification email

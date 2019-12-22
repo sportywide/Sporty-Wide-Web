@@ -1,5 +1,8 @@
 service: sw
 
+package:
+    individually: true
+
 provider:
     name: aws
     region: ap-southeast-2

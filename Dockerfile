@@ -32,4 +32,4 @@ WORKDIR $PROJECT_ROOT
 FROM base as prod
 ENV NO_OPTIONAL 1
 RUN npm run install:dependencies
-
+COPY package-lock.json /opt/app/package-lock.json

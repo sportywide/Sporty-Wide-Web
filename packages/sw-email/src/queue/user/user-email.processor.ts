@@ -19,6 +19,7 @@ import { Logger } from 'log4js';
 import { Token } from '@schema/auth/models/token.entity';
 import { TokenType } from '@schema/auth/models/enums/token-type.token';
 import { TemplateService } from '@email/core/email/template/template.service';
+import { fromString } from 'html-to-text';
 
 @Queue({
 	name: USER_EMAIL_QUEUE,
@@ -56,19 +57,21 @@ export class UserEmailProcessor extends SwQueueProcessor {
 			templateFile: 'auth/verify-email.pug',
 			cssFile: 'verify-email.min.css',
 		});
+		const html = this.templateService.injectCss(
+			template({
+				appUrl: this.emailConfig.get('app:url'),
+				title: 'Please confirm your email',
+				token: token.content,
+				userId: user.id,
+			}),
+			css
+		);
 		const mailData: MailDto = {
 			from: this.emailService.getSupportUserEmail(),
 			to: this.emailService.getUserEmail(user),
 			subject: 'You have signed up for sportywide',
-			html: this.templateService.injectCss(
-				template({
-					appUrl: this.emailConfig.get('app:url'),
-					title: 'Please confirm your email',
-					token: token.content,
-					userId: user.id,
-				}),
-				css
-			),
+			html,
+			text: fromString(html),
 		};
 
 		return this.emailService.sendMail(mailData);
@@ -94,18 +97,21 @@ export class UserEmailProcessor extends SwQueueProcessor {
 			templateFile: 'auth/forgot-password.pug',
 			cssFile: 'forgot-password.min.css',
 		});
+		const html = this.templateService.injectCss(
+			template({
+				appUrl: this.emailConfig.get('app:url'),
+				title: 'Please click the url to reset your password',
+				token: token.content,
+				username: user.name,
+			}),
+			css
+		);
 		const mailData: MailDto = {
 			from: this.emailService.getSupportUserEmail(),
 			to: this.emailService.getUserEmail(user),
 			subject: 'Reset your password',
-			html: this.templateService.injectCss(
-				template({
-					appUrl: this.emailConfig.get('app:url'),
-					title: 'Please click the url to reset your password',
-					token: token.content,
-				}),
-				css
-			),
+			html,
+			text: fromString(html),
 		};
 
 		return this.emailService.sendMail(mailData);
