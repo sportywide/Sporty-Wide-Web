@@ -84,5 +84,6 @@ module "elastic_beanstalk_environment_backend" {
     SW_JWT_SECRET: var.env_vars.jwt_secret
     SW_SMTP_USER: var.env_vars.smtp_username
     SW_SMTP_PASSWORD: var.env_vars.smtp_password
+    SW_LOGZ_TOKEN: var.env_vars.logz_token
   }
 }

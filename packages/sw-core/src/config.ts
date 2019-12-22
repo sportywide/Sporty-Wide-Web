@@ -34,6 +34,9 @@ export const config = {
 		},
 		logging: {
 			default: 'INFO',
+			logz: {
+				token: process.env.SW_LOGZ_TOKEN,
+			},
 		},
 		support_user: {
 			email: 'support@mg.sportywide.com',
