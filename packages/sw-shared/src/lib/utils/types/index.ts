@@ -5,9 +5,7 @@ export type Interface<E> = {
 };
 
 export class MongooseDocument {
-	@Expose()
 	_id: any;
-	@Expose()
 	__v: number;
 }
 

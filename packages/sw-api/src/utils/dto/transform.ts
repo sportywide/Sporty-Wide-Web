@@ -8,6 +8,7 @@ import { getDtoType } from '@shared/lib/dtos/decorators/dto-type.decorator';
 const defaultOptions: ClassTransformOptions = {
 	excludeExtraneousValues: true,
 	ignoreGroupDecorators: true,
+	useProperties: true,
 };
 export function toDto<T>({
 	value,
