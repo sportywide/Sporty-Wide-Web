@@ -19,9 +19,6 @@ export class FixtureController {
 		return toDto({
 			dtoType: FixtureDto,
 			value: fixtures,
-			options: {
-				excludeExtraneousValues: false,
-			},
 		});
 	}
 
@@ -36,9 +33,6 @@ export class FixtureController {
 		return toDto({
 			value: fixtures,
 			dtoType: FixtureDto,
-			options: {
-				excludeExtraneousValues: false,
-			},
 		});
 	}
 
@@ -49,9 +43,6 @@ export class FixtureController {
 		const fixture = await this.fixtureService.getFixtureDetails(fixtureId);
 		return toDto({
 			value: fixture,
-			options: {
-				excludeExtraneousValues: false,
-			},
 		});
 	}
 }
