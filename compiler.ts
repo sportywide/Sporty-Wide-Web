@@ -47,10 +47,10 @@ const config = createConfig([
 
 function getEntries() {
 	const tsFiles = [
-		...glob.sync('packages/**/gulpfile.ts', {
+		...glob.sync('packages/*/gulpfile.ts', {
 			absolute: true,
 		}),
-		...glob.sync('packages/**/webpack.config.ts', {
+		...glob.sync('packages/*/webpack.config.ts', {
 			absolute: true,
 		}),
 	];

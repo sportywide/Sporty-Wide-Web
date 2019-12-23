@@ -3,6 +3,7 @@ import { MongooseDocument } from '@shared/lib/utils/types';
 export class PlayerRatingDto {
 	playerId: number;
 	fixtureId: number;
+	teamId: number;
 }
 
 export interface PlayerRatingDto extends PlayerRating, MongooseDocument {}
