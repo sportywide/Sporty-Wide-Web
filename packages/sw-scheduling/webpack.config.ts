@@ -1,6 +1,9 @@
+import path from 'path';
 import { makeConfig } from '@build/webpack/node/config';
 import slsw from 'serverless-webpack';
 import paths from '@build/paths';
+import { GenerateDependencyPackages } from '@build/webpack/plugins/generate-package-json';
+import { mergePackageJson } from '@root/helpers/package';
 
 const isDev = slsw.lib.webpack.isLocal;
 // @ts-ignore
@@ -23,5 +26,16 @@ const config = makeConfig({
 		minimize: false,
 	},
 });
+
+config.plugins.push(
+	new GenerateDependencyPackages({
+		excludes: ['aws-sdk'],
+		includes: ['pg', 'source-map-support', 'rxjs', 'graphql'],
+		packageJson: mergePackageJson({
+			rootDir: paths.project.root,
+		}),
+		outputPath: path.resolve(paths.scheduling.root, 'compile', 'package.json'),
+	})
+);
 
 module.exports = config;

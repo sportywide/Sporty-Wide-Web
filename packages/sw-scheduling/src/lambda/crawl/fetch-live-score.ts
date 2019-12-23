@@ -9,6 +9,7 @@ import { BrowserService } from '@data/crawler/browser.service';
 import { INestApplicationContext } from '@nestjs/common';
 import { addMinutes } from 'date-fns';
 import { CloudwatchService } from '@scheduling/lib/aws/cloudwatch/cloudwatch.service';
+import { SCHEDULING_LOGGER } from '@core/logging/logging.constant';
 
 export async function handler(event, context) {
 	let module;
@@ -73,6 +74,7 @@ async function processMatches(module, matches) {
 
 async function scheduleNextCall(module: INestApplicationContext) {
 	const fixtureService = module.get(FixtureService);
+	const schedulingLogger = module.get(SCHEDULING_LOGGER);
 	const hasActiveMatches = await fixtureService.hasActiveMatches();
 	let date: Date;
 	if (hasActiveMatches) {
@@ -83,6 +85,7 @@ async function scheduleNextCall(module: INestApplicationContext) {
 			date = pendingMatch.time;
 		}
 	}
+	schedulingLogger.info('Next schedule time', date);
 	const cloudWatchService = module.get(CloudwatchService);
 	await cloudWatchService.putRule({
 		ruleName: 'schedule-fetch-livescore',

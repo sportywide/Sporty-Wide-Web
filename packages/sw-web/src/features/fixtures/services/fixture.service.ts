@@ -23,4 +23,19 @@ export class FixtureService {
 				)
 			);
 	}
+
+	fetchFixtureDetails(fixtureId: number): Observable<FixtureDto> {
+		return this.apiService
+			.api()
+			.get(`/fixtures/${fixtureId}`)
+			.pipe(
+				map(({ data: payload }) =>
+					payload.map(league =>
+						plainToClass(FixtureDto, league, {
+							excludeExtraneousValues: false,
+						})
+					)
+				)
+			);
+	}
 }

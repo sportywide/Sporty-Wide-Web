@@ -95,9 +95,7 @@ export class PlayerPersisterService {
 					.reverse()
 					.join(' '),
 			}));
-			const dbPlayers = await this.playerService.getPlayersByTeam({
-				teamId: foundTeams[0].id,
-			});
+			const dbPlayers = await this.playerService.getPlayersByTeam(foundTeams[0].id);
 			const result = this.playerService.fuzzySearch(
 				dbPlayers,
 				transformedPlayers.map(player => ({
@@ -181,6 +179,7 @@ export class PlayerPersisterService {
 				}
 				await this.playerService.savePlayerRating({
 					...omit(playerRating, 'name', 'shirt'),
+					teamId: matchedPlayer.teamId,
 					playerId: matchedPlayer.id,
 					fixtureId,
 				});

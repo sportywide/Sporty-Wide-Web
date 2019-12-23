@@ -1,19 +1,26 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectSwRepository } from '@schema/core/repository/sql/inject-repository.decorator';
 import { SwRepository } from '@schema/core/repository/sql/base.repository';
 import { BaseEntityService } from '@schema/core/entity/base-entity.service';
 import { Fixture } from '@schema/fixture/models/fixture.entity';
-import { addDays, addMonths, addWeeks, addHours, format, startOfDay, startOfMonth, startOfWeek } from 'date-fns';
-import { Between, Not, In, MoreThan } from 'typeorm';
+import { addDays, addHours, addMonths, addWeeks, format, startOfDay, startOfMonth, startOfWeek } from 'date-fns';
+import { Between, In, MoreThan, Not } from 'typeorm';
 import { Logger } from 'log4js';
 import { SCHEMA_LOGGER } from '@core/logging/logging.constant';
 import { TeamService } from '@schema/team/services/team.service';
 import { WhoscoreFixture } from '@shared/lib/dtos/fixture/fixture.dto';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+import { Player } from '@schema/player/models/player.entity';
+import { keyBy } from 'lodash';
+import { PlayerRatingDocument } from '@schema/player/models/player-rating.schema';
 
 @Injectable()
 export class FixtureService extends BaseEntityService<Fixture> {
 	constructor(
 		@InjectSwRepository(Fixture) private readonly fixtureRepository: SwRepository<Fixture>,
+		@InjectSwRepository(Player) private readonly playerRepository: SwRepository<Player>,
+		@InjectModel('PlayerRating') private readonly playerRatingModel: Model<PlayerRatingDocument>,
 		@Inject(SCHEMA_LOGGER) private readonly logger: Logger,
 		private readonly teamService: TeamService
 	) {
@@ -24,9 +31,51 @@ export class FixtureService extends BaseEntityService<Fixture> {
 		return this.fixtureRepository.count({
 			where: [
 				{ status: Not(In(['FT', 'PENDING'])) },
-				{ status: 'PENDING', time: MoreThan(addHours(new Date(), -2)) },
+				{ status: 'PENDING', time: Between(addHours(new Date(), -2), new Date()) },
 			],
 		});
+	}
+
+	async getFixtureDetails(fixtureId: any) {
+		const fixture = await this.findById({
+			id: fixtureId,
+		});
+
+		if (!fixture) {
+			throw new NotFoundException('Fixture not found');
+		}
+		const playerRatings = await this.playerRatingModel.find({
+			fixtureId,
+		});
+		const playerIds = playerRatings.map(playerRating => playerRating.playerId);
+		const players = await this.playerRepository.findByIds(playerIds);
+		const playerIdMap = keyBy(players, 'id');
+
+		const ratings = {
+			home: [],
+			away: [],
+		};
+
+		for (const playerRating of playerRatings) {
+			if (!playerIdMap[playerRating.playerId]) {
+				continue;
+			}
+			const teamId = playerRating.teamId || playerIdMap[playerRating.playerId].teamId;
+			const value = {
+				player: playerIdMap[playerRating.playerId],
+				rating: playerRating,
+			};
+			if (teamId === fixture.homeId) {
+				ratings.home.push(value);
+			} else {
+				ratings.away.push(value);
+			}
+		}
+
+		return {
+			fixture: fixture,
+			ratings,
+		};
 	}
 
 	getNextPendingMatch() {

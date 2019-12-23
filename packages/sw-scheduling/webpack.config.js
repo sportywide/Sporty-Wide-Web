@@ -95,6 +95,33 @@ module.exports = /******/ (function(modules) {
 })(
 	/************************************************************************/
 	/******/ {
+		/***/ './helpers sync recursive':
+			/*!**********************!*\
+  !*** ./helpers sync ***!
+  \**********************/
+			/*! no static exports found */
+			/***/ function(module, exports) {
+				eval(
+					'function webpackEmptyContext(req) {\n\tvar e = new Error("Cannot find module \'" + req + "\'");\n\te.code = \'MODULE_NOT_FOUND\';\n\tthrow e;\n}\nwebpackEmptyContext.keys = function() { return []; };\nwebpackEmptyContext.resolve = webpackEmptyContext;\nmodule.exports = webpackEmptyContext;\nwebpackEmptyContext.id = "./helpers sync recursive";\n\n//# sourceURL=webpack:///./helpers_sync?'
+				);
+
+				/***/
+			},
+
+		/***/ './helpers/package.ts':
+			/*!****************************!*\
+  !*** ./helpers/package.ts ***!
+  \****************************/
+			/*! no static exports found */
+			/***/ function(module, exports, __webpack_require__) {
+				'use strict';
+				eval(
+					"\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\nexports.getDependencies = getDependencies;\nexports.getAllPackages = getAllPackages;\nexports.mergePackageJson = mergePackageJson;\n\nvar _fs = _interopRequireDefault(__webpack_require__(/*! fs */ \"fs\"));\n\nvar _path = _interopRequireDefault(__webpack_require__(/*! path */ \"path\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\n/* global __non_webpack_require__ */\nfunction getDependencies({\n  rootDir = process.cwd(),\n  packageName\n}) {\n  const packageJson = JSON.parse(_fs.default.readFileSync(_path.default.resolve(rootDir, 'packages', packageName, 'package.json'), 'utf-8'));\n  return [...Object.keys(packageJson.dependencies || {}), ...Object.keys(packageJson.devDependencies || {})].filter(dependency => dependency.startsWith('sportywide-')).map(dependency => dependency.replace('sportywide-', 'sw-'));\n}\n\nfunction getAllPackages({\n  rootDir = process.cwd()\n} = {}) {\n  const packagesDir = _path.default.resolve(rootDir, 'packages');\n\n  if (!_fs.default.existsSync(packagesDir)) {\n    return [];\n  }\n\n  return _fs.default.readdirSync(packagesDir).filter(packageName => packageName.startsWith('sw-'));\n}\n\nfunction mergePackageJson({\n  rootDir = process.cwd()\n} = {}) {\n  const glob = __webpack_require__(/*! glob */ \"glob\");\n\n  const rootPackageJson = customRequire(_path.default.resolve(rootDir, 'package.json'));\n  const subPackageJsonFiles = glob.sync(_path.default.resolve(rootDir, 'packages/**/package.json'), {\n    absolute: true\n  });\n  const packageJsonContents = subPackageJsonFiles.map(subPackageJsonFile => customRequire(subPackageJsonFile));\n  const reducedPackage = packageJsonContents.reduce((currentContent, content) => {\n    return { ...currentContent,\n      devDependencies: { ...(currentContent.devDependencies || {}),\n        ...(content.devDependencies || {})\n      },\n      optionalDependencies: { ...(currentContent.optionalDependencies || {}),\n        ...(content.optionalDependencies || {})\n      },\n      dependencies: { ...(currentContent.dependencies || {}),\n        ...(content.dependencies || {})\n      },\n      peerDependencies: { ...(currentContent.peerDependencies || {}),\n        ...(content.peerDependencies || {})\n      }\n    };\n  }, rootPackageJson);\n\n  for (const dependencyType of ['devDependencies', 'optionalDependencies', 'dependencies', 'peerDependencies']) {\n    for (const key of Object.keys(reducedPackage[dependencyType])) {\n      if (key.startsWith('sportywide')) {\n        delete reducedPackage[dependencyType][key];\n      }\n    }\n  }\n\n  return reducedPackage;\n}\n\nfunction customRequire(path) {\n  // @ts-ignore\n  // eslint-disable-next-line @typescript-eslint/camelcase\n  return typeof require !== 'undefined' ? require(path) : __webpack_require__(\"./helpers sync recursive\")(path);\n}\n\n//# sourceURL=webpack:///./helpers/package.ts?"
+				);
+
+				/***/
+			},
+
 		/***/ './packages/sw-scheduling/webpack.config.ts':
 			/*!**************************************************!*\
   !*** ./packages/sw-scheduling/webpack.config.ts ***!
@@ -103,7 +130,7 @@ module.exports = /******/ (function(modules) {
 			/***/ function(module, exports, __webpack_require__) {
 				'use strict';
 				eval(
-					"\n\nvar _config = __webpack_require__(/*! @build/webpack/node/config */ \"./packages/sw-shared/build/webpack/node/config.ts\");\n\nvar _serverlessWebpack = _interopRequireDefault(__webpack_require__(/*! serverless-webpack */ \"serverless-webpack\"));\n\nvar _paths = _interopRequireDefault(__webpack_require__(/*! @build/paths */ \"./packages/sw-shared/build/paths/index.js\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nconst isDev = _serverlessWebpack.default.lib.webpack.isLocal; // @ts-ignore\n\nprocess.env.NODE_ENV = isDev ? 'development' : 'production';\nconst config = (0, _config.makeConfig)({\n  entries: _serverlessWebpack.default.lib.entries,\n  watchMode: false,\n  env: process.env.NODE_ENV,\n  libraryTarget: 'commonjs2',\n  output: _paths.default.scheduling.dist,\n  alias: {\n    '@scheduling': _paths.default.scheduling.src,\n    '@schema': _paths.default.schema.src,\n    '@core': _paths.default.core.src,\n    '@data': _paths.default.data.src,\n    '@shared': _paths.default.shared.src\n  },\n  optimizationOptions: {\n    minimize: false\n  }\n});\nmodule.exports = config;\n\n//# sourceURL=webpack:///./packages/sw-scheduling/webpack.config.ts?"
+					"\n\nvar _path = _interopRequireDefault(__webpack_require__(/*! path */ \"path\"));\n\nvar _config = __webpack_require__(/*! @build/webpack/node/config */ \"./packages/sw-shared/build/webpack/node/config.ts\");\n\nvar _serverlessWebpack = _interopRequireDefault(__webpack_require__(/*! serverless-webpack */ \"serverless-webpack\"));\n\nvar _paths = _interopRequireDefault(__webpack_require__(/*! @build/paths */ \"./packages/sw-shared/build/paths/index.js\"));\n\nvar _generatePackageJson = __webpack_require__(/*! @build/webpack/plugins/generate-package-json */ \"./packages/sw-shared/build/webpack/plugins/generate-package-json.ts\");\n\nvar _package = __webpack_require__(/*! @root/helpers/package */ \"./helpers/package.ts\");\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nconst isDev = _serverlessWebpack.default.lib.webpack.isLocal; // @ts-ignore\n\nprocess.env.NODE_ENV = isDev ? 'development' : 'production';\nconst config = (0, _config.makeConfig)({\n  entries: _serverlessWebpack.default.lib.entries,\n  watchMode: false,\n  env: process.env.NODE_ENV,\n  libraryTarget: 'commonjs2',\n  output: _paths.default.scheduling.dist,\n  alias: {\n    '@scheduling': _paths.default.scheduling.src,\n    '@schema': _paths.default.schema.src,\n    '@core': _paths.default.core.src,\n    '@data': _paths.default.data.src,\n    '@shared': _paths.default.shared.src\n  },\n  optimizationOptions: {\n    minimize: false\n  }\n});\nconfig.plugins.push(new _generatePackageJson.GenerateDependencyPackages({\n  excludes: ['aws-sdk'],\n  includes: ['pg', 'source-map-support', 'rxjs', 'graphql'],\n  packageJson: (0, _package.mergePackageJson)({\n    rootDir: _paths.default.project.root\n  }),\n  outputPath: _path.default.resolve(_paths.default.scheduling.root, 'compile', 'package.json')\n}));\nmodule.exports = config;\n\n//# sourceURL=webpack:///./packages/sw-scheduling/webpack.config.ts?"
 				);
 
 				/***/
@@ -146,6 +173,20 @@ module.exports = /******/ (function(modules) {
 				'use strict';
 				eval(
 					'\n\nObject.defineProperty(exports, "__esModule", {\n  value: true\n});\nexports.target = target;\nexports.externals = externals;\nexports.none = none;\nexports.optimize = optimize;\nexports.watch = watch;\nexports.node = node;\nexports.setEntry = setEntry;\n\nfunction target(target) {\n  return (context, util) => util.merge({\n    target\n  });\n}\n\nfunction externals(externals) {\n  return (context, util) => util.merge({\n    externals\n  });\n}\n\nfunction none() {\n  return () => config => config;\n}\n\nfunction optimize(options) {\n  return (context, util) => util.merge({\n    optimization: options\n  });\n}\n\nfunction watch() {\n  return (context, util) => util.merge({\n    watch: true,\n    watchOptions: {\n      ignored: /node_modules/\n    }\n  });\n}\n\nfunction node() {\n  return (context, util) => util.merge({\n    node: {\n      __dirname: false,\n      __filename: false\n    }\n  });\n}\n\nfunction setEntry(entry) {\n  return (context, util) => util.merge({\n    entry\n  });\n}\n\n//# sourceURL=webpack:///./packages/sw-shared/build/webpack/plugins/core.ts?'
+				);
+
+				/***/
+			},
+
+		/***/ './packages/sw-shared/build/webpack/plugins/generate-package-json.ts':
+			/*!***************************************************************************!*\
+  !*** ./packages/sw-shared/build/webpack/plugins/generate-package-json.ts ***!
+  \***************************************************************************/
+			/*! no static exports found */
+			/***/ function(module, exports, __webpack_require__) {
+				'use strict';
+				eval(
+					"\n\nObject.defineProperty(exports, \"__esModule\", {\n  value: true\n});\nexports.GenerateDependencyPackages = exports.nodeBuiltInModules = void 0;\n\nvar _fs = _interopRequireDefault(__webpack_require__(/*! fs */ \"fs\"));\n\nvar _path = _interopRequireDefault(__webpack_require__(/*! path */ \"path\"));\n\nvar _lodash = __webpack_require__(/*! lodash */ \"lodash\");\n\nvar _fsExtra = _interopRequireDefault(__webpack_require__(/*! fs-extra */ \"fs-extra\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nconst nodeBuiltInModules = ['assert', 'async_hooks', 'buffer', 'child_process', 'cluster', 'console', 'constants', 'crypto', 'dgram', 'dns', 'domain', 'events', 'fs', 'http', 'http2', 'https', 'inspector', 'module', 'net', 'os', 'path', 'perf_hooks', 'process', 'punycode', 'querystring', 'readline', 'repl', 'stream', 'string_decoder', 'timers', 'tls', 'trace_events', 'tty', 'url', 'util', 'v8', 'vm', 'zlib'];\nexports.nodeBuiltInModules = nodeBuiltInModules;\n\nclass GenerateDependencyPackages {\n  constructor({\n    excludes = [],\n    includes = [],\n    packageJson = null,\n    packageJsonPath = '',\n    outputPath = ''\n  } = {}) {\n    this.excludes = void 0;\n    this.includes = void 0;\n    this.packageJson = void 0;\n    this.outputPath = void 0;\n    this.excludes = excludes.concat(nodeBuiltInModules);\n    this.includes = includes;\n    this.packageJson = packageJson || JSON.parse(_fs.default.readFileSync(packageJsonPath, {\n      encoding: 'utf-8'\n    }));\n    this.outputPath = outputPath;\n  }\n\n  apply(compiler) {\n    compiler.hooks.compilation.tap('GenerateDependencyPackagesPlugin', compilation => {\n      compilation.hooks.finishModules.tap('GenerateDependencyPackagesPlugin', modules => {\n        const dependentPackages = [];\n        modules.filter(module => module.type === 'javascript/auto').forEach(module => {\n          const dependencies = module.dependencies.filter(dependency => getConstructorName(dependency) === 'CommonJsRequireDependency' && dependency.module.external);\n          dependentPackages.push(...dependencies.map(dependency => dependency.request));\n        });\n        dependentPackages.push(...this.includes);\n        const allDependencyMap = (0, _lodash.merge)(this.packageJson.dependencies || {}, this.packageJson.devDependencies || {});\n        const allDependencies = Object.keys(allDependencyMap);\n        const generatedDependencyMap = (0, _lodash.uniq)(dependentPackages).reduce((currentDependencyMap, dependentPackage) => {\n          if (this.excludes.includes(dependentPackage)) {\n            return currentDependencyMap;\n          }\n\n          if (dependentPackage.startsWith('sportywide')) {\n            return currentDependencyMap;\n          }\n\n          const foundDependency = allDependencies.find(dependency => dependentPackage === dependency || dependentPackage.startsWith(`${dependency}/`));\n\n          if (!foundDependency) {\n            console.info(`Cannot find version for ${dependentPackage}`);\n            return { ...currentDependencyMap,\n              [dependentPackage]: 'latest'\n            };\n          }\n\n          return { ...currentDependencyMap,\n            [foundDependency]: allDependencyMap[foundDependency]\n          };\n        }, {});\n        const newPackageJson = {\n          name: 'generated-package',\n          dependencies: generatedDependencyMap\n        };\n        const packageJsonString = JSON.stringify(newPackageJson, null, 4);\n\n        _fsExtra.default.mkdirpSync(_path.default.dirname(this.outputPath));\n\n        _fs.default.writeFileSync(this.outputPath, packageJsonString, {\n          encoding: 'utf-8'\n        });\n      });\n    });\n  }\n\n}\n\nexports.GenerateDependencyPackages = GenerateDependencyPackages;\n\nfunction getConstructorName(obj) {\n  return Object.getPrototypeOf(obj).constructor.name;\n}\n\n//# sourceURL=webpack:///./packages/sw-shared/build/webpack/plugins/generate-package-json.ts?"
 				);
 
 				/***/
@@ -223,6 +264,39 @@ module.exports = /******/ (function(modules) {
 			/*! no static exports found */
 			/***/ function(module, exports) {
 				eval('module.exports = require("fs");\n\n//# sourceURL=webpack:///external_%22fs%22?');
+
+				/***/
+			},
+
+		/***/ 'fs-extra':
+			/*!***************************!*\
+  !*** external "fs-extra" ***!
+  \***************************/
+			/*! no static exports found */
+			/***/ function(module, exports) {
+				eval('module.exports = require("fs-extra");\n\n//# sourceURL=webpack:///external_%22fs-extra%22?');
+
+				/***/
+			},
+
+		/***/ glob:
+			/*!***********************!*\
+  !*** external "glob" ***!
+  \***********************/
+			/*! no static exports found */
+			/***/ function(module, exports) {
+				eval('module.exports = require("glob");\n\n//# sourceURL=webpack:///external_%22glob%22?');
+
+				/***/
+			},
+
+		/***/ lodash:
+			/*!*************************!*\
+  !*** external "lodash" ***!
+  \*************************/
+			/*! no static exports found */
+			/***/ function(module, exports) {
+				eval('module.exports = require("lodash");\n\n//# sourceURL=webpack:///external_%22lodash%22?');
 
 				/***/
 			},
