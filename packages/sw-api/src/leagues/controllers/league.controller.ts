@@ -30,9 +30,6 @@ export class LeagueController {
 		return toDto({
 			value: await this.leagueService.findLeagueStanding(leagueId, getSeason(new Date())),
 			dtoType: LeagueStandingsDto,
-			options: {
-				excludeExtraneousValues: false,
-			},
 		});
 	}
 

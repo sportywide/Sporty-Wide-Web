@@ -17,7 +17,7 @@ export class FixtureService {
 				map(({ data: payload }) =>
 					payload.map(league =>
 						plainToClass(FixtureDto, league, {
-							excludeExtraneousValues: false,
+							useProperties: true,
 						})
 					)
 				)
@@ -32,7 +32,7 @@ export class FixtureService {
 				map(({ data: payload }) =>
 					payload.map(league =>
 						plainToClass(FixtureDto, league, {
-							excludeExtraneousValues: false,
+							useProperties: true,
 						})
 					)
 				)

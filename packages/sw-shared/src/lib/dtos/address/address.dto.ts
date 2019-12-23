@@ -10,7 +10,6 @@ import { Field, Int, ObjectType } from '@shared/lib/utils/api/graphql';
 export class AddressDto {
 	@ApiModelProperty()
 	@Field(() => Int)
-	@Expose()
 	id?: number;
 
 	@ApiModelProperty()
