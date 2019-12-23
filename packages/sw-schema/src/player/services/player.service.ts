@@ -277,7 +277,7 @@ export class PlayerService extends BaseEntityService<Player> {
 		);
 	}
 
-	getPlayersByTeam(teamId) {
+	getPlayersByTeam(teamId: number) {
 		return this.playerRepository.find({
 			where: {
 				teamId,

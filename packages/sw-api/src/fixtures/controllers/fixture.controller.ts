@@ -1,8 +1,8 @@
-import { Controller, Get, Param, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { ActiveUser } from '@api/auth/decorators/user-check.decorator';
 import { toDto } from '@api/utils/dto/transform';
-import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
+import { FixtureDetailsDto, FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
 import { FixtureService } from '@schema/fixture/services/fixture.service';
 
 @Controller('/fixtures')
@@ -36,6 +36,19 @@ export class FixtureController {
 		return toDto({
 			value: fixtures,
 			dtoType: FixtureDto,
+			options: {
+				excludeExtraneousValues: false,
+			},
+		});
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@ActiveUser()
+	@Get('/:id')
+	public async getFixture(@Param('id', new ParseIntPipe()) fixtureId: number): Promise<FixtureDetailsDto> {
+		const fixture = await this.fixtureService.getFixtureDetails(fixtureId);
+		return toDto({
+			value: fixture,
 			options: {
 				excludeExtraneousValues: false,
 			},

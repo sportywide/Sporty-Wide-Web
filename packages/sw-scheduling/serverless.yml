@@ -1,8 +1,5 @@
 service: sw
 
-package:
-    individually: true
-
 provider:
     name: aws
     region: ap-southeast-2
@@ -20,10 +17,17 @@ provider:
         SW_POSTGRES_PASSWORD: ${file(./secret.${self:provider.stage}.yml):rdsPassword}
         SW_MONGO_USER: ${file(./secret.${self:provider.stage}.yml):mongoUser}
         SW_MONGO_PASSWORD: ${file(./secret.${self:provider.stage}.yml):mongoPassword}
+        SW_LOGZ_TOKEN: ${file(./secret.${self:provider.stage}.yml):logzToken}
         SW_POSTGRES_DB: sportywide
         SW_MONGO_DB: sportywide
         SW_PUPPETEER_EXECUTABLE: ${file(./secret.${self:provider.stage}.yml):puppeteerExecutable}
         IS_LAMBDA: 1
+
+package:
+    individually: true
+    exclude:
+        - node_modules/**
+    excludeDevDependencies: true
 
 plugins:
     - serverless-webpack
@@ -33,11 +37,18 @@ plugins:
     - serverless-offline
     - serverless-s3-local
     - serverless-iam-roles-per-function
+    - serverless-lambda-layers
 
 custom:
     serverless-offline:
         port: 4000
         host: 0.0.0.0
+    serverless-lambda-layers:
+        packageManager: npm
+        packagePath: compile/package.json
+        packageLockPath: ../../package-lock.json
+        compatibleRuntimes: ['nodejs10.x']
+        layersDeploymentBucket: sportywide-deployment
     dynamodb:
         stages:
             - development
@@ -49,11 +60,7 @@ custom:
     aws:
         accountId: 409050499179
     webpack:
-        includeModules:
-            packagePath: '../../package.json'
-            forceInclude:
-                - source-map-support
-                - pg
+        includeModules: false
     serverless-offline-message-queue:
         autoCreate: true
         apiVersion: '2012-11-05'

@@ -19,6 +19,6 @@ import { PlayerRatingSchema } from '@schema/player/models/player-rating.schema';
 		MongooseModule.forFeature([{ name: 'PlayerRating', schema: PlayerRatingSchema }]),
 	],
 	providers: [PlayerService],
-	exports: [SwRepositoryModule, PlayerService],
+	exports: [SwRepositoryModule, PlayerService, MongooseModule],
 })
 export class SchemaPlayerModule {}

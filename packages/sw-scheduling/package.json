@@ -8,7 +8,7 @@
 	},
 	"license": "ISC",
 	"scripts": {
-		"deploy": "ts-node -r tsconfig-paths/register -T deploy.ts",
+		"deploy": "sls deploy --stage production",
 		"start": "sls offline start --useSeparateProcesses"
 	},
 	"dependencies": {
@@ -23,6 +23,7 @@
 		"serverless": "1.56.1",
 		"serverless-dynamodb-local": "0.2.38",
 		"serverless-iam-roles-per-function": "2.0.2",
+		"serverless-lambda-layers": "1.4.6",
 		"serverless-offline": "5.12.0",
 		"serverless-offline-message-queue": "3.0.7",
 		"serverless-offline-sns": "0.65.0",

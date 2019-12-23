@@ -1,4 +1,6 @@
 import { Type } from 'class-transformer-imp';
+import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
+import { PlayerRatingDto } from '@shared/lib/dtos/player/player-rating.dto';
 
 export class FixtureDto {
 	id: number;
@@ -15,6 +17,20 @@ export class FixtureDto {
 	current: number;
 	@Type(() => Date)
 	time: Date;
+}
+
+export class FixtureDetailsDto {
+	fixture: FixtureDto;
+	ratings: {
+		home: {
+			ratings: PlayerRatingDto;
+			player: PlayerDto;
+		}[];
+		away: {
+			ratings: PlayerRatingDto;
+			player: PlayerDto;
+		}[];
+	};
 }
 
 export class WhoscoreFixture {
