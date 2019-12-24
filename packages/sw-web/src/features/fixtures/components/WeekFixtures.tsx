@@ -5,6 +5,7 @@ import { Loader } from 'semantic-ui-react';
 import { groupBy, sortBy } from 'lodash';
 import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
 import { format, startOfDay } from 'date-fns';
+import { redirect } from '@web/shared/lib/navigation/helper';
 import * as S from './WeekFixtures.styled';
 
 interface IProps {
@@ -40,8 +41,12 @@ const SwWeekFixturesComponent: React.FC<IProps> = ({ leagueId }) => {
 							{sortBy(fixtures, 'time').map(fixture => (
 								<S.FixtureLine
 									key={fixture.id}
-									onClick={() => {
-										window.open(fixture.link, 'blank');
+									onClick={async () => {
+										await redirect({
+											refresh: false,
+											route: 'fixture-details',
+											params: { id: fixture.id },
+										});
 									}}
 								>
 									<S.FixtureTime>{format(new Date(fixture.time), 'hh:mm')}</S.FixtureTime>
