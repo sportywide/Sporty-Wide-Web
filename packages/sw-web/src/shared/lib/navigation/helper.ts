@@ -28,11 +28,10 @@ export async function redirect({
 				window.location.href = redirectUrl;
 			}
 		} else {
-			const path = findPathForRoute(route);
 			if (replace) {
-				return Router.replaceRoute(path, params);
+				return Router.replaceRoute(route, params);
 			} else {
-				return Router.pushRoute(path, params);
+				return Router.pushRoute(route, params);
 			}
 		}
 	}

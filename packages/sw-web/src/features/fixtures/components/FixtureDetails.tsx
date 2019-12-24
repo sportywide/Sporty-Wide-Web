@@ -2,10 +2,9 @@ import React from 'react';
 import { FixtureDetailsDto, FixtureDto, FixturePlayerRatingDto } from '@shared/lib/dtos/fixture/fixture.dto';
 import { formatRelative } from 'date-fns';
 import { fifaFlag, fifaImage } from '@web/shared/lib/images/links';
-import { Divider, Header, Table, Image, Popup } from 'semantic-ui-react';
+import { Divider, Header, Image, Popup, Table } from 'semantic-ui-react';
 import { IconName, SwIcon } from '@web/shared/lib/icon';
 import { TeamDto } from '@shared/lib/dtos/team/team.dto';
-import { SwTeamLogo } from '@web/features/lineup/components/players/PlayerItem.styled';
 import * as S from './FixtureDetails.styled';
 
 interface IProps {
@@ -46,7 +45,7 @@ function fixtureHeader(fixtureDetails: FixtureDetailsDto) {
 				</div>
 			</div>
 			<Divider />
-			{fixture.incidents && fixture.incidents.length && (
+			{!!(fixture.incidents && fixture.incidents.length) && (
 				<>
 					<div className={'sw-flex sw-flex-justify sw-relative'}>
 						<div>{renderIncidents(fixture.incidents.filter(incident => incident.home))}</div>
