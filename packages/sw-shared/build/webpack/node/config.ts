@@ -46,9 +46,13 @@ export function makeConfig({
 	// @ts-ignore
 	process.env.NODE_ENV = environment;
 
-	envFile = envFile
-		? path.resolve(paths.project.root, 'packages', packageName, envFile)
-		: path.resolve(paths.project.root, 'packages', packageName, '.env');
+	if (envFile) {
+		if (!path.isAbsolute(envFile)) {
+			envFile = path.resolve(paths.project.root, 'packages', packageName, envFile);
+		}
+	} else {
+		envFile = path.resolve(paths.project.root, 'packages', packageName, '.env');
+	}
 
 	return createConfig([
 		setOutput(output),

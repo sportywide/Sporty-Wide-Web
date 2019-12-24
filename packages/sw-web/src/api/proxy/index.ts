@@ -13,6 +13,7 @@ import {
 	UNAUTHORIZED,
 } from '@web/shared/lib/http/status-codes';
 import { getHeaders, setAuthCookies } from '@web/shared/lib/auth/helper';
+import { isDevelopment } from '@shared/lib/utils/env';
 
 const config = getConfig();
 
@@ -75,7 +76,10 @@ export const devProxy = {
 };
 
 function setRefererHeader(proxyReq, req: Request) {
-	const referer = req.get('host');
+	let referer = req.get('host');
+	if (isDevelopment()) {
+		referer = req.get('x-forwarded-host');
+	}
 	proxyReq.setHeader('Referer', `https://${referer}`);
 }
 

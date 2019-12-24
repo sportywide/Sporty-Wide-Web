@@ -39,6 +39,7 @@ export class FixtureService extends BaseEntityService<Fixture> {
 	async getFixtureDetails(fixtureId: any) {
 		const fixture = await this.findById({
 			id: fixtureId,
+			relations: ['league', 'homeTeam', 'awayTeam'],
 		});
 
 		if (!fixture) {

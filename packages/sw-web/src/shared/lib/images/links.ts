@@ -7,3 +7,7 @@ export function gravatar(email) {
 export function fifaImage(image) {
 	return `https://www.fifaindex.com${image}`;
 }
+
+export function fifaFlag(id) {
+	return `https://www.fifaindex.com/static/FIFA20/images/flags/2/${id}.png`;
+}

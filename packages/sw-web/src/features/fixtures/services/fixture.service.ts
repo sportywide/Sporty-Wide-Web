@@ -3,7 +3,7 @@ import { Observable } from 'rxjs';
 import { ApiService } from '@web/shared/lib/http/api.service';
 import { map } from 'rxjs/operators';
 import { plainToClass } from 'class-transformer-imp';
-import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
+import { FixtureDetailsDto, FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
 
 @Service()
 export class FixtureService {
@@ -24,17 +24,15 @@ export class FixtureService {
 			);
 	}
 
-	fetchFixtureDetails(fixtureId: number): Observable<FixtureDto> {
+	fetchFixtureDetails(fixtureId: number): Observable<FixtureDetailsDto> {
 		return this.apiService
 			.api()
 			.get(`/fixtures/${fixtureId}`)
 			.pipe(
-				map(({ data: payload }) =>
-					payload.map(league =>
-						plainToClass(FixtureDto, league, {
-							useProperties: true,
-						})
-					)
+				map(({ data: fixture }) =>
+					plainToClass(FixtureDetailsDto, fixture, {
+						useProperties: true,
+					})
 				)
 			);
 	}

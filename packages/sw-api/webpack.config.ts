@@ -1,8 +1,8 @@
 import path from 'path';
 import { makeConfig } from '@build/webpack/node/config';
 import paths from '@build/paths';
-import { isProduction } from '@shared/lib/utils/env';
 const argv = require('yargs').argv;
+const findup = require('find-up');
 
 const config = makeConfig({
 	env: argv.env,
@@ -18,7 +18,7 @@ const config = makeConfig({
 	optimizationOptions: {
 		minimize: false,
 	},
-	envFile: argv.env !== 'production' ? '.env.dev' : '.env',
+	envFile: argv.env !== 'production' ? findup.sync('.env') : '.env',
 });
 
 module.exports = config;
