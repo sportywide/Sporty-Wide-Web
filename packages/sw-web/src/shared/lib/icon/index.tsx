@@ -12,13 +12,15 @@ const componentMap = {
 	'soccer-ball': SoccerBall,
 };
 
+export type IconName = keyof typeof componentMap;
+
 export function SwIcon({
 	size,
 	name,
 	...rest
 }: {
 	size?: IconSize;
-	name: keyof typeof componentMap;
+	name: IconName;
 	width?: number;
 	height?: number;
 	className?: string;

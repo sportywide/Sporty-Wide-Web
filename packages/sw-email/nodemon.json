@@ -2,5 +2,5 @@
 	"ignore": ["src", "node_modules"],
 	"watch": ["./dist"],
 	"delay": 1,
-	"exec": "node dist/main.js"
+	"exec": "cd dist && node main.js"
 }

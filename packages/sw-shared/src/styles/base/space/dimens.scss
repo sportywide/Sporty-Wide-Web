@@ -1,3 +1,18 @@
 .sw-full-width {
 	width: 100%;
 }
+
+.sw-overflow-x {
+	max-width: 100%;
+	overflow-x: hidden;
+
+	&:hover {
+		overflow-x: auto;
+	}
+}
+
+@each $dimen in (100 200) {
+	.sw-min-width-#{$dimen} {
+		min-width: #{$dimen}px;
+	}
+}

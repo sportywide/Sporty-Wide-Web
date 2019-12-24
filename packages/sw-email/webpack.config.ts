@@ -4,6 +4,7 @@ import { makeConfig as makeStyleConfig } from '@build/webpack/styles/config';
 import paths from '@build/paths';
 import glob from 'glob';
 const argv = require('yargs').argv;
+const findup = require('find-up');
 
 const nodeConfig = makeNodeConfig({
 	entries: path.resolve(paths.email.src, 'main'),
@@ -19,7 +20,7 @@ const nodeConfig = makeNodeConfig({
 	optimizationOptions: {
 		minimize: false,
 	},
-	envFile: argv.env !== 'production' ? '.env.dev' : '.env',
+	envFile: argv.env !== 'production' ? findup.sync('.env') : '.env',
 });
 const styleConfig = makeStyleConfig({
 	env: argv.env,

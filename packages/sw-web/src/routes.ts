@@ -56,6 +56,11 @@ const routeMappings = [
 		pattern: '/user-leagues',
 		page: 'league/user-leagues',
 	},
+	{
+		name: 'fixture-details',
+		pattern: '/fixture/:id',
+		page: 'fixture/details',
+	},
 ];
 
 let routes = new Routes();
