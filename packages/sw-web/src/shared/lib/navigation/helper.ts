@@ -37,3 +37,11 @@ export async function redirect({
 		}
 	}
 }
+
+export function to404() {
+	return redirect({
+		refresh: true,
+		replace: true,
+		route: '/404',
+	});
+}

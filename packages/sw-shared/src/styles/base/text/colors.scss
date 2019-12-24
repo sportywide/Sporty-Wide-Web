@@ -13,6 +13,7 @@ $colors: (
 	),
 	'grey': (
 		base: #ccc,
+		dark: #777,
 	),
 	'green': (
 		base: green,
@@ -27,4 +28,8 @@ $colors: (
 
 .sw-bg {
 	@include map-modifiers($colors, 'background-color', '--');
+}
+
+.sw-text {
+	@include map-modifiers($colors, 'color', '--');
 }

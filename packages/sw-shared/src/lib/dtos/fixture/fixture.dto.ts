@@ -1,6 +1,8 @@
 import { Type } from 'class-transformer-imp';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { PlayerRatingDto } from '@shared/lib/dtos/player/player-rating.dto';
+import { LeagueDto } from '@shared/lib/dtos/leagues/league.dto';
+import { TeamDto } from '@shared/lib/dtos/team/team.dto';
 
 export class FixtureDto {
 	id: number;
@@ -10,6 +12,9 @@ export class FixtureDto {
 	homeId: number;
 	awayId: number;
 	leagueId: number;
+	incidents: any[];
+	@Type(() => LeagueDto)
+	league: LeagueDto;
 	homeScore: number;
 	awayScore: number;
 	link: string;
@@ -17,20 +22,34 @@ export class FixtureDto {
 	current: number;
 	@Type(() => Date)
 	time: Date;
+	@Type(() => TeamDto)
+	homeTeam: TeamDto;
+	@Type(() => TeamDto)
+	awayTeam: TeamDto;
+}
+
+export class FixturePlayerRatingDto {
+	@Type(() => PlayerRatingDto)
+	rating: PlayerRatingDto;
+
+	@Type(() => PlayerDto)
+	player: PlayerDto;
+}
+
+export class FixtureRatingsDto {
+	@Type(() => FixturePlayerRatingDto)
+	home: FixturePlayerRatingDto[];
+
+	@Type(() => FixturePlayerRatingDto)
+	away: FixturePlayerRatingDto[];
 }
 
 export class FixtureDetailsDto {
+	@Type(() => FixtureDto)
 	fixture: FixtureDto;
-	ratings: {
-		home: {
-			ratings: PlayerRatingDto;
-			player: PlayerDto;
-		}[];
-		away: {
-			ratings: PlayerRatingDto;
-			player: PlayerDto;
-		}[];
-	};
+
+	@Type(() => FixtureRatingsDto)
+	ratings: FixtureRatingsDto;
 }
 
 export class WhoscoreFixture {
