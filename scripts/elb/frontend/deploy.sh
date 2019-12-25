@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 WEB_VERSION=$(./get-version sw-web)
-cd ./elb/frontend || exit 1
+cd ./scripts/elb/frontend || exit 1
 START=$(date +%s)
 VERSION=$(date +%s)
 ZIP=$VERSION.zip
