@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 EMAIL_VERSION=$(./get-version sw-email)
 API_VERSION=$(./get-version sw-api)
-cd ./elb/backend || exit 1
+cd ./scripts/elb/backend || exit 1
 START=$(date +%s)
 VERSION=$(date +%s)
 ZIP=$VERSION.zip
