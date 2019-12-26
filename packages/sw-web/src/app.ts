@@ -1,5 +1,5 @@
 import express from 'express';
-import { isProduction } from '@shared/lib/utils/env';
+import { isDevelopment, isProduction } from '@shared/lib/utils/env';
 import { authRouter } from '@web/api/auth/routes';
 import { devProxy } from '@web/api/proxy';
 import routes from '@web/routes';
@@ -8,6 +8,10 @@ import csurf from 'csurf';
 import flash from 'express-cookie-flash';
 import { getConfig } from '@web/config.provider';
 import { COOKIE_CSRF } from '@web/api/auth/constants';
+import log4js from 'log4js';
+import { logzAppender } from '@shared/lib/utils/logging/logz';
+import { colorPatternLayout, defaultPatternLayout } from '@shared/lib/utils/logging/layout';
+import { log4jsFactory } from '@web/shared/lib/logginng';
 
 const config = getConfig();
 
@@ -29,6 +33,12 @@ export function bootstrap(app) {
 			whitelist: req => {
 				return CSRF_WHITE_LIST.some(whiteListPath => req.path && req.path.endsWith(whiteListPath));
 			},
+		})
+	);
+	server.use(
+		log4jsFactory.connectLogger(log4jsFactory.getLogger('http'), {
+			level: 'INFO',
+			nolog: '\\.js|\\.css|\\.png',
 		})
 	);
 	server.get('/healthcheck', (req, res) => res.send('OK'));

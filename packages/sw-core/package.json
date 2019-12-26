@@ -5,8 +5,6 @@
 	"license": "ISC",
 	"dependencies": {
 		"bull": "3.10.0",
-		"log4js": "5.0.0",
-		"logzio-nodejs": "1.0.7",
 		"nest-bull": "0.8.3",
 		"pug": "2.0.4",
 		"redis": "2.8.0",
