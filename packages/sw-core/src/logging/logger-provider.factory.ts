@@ -1,29 +1,10 @@
-import os from 'os';
 import { Inject, Injectable } from '@nestjs/common';
 import { Provider } from 'nconf';
 import { mergeConcatArray } from '@shared/lib/utils/object/merge';
 import log4j, { Configuration } from 'log4js';
 import { CORE_CONFIG } from '@core/config/config.constants';
-import logz from 'logzio-nodejs';
-
-function filenameToken(logEvent) {
-	return logEvent.fileName ? logEvent.fileName.replace(__dirname, '').replace(/^\/webpack:/, '') : '';
-}
-
-const colorPatternLayout = {
-	type: 'pattern',
-	pattern: '%[ %d %p %c %] %h (%x{file}:%l) %m%n',
-	tokens: {
-		file: filenameToken,
-	},
-};
-const defaultPatternLayout = {
-	type: 'pattern',
-	pattern: '%d %p %c  %h (%x{file}:%l) %m%n',
-	tokens: {
-		file: filenameToken,
-	},
-};
+import { logzAppender } from '@shared/lib/utils/logging/logz';
+import { colorPatternLayout, defaultPatternLayout } from '@shared/lib/utils/logging/layout';
 
 @Injectable()
 export class LoggerProviderFactory {
@@ -96,35 +77,10 @@ export class LoggerProviderFactory {
 	}
 
 	private buildLogzConfig(log4jsConfig: Configuration, coreConfig) {
-		const logzAppender = {
-			configure(config, layouts) {
-				const logger = logz.createLogger({
-					token: coreConfig.get('logging:logz:token'),
-					host: 'listener.logz.io',
-					type: 'nodejs',
-				});
-				let layout = layouts.messagePassThrough;
-				if (config.layout) {
-					// load the layout
-					layout = layouts.layout(config.layout.type, config.layout);
-				}
-
-				return loggingEvent => {
-					const message = layout(loggingEvent);
-					logger.log({
-						message,
-						level: loggingEvent.level.levelStr,
-						category: loggingEvent.categoryName,
-						hostname: os.hostname().toString(),
-						env: process.env.NODE_ENV,
-					});
-				};
-			},
-		};
 		log4jsConfig = mergeConcatArray(log4jsConfig, {
 			appenders: {
 				logz: {
-					type: logzAppender,
+					type: logzAppender(coreConfig.get('logging:logz:token')),
 					layout: defaultPatternLayout,
 				},
 			},
