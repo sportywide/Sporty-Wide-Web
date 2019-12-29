@@ -1,4 +1,4 @@
-require('@shared/lib/utils/env/dotenv').config();
+require('@shared/lib/utils/env/dotenv').default.config();
 /* eslint-disable */
 export const config = {
 	default: {
@@ -8,14 +8,14 @@ export const config = {
 		cookie_secret: 'testsecret',
 		server_url: 'http://192.168.50.1:5000',
 		logging: {
-			info: 'DEBUG',
+			level: 'DEBUG',
 		},
 	},
 	production: {
 		cookie_secret: process.env.SW_COOKIE_SECRET,
 		server_url: 'https://api.sportywide.com',
 		logging: {
-			info: 'INFO',
+			level: 'INFO',
 			logz: {
 				token: process.env.SW_LOGZ_TOKEN,
 			},

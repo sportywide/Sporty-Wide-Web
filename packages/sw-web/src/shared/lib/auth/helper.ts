@@ -21,11 +21,13 @@ export function getHeaders(req) {
 	const jwtSignature = req.cookies[COOKIE_JWT_SIGNATURE];
 	const refreshToken = req.cookies[COOKIE_REFRESH_TOKEN];
 	const csrfToken = req.cookies[COOKIE_CSRF];
+	const csrfSecret = req.cookies['_csrf'];
 
 	return {
 		'Refresh-Token': refreshToken,
 		Authorization: `Bearer ${jwtPayload}.${jwtSignature}`,
 		'XSRF-TOKEN': csrfToken,
+		...(csrfSecret && { Cookie: `_csrf=${csrfSecret}` }),
 	};
 }
 export function parseCookies(cookies = {}) {

@@ -59,7 +59,7 @@ class SwHomePage extends React.Component<IProps, any> {
 				<h1>Index Page</h1>
 				<CharacterInfo />
 				<GraphQlTest />
-				<Button onClick={() => redirect({ route: 'other', replace: true })}>Go to other</Button>
+				<Button onClick={() => redirect({ route: '/other', replace: true })}>Go to other</Button>
 				<Segment>
 					<Flag name="ae" />
 					<Flag name="france" />

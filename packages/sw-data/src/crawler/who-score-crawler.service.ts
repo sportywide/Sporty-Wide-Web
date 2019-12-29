@@ -313,7 +313,7 @@ export class WhoScoreCrawlerService extends ResultsService {
 		let homeScore = 0,
 			awayScore = 0;
 		if (status !== 'PENDING') {
-			[homeScore, awayScore] = result.split(':').map(score => parseInt(score, 10));
+			[homeScore, awayScore] = result.split(':').map(score => parseInt(score.trim(), 10));
 		}
 		const matchDate = new Date(date);
 		matchDate.setHours(hour);

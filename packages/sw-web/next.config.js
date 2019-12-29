@@ -64,6 +64,18 @@ const nextConfig = {
 			},
 		});
 
+		webpackConfig.plugins.push(
+			new webpack.DefinePlugin({
+				'process.env.IS_SERVER': JSON.stringify(isServer),
+			})
+		);
+
+		webpackConfig.plugins.push(
+			new webpack.NormalModuleReplacementPlugin(/(.*)@web\/shared\/lib\/logging/, function(resource) {
+				resource.request = resource.request + (isServer ? '/server' : '/client');
+			})
+		);
+
 		webpackConfig.output.pathinfo = false;
 
 		const originalEntry = webpackConfig.entry;

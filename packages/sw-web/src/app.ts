@@ -1,5 +1,5 @@
-import express from 'express';
-import { isDevelopment, isProduction } from '@shared/lib/utils/env';
+import express, { NextFunction, Request, Response } from 'express';
+import { isProduction } from '@shared/lib/utils/env';
 import { authRouter } from '@web/api/auth/routes';
 import { devProxy } from '@web/api/proxy';
 import routes from '@web/routes';
@@ -8,10 +8,8 @@ import csurf from 'csurf';
 import flash from 'express-cookie-flash';
 import { getConfig } from '@web/config.provider';
 import { COOKIE_CSRF } from '@web/api/auth/constants';
-import log4js from 'log4js';
-import { logzAppender } from '@shared/lib/utils/logging/logz';
-import { colorPatternLayout, defaultPatternLayout } from '@shared/lib/utils/logging/layout';
-import { log4jsFactory } from '@web/shared/lib/logginng';
+import { log4jsFactory, logger } from '@web/shared/lib/logging';
+import { networkLogOptions } from '@shared/lib/utils/logging/layout';
 
 const config = getConfig();
 
@@ -19,6 +17,7 @@ const CSRF_WHITE_LIST = ['login', 'signup', 'refresh-token'];
 
 export function bootstrap(app) {
 	const server = express();
+	server.enable('trust proxy');
 	server.use(cookieParser(config.get('cookie_secret')));
 	server.use(
 		flash({
@@ -35,12 +34,8 @@ export function bootstrap(app) {
 			},
 		})
 	);
-	server.use(
-		log4jsFactory.connectLogger(log4jsFactory.getLogger('http'), {
-			level: 'INFO',
-			nolog: '\\.js|\\.css|\\.png',
-		})
-	);
+
+	server.use(log4jsFactory.connectLogger(log4jsFactory.getLogger('web-http'), networkLogOptions));
 	server.get('/healthcheck', (req, res) => res.send('OK'));
 	server.use('/auth', authRouter);
 	setupProxy(devProxy);
@@ -55,9 +50,16 @@ export function bootstrap(app) {
 		});
 		next();
 	});
-	const handler = routes.getRequestHandler(app);
+	const handler: any = routes.getRequestHandler(app);
 	// Default catch-all handler to allow Next.js to handle all other routes
-	server.use(handler);
+	server.use((req, res, next) => {
+		handler(req, res, next).catch(e => next(e));
+	});
+
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
+	server.use((err: Error, req: Request, res: Response, next: NextFunction) => {
+		logger.error(`Error handling request ${req.url}`, err);
+	});
 
 	function setupProxy(proxy) {
 		// Set up the proxy.

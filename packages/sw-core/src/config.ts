@@ -1,4 +1,4 @@
-require('@shared/lib/utils/env/dotenv').config();
+require('@shared/lib/utils/env/dotenv').default.config();
 /* eslint-disable */
 export const config = {
 	default: {

@@ -28,7 +28,7 @@ export class LoggerProviderFactory {
 					// @ts-ignore
 					enableCallStack: true,
 				},
-				http: {
+				'api-http': {
 					appenders: [],
 					level: defaultLevel,
 					// @ts-ignore
@@ -68,7 +68,7 @@ export class LoggerProviderFactory {
 				default: {
 					appenders: ['console'],
 				},
-				http: {
+				'api-http': {
 					appenders: [],
 				},
 			},
@@ -88,7 +88,7 @@ export class LoggerProviderFactory {
 				default: {
 					appenders: ['logz'],
 				},
-				http: {
+				'api-http': {
 					appenders: ['logz'],
 				},
 			},
@@ -110,7 +110,7 @@ export class LoggerProviderFactory {
 					type: 'dateFile',
 					filename: `${logPath}/access.log`,
 					pattern: '-yyyy-MM-dd',
-					category: 'http',
+					category: 'api-http',
 					layout: defaultPatternLayout,
 				},
 				app: {
@@ -136,7 +136,7 @@ export class LoggerProviderFactory {
 				default: {
 					appenders: ['app', 'errors'],
 				},
-				http: {
+				'api-http': {
 					appenders: ['access'],
 				},
 			},
