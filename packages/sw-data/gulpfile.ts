@@ -23,6 +23,6 @@ export class Gulpfile extends GenericWebpackTasks {
 
 	@SequenceTask('exec')
 	exec() {
-		return spawn(`cd dist && node ${argv.entry}`);
+		return spawn(`cd dist && TZ='UTC' node ${argv.entry}`);
 	}
 }

@@ -33,11 +33,13 @@ module "elastic_beanstalk_environment_frontend" {
   ssh_listener_enabled = true
   application_port = 80
   keypair = "sw-ec2-key"
+  enable_stream_logs = true
 
   solution_stack_name = "64bit Amazon Linux 2018.03 v2.14.0 running Docker 18.09.9-ce"
 
   env_vars = {
-    SW_COOKIE_SECRET: var.env_vars.cookie_secret
+    SW_COOKIE_SECRET: var.env_vars.cookie_secret,
+ 	SW_LOGZ_TOKEN: var.env_vars.logz_token
   }
 }
 
@@ -69,6 +71,7 @@ module "elastic_beanstalk_environment_backend" {
   ssh_listener_enabled = true
   application_port = 80
   keypair = "sw-ec2-key"
+  enable_stream_logs = true
 
   solution_stack_name = "64bit Amazon Linux 2018.03 v2.18.0 running Multi-container Docker 18.09.9-ce (Generic)"
 

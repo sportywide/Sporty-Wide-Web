@@ -1,5 +1,8 @@
+import { networkLogOptions } from '@shared/lib/utils/logging/layout';
+
 process.env.TZ = 'UTC';
 import { NestFactory } from '@nestjs/core';
+import { ExpressAdapter } from '@nestjs/platform-express';
 import cors from 'cors';
 import helmet from 'helmet';
 import cookieParser from 'cookie-parser';
@@ -7,11 +10,15 @@ import { LOG4J_PROVIDER } from '@core/logging/logging.constant';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { API_CONFIG } from '@core/config/config.constants';
 import passport from 'passport';
+import express from 'express';
 import { AppModule } from './app.module';
+
 declare const module: any;
 
 async function bootstrap() {
-	const app = await NestFactory.create(AppModule);
+	const server = express();
+	server.enable('trust proxy');
+	const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
 	app.use(helmet());
 	app.use(cookieParser());
 	app.use(passport.initialize());
@@ -22,12 +29,7 @@ async function bootstrap() {
 		next();
 	});
 	const log4js = app.get(LOG4J_PROVIDER);
-	app.use(
-		log4js.connectLogger(log4js.getLogger('http'), {
-			level: 'INFO',
-			nolog: '\\.js|\\.css|\\.png',
-		})
-	);
+	app.use(log4js.connectLogger(log4js.getLogger('api-http'), networkLogOptions));
 
 	const options = new DocumentBuilder()
 		.setTitle('SportyWide API')

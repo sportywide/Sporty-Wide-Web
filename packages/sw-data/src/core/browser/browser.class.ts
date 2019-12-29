@@ -4,6 +4,7 @@ import puppeteer, { Browser, Page, LaunchOptions, ClickOptions } from 'puppeteer
 import { Logger } from 'log4js';
 const MAX_ATTEMPTS = 3;
 import { Provider } from 'nconf';
+import { isDevelopment } from '@shared/lib/utils/env';
 
 export type SwBrowser = SwBrowserWrapper & Browser;
 
@@ -27,7 +28,7 @@ export class SwBrowserWrapper {
 			delete options.proxyServer;
 		}
 		let browser;
-		if (process.env.IS_LAMBDA) {
+		if (process.env.IS_LAMBDA && !isDevelopment()) {
 			const chromium = require('chrome-aws-lambda');
 			browser = await chromium.puppeteer.launch({
 				args: [...chromium.args, proxyServer ? `--proxy-server=${proxyServer}` : null].filter(arg => arg),

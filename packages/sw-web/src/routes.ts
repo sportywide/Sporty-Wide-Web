@@ -1,4 +1,4 @@
-import Routes from 'next-routes';
+import Routes from 'next-routes-handler';
 
 const routeMappings = [
 	{

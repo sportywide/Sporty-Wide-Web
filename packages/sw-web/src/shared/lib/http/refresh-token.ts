@@ -1,6 +1,7 @@
 import path from 'path';
 import { Axios } from 'axios-observable';
 import { UNAUTHENTICATED, UNAUTHORIZED } from '@web/shared/lib/http/status-codes';
+import { logger } from '@web/shared/lib/logging';
 
 export function createRefreshTokenInterceptor(axios: Axios, refreshTokenCall, onRefreshTokenFailed) {
 	const statusCodes = [UNAUTHENTICATED];
@@ -57,8 +58,9 @@ export function createRefreshTokenInterceptor(axios: Axios, refreshTokenCall, on
 			})
 			.catch(error => {
 				axios.interceptors.request.eject(requestQueueInterceptorId);
-				if (error && error.response.status === UNAUTHORIZED) {
-					onRefreshTokenFailed(error);
+				logger.error(`Refresh token failed for request ${config.url}`, error);
+				if (error.response && error.response.status === UNAUTHORIZED) {
+					onRefreshTokenFailed(error, config.url);
 				}
 				return Promise.reject(error);
 			})

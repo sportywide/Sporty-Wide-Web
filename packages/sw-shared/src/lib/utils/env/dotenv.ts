@@ -17,4 +17,4 @@ const dotenvOverride = {
 	},
 };
 
-module.exports = dotenvOverride;
+export default dotenvOverride;

@@ -1,4 +1,4 @@
-require('@shared/lib/utils/env/dotenv').config();
+require('@shared/lib/utils/env/dotenv').default.config();
 /* eslint-disable */
 export const config = {
 	default: {
@@ -27,7 +27,7 @@ export const config = {
 		auth: {
 			jwt: {
 				secret_key: process.env.SW_JWT_SECRET,
-				access_token_expiration_time: 60 * 60,
+				access_token_expiration_time: 15 * 60,
 				refresh_token_expiration_time: 60 * 60 * 24 * 30,
 			},
 		},

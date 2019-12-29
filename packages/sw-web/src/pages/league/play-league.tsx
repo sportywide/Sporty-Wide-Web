@@ -8,11 +8,16 @@ import { SwLeagueStandings } from '@web/features/leagues/base/components/LeagueS
 import { SwWeekFixtures } from '@web/features/fixtures/components/WeekFixtures';
 import styled from 'styled-components';
 import { redirect } from '@web/shared/lib/navigation/helper';
+import { device } from '@web/styles/constants/size';
 
 const PlayButton = styled(Button)`
-	position: absolute;
+	position: initial;
 	right: 10px;
 	top: 60px;
+
+	@media ${device.laptop} {
+		position: absolute;
+	}
 `;
 class SwManagePlayersPage extends React.Component<any> {
 	static async getInitialProps({ query, store }) {
@@ -39,8 +44,15 @@ class SwManagePlayersPage extends React.Component<any> {
 				</Head>
 				<SwContainer>
 					<PlayButton
-						color={'green'}
-						onClick={() => redirect({ route: `lineup-builder/${this.props.leagueId}` })}
+						color={'blue'}
+						onClick={() =>
+							redirect({
+								route: 'lineup-builder',
+								params: {
+									id: this.props.leagueId,
+								},
+							})
+						}
 					>
 						Build your lineup <Icon name={'arrow right'} />
 					</PlayButton>
