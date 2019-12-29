@@ -24,7 +24,7 @@ provider:
         IS_LAMBDA: 1
 
 package:
-    individually: true
+    individually: ${self:custom.variables.${self:provider.stage}.package}
     exclude:
         - node_modules/**
     excludeDevDependencies: true
@@ -40,6 +40,11 @@ plugins:
     - serverless-lambda-layers
 
 custom:
+    variables:
+        development:
+            package: false
+        production:
+            package: true
     serverless-offline:
         port: 4000
         host: 0.0.0.0

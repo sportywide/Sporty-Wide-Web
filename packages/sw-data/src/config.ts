@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/camelcase */
-require('@shared/lib/utils/env/dotenv').config();
+require('@shared/lib/utils/env/dotenv').default.config();
 export const config = {
 	default: {
 		puppeteer: {

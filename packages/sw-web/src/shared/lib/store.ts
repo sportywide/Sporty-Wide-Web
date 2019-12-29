@@ -14,6 +14,7 @@ import React from 'react';
 import { leagueReducer } from '@web/features/leagues/base/store/reducers/league-reducer';
 import { fetchLeaguesEpic } from '@web/features/leagues/base/store/epics';
 import { observableToPromiseMiddleware } from '@web/shared/lib/redux/middlewares/observable-to-promise';
+import { logger } from '@web/shared/lib/logging';
 import { createReducerManager, ReducerManager } from './redux/reducer-manager';
 
 export interface IDependencies {
@@ -71,7 +72,7 @@ function registerContainer({ context }) {
 	const appContainer = Container.of(context.req);
 	appContainer.set('context', context);
 	if (context.req) {
-		appContainer.set('baseUrl', `${context.req.protocol}://${context.req.get('host')}`);
+		appContainer.set('baseUrl', `${isDevelopment() ? context.req.protocol : 'https'}://${context.req.get('host')}`);
 	} else {
 		appContainer.set('baseUrl', window.location.origin);
 	}

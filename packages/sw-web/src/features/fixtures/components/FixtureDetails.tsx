@@ -26,15 +26,15 @@ function fixtureHeader(fixtureDetails: FixtureDetailsDto) {
 			<div className={'sw-flex sw-flex-justify-center sw-mt4 sw-mb3 sw-align-center'}>
 				<div>
 					<div className={'sw-flex'}>
-						<div className={'sw-flex sw-flex-grow-equal sw-min-width-200'}>
+						<div className={'sw-flex sw-flex-grow-equal sw-ml1'}>
 							<div className={'sw-mr4'}>
 								<img src={fifaImage(fixture.homeTeam.image)} alt={fixture.homeTeam.title} />
 								<div>{fixture.homeTeam.title}</div>
 							</div>
 							<S.FixtureScore>{fixture.homeScore}</S.FixtureScore>
 						</div>
-						<S.FixtureScore className={'sw-ml4 sw-mr4'}>-</S.FixtureScore>
-						<div className={'sw-flex sw-flex-grow-equal sw-min-width-200'}>
+						<S.FixtureScore className={'sw-ml2 sw-mr2'}>-</S.FixtureScore>
+						<div className={'sw-flex sw-flex-grow-equal sw-mr1'}>
 							<S.FixtureScore>{fixture.awayScore}</S.FixtureScore>
 							<div className={'sw-ml4'}>
 								<img src={fifaImage(fixture.awayTeam.image)} alt={fixture.awayTeam.title} />
@@ -47,10 +47,14 @@ function fixtureHeader(fixtureDetails: FixtureDetailsDto) {
 			<Divider />
 			{!!(fixture.incidents && fixture.incidents.length) && (
 				<>
-					<div className={'sw-flex sw-flex-justify sw-relative'}>
-						<div>{renderIncidents(fixture.incidents.filter(incident => incident.home))}</div>
-						<SwIcon name={'soccer-ball'} width={18} className={'sw-absolute-center'} />
-						<div>{renderIncidents(fixture.incidents.filter(incident => !incident.home))}</div>
+					<div className={'sw-flex sw-flex-justify'}>
+						<div className={'sw-flex-grow-equal'}>
+							{renderIncidents(fixture.incidents.filter(incident => incident.home))}
+						</div>
+						<SwIcon name={'soccer-ball'} width={18} />
+						<div className={'sw-flex-grow-equal'}>
+							{renderIncidents(fixture.incidents.filter(incident => !incident.home), false)}
+						</div>
 					</div>
 					<Divider />
 				</>
@@ -136,7 +140,7 @@ function renderPlayerRatings({
 	);
 }
 
-function renderIncidents(incidents = []) {
+function renderIncidents(incidents = [], isLeft = true) {
 	return (
 		<>
 			{incidents.map((incident, index) => {
@@ -154,9 +158,12 @@ function renderIncidents(incidents = []) {
 						break;
 				}
 				return (
-					<div key={index} className={'sw-flex sw-flex-center sw-mb1'}>
+					<div
+						key={index}
+						className={`sw-flex sw-flex-center sw-mb1 ${isLeft ? '' : 'sw-flex-justify-right'}`}
+					>
 						<SwIcon name={iconName} width={18} className={'sw-mr1'} />
-						<span className={'sw-truncate'} style={{ width: '150px' }}>
+						<span className={'sw-truncate'} style={{ width: '60%', maxWidth: '150px' }}>
 							{incident.info && <span>{incident.info} &nbsp;</span>}
 
 							<Popup
@@ -175,13 +182,15 @@ function renderIncidents(incidents = []) {
 	);
 }
 
-function renderStatus({ status }: FixtureDto) {
+function renderStatus({ status, time }: FixtureDto) {
 	if (status === 'FT') {
 		return 'Full-Time';
 	} else if (status === 'HT') {
 		return 'Half-Time';
 	} else if (status === 'PENDING') {
 		return 'Pending';
+	} else if (status === 'ACTIVE') {
+		return time;
 	} else {
 		return status;
 	}

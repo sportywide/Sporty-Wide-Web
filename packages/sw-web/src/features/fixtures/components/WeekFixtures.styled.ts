@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Header } from 'semantic-ui-react';
+
 export const FixtureDateHeadline = styled(Header)`
 	&&& {
 		background-color: #011b51;
@@ -11,8 +12,8 @@ export const FixtureDateHeadline = styled(Header)`
 `;
 
 export const FixtureTime = styled.div`
-	width: 100px;
 	font-weight: bold;
+	padding-right: 5px;
 `;
 
 export const FixtureLine = styled.div`
@@ -28,14 +29,16 @@ export const FixtureLine = styled.div`
 
 export const FixtureStatus = styled.div`
 	font-weight: bold;
-	width: 100px;
 	text-align: right;
+	width: 55px;
+	padding-left: 5px;
 `;
 export const FixtureMain = styled.div`
-	flex-grow: 1;
+	flex: 1 1 0;
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	overflow: hidden;
 `;
 export const FixtureScore = styled.div`
 	color: white;

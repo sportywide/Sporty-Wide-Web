@@ -28,6 +28,7 @@ export function makeConfig({
 	hot,
 	envFile,
 	watchMode,
+	envVars = {},
 	optimizationOptions,
 }: {
 	entries: any;
@@ -36,6 +37,7 @@ export function makeConfig({
 	env?: string;
 	hot?: boolean;
 	envFile?: string;
+	envVars?: any;
 	watchMode?: boolean;
 	libraryTarget?: string;
 	optimizationOptions?: any;
@@ -71,6 +73,7 @@ export function makeConfig({
 		}),
 		setEnv({
 			NODE_ENV: environment,
+			...envVars,
 		}),
 		env('development', [
 			watchMode ? watch() : none(),

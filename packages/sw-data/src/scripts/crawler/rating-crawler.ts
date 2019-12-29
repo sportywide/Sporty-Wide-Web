@@ -17,7 +17,7 @@ async function bootstrap() {
 		const finishedMatchLinks = finishedMatches.map(match => match.link).filter(link => link);
 		const logger = context.get(DATA_LOGGER);
 		logger.info(`Getting ratings for ${finishedMatches.length} matches`);
-		const ratingMap = await crawlerService.getRatings([finishedMatchLinks[0]]);
+		const ratingMap = await crawlerService.getRatings(finishedMatchLinks);
 		matches = matches.map(match => {
 			const link = match.link || '';
 			if (ratingMap[link]) {

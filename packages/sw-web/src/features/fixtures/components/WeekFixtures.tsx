@@ -51,17 +51,17 @@ const SwWeekFixturesComponent: React.FC<IProps> = ({ leagueId }) => {
 								>
 									<S.FixtureTime>{format(new Date(fixture.time), 'hh:mm')}</S.FixtureTime>
 									<S.FixtureMain>
-										<S.FixtureTeam home>{fixture.home}</S.FixtureTeam>
+										<S.FixtureTeam className={'sw-truncate'} home>
+											{fixture.home}
+										</S.FixtureTeam>
 										<S.FixtureScore>
 											{fixture.status === 'PENDING'
 												? 'VS'
 												: `${fixture.homeScore} - ${fixture.awayScore}`}
 										</S.FixtureScore>
-										<S.FixtureTeam>{fixture.away}</S.FixtureTeam>
+										<S.FixtureTeam className={'sw-truncate'}>{fixture.away}</S.FixtureTeam>
 									</S.FixtureMain>
-									<S.FixtureStatus>
-										{fixture.status === 'PENDING' ? 'PNDG' : fixture.status}
-									</S.FixtureStatus>
+									<S.FixtureStatus>{renderStatus(fixture)}</S.FixtureStatus>
 								</S.FixtureLine>
 							))}
 						</div>
@@ -71,4 +71,13 @@ const SwWeekFixturesComponent: React.FC<IProps> = ({ leagueId }) => {
 	);
 };
 
+function renderStatus(fixture: FixtureDto) {
+	if (fixture.status === 'PENDING') {
+		return 'PNDG';
+	} else if (fixture.status === 'ACTIVE') {
+		return fixture.time || 0;
+	} else {
+		return fixture.status;
+	}
+}
 export const SwWeekFixtures = SwWeekFixturesComponent;

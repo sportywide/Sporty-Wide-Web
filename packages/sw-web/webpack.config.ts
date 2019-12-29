@@ -15,6 +15,9 @@ const config = makeConfig({
 		'@shared': paths.shared.src,
 		'@web': paths.web.src,
 	},
+	envVars: {
+		IS_SERVER: 'true',
+	},
 	optimizationOptions: {
 		minimize: false,
 	},

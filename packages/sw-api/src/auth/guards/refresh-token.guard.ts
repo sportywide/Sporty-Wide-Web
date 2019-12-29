@@ -22,24 +22,18 @@ export class RefreshTokenGuard implements CanActivate {
 			return false;
 		}
 
-		return new Promise(resolve => {
-			passport.authenticate('jwt', async (err, user, info) => {
-				if (!(info && info.constructor === TokenExpiredError)) {
-					return resolve(false);
-				}
-				const jwtToken = this.jwtStrategy.getToken(request);
-				const decodedPayload: any = this.jwtService.decode(jwtToken);
-				if (!(decodedPayload && decodedPayload.user)) {
-					return resolve(false);
-				}
-				const userId = decodedPayload.user.id;
-				user = await this.userService.findById({ id: userId });
-				if (!user || user.refreshToken !== refreshToken) {
-					return resolve(false);
-				}
-				request.user = user;
-				return resolve(true);
-			})(request);
+		return new Promise(async resolve => {
+			const decodedPayload: any = this.jwtService.decode(refreshToken);
+			if (!(decodedPayload && decodedPayload.id)) {
+				return resolve(false);
+			}
+			const userId = decodedPayload.id;
+			const user = await this.userService.findById({ id: userId });
+			if (!user || user.refreshToken !== refreshToken) {
+				return resolve(false);
+			}
+			request.user = user;
+			return resolve(true);
 		});
 	}
 }
