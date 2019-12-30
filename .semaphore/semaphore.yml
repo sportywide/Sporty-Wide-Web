@@ -1,0 +1,53 @@
+version: v1.0
+
+name: Sportywide Pipeline
+
+agent:
+    machine:
+        type: e1-standard-2
+        os_image: ubuntu1804
+
+blocks:
+    - name: Install dependencies
+      task:
+          prologue:
+              commands:
+                  - checkout
+                  - nvm use
+                  - node --version
+                  - npm --version
+          jobs:
+              - name: client npm install and cache
+                commands:
+                    - cache restore node-modules-$(checksum package-lock.json)
+                    - cache has_key node-modules-$(checksum package-lock.json) || npx lerna bootstrap -- --ci --no-optional
+                    - npx link-parent-bin
+                    - cache store node-modules-$(checksum package-lock.json) node_modules
+    - name: Build
+      task:
+          prologue:
+              commands:
+                  - checkout
+                  - nvm use
+                  - node --version
+                  - npm --version
+          jobs:
+              - name: Build
+                commands:
+                    - cache restore node-modules-$(checksum package-lock.json)
+                    - npx lerna link
+                    - npx lerna run build --stream
+    - name: Test
+      task:
+          prologue:
+              commands:
+                  - checkout
+                  - nvm use
+                  - node --version
+                  - npm --version
+          jobs:
+              - name: Test
+                commands:
+                    - cache restore node-modules-$(checksum package-lock.json)
+                    - npx lerna link
+                    - npx gulp test --coverage
