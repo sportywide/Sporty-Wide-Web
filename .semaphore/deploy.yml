@@ -9,8 +9,11 @@ blocks:
       skip:
           when: "branch != 'release'"
       task:
+          secrets:
+              - name: git-ssh-keys
           prologue:
               commands:
+                  - chmod 400 ~/.ssh/id_rsa
                   - checkout
                   - nvm use
                   - node --version
@@ -25,28 +28,36 @@ blocks:
       skip:
           when: "branch != 'release'"
       task:
+          secrets:
+              - name: docker-login
           prologue:
               commands:
                   - checkout
           jobs:
               - name: 'Build all'
                 commands:
+                    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
                     - make buildAll
     - name: Push docker images
       skip:
           when: "branch != 'release'"
       task:
+          secrets:
+              - name: docker-login
           prologue:
               commands:
                   - checkout
           jobs:
               - name: 'Push all'
                 commands:
+                    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
                     - make pushAll
     - name: Deploy Frontend
       skip:
           when: "branch != 'release'"
       task:
+          secrets:
+              - name: aws-creds
           prologue:
               commands:
                   - checkout
@@ -58,6 +69,8 @@ blocks:
       skip:
           when: "branch != 'release'"
       task:
+          secrets:
+              - name: aws-creds
           prologue:
               commands:
                   - checkout
