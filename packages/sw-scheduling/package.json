@@ -2,6 +2,7 @@
 	"name": "sportywide-scheduling",
 	"version": "1.0.3",
 	"description": "Contain scheduling functions",
+	"private": true,
 	"repository": {
 		"type": "git",
 		"url": "git+ssh://git@gitlab.com/sporty-wide/sporty-wide-web.git"

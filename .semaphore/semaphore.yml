@@ -51,3 +51,6 @@ blocks:
                     - cache restore node-modules-$(checksum package-lock.json)
                     - npx lerna link
                     - npx gulp test --coverage
+promotions:
+    - name: Production deploy
+      pipeline_file: deploy.yml

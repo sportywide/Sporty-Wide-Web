@@ -1,7 +1,7 @@
 apiVersion: v1alpha
 kind: Notification
 metadata:
-    name: notify-on-fail
+    name: notify-slack
 spec:
     rules:
         - name: 'Notify slack'

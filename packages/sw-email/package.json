@@ -3,6 +3,7 @@
 	"version": "1.0.3",
 	"description": "Email micro service",
 	"license": "ISC",
+	"private": true,
 	"scripts": {
 		"build": "gulp build --color",
 		"dev": "gulp dev --color"

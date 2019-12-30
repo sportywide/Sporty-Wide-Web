@@ -8,6 +8,7 @@
 		"build": "gulp build --color",
 		"dev": "gulp dev --color"
 	},
+	"private": true,
 	"dependencies": {
 		"@bugsnag/plugin-express": "6.5.0",
 		"@nestjs/graphql": "6.5.3",

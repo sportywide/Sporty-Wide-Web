@@ -1,0 +1,65 @@
+version: v1.0
+name: Deploy to production
+agent:
+    machine:
+        type: e1-standard-2
+        os_image: ubuntu1804
+blocks:
+    - name: NPM publish
+      prologue:
+          commands:
+              - checkout
+              - nvm use
+              - node --version
+              - npm --version
+      skip:
+          when: "branch != 'release'"
+      task:
+          jobs:
+              - name: 'Publish Packages'
+                commands:
+                    - npx lerna publish minor --yes
+    - name: Build docker images
+      prologue:
+          commands:
+              - checkout
+      skip:
+          when: "branch != 'release'"
+      task:
+          jobs:
+              - name: 'Build all'
+                commands:
+                    - make buildAll
+    - name: Push docker images
+      prologue:
+          commands:
+              - checkout
+      skip:
+          when: "branch != 'release'"
+      task:
+          jobs:
+              - name: 'Push all'
+                commands:
+                    - make pushAll
+    - name: Deploy Frontend
+      prologue:
+          commands:
+              - checkout
+      skip:
+          when: "branch != 'release'"
+      task:
+          jobs:
+              - name: 'Deploy Frontend'
+                commands:
+                    - ./scripts/elb/frontend/deploy.sh
+    - name: Deploy Backend
+      prologue:
+          commands:
+              - checkout
+      skip:
+          when: "branch != 'release'"
+      task:
+          jobs:
+              - name: 'Deploy Backend'
+                commands:
+                    - ./scripts/elb/backend/deploy.sh
