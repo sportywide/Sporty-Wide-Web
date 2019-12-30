@@ -5,27 +5,6 @@ agent:
         type: e1-standard-2
         os_image: ubuntu1804
 blocks:
-    - name: NPM publish
-      skip:
-          when: "branch != 'release'"
-      task:
-          secrets:
-              - name: git-ssh-keys
-              - name: npm-token
-          prologue:
-              commands:
-                  - chmod 400 ~/.ssh/id_rsa
-                  - checkout
-                  - nvm use
-                  - node --version
-                  - npm --version
-          jobs:
-              - name: 'Publish Packages'
-                commands:
-                    - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > ~/.npmrc
-                    - git config --global user.email "vdtn359@gmail.com"
-                    - git config --global user.name "Tuan Nguyen"
-                    - npx lerna publish minor --yes
     - name: Build docker images
       skip:
           when: "branch != 'release'"
@@ -80,3 +59,24 @@ blocks:
               - name: 'Deploy Backend'
                 commands:
                     - ./scripts/elb/backend/deploy.sh
+    - name: NPM publish
+      skip:
+          when: "branch != 'release'"
+      task:
+          secrets:
+              - name: git-ssh-keys
+              - name: npm-token
+          prologue:
+              commands:
+                  - chmod 400 ~/.ssh/id_rsa
+                  - checkout
+                  - nvm use
+                  - node --version
+                  - npm --version
+          jobs:
+              - name: 'Publish Packages'
+                commands:
+                    - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > ~/.npmrc
+                    - git config --global user.email "vdtn359@gmail.com"
+                    - git config --global user.name "Tuan Nguyen"
+                    - npx lerna publish minor --yes

@@ -58,4 +58,4 @@ promotions:
     - name: Production deploy
       pipeline_file: deploy.yml
       auto_promote:
-          when: "result = 'passed' and branch = 'release' and tag = ''"
+          when: "result = 'passed' and branch = 'release' and tag !~ 'v*'"

@@ -1,4 +1,6 @@
 #! /usr/bin/env node
+const { execSync } = require('child_process');
+
 const packageName = process.argv[2];
 
 let packageJson;
@@ -8,4 +10,8 @@ if (packageName) {
 	packageJson = require(`${__dirname}/package.json`);
 }
 
-console.info(packageJson.version);
+console.info(
+	execSync(`npx semver ${packageJson.version} -i minor`, {
+		encoding: 'utf-8',
+	}).trim()
+);
