@@ -163,6 +163,19 @@ module.exports = /******/ (function(modules) {
 				/***/
 			},
 
+		/***/ './packages/sw-web/package.json':
+			/*!**************************************!*\
+  !*** ./packages/sw-web/package.json ***!
+  \**************************************/
+			/*! exports provided: name, version, description, license, author, scripts, dependencies, default */
+			/***/ function(module) {
+				eval(
+					'module.exports = JSON.parse("{\\"name\\":\\"sportywide-web\\",\\"version\\":\\"1.0.3\\",\\"description\\":\\"Sporty Wide Web repository\\",\\"license\\":\\"MIT\\",\\"author\\":\\"\\",\\"scripts\\":{\\"build\\":\\"gulp build --color\\",\\"dev\\":\\"gulp dev --color\\"},\\"dependencies\\":{\\"@apollo/react-hooks\\":\\"3.1.2\\",\\"@bugsnag/plugin-react\\":\\"6.5.0\\",\\"@graphql-codegen/cli\\":\\"1.8.0\\",\\"@graphql-codegen/typescript\\":\\"1.8.0\\",\\"@graphql-codegen/typescript-operations\\":\\"1.8.0\\",\\"@graphql-codegen/typescript-react-apollo\\":\\"1.8.0\\",\\"apollo-boost\\":\\"0.4.4\\",\\"axios\\":\\"0.19.0\\",\\"axios-observable\\":\\"1.1.2\\",\\"classnames\\":\\"2.2.6\\",\\"cookie-parser\\":\\"1.4.4\\",\\"csurf\\":\\"https://github.com/vdtn359/csurf.git#sw-1.10.0\\",\\"express\\":\\"4.17.1\\",\\"express-cookie-flash\\":\\"1.0.0\\",\\"formik\\":\\"1.5.8\\",\\"hoist-non-react-statics\\":\\"3.3.0\\",\\"http-proxy-middleware\\":\\"0.19.1\\",\\"next\\":\\"9.1.3\\",\\"next-cookies\\":\\"1.1.2\\",\\"next-routes-handler\\":\\"1.4.2\\",\\"next-store-wrapper\\":\\"3.0.0-alpha.5\\",\\"node-http-proxy-json\\":\\"0.1.6\\",\\"react\\":\\"16.9.0\\",\\"react-dnd-cjs\\":\\"9.3.9\\",\\"react-dnd-html5-backend-cjs\\":\\"9.3.9\\",\\"react-dom\\":\\"16.9.0\\",\\"react-measure\\":\\"2.3.0\\",\\"react-notification-system\\":\\"0.2.17\\",\\"react-notification-system-redux\\":\\"2.0.0\\",\\"react-redux\\":\\"7.1.0\\",\\"react-redux-loading-bar\\":\\"4.4.0\\",\\"react-svg-loader\\":\\"3.0.3\\",\\"recompose\\":\\"0.30.0\\",\\"redux\\":\\"4.0.4\\",\\"redux-devtools-extension\\":\\"2.13.8\\",\\"redux-mock-store\\":\\"1.5.3\\",\\"redux-observable\\":\\"1.1.0\\",\\"redux-thunk\\":\\"2.3.0\\",\\"reselect\\":\\"4.0.0\\",\\"semantic-ui-calendar-react\\":\\"0.15.3\\",\\"semantic-ui-react\\":\\"0.87.3\\",\\"sporty-wide-style\\":\\"1.0.1\\",\\"sportywide-shared\\":\\"^1.0.3\\",\\"styled-components\\":\\"4.3.2\\",\\"typedi\\":\\"0.8.0\\",\\"typesafe-actions\\":\\"4.4.2\\",\\"zxcvbn\\":\\"4.4.2\\"}}");\n\n//# sourceURL=webpack:///./packages/sw-web/package.json?'
+				);
+
+				/***/
+			},
+
 		/***/ './packages/sw-web/webpack.config.ts':
 			/*!*******************************************!*\
   !*** ./packages/sw-web/webpack.config.ts ***!
@@ -171,7 +184,7 @@ module.exports = /******/ (function(modules) {
 			/***/ function(module, exports, __webpack_require__) {
 				'use strict';
 				eval(
-					"\n\nvar _path = _interopRequireDefault(__webpack_require__(/*! path */ \"path\"));\n\nvar _env = __webpack_require__(/*! @shared/lib/utils/env */ \"./packages/sw-shared/src/lib/utils/env/index.ts\");\n\nvar _config = __webpack_require__(/*! @build/webpack/node/config */ \"./packages/sw-shared/build/webpack/node/config.ts\");\n\nvar _paths = _interopRequireDefault(__webpack_require__(/*! @build/paths */ \"./packages/sw-shared/build/paths/index.js\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nconst argv = __webpack_require__(/*! yargs */ \"yargs\").argv;\n\nconst findup = __webpack_require__(/*! find-up */ \"find-up\");\n\nconst config = (0, _config.makeConfig)({\n  hot: (0, _env.isDevelopment)(argv.env),\n  env: argv.env,\n  entries: _path.default.resolve(_paths.default.web.src, 'next-server'),\n  output: _paths.default.web.dist,\n  alias: {\n    '@root': _paths.default.project.root,\n    '@shared': _paths.default.shared.src,\n    '@web': _paths.default.web.src\n  },\n  envVars: {\n    IS_SERVER: 'true'\n  },\n  optimizationOptions: {\n    minimize: false\n  },\n  envFile: argv.env !== 'production' ? findup.sync('.env') : '.env'\n});\nmodule.exports = config;\n\n//# sourceURL=webpack:///./packages/sw-web/webpack.config.ts?"
+					"\n\nvar _path = _interopRequireDefault(__webpack_require__(/*! path */ \"path\"));\n\nvar _env = __webpack_require__(/*! @shared/lib/utils/env */ \"./packages/sw-shared/src/lib/utils/env/index.ts\");\n\nvar _config = __webpack_require__(/*! @build/webpack/node/config */ \"./packages/sw-shared/build/webpack/node/config.ts\");\n\nvar _paths = _interopRequireDefault(__webpack_require__(/*! @build/paths */ \"./packages/sw-shared/build/paths/index.js\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nconst argv = __webpack_require__(/*! yargs */ \"yargs\").argv;\n\nconst findup = __webpack_require__(/*! find-up */ \"find-up\");\n\nconst config = (0, _config.makeConfig)({\n  hot: (0, _env.isDevelopment)(argv.env),\n  env: argv.env,\n  entries: _path.default.resolve(_paths.default.web.src, 'next-server'),\n  output: _paths.default.web.dist,\n  alias: {\n    '@root': _paths.default.project.root,\n    '@shared': _paths.default.shared.src,\n    '@web': _paths.default.web.src\n  },\n  envVars: {\n    IS_SERVER: 'true',\n    APP_VERSION: __webpack_require__(/*! ./package.json */ \"./packages/sw-web/package.json\").version\n  },\n  optimizationOptions: {\n    minimize: false\n  },\n  envFile: argv.env !== 'production' ? findup.sync('.env') : '.env'\n});\nmodule.exports = config;\n\n//# sourceURL=webpack:///./packages/sw-web/webpack.config.ts?"
 				);
 
 				/***/

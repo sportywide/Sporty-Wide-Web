@@ -1,11 +1,10 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import passport from 'passport';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from '@api/user/services/user.service';
 import { JwtStrategy } from '@api/auth/strategy/jwt.strategy';
-import { TokenExpiredError } from 'jsonwebtoken';
 import { getRequest } from '@api/utils/context';
+import { bugsnagClient } from '@api/utils/bugsnag';
 
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {
@@ -33,6 +32,7 @@ export class RefreshTokenGuard implements CanActivate {
 				return resolve(false);
 			}
 			request.user = user;
+			bugsnagClient.user = user.getBugsnagData();
 			return resolve(true);
 		});
 	}

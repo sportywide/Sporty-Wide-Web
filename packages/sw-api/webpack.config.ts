@@ -15,6 +15,9 @@ const config = makeConfig({
 		'@core': paths.core.src,
 		'@api': paths.api.src,
 	},
+	envVars: {
+		'process.env.APP_VERSION': JSON.stringify(require('./package.json').version),
+	},
 	optimizationOptions: {
 		minimize: false,
 	},

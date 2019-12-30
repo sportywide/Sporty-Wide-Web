@@ -5,6 +5,7 @@ const babel = require('next-plugin-custom-babel-config');
 const bundleAnalyzer = require('@zeit/next-bundle-analyzer');
 const webpack = require('webpack');
 const { importAutoDllPlugin } = require('next/dist/build/webpack/plugins/dll-import');
+const withSourceMaps = require('@zeit/next-source-maps');
 const scss = require('./src/build/plugins/with-sass');
 const css = require('./src/build/plugins/with-css');
 
@@ -67,6 +68,7 @@ const nextConfig = {
 		webpackConfig.plugins.push(
 			new webpack.DefinePlugin({
 				'process.env.IS_SERVER': JSON.stringify(isServer),
+				'process.env.APP_VERSION': JSON.stringify(require('./package.json').version),
 			})
 		);
 
@@ -208,6 +210,7 @@ module.exports = withPlugins(
 		],
 		scss,
 		css,
+		withSourceMaps,
 	],
 	nextConfig
 );
