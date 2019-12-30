@@ -11,6 +11,7 @@ blocks:
       task:
           secrets:
               - name: git-ssh-keys
+              - name: npm-token
           prologue:
               commands:
                   - chmod 400 ~/.ssh/id_rsa
