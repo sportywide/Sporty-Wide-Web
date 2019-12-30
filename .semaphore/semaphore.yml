@@ -1,6 +1,6 @@
 version: v1.0
 
-name: Sportywide Pipeline
+name: Build And Test Pipeline
 
 agent:
     machine:
@@ -54,3 +54,5 @@ blocks:
 promotions:
     - name: Production deploy
       pipeline_file: deploy.yml
+      auto_promote:
+          when: "result = 'passed' and branch = 'release'"
