@@ -4,6 +4,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { JsonWebTokenError, TokenExpiredError } from 'jsonwebtoken';
 import { CHECK_METADATA, CheckFunction } from '@api/auth/decorators/user-check.decorator';
 import { getRequest } from '@api/utils/context';
+import { bugsnagClient } from '@api/utils/bugsnag';
 
 @Injectable()
 export class JwtAuthGuard extends AuthGuard('jwt') {
@@ -33,6 +34,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
 		if (checkFunction && !checkFunction(user)) {
 			throw new ForbiddenException('You are not allowed to access this endpoint');
 		}
+		bugsnagClient.user = user.getBugsnagData();
 		return user;
 	}
 }

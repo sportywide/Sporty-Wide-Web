@@ -19,6 +19,9 @@ import { LoadingBar } from '@web/shared/lib/ui/components/loading/LoadingBar';
 import { ApiService } from '@web/shared/lib/http/api.service';
 import EventModalManager from '@web/shared/lib/popup/EventModalManager';
 import ConfirmationManager from '@web/shared/lib/popup/ConfirmationManager';
+import { bugsnagClient } from '@web/shared/lib/bugsnag';
+
+const ErrorBoundary = bugsnagClient.getPlugin('react');
 
 interface IProps {
 	store: ISportyWideStore;
@@ -54,6 +57,10 @@ class SwApp extends App<IProps> {
 				replace: true,
 			});
 			return { pageProps };
+		}
+
+		if (user) {
+			bugsnagClient.user = user;
 		}
 
 		if (Component.registerEpics) {
@@ -97,19 +104,21 @@ class SwApp extends App<IProps> {
 		const container = store.container;
 		const apiService = container.get(ApiService);
 		return (
-			<ThemeProvider theme={theme}>
-				<Provider store={store}>
-					<ApolloProvider client={apiService.graphql()}>
-						<ContainerContext.Provider value={store.container}>
-							<LoadingBar />
-							<Component {...pageProps} />
-							<NotificationContainer />
-							<ConfirmationManager />
-							<EventModalManager />
-						</ContainerContext.Provider>
-					</ApolloProvider>
-				</Provider>
-			</ThemeProvider>
+			<ErrorBoundary>
+				<ThemeProvider theme={theme}>
+					<Provider store={store}>
+						<ApolloProvider client={apiService.graphql()}>
+							<ContainerContext.Provider value={store.container}>
+								<LoadingBar />
+								<Component {...pageProps} />
+								<NotificationContainer />
+								<ConfirmationManager />
+								<EventModalManager />
+							</ContainerContext.Provider>
+						</ApolloProvider>
+					</Provider>
+				</ThemeProvider>
+			</ErrorBoundary>
 		);
 	}
 }

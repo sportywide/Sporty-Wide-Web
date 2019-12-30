@@ -11,14 +11,16 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { API_CONFIG } from '@core/config/config.constants';
 import passport from 'passport';
 import express from 'express';
+import { bugsnagClient } from '@api/utils/bugsnag';
 import { AppModule } from './app.module';
 
 declare const module: any;
 
 async function bootstrap() {
 	const server = express();
-	server.enable('trust proxy');
+	const middleware = bugsnagClient.getPlugin('express');
 	const app = await NestFactory.create(AppModule, new ExpressAdapter(server));
+	app.use(middleware.requestHandler);
 	app.use(helmet());
 	app.use(cookieParser());
 	app.use(passport.initialize());
@@ -30,7 +32,7 @@ async function bootstrap() {
 	});
 	const log4js = app.get(LOG4J_PROVIDER);
 	app.use(log4js.connectLogger(log4js.getLogger('api-http'), networkLogOptions));
-
+	app.use(middleware.errorHandler);
 	const options = new DocumentBuilder()
 		.setTitle('SportyWide API')
 		.setDescription('SportyWide API description')

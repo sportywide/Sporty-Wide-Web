@@ -9,6 +9,7 @@
 		"dev": "gulp dev --color"
 	},
 	"dependencies": {
+		"@bugsnag/plugin-express": "6.5.0",
 		"@nestjs/graphql": "6.5.3",
 		"@nestjs/jwt": "6.1.1",
 		"@nestjs/passport": "6.1.0",

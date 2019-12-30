@@ -7,7 +7,7 @@ import { FixtureService } from '@schema/fixture/services/fixture.service';
 import { FixtureProcessInput, FixtureProcessService } from '@scheduling/lib/fixture/services/fixture-process.service';
 import { BrowserService } from '@data/crawler/browser.service';
 import { INestApplicationContext } from '@nestjs/common';
-import { addMinutes } from 'date-fns';
+import { addMinutes, endOfMinute } from 'date-fns';
 import { CloudwatchService } from '@scheduling/lib/aws/cloudwatch/cloudwatch.service';
 import { SCHEDULING_LOGGER } from '@core/logging/logging.constant';
 
@@ -78,7 +78,7 @@ async function scheduleNextCall(module: INestApplicationContext) {
 	const hasActiveMatches = await fixtureService.hasActiveMatches();
 	let date: Date;
 	if (hasActiveMatches) {
-		date = addMinutes(new Date(), 1);
+		date = addMinutes(endOfMinute(new Date()), 1);
 	} else {
 		const pendingMatch = await fixtureService.getNextPendingMatch();
 		if (pendingMatch) {

@@ -17,7 +17,6 @@ const CSRF_WHITE_LIST = ['login', 'signup', 'refresh-token'];
 
 export function bootstrap(app) {
 	const server = express();
-	server.enable('trust proxy');
 	server.use(cookieParser(config.get('cookie_secret')));
 	server.use(
 		flash({

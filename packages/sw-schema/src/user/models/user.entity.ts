@@ -82,6 +82,15 @@ export class User extends TrackTimestamp(BaseGeneratedEntity) {
 		return [this.firstName, this.lastName].filter(value => value).join(' ');
 	}
 
+	getBugsnagData() {
+		return {
+			id: this.id,
+			name: this.name,
+			type: this.socialProvider,
+			email: this.email,
+		};
+	}
+
 	@BeforeInsert()
 	@BeforeUpdate()
 	async didSaveUser() {

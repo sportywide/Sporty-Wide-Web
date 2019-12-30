@@ -26,7 +26,7 @@ function fixtureHeader(fixtureDetails: FixtureDetailsDto) {
 			<div className={'sw-flex sw-flex-justify-center sw-mt4 sw-mb3 sw-align-center'}>
 				<div>
 					<div className={'sw-flex'}>
-						<div className={'sw-flex sw-flex-grow-equal sw-ml1'}>
+						<div className={'sw-flex sw-flex-grow-equal sw-ml2'}>
 							<div className={'sw-mr4'}>
 								<img src={fifaImage(fixture.homeTeam.image)} alt={fixture.homeTeam.title} />
 								<div>{fixture.homeTeam.title}</div>
@@ -34,7 +34,7 @@ function fixtureHeader(fixtureDetails: FixtureDetailsDto) {
 							<S.FixtureScore>{fixture.homeScore}</S.FixtureScore>
 						</div>
 						<S.FixtureScore className={'sw-ml2 sw-mr2'}>-</S.FixtureScore>
-						<div className={'sw-flex sw-flex-grow-equal sw-mr1'}>
+						<div className={'sw-flex sw-flex-grow-equal sw-mr2'}>
 							<S.FixtureScore>{fixture.awayScore}</S.FixtureScore>
 							<div className={'sw-ml4'}>
 								<img src={fifaImage(fixture.awayTeam.image)} alt={fixture.awayTeam.title} />
@@ -51,7 +51,7 @@ function fixtureHeader(fixtureDetails: FixtureDetailsDto) {
 						<div className={'sw-flex-grow-equal'}>
 							{renderIncidents(fixture.incidents.filter(incident => incident.home))}
 						</div>
-						<SwIcon name={'soccer-ball'} width={18} />
+						<S.SoccerIcon name={'soccer-ball'} width={18} />
 						<div className={'sw-flex-grow-equal'}>
 							{renderIncidents(fixture.incidents.filter(incident => !incident.home), false)}
 						</div>
@@ -182,7 +182,7 @@ function renderIncidents(incidents = [], isLeft = true) {
 	);
 }
 
-function renderStatus({ status, time }: FixtureDto) {
+function renderStatus({ status, current }: FixtureDto) {
 	if (status === 'FT') {
 		return 'Full-Time';
 	} else if (status === 'HT') {
@@ -190,7 +190,7 @@ function renderStatus({ status, time }: FixtureDto) {
 	} else if (status === 'PENDING') {
 		return 'Pending';
 	} else if (status === 'ACTIVE') {
-		return time;
+		return current;
 	} else {
 		return status;
 	}

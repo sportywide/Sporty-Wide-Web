@@ -17,6 +17,7 @@ const config = makeConfig({
 	},
 	envVars: {
 		IS_SERVER: 'true',
+		APP_VERSION: require('./package.json').version,
 	},
 	optimizationOptions: {
 		minimize: false,
