@@ -1,0 +1,19 @@
+apiVersion: v1alpha
+kind: Notification
+metadata:
+    name: notify-on-fail
+spec:
+    rules:
+        - name: 'Notify slack'
+          filter:
+              projects:
+                  - Sporty-Wide-Web
+              branches:
+                  - master
+                  - release
+              results:
+                  - failed
+                  - passed
+          notify:
+              slack:
+                  endpoint: https://hooks.slack.com/services/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
