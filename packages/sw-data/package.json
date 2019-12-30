@@ -3,6 +3,7 @@
 	"version": "1.0.3",
 	"description": "Data Crawler service for SportyWide",
 	"license": "ISC",
+	"private": true,
 	"dependencies": {
 		"cheerio": "0.22.0",
 		"chrome-aws-lambda": "2.0.1",

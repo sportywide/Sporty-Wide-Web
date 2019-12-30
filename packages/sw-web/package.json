@@ -3,6 +3,7 @@
 	"version": "1.0.3",
 	"description": "Sporty Wide Web repository",
 	"license": "MIT",
+	"private": true,
 	"author": "",
 	"scripts": {
 		"build": "gulp build --color",
