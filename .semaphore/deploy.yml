@@ -22,6 +22,7 @@ blocks:
           jobs:
               - name: 'Publish Packages'
                 commands:
+                    - echo '//registry.npmjs.org/:_authToken=${NPM_TOKEN}' > ~/.npmrc
                     - git config --global user.email "vdtn359@gmail.com"
                     - git config --global user.name "Tuan Nguyen"
                     - npx lerna publish minor --yes
