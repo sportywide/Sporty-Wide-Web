@@ -1,6 +1,6 @@
 {
 	"name": "sportywide-email",
-	"version": "1.1.0",
+	"version": "1.2.0",
 	"description": "Email micro service",
 	"license": "ISC",
 	"private": true,
@@ -11,8 +11,8 @@
 	"dependencies": {
 		"html-to-text": "5.1.1",
 		"nodemailer": "6.3.0",
-		"sportywide-core": "^1.1.0",
-		"sportywide-schema": "^1.1.0",
-		"sportywide-shared": "^1.1.0"
+		"sportywide-core": "^1.2.0",
+		"sportywide-schema": "^1.2.0",
+		"sportywide-shared": "^1.2.0"
 	}
 }
