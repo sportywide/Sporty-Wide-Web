@@ -43,3 +43,21 @@ pushEmail:
 	docker push sportywide/sportywide-email:$(VERSION)
 	docker push sportywide/sportywide-email
 pushAll: pushBase pushNode pushWeb pushApi pushEmail
+
+pullBase:
+	docker pull sportywide/sportywide-base
+pullNode:
+	docker pull sportywide/sportywide-node
+pullWeb:
+	docker pull sportywide/sportywide-web:build-prod
+	docker pull sportywide/sportywide-web:produles
+	docker pull sportywide/sportywide-web
+pullApi:
+	docker pull sportywide/sportywide-api:build-prod
+	docker pull sportywide/sportywide-api:produles
+	docker pull sportywide/sportywide-api
+pullEmail:
+	docker pull sportywide/sportywide-email:build-prod
+	docker pull sportywide/sportywide-email:produles
+	docker pull sportywide/sportywide-email
+pullAll: pullBase pullNode pullApi pullEmail pullWeb

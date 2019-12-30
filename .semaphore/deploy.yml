@@ -5,7 +5,31 @@ agent:
         type: e1-standard-2
         os_image: ubuntu1804
 blocks:
-    - name: Build docker images
+    - name: Bump version
+      skip:
+          when: "branch != 'release'"
+      task:
+          secrets:
+              - name: git-ssh-keys
+          prologue:
+              commands:
+                  - chmod 400 ~/.ssh/id_rsa
+                  - checkout
+                  - nvm use
+                  - node --version
+                  - npm --version
+          jobs:
+              - name: 'Bump version'
+                commands:
+                    - git config --global user.email "vdtn359@gmail.com"
+                    - git config --global user.name "Tuan Nguyen"
+                    - VERSION=$(cat version)
+                    - echo $(npx semver $VERSION -i minor) > version
+                    - git commit -a -m 'v$VERSION'
+                    - VERSION=$(cat version)
+                    - git tag -m "v$VERSION" "v$VERSION" -f
+                    - git push origin --follow-tags
+    - name: Build and push docker images
       skip:
           when: "branch != 'release'"
       task:
@@ -18,20 +42,8 @@ blocks:
               - name: 'Build all'
                 commands:
                     - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+                    - make pullAll
                     - make buildAll
-    - name: Push docker images
-      skip:
-          when: "branch != 'release'"
-      task:
-          secrets:
-              - name: docker-login
-          prologue:
-              commands:
-                  - checkout
-          jobs:
-              - name: 'Push all'
-                commands:
-                    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
                     - make pushAll
     - name: Deploy Frontend
       skip:
