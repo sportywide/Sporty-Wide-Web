@@ -1,6 +1,6 @@
 {
 	"name": "sportywide-scheduling",
-	"version": "1.0.3",
+	"version": "1.1.0",
 	"description": "Contain scheduling functions",
 	"private": true,
 	"repository": {
@@ -16,7 +16,7 @@
 		"aws-lambda": "0.1.2",
 		"dynamoose-improved": "1.10.2",
 		"source-map-support": "0.5.13",
-		"sportywide-data": "1.0.3"
+		"sportywide-data": "^1.1.0"
 	},
 	"devDependencies": {
 		"@types/aws-lambda": "8.10.36",
