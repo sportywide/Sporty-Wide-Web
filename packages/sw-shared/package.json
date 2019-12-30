@@ -1,6 +1,6 @@
 {
 	"name": "sportywide-shared",
-	"version": "1.2.0",
+	"version": "0.0.0",
 	"description": "Shared package that contains typescript interfaces, shared utility code between packages and build config",
 	"keywords": [],
 	"license": "ISC",

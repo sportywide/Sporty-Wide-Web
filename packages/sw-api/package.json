@@ -1,6 +1,6 @@
 {
 	"name": "sportywide-api",
-	"version": "1.2.0",
+	"version": "0.0.0",
 	"description": "This package contains all related API code",
 	"keywords": [],
 	"license": "ISC",
@@ -27,9 +27,9 @@
 		"passport-google-oauth2": "0.2.0",
 		"passport-jwt": "4.0.0",
 		"passport-local": "1.0.0",
-		"sportywide-core": "^1.2.0",
-		"sportywide-schema": "^1.2.0",
-		"sportywide-shared": "^1.2.0",
+		"sportywide-core": "0.0.0",
+		"sportywide-schema": "0.0.0",
+		"sportywide-shared": "0.0.0",
 		"swagger-ui-express": "4.0.7"
 	}
 }

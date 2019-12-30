@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-EMAIL_VERSION=$(./get-next-version sw-email)
-API_VERSION=$(./get-next-version sw-api)
+EMAIL_VERSION=$(./get-version)
+API_VERSION=$(./get-version)
 cd ./scripts/elb/backend || exit 1
 START=$(date +%s)
 VERSION=$(date +%s)
