@@ -1,7 +1,7 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { fifaImage } from '@web/shared/lib/images/links';
-import { Button, Card, Grid, GridColumn, Image, Loader, Select, Label, Popup } from 'semantic-ui-react';
+import { Card, Grid, GridColumn, Image, Label, Loader, Popup, Select } from 'semantic-ui-react';
 import { IProfilePlayers, profilePlayersReducer } from '@web/features/profile/players/store/reducers';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { registerReducer } from '@web/shared/lib/redux/register-reducer';
@@ -113,7 +113,7 @@ const SwManageProfilePlayersComponent: React.FC<IProps> = ({ profilePlayers, lea
 		<div>
 			<span className={'sw-mr2'}>Your favorite formation</span>
 			<Select
-				className={'sw-mb2'}
+				className={'sw-mb3'}
 				disabled={isSettingFormation}
 				defaultValue={profilePlayers.preference.formation}
 				options={options}

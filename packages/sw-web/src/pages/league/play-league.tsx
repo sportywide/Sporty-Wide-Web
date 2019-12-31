@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import { SwContainer, SwGreyBackground } from '@web/shared/styled/Background.styled';
-import { Button, Header, Icon } from 'semantic-ui-react';
+import { Button, Header, Icon, Tab } from 'semantic-ui-react';
 import { SwManageProfilePlayers } from '@web/features/profile/players/components/ManageProfilePlayers';
 import { LeagueService } from '@web/features/leagues/base/services/league.service';
 import { SwLeagueStandings } from '@web/features/leagues/base/components/LeagueStanding';
@@ -13,7 +13,9 @@ import { device } from '@web/styles/constants/size';
 const PlayButton = styled(Button)`
 	position: initial;
 	right: 10px;
-	top: 60px;
+	&&& {
+		margin-bottom: 20px;
+	}
 
 	@media ${device.laptop} {
 		position: absolute;
@@ -37,32 +39,54 @@ class SwManagePlayersPage extends React.Component<any> {
 		if (!this.props.league) {
 			return null;
 		}
+		const panes = [
+			{
+				menuItem: 'Players',
+				render: () => (
+					<Tab.Pane as="div" attached={false} className={'sw-relative'}>
+						<PlayButton
+							color={'blue'}
+							onClick={() =>
+								redirect({
+									route: 'lineup-builder',
+									params: {
+										id: this.props.leagueId,
+									},
+								})
+							}
+						>
+							Build your lineup <Icon name={'arrow right'} />
+						</PlayButton>
+						<SwManageProfilePlayers leagueId={this.props.leagueId} />
+					</Tab.Pane>
+				),
+			},
+			{
+				menuItem: 'Standings',
+				render: () => (
+					<Tab.Pane as="div" attached={false}>
+						<SwLeagueStandings league={this.props.league} />
+					</Tab.Pane>
+				),
+			},
+			{
+				menuItem: 'Fixtures',
+				render: () => (
+					<Tab.Pane as="div" attached={false}>
+						<Header as={'h3'}>This week fixtures</Header>
+						<SwWeekFixtures leagueId={this.props.leagueId} />
+					</Tab.Pane>
+				),
+			},
+		];
 		return (
 			<SwGreyBackground padding={true}>
 				<Head>
 					<title>{this.props.league.title}</title>
 				</Head>
 				<SwContainer>
-					<PlayButton
-						color={'blue'}
-						onClick={() =>
-							redirect({
-								route: 'lineup-builder',
-								params: {
-									id: this.props.leagueId,
-								},
-							})
-						}
-					>
-						Build your lineup <Icon name={'arrow right'} />
-					</PlayButton>
 					<Header as={'h1'}>Welcome to {this.props.league.title}</Header>
-					<Header as={'h3'}>Your players</Header>
-					<SwManageProfilePlayers leagueId={this.props.leagueId} />
-					<Header as={'h3'}>League Standings</Header>
-					<SwLeagueStandings league={this.props.league} />
-					<Header as={'h3'}>This week fixtures</Header>
-					<SwWeekFixtures leagueId={this.props.leagueId} />
+					<Tab menu={{ secondary: true, pointing: true }} panes={panes} />
 				</SwContainer>
 			</SwGreyBackground>
 		);
