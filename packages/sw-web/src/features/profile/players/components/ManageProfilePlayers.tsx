@@ -16,6 +16,12 @@ import { ContainerContext } from '@web/shared/lib/store';
 import { UserLeagueService } from '@web/features/leagues/user/services/user-league.service';
 import { SwIcon } from '@web/shared/lib/icon';
 import { getPositionColor, getRatingColor } from '@web/shared/lib/color';
+import { get } from 'lodash';
+import { fetchUpcomingFixturesEpic } from '@web/features/fixtures/store/epics';
+import { fixtureReducer } from '@web/features/fixtures/store/reducers';
+import { fetchUpcomingFixtures } from '@web/features/fixtures/store/actions';
+import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
+import { formatDistance } from 'date-fns';
 
 interface IProps {
 	players: PlayerDto[];
@@ -25,8 +31,10 @@ interface IProps {
 interface IProps {
 	profilePlayers: IProfilePlayers;
 	user: IUser;
+	upcomingFixtures: Record<number, FixtureDto>;
 	leagueId: number;
 	fetchProfilePlayers: typeof fetchProfilePlayers;
+	fetchUpcomingFixtures: typeof fetchUpcomingFixtures;
 }
 const playerPosition = (position: string) => {
 	return (
@@ -36,7 +44,11 @@ const playerPosition = (position: string) => {
 	);
 };
 
-const playerCard = (player: PlayerDto) => {
+const playerCard = (player: PlayerDto, upcomingFixture: FixtureDto) => {
+	const againstTeamId =
+		upcomingFixture && (upcomingFixture.homeId === player.teamId ? upcomingFixture.awayId : upcomingFixture.homeId);
+	const againstTeam =
+		upcomingFixture && (upcomingFixture.homeId === player.teamId ? upcomingFixture.away : upcomingFixture.home);
 	return (
 		<GridColumn mobile={16} tablet={8} computer={4} key={player.id}>
 			<Card key={player.id}>
@@ -79,6 +91,16 @@ const playerCard = (player: PlayerDto) => {
 								</>
 							)}
 						</div>
+						<div>
+							{upcomingFixture && (
+								<>
+									<strong>Upcoming game:</strong>
+									<div className={'sw-flex sw-flex-center sw-flex-justify sw-mt1'}>
+										{againstTeam} - {formatDistance(upcomingFixture.time, new Date())}
+									</div>
+								</>
+							)}
+						</div>
 					</Card.Description>
 				</Card.Content>
 				<Card.Content extra>
@@ -96,7 +118,13 @@ const playerCard = (player: PlayerDto) => {
 	);
 };
 
-const SwManageProfilePlayersComponent: React.FC<IProps> = ({ profilePlayers, leagueId, fetchProfilePlayers }) => {
+const SwManageProfilePlayersComponent: React.FC<IProps> = ({
+	profilePlayers,
+	leagueId,
+	fetchProfilePlayers,
+	fetchUpcomingFixtures,
+	upcomingFixtures,
+}) => {
 	const user = useUser();
 	const [isSettingFormation, setIsSettingFormation] = useState(false);
 	const container = useContext(ContainerContext);
@@ -104,11 +132,21 @@ const SwManageProfilePlayersComponent: React.FC<IProps> = ({ profilePlayers, lea
 		fetchProfilePlayers({ leagueId, userId: user.id });
 	}, [fetchProfilePlayers, leagueId, user.id]);
 
+	useEffect(() => {
+		(async () => {
+			if (!get(profilePlayers, 'players.length')) {
+				return;
+			}
+			fetchUpcomingFixtures(profilePlayers.players.map(player => player.teamId));
+		})();
+	}, [container, fetchUpcomingFixtures, profilePlayers]);
+
 	const options = useFormationOptions();
 	if (!profilePlayers || profilePlayers.loading) {
 		return <Loader active inline={'centered'} />;
 	}
 	const players = profilePlayers.players;
+
 	return (
 		<div>
 			<span className={'sw-mr2'}>Your favorite formation</span>
@@ -120,7 +158,11 @@ const SwManageProfilePlayersComponent: React.FC<IProps> = ({ profilePlayers, lea
 				onChange={(e, { value }) => setPreferredFormation(value)}
 			/>
 			<Grid verticalAlign={'middle'} centered>
-				{players.length > 0 ? players.map(playerCard) : <span />}
+				{players.length > 0 ? (
+					players.map(player => playerCard(player, upcomingFixtures[player.teamId]))
+				) : (
+					<span />
+				)}
 			</Grid>
 		</div>
 	);
@@ -137,15 +179,25 @@ const SwManageProfilePlayersComponent: React.FC<IProps> = ({ profilePlayers, lea
 	}
 };
 const enhancer = compose(
-	registerReducer({ profilePlayers: profilePlayersReducer }),
-	registerEpic(fetchProfilePlayersEpic),
+	registerReducer({
+		profilePlayers: profilePlayersReducer,
+		fixtures: {
+			unmount: false,
+			reducer: fixtureReducer,
+		},
+	}),
+	registerEpic(fetchProfilePlayersEpic, fetchUpcomingFixturesEpic),
 	connect(
 		(state, ownProps) => {
 			const userId = safeGet(() => state.auth.user.id);
-			return { profilePlayers: safeGet(() => state.profilePlayers[userId][ownProps.leagueId]) };
+			return {
+				profilePlayers: safeGet(() => state.profilePlayers[userId][ownProps.leagueId]),
+				upcomingFixtures: state.fixtures.upcoming,
+			};
 		},
 		{
 			fetchProfilePlayers,
+			fetchUpcomingFixtures,
 		}
 	)
 );

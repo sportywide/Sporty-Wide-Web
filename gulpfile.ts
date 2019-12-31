@@ -55,6 +55,7 @@ export class Gulpfile {
 
 		if (argv.it) {
 			args.push('--testRegex=\\.it-spec\\.ts$');
+			args.push('--detectOpenHandles');
 		}
 
 		if (argv.e2e) {
@@ -65,6 +66,7 @@ export class Gulpfile {
 			args.push('--testRegex=\\.it-spec\\.tsx?$');
 			args.push('--testRegex=\\.e2e-spec\\.tsx?$');
 			args.push('--testRegex=\\.spec\\.tsx?$');
+			args.push('--detectOpenHandles');
 		}
 
 		for (const key of Object.keys(argv)) {

@@ -144,4 +144,8 @@ export class BaseEntityService<T extends BaseGeneratedEntity> {
 	public isResolved(entity: T, key) {
 		return entity.isResolved(key);
 	}
+
+	public makePlaceholders(ids: number[]) {
+		return `(${ids.map((value, index) => `$${index + 1}`).join(',')})`;
+	}
 }

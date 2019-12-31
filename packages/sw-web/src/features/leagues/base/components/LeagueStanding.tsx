@@ -8,7 +8,7 @@ import { fetchLeaguesStandingEpic } from '@web/features/leagues/base/store/epics
 import { leagueStandingReducer } from '@web/features/leagues/base/store/reducers/league-standing-reducer';
 import { fetchLeagueStandings } from '@web/features/leagues/base/store/actions';
 import { LeagueStandingsDto } from '@shared/lib/dtos/leagues/league-standings.dto';
-import { Table, Loader, Icon, Popup } from 'semantic-ui-react';
+import { Icon, Loader, Popup, Table } from 'semantic-ui-react';
 
 interface IProps {
 	league: SelectableLeagueDto;

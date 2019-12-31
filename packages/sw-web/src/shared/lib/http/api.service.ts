@@ -13,7 +13,6 @@ import { logout, setAuth } from '@web/features/auth/store/actions';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { autobind } from 'core-decorators';
 import { axiosFetch } from '@web/shared/lib/http/axios-fetch';
-import { logger } from '@web/shared/lib/logging';
 
 @Service()
 export class ApiService {

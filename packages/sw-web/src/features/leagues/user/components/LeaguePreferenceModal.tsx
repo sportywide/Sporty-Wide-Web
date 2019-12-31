@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Button, Modal, Select, Image } from 'semantic-ui-react';
+import { Button, Image, Modal, Select } from 'semantic-ui-react';
 import { noop } from '@shared/lib/utils/functions';
 import { useFormationOptions } from '@web/shared/lib/react/hooks';
 import { connect } from 'react-redux';

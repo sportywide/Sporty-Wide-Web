@@ -136,6 +136,26 @@ export class FixtureService extends BaseEntityService<Fixture> {
 		});
 	}
 
+	async getNextFixtures(teamIds: number[] = []) {
+		if (!teamIds.length) {
+			return {};
+		}
+		const rows = await this.fixtureRepository.query(
+			`SELECT select_next_match(id) AS fixture_id, id AS team_id FROM team WHERE id IN (${teamIds.join(',')})`
+		);
+
+		const rowMap = keyBy(rows, 'fixture_id');
+
+		const fixtures = await this.fixtureRepository.findByIds(rows.map(row => row.fixture_id));
+
+		return fixtures.reduce((currentMap, fixture) => {
+			return {
+				...currentMap,
+				[rowMap[fixture.id].team_id]: fixture,
+			};
+		}, {});
+	}
+
 	async saveWhoscoreFixtures(
 		leagueId: number,
 		dbFixtures: Fixture[],

@@ -1,4 +1,3 @@
-import urlParser from 'url';
 import { getConfig } from '@web/config.provider';
 import { Request } from 'express';
 import modifyResponse from 'node-http-proxy-json';

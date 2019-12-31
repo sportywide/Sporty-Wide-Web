@@ -1,4 +1,4 @@
-import { mapTo, catchError } from 'rxjs/operators';
+import { catchError, mapTo } from 'rxjs/operators';
 
 export function catchAndThrow(action) {
 	return catchError(error => {

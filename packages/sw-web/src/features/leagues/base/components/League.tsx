@@ -1,6 +1,6 @@
 import React from 'react';
 import { SelectableLeagueDto } from '@shared/lib/dtos/leagues/user-league.dto';
-import { Icon, Card, Button } from 'semantic-ui-react';
+import { Button, Card, Icon } from 'semantic-ui-react';
 import { SwLeagueImage } from '@web/features/leagues/base/components/League.styled';
 
 interface IProps {
