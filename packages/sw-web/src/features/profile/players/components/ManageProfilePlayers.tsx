@@ -45,14 +45,12 @@ const playerPosition = (position: string) => {
 };
 
 const playerCard = (player: PlayerDto, upcomingFixture: FixtureDto) => {
-	const againstTeamId =
-		upcomingFixture && (upcomingFixture.homeId === player.teamId ? upcomingFixture.awayId : upcomingFixture.homeId);
 	const againstTeam =
 		upcomingFixture && (upcomingFixture.homeId === player.teamId ? upcomingFixture.away : upcomingFixture.home);
 	return (
 		<GridColumn mobile={16} tablet={8} computer={4} key={player.id}>
 			<Card key={player.id}>
-				<Card.Content style={{ height: '180px' }}>
+				<Card.Content style={{ height: '220px' }}>
 					<Image floated="right" size="tiny" src={fifaImage(player.image)} />
 					<Card.Header>
 						<Popup
@@ -67,31 +65,27 @@ const playerCard = (player: PlayerDto, upcomingFixture: FixtureDto) => {
 					</Card.Meta>
 					<Card.Description>
 						<div>
-							{player.stats && (
-								<>
-									<strong>Stats:</strong>
-									<div className={'sw-flex sw-flex-center sw-flex-justify sw-mt1'}>
-										<div className={'sw-flex sw-flex-center'}>
-											<SwIcon name={'foot-ware'} width={18} className={'sw-mr1'} />{' '}
-											{player.stats.played}
-										</div>
-										<div className={'sw-flex sw-flex-center'}>
-											<SwIcon name={'soccer-ball'} width={18} className={'sw-mr1'} />{' '}
-											{player.stats.scored}
-										</div>
-										<div className={'sw-flex sw-flex-center'}>
-											<SwIcon name={'red-card'} width={18} className={'sw-mr1'} />{' '}
-											{player.stats.red}
-										</div>
-										<div className={'sw-flex sw-flex-center'}>
-											<SwIcon name={'yellow-card'} width={18} className={'sw-mr1'} />{' '}
-											{player.stats.yellow}
-										</div>
-									</div>
-								</>
-							)}
+							<strong>Stats:</strong>
+							<div className={'sw-flex sw-flex-center sw-flex-justify sw-mt1'}>
+								<div className={'sw-flex sw-flex-center'}>
+									<SwIcon name={'foot-ware'} width={18} className={'sw-mr1'} />{' '}
+									{player.stats?.played ?? 'N/A'}
+								</div>
+								<div className={'sw-flex sw-flex-center'}>
+									<SwIcon name={'soccer-ball'} width={18} className={'sw-mr1'} />{' '}
+									{player.stats?.scored ?? 'N/A'}
+								</div>
+								<div className={'sw-flex sw-flex-center'}>
+									<SwIcon name={'red-card'} width={18} className={'sw-mr1'} />{' '}
+									{player.stats?.red ?? 'N/A'}
+								</div>
+								<div className={'sw-flex sw-flex-center'}>
+									<SwIcon name={'yellow-card'} width={18} className={'sw-mr1'} />{' '}
+									{player.stats?.yellow ?? 'N/A'}
+								</div>
+							</div>
 						</div>
-						<div>
+						<div className={'sw-mt2'}>
 							{upcomingFixture && (
 								<>
 									<strong>Upcoming game:</strong>

@@ -144,14 +144,13 @@ export class FixtureService extends BaseEntityService<Fixture> {
 			`SELECT select_next_match(id) AS fixture_id, id AS team_id FROM team WHERE id IN (${teamIds.join(',')})`
 		);
 
-		const rowMap = keyBy(rows, 'fixture_id');
-
 		const fixtures = await this.fixtureRepository.findByIds(rows.map(row => row.fixture_id));
+		const fixtureMap = keyBy(fixtures, 'id');
 
-		return fixtures.reduce((currentMap, fixture) => {
+		return rows.reduce((currentMap, row) => {
 			return {
 				...currentMap,
-				[rowMap[fixture.id].team_id]: fixture,
+				[row.team_id]: fixtureMap[row.fixture_id],
 			};
 		}, {});
 	}
