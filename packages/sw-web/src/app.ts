@@ -10,6 +10,8 @@ import { getConfig } from '@web/config.provider';
 import { COOKIE_CSRF } from '@web/api/auth/constants';
 import { log4jsFactory, logger } from '@web/shared/lib/logging';
 import { networkLogOptions } from '@shared/lib/utils/logging/layout';
+import { bugsnagClient } from '@web/shared/lib/bugsnag';
+import { parseCookies } from '@web/shared/lib/auth/helper';
 
 const config = getConfig();
 
@@ -17,7 +19,15 @@ const CSRF_WHITE_LIST = ['login', 'signup', 'refresh-token'];
 
 export function bootstrap(app) {
 	const server = express();
+	const middleware = bugsnagClient.getPlugin('express');
+	server.use(middleware.requestHandler);
 	server.use(cookieParser(config.get('cookie_secret')));
+	server.use((req, res, next) => {
+		const { user } = parseCookies(req.cookies);
+		(req as any).user = user;
+		bugsnagClient.user = user;
+		next();
+	});
 	server.use(
 		flash({
 			secure: isProduction(),
@@ -49,15 +59,20 @@ export function bootstrap(app) {
 		});
 		next();
 	});
-	const handler: any = routes.getRequestHandler(app);
+	server.use(middleware.errorHandler);
+	const handler = routes.getRequestHandler(app);
 	// Default catch-all handler to allow Next.js to handle all other routes
 	server.use((req, res, next) => {
-		handler(req, res, next).catch(e => next(e));
+		handler(req, res).catch(e => next(e));
 	});
 
 	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	server.use((err: Error, req: Request, res: Response, next: NextFunction) => {
 		logger.error(`Error handling request ${req.url}`, err);
+		bugsnagClient.notify(err);
+		if (!res.headersSent) {
+			res.status(500).send('Internal Server Error');
+		}
 	});
 
 	function setupProxy(proxy) {
