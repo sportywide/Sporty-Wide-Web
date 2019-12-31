@@ -1,4 +1,4 @@
-import { Controller, Get, Param, UseGuards, ParseIntPipe } from '@nestjs/common';
+import { Controller, Get, Param, UseGuards, ParseIntPipe, Query } from '@nestjs/common';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { ActiveUser } from '@api/auth/decorators/user-check.decorator';
 import { toDto } from '@api/utils/dto/transform';
@@ -18,6 +18,16 @@ export class FixtureController {
 		});
 		return toDto({
 			dtoType: FixtureDto,
+			value: fixtures,
+		});
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@ActiveUser()
+	@Get('/upcoming')
+	public async getNextFixtures(@Query('team_id') teamIds: number[]) {
+		const fixtures = await this.fixtureService.getNextFixtures(teamIds);
+		return toDto({
 			value: fixtures,
 		});
 	}

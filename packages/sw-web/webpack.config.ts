@@ -2,6 +2,7 @@ import path from 'path';
 import { isDevelopment } from '@shared/lib/utils/env';
 import { makeConfig } from '@build/webpack/node/config';
 import paths from '@build/paths';
+
 const argv = require('yargs').argv;
 const findup = require('find-up');
 

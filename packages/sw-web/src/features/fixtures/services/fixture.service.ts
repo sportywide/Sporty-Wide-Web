@@ -4,6 +4,7 @@ import { ApiService } from '@web/shared/lib/http/api.service';
 import { map } from 'rxjs/operators';
 import { plainToClass } from 'class-transformer-imp';
 import { FixtureDetailsDto, FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
+import { fromPairs, toPairs } from 'lodash';
 
 @Service()
 export class FixtureService {
@@ -33,6 +34,29 @@ export class FixtureService {
 					plainToClass(FixtureDetailsDto, fixture, {
 						useProperties: true,
 					})
+				)
+			);
+	}
+
+	fetchUpcomingFixtures(teamIds: number[]): Observable<{ [key: number]: FixtureDto }> {
+		return this.apiService
+			.api()
+			.get(`/fixtures/upcoming`, {
+				params: {
+					// eslint-disable-next-line @typescript-eslint/camelcase
+					team_id: teamIds,
+				},
+			})
+			.pipe(
+				map(({ data: fixtureMap }) =>
+					fromPairs(
+						toPairs(fixtureMap).map(([key, value]) => [
+							key,
+							plainToClass(FixtureDto, value, {
+								useProperties: true,
+							}),
+						])
+					)
 				)
 			);
 	}

@@ -14,7 +14,6 @@ import React from 'react';
 import { leagueReducer } from '@web/features/leagues/base/store/reducers/league-reducer';
 import { fetchLeaguesEpic } from '@web/features/leagues/base/store/epics';
 import { observableToPromiseMiddleware } from '@web/shared/lib/redux/middlewares/observable-to-promise';
-import { logger } from '@web/shared/lib/logging';
 import { createReducerManager, ReducerManager } from './redux/reducer-manager';
 
 export interface IDependencies {

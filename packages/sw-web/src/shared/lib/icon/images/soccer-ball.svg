@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="iso-8859-1"?>
 <!-- Generator: Adobe Illustrator 19.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
+<svg version="1.1" id="Capa_1" xmlns="http://www.w3.org/2000/svg" x="0px" y="0px"
+     viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve">
 <circle style="fill:#78B22A;" cx="256" cy="256" r="256"/>
 <path style="fill:#679C20;" d="M512,256c0-5.617-0.201-11.185-0.557-16.712l-116.04-116.039l-279.55,264.705l123.492,123.492
 	C244.853,511.8,250.403,512,256,512C397.385,512,512,397.385,512,256z"/>

@@ -19,6 +19,7 @@ BEGIN
                FROM fixture
                WHERE fixture.status != 'FT' AND
                      fixture.time < select_next_interval(NOW())
+                     AND fixture.time >= date_trunc('week', NOW())
                      AND (fixture.home_id = team_id
                      OR fixture.away_id = team_id)
                LIMIT 1);
