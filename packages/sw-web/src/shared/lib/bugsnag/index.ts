@@ -10,9 +10,9 @@ export const bugsnagClient = bugsnag({
 	appVersion: process.env.APP_VERSION,
 	releaseStage: process.env.NODE_ENV,
 	beforeSend: (report, cb) => {
-		// if (isDevelopment()) {
-		// 	report.ignore();
-		// }
+		if (isDevelopment()) {
+			report.ignore();
+		}
 		cb(null);
 	},
 });
