@@ -1,9 +1,9 @@
 {
 	"name": "sportywide-data",
 	"version": "0.0.0",
+	"private": true,
 	"description": "Data Crawler service for SportyWide",
 	"license": "ISC",
-	"private": true,
 	"dependencies": {
 		"cheerio": "0.22.0",
 		"chrome-aws-lambda": "2.0.1",
