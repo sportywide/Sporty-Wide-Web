@@ -3,12 +3,12 @@
 	"image": "https://www.fifplay.com/img/fifa/19/formations/fifa-3-1-4-2.jpg",
 	"formation": [
 		{
-			"name": "LS",
+			"name": "ST",
 			"top": 15,
 			"left": 35
 		},
 		{
-			"name": "RS",
+			"name": "ST",
 			"top": 15,
 			"left": 65
 		},
