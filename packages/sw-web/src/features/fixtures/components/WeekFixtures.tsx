@@ -75,7 +75,7 @@ function renderStatus(fixture: FixtureDto) {
 	if (fixture.status === 'PENDING') {
 		return 'PNDG';
 	} else if (fixture.status === 'ACTIVE') {
-		return fixture.current || 0;
+		return `${fixture.current || 0}'`;
 	} else {
 		return fixture.status;
 	}
