@@ -187,7 +187,9 @@ export class FixtureService extends BaseEntityService<Fixture> {
 				dbFixture.whoscoreUrl = fixture.link;
 				dbFixture.status = fixture.status;
 				dbFixture.current = fixture.current;
-				dbFixture.time = fixture.time;
+				if (fixture.time) {
+					dbFixture.time = fixture.time;
+				}
 				dbFixture.homeScore = fixture.homeScore;
 				dbFixture.awayScore = fixture.awayScore;
 				dbFixture.incidents = fixture.incidents;

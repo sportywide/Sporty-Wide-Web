@@ -73,12 +73,16 @@ export class FixtureProcessService {
 			FixtureProcessModel.query('status')
 				.using('statusIndex')
 				.eq(FixtureProcessStatus.PENDING)
+				.filter('nextTime')
+				.le(new Date())
 				.exec(),
 			FixtureProcessModel.query('status')
 				.using('statusIndex')
 				.eq(FixtureProcessStatus.RETRY)
 				.filter('attempt')
 				.lt(3)
+				.filter('nextTime')
+				.le(new Date())
 				.exec(),
 		]);
 		const fixtures = [...pendingFixtures, ...retryFixtures];

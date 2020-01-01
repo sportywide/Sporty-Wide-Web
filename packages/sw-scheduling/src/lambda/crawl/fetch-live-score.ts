@@ -7,7 +7,7 @@ import { FixtureService } from '@schema/fixture/services/fixture.service';
 import { FixtureProcessInput, FixtureProcessService } from '@scheduling/lib/fixture/services/fixture-process.service';
 import { BrowserService } from '@data/crawler/browser.service';
 import { INestApplicationContext } from '@nestjs/common';
-import { addMinutes, endOfMinute } from 'date-fns';
+import { addMinutes, startOfMinute } from 'date-fns';
 import { CloudwatchService } from '@scheduling/lib/aws/cloudwatch/cloudwatch.service';
 import { SCHEDULING_LOGGER } from '@core/logging/logging.constant';
 
@@ -76,20 +76,25 @@ async function scheduleNextCall(module: INestApplicationContext) {
 	const fixtureService = module.get(FixtureService);
 	const schedulingLogger = module.get(SCHEDULING_LOGGER);
 	const hasActiveMatches = await fixtureService.hasActiveMatches();
-	let date: Date;
+	let nextProcessingDate: Date;
 	if (hasActiveMatches) {
-		date = addMinutes(endOfMinute(new Date()), 1);
+		const currentDate = new Date();
+		if (currentDate.getSeconds() <= 20) {
+			nextProcessingDate = addMinutes(startOfMinute(currentDate), 1);
+		} else {
+			nextProcessingDate = addMinutes(startOfMinute(currentDate), 2);
+		}
 	} else {
 		const pendingMatch = await fixtureService.getNextPendingMatch();
 		if (pendingMatch) {
-			date = pendingMatch.time;
+			nextProcessingDate = pendingMatch.time;
 		}
 	}
-	schedulingLogger.info('Next schedule time', date);
+	schedulingLogger.info('Next schedule time', nextProcessingDate);
 	const cloudWatchService = module.get(CloudwatchService);
 	await cloudWatchService.putRule({
 		ruleName: 'schedule-fetch-livescore',
 		lambda: 'sw-production-fetch-live-score',
-		date,
+		date: nextProcessingDate,
 	});
 }
