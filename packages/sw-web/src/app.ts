@@ -7,7 +7,7 @@ import cookieParser from 'cookie-parser';
 import csurf from 'csurf';
 import flash from 'express-cookie-flash';
 import { getConfig } from '@web/config.provider';
-import { COOKIE_CSRF } from '@web/api/auth/constants';
+import { COOKIE_CSRF, TEN_YEARS } from '@web/api/auth/constants';
 import { log4jsFactory, logger } from '@web/shared/lib/logging';
 import { networkLogOptions } from '@shared/lib/utils/logging/layout';
 import { bugsnagClient } from '@web/shared/lib/bugsnag';
@@ -37,6 +37,7 @@ export function bootstrap(app) {
 		csurf({
 			cookie: {
 				secure: isProduction(),
+				maxAge: TEN_YEARS,
 			},
 			whitelist: req => {
 				return CSRF_WHITE_LIST.some(whiteListPath => req.path && req.path.endsWith(whiteListPath));
@@ -56,6 +57,7 @@ export function bootstrap(app) {
 		}
 		res.cookie(COOKIE_CSRF, (req as any).csrfToken(), {
 			secure: isProduction(),
+			maxAge: TEN_YEARS,
 		});
 		next();
 	});

@@ -15,7 +15,7 @@ import { config } from '@api/config';
 import { ApiValidationService } from './services/validation/validation.service';
 
 @Module({
-	exports: [ApiValidationService, RequestContextService, ConfigModule, AddressService],
+	exports: [ApiValidationService, RequestContextService, ConfigModule, AddressService, CoreModule],
 	controllers: [UtilController, AddressController],
 	providers: [exceptionFilterProvider, ApiValidationService, RequestContextService, UniqueService, AddressService],
 	imports: [

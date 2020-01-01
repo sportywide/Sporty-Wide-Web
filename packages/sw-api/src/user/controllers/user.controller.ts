@@ -11,6 +11,7 @@ import {
 	Put,
 	Query,
 	UnauthorizedException,
+	BadRequestException,
 	UseGuards,
 } from '@nestjs/common';
 import { UserDto } from '@shared/lib/dtos/user/user.dto';
@@ -53,7 +54,15 @@ export class UserController {
 	@Get('token')
 	@HttpCode(HttpStatus.OK)
 	public async findByToken(@Query('token') token: string) {
-		const user = await this.userService.findByToken({ token });
+		if (!token) {
+			throw new BadRequestException('Token is required');
+		}
+		let [userId]: any[] = token.split(':');
+		userId = parseInt(userId, 10);
+		if (isNaN(userId)) {
+			throw new BadRequestException('Token is not valid');
+		}
+		const user = await this.userService.findById({ id: userId });
 		return toDto({
 			value: user,
 			dtoType: UserDto,
