@@ -38,10 +38,10 @@ resource "null_resource" "checkout_git" {
   }
   provisioner "remote-exec" {
     inline = [
-      "ssh-keygen -F gitlab.com || ssh-keyscan gitlab.com >>~/.ssh/known_hosts",
+      "ssh-keygen -F github.com || ssh-keyscan github.com >>~/.ssh/known_hosts",
       "eval \"$(ssh-agent -s)\"",
       "ssh-add ~/.ssh/sw_git",
-      "test ! -e sporty-wide-web && git clone git@gitlab.com:sporty-wide/sporty-wide-web.git",
+      "test ! -e sporty-wide-web && git clone git@github.com:vdtn359/Sporty-Wide-Web.git sporty-wide-web",
       "cd sporty-wide-web || exit",
       "git pull origin master"
     ]
