@@ -53,7 +53,10 @@ function fixtureHeader(fixtureDetails: FixtureDetailsDto) {
 						</div>
 						<S.SoccerIcon name={'soccer-ball'} width={18} />
 						<div className={'sw-flex-grow-equal'}>
-							{renderIncidents(fixture.incidents.filter(incident => !incident.home), false)}
+							{renderIncidents(
+								fixture.incidents.filter(incident => !incident.home),
+								false
+							)}
 						</div>
 					</div>
 					<Divider />
@@ -190,7 +193,7 @@ function renderStatus({ status, current }: FixtureDto) {
 	} else if (status === 'PENDING') {
 		return 'Pending';
 	} else if (status === 'ACTIVE') {
-		return current;
+		return `${current}'`;
 	} else {
 		return status;
 	}
