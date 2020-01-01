@@ -105,7 +105,7 @@ function setCookies(proxyRes, request, response, redirectUrl) {
 	}
 
 	modifyResponse(response, proxyRes, function(tokens) {
-		const { accessToken, refreshToken } = tokens;
+		const { accessToken, refreshToken, refreshTokenLifeTime } = tokens;
 
 		const isServerSide = request.headers[HEADER_SERVER_SIDE];
 
@@ -115,6 +115,7 @@ function setCookies(proxyRes, request, response, redirectUrl) {
 				{
 					accessToken,
 					refreshToken,
+					refreshTokenLifeTime,
 				}
 			);
 

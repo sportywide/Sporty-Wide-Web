@@ -17,8 +17,13 @@ export const logoutEpic = (action$, state$, { container }: IDependencies) => {
 			const authService = container.get(AuthService);
 			return authService.logout().pipe(
 				mapTo(logoutSuccess),
-				tap(() => {
-					window.location.href = '/login';
+				tap(async () => {
+					await redirect({
+						context: container.get('context'),
+						route: 'login',
+						replace: true,
+						refresh: true,
+					});
 				})
 			);
 		})

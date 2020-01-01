@@ -97,10 +97,7 @@ const enhance = compose(
 	checkUser(notAllowActive, 'home'),
 	registerReducer({ auth: authReducer }),
 	registerEpic(loginEpic),
-	connect(
-		null,
-		{ login }
-	)
+	connect(null, { login })
 );
 
 export default enhance(SwLoginPage);

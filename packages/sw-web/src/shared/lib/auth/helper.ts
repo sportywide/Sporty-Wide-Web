@@ -1,5 +1,11 @@
 import cookieParser from 'next-cookies';
-import { COOKIE_CSRF, COOKIE_JWT_PAYLOAD, COOKIE_JWT_SIGNATURE, COOKIE_REFRESH_TOKEN } from '@web/api/auth/constants';
+import {
+	COOKIE_CSRF,
+	COOKIE_JWT_PAYLOAD,
+	COOKIE_JWT_SIGNATURE,
+	COOKIE_REFRESH_TOKEN,
+	TEN_YEARS,
+} from '@web/api/auth/constants';
 import { decodeBase64 } from '@web/shared/lib/encode/encoding';
 import { isNode } from '@web/shared/lib/environment';
 import { isProduction } from '@shared/lib/utils/env';
@@ -43,20 +49,24 @@ export function parseCookies(cookies = {}) {
 	};
 }
 
-export function setAuthCookies({ request, response }, { accessToken, refreshToken }) {
+export function setAuthCookies({ request, response }, { accessToken, refreshToken, refreshTokenLifeTime }) {
 	const [header, payload, signature] = accessToken.split('.');
 	response.cookie(COOKIE_JWT_PAYLOAD, [header, payload].join('.'), {
 		secure: isProduction(),
+		maxAge: refreshTokenLifeTime * 1000,
 	});
 	response.cookie(COOKIE_JWT_SIGNATURE, signature, {
 		httpOnly: true,
 		secure: isProduction(),
+		maxAge: refreshTokenLifeTime * 1000,
 	});
 	response.cookie(COOKIE_REFRESH_TOKEN, refreshToken, {
 		httpOnly: true,
 		secure: isProduction(),
+		maxAge: refreshTokenLifeTime * 1000,
 	});
 	response.cookie(COOKIE_CSRF, request.csrfToken(), {
 		secure: isProduction(),
+		maxAge: TEN_YEARS,
 	});
 }
