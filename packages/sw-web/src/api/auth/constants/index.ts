@@ -4,3 +4,4 @@ export const COOKIE_REFRESH_TOKEN = 'X-AUTH-REFRESH-TOKEN';
 export const COOKIE_CSRF = 'XSRF-TOKEN';
 export const COOKIE_REFERRER = 'Referrer';
 export const HEADER_SERVER_SIDE = 'X-SERVER-SIDE';
+export const TEN_YEARS = 315360000000;

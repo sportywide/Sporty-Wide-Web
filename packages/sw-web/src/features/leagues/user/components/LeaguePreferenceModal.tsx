@@ -44,8 +44,11 @@ const LeaguePreferenceModalComponent: React.FC<IProps> = function({
 					onClick={async () => {
 						await joinUserLeague({ leagueId: league.id, userId, formation });
 						await redirect({
-							refresh: true,
-							route: `play-league/${league.id}`,
+							refresh: false,
+							route: 'play-league',
+							params: {
+								id: league.id,
+							},
 						});
 					}}
 					positive
@@ -62,12 +65,9 @@ const LeaguePreferenceModalComponent: React.FC<IProps> = function({
 
 const enhancer = compose(
 	registerEpic(joinUserLeagueEpic),
-	connect(
-		null,
-		{
-			joinUserLeague,
-		}
-	),
+	connect(null, {
+		joinUserLeague,
+	}),
 	memo
 );
 

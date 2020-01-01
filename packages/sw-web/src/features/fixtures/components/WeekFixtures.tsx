@@ -49,7 +49,7 @@ const SwWeekFixturesComponent: React.FC<IProps> = ({ leagueId }) => {
 										});
 									}}
 								>
-									<S.FixtureTime>{format(new Date(fixture.time), 'hh:mm')}</S.FixtureTime>
+									<S.FixtureTime>{format(new Date(fixture.time), 'HH:mm')}</S.FixtureTime>
 									<S.FixtureMain>
 										<S.FixtureTeam className={'sw-truncate'} home>
 											{fixture.home}

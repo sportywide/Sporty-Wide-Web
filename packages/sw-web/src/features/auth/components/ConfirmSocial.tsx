@@ -39,6 +39,7 @@ const SwConfirmSocialComponent: React.FC<any> = () => {
 		await authService.confirmSocial(values).toPromise();
 		await redirect({
 			refresh: true,
+			redirect: true,
 			route: 'home',
 		});
 	}
