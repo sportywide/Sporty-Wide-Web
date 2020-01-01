@@ -88,7 +88,7 @@ export class TokenService {
 	}
 
 	public async getRefreshToken(userId: number): Promise<string> {
-		const refreshKey = `refresh_token:${userId}`;
+		const refreshKey = refreshTokenKey(userId);
 		return this.redisService.client.get(refreshKey);
 	}
 }

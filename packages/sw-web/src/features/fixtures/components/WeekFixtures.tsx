@@ -49,7 +49,7 @@ const SwWeekFixturesComponent: React.FC<IProps> = ({ leagueId }) => {
 										});
 									}}
 								>
-									<S.FixtureTime>{format(new Date(fixture.time), 'hh:mm')}</S.FixtureTime>
+									<S.FixtureTime>{format(new Date(fixture.time), 'HH:mm')}</S.FixtureTime>
 									<S.FixtureMain>
 										<S.FixtureTeam className={'sw-truncate'} home>
 											{fixture.home}
@@ -75,7 +75,7 @@ function renderStatus(fixture: FixtureDto) {
 	if (fixture.status === 'PENDING') {
 		return 'PNDG';
 	} else if (fixture.status === 'ACTIVE') {
-		return fixture.current || 0;
+		return `${fixture.current || 0}'`;
 	} else {
 		return fixture.status;
 	}

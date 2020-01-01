@@ -1,4 +1,5 @@
 import { Inject, Service } from 'typedi';
+import { of } from 'rxjs';
 import { ApiService } from '@web/shared/lib/http/api.service';
 import { CompleteSocialProfileDto } from '@shared/lib/dtos/user/complete-social-profile.dto';
 import { ResetPasswordDto } from '@shared/lib/dtos/user/reset-password-dto';
@@ -27,6 +28,7 @@ export class AuthService {
 			for (const cookieName of Object.keys(this.context.req.cookies || {})) {
 				this.context.res.clearCookie(cookieName);
 			}
+			return of(null);
 		} else {
 			return this.apiService.auth().post('/logout');
 		}
