@@ -1,31 +1,42 @@
 import { findPathForRoute, Router } from '@web/routes';
+import { TEMPORARY_REDIRECT } from '@web/shared/lib/http/status-codes';
 
 export async function redirect({
 	context = {},
 	route,
 	replace = false,
+	redirect = false,
 	refresh,
 	params = undefined,
 }: {
 	context?: any;
 	route?: string;
 	replace?: boolean;
+	redirect?: boolean;
 	refresh?: boolean;
 	params?: any;
 }) {
 	if (context && context.res) {
-		context.res.writeHead(302, {
-			Location: findPathForRoute(route) || '/auth/redirect',
-		});
-		context.res.end();
+		context.res.location(findPathForRoute(route) || '/auth/redirect');
+		context.res.status(TEMPORARY_REDIRECT);
+		if (context.res.originalEnd) {
+			context.res.originalEnd();
+		} else {
+			context.res.end();
+		}
 	} else {
-		if (refresh || !route) {
+		if (refresh) {
 			const path = findPathForRoute(route);
-			const redirectUrl = path ? `/auth/redirect?url=${path}` : '/auth/redirect';
-			if (replace) {
-				window.location.replace(redirectUrl);
+			let url;
+			if (!route || redirect) {
+				url = path ? `/auth/redirect?url=${encodeURIComponent(path)}` : '/auth/redirect';
 			} else {
-				window.location.href = redirectUrl;
+				url = path;
+			}
+			if (replace) {
+				window.location.replace(url);
+			} else {
+				window.location.href = url;
 			}
 		} else {
 			if (replace) {

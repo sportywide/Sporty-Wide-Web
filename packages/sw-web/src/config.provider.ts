@@ -7,5 +7,6 @@ export function getConfig() {
 	if (currentConfig) {
 		return currentConfig;
 	}
-	return (currentConfig = createConfig(config, process.env.NODE_ENV));
+	currentConfig = createConfig(config, process.env.NODE_ENV);
+	return currentConfig;
 }
