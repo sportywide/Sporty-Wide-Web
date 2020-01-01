@@ -27,7 +27,11 @@ export const networkLogOptions = {
 	],
 	context: true,
 	format: (req, res, format) =>
-		format(`${getIP(req)} - ":method :url HTTP/:http-version" :status ":referrer" ":user-agent"`),
+		format(
+			`\nIP: ${getIP(
+				req
+			)}\nMethod: :method\nUrl: :url\nProtocol: HTTP/:http-version\nStatus: :status\nReferrer: :referrer\nUser-Agent: :user-agent"`
+		),
 };
 
 export function getIP(req) {
