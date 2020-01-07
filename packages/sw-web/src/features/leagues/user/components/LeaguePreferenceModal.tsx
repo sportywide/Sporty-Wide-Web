@@ -43,6 +43,7 @@ const LeaguePreferenceModalComponent: React.FC<IProps> = function({
 				<Button
 					onClick={async () => {
 						await joinUserLeague({ leagueId: league.id, userId, formation });
+						onClose(null);
 						await redirect({
 							refresh: false,
 							route: 'play-league',
