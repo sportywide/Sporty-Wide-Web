@@ -36,7 +36,7 @@ blocks:
                 commands:
                     - cache restore node-modules-$(checksum package-lock.json)
                     - npx lerna link
-                    - npx lerna run build --stream
+                    - npx lerna run build --stream --parallel
     - name: Test
       task:
           secrets:
