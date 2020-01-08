@@ -177,6 +177,8 @@ Thumbs.db
 ehthumbs.db
 ehthumbs_vista.db
 
+.semaphore/secrets
+
 # Dump file
 *.stackdump
 
