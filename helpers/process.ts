@@ -49,7 +49,11 @@ export function spawn(command, options = {}) {
 		};
 		const child = crossSpawn(command, spawnOptions);
 		child.on('close', function(code) {
-			resolve(code);
+			if (code != 0) {
+				reject(new Error(`Process failed with code ${code}`));
+			} else {
+				resolve(code);
+			}
 		});
 		child.on('error', function(err) {
 			reject(err);
