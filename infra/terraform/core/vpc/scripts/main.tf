@@ -41,7 +41,7 @@ resource "null_resource" "checkout_git" {
       "ssh-keygen -F github.com || ssh-keyscan github.com >>~/.ssh/known_hosts",
       "eval \"$(ssh-agent -s)\"",
       "ssh-add ~/.ssh/sw_git",
-      "test ! -e sporty-wide-web && git clone git@github.com:vdtn359/Sporty-Wide-Web.git sporty-wide-web",
+      "test ! -e sporty-wide-web && git clone git@github.com:sportywide/Sporty-Wide-Web.git sporty-wide-web",
       "cd sporty-wide-web || exit",
       "git pull origin master"
     ]
