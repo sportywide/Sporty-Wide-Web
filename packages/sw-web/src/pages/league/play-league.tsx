@@ -9,6 +9,7 @@ import { SwWeekFixtures } from '@web/features/fixtures/components/WeekFixtures';
 import { DndProvider } from 'react-dnd-cjs';
 import html5Backend from 'react-dnd-html5-backend-cjs';
 import { SwMyLineup } from '@web/features/lineup/components/MyLineup';
+import { TabPane } from '@web/shared/lib/tab/TabPane';
 
 class SwPlayerLeaguePage extends React.Component<any> {
 	static async getInitialProps({ query, store }) {
@@ -32,36 +33,36 @@ class SwPlayerLeaguePage extends React.Component<any> {
 			{
 				menuItem: 'Players',
 				render: () => (
-					<Tab.Pane as="div" attached={false} className={'sw-flex-grow sw-relative'}>
+					<TabPane>
 						<SwMyManagedPlayers leagueId={this.props.leagueId} />
-					</Tab.Pane>
+					</TabPane>
 				),
 			},
 			{
 				menuItem: 'Standings',
 				render: () => (
-					<Tab.Pane as="div" attached={false}>
+					<TabPane>
 						<SwLeagueStandings league={this.props.league} />
-					</Tab.Pane>
+					</TabPane>
 				),
 			},
 			{
 				menuItem: 'Fixtures',
 				render: () => (
-					<Tab.Pane as="div" attached={false}>
+					<TabPane>
 						<Header as={'h3'}>This week fixtures</Header>
 						<SwWeekFixtures leagueId={this.props.leagueId} />
-					</Tab.Pane>
+					</TabPane>
 				),
 			},
 			{
 				menuItem: 'Lineup',
 				render: () => (
-					<Tab.Pane as="div" attached={false}>
+					<TabPane>
 						<DndProvider backend={html5Backend}>
 							<SwMyLineup leagueId={this.props.leagueId} />
 						</DndProvider>
-					</Tab.Pane>
+					</TabPane>
 				),
 			},
 		];

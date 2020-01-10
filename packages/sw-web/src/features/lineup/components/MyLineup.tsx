@@ -3,8 +3,8 @@ import { ContainerContext } from '@web/shared/lib/store';
 import { ProfilePlayersService } from '@web/features/profile/players/services/profile-players.service';
 import { useAsync } from 'react-async-hook';
 import { sortPlayers } from '@web/features/players/utility/player';
-import { Loader } from 'semantic-ui-react';
-import { SwIcon } from '@web/shared/lib/icon';
+import { ErrorMessage } from '@web/shared/lib/error/Error';
+import { Spinner } from '@web/shared/lib/spinner/Spinner';
 import { SwLineupBuilder } from './pitch/LineupBuilder';
 
 interface IProps {
@@ -41,18 +41,13 @@ const SwMyLineupComponent: React.FC<IProps> = function({ leagueId }) {
 	const lineupResult = useAsync(fetchPlayerLineup, [leagueId]);
 
 	if (lineupResult.loading) {
-		return <Loader active />;
+		return <Spinner />;
 	}
 
 	const errorMessage = getErrorMessage(lineupResult);
 
 	if (errorMessage) {
-		return (
-			<div className={'sw-center sw-mt4'}>
-				<SwIcon name={'sad'} width={150} height={150} />
-				<div className={'sw-mt2'}>{errorMessage}</div>
-			</div>
-		);
+		return <ErrorMessage message={errorMessage} />;
 	}
 
 	return (

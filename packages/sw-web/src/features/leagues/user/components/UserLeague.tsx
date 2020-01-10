@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useContext, useEffect } from 'react';
-import { Grid, Loader } from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { compose } from '@shared/lib/utils/fp/combine';
 import { registerEpic } from '@web/shared/lib/redux/register-epic';
@@ -17,6 +17,7 @@ import { ContainerContext } from '@web/shared/lib/store';
 import { SHOW_CONFIRM, SHOW_MODAL } from '@web/shared/lib/popup/event.constants';
 import { SHOW_LEAGUE_PREFERENCE } from '@web/shared/lib/popup/modal.constants';
 import { redirect } from '@web/shared/lib/navigation/helper';
+import { Spinner } from '@web/shared/lib/spinner/Spinner';
 import { fetchUserLeagues, leaveUserLeague } from '../store/actions';
 
 interface IProps {
@@ -36,7 +37,7 @@ const SwUserLeaguesComponent: React.FC<IProps> = ({ leagues, fetchUserLeagues, f
 	const onPlayCallback = useCallback(onPlay, []);
 	const onLeaveCallback = useCallback(onLeave, []);
 	if (!leagues) {
-		return <Loader active />;
+		return <Spinner />;
 	}
 	return (
 		<Grid verticalAlign={'middle'} centered>
