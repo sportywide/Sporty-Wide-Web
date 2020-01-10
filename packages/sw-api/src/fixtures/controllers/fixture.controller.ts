@@ -24,9 +24,19 @@ export class FixtureController {
 
 	@UseGuards(JwtAuthGuard)
 	@ActiveUser()
-	@Get('/upcoming')
-	public async getNextFixtures(@Query('team_id') teamIds: number[]) {
-		const fixtures = await this.fixtureService.getNextFixtures(teamIds);
+	@Get('/team/upcoming')
+	public async getNextFixturesForTeams(@Query('team_id') teamIds: number[]) {
+		const fixtures = await this.fixtureService.getNextFixturesForTeams(teamIds);
+		return toDto({
+			value: fixtures,
+		});
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@ActiveUser()
+	@Get('/team/weekly')
+	public async getWeeklyMatchesForTeams(@Query('team_id') teamIds: number[]) {
+		const fixtures = await this.fixtureService.getWeeklyMatchesForTeams(teamIds);
 		return toDto({
 			value: fixtures,
 		});

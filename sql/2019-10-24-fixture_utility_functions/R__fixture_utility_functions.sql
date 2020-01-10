@@ -26,6 +26,19 @@ BEGIN
 END;$$
 LANGUAGE 'plpgsql';
 
+CREATE OR REPLACE FUNCTION select_match_week(team_id NUMERIC)
+  RETURNS NUMERIC AS $$
+BEGIN
+  RETURN (SELECT fixture.id
+               FROM fixture
+               WHERE fixture.time < select_next_interval(NOW())
+                     AND fixture.time >= date_trunc('week', NOW())
+                     AND (fixture.home_id = team_id
+                     OR fixture.away_id = team_id)
+               LIMIT 1);
+END;$$
+LANGUAGE 'plpgsql';
+
 CREATE OR REPLACE FUNCTION field(ANYELEMENT, ANYARRAY)
   RETURNS BIGINT AS $$
 SELECT n

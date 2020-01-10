@@ -53,7 +53,7 @@ describe('Testing fixture service', () => {
 	});
 	describe('#getNextFixtures', () => {
 		it('should return the next matches for specified teams', async () => {
-			await fixtureService.getNextFixtures([9, 1]);
+			await fixtureService.getNextFixturesForTeams([9, 1]);
 		});
 	});
 });

@@ -9,6 +9,8 @@ export interface IProfilePlayers {
 	loading: boolean;
 	formation: string;
 	preference: any;
+	errorCode?: string;
+	errorMessage?: string;
 }
 
 interface IState {
@@ -23,7 +25,7 @@ const initialState = {
 
 export const profilePlayersReducer = createReducer<IState, ProfilePlayersAction>(initialState)
 	.handleAction(
-		actions.fetchProfilePlayersSuccess,
+		actions.fetchMyPlayersSuccess,
 		(state, { payload: { userId, leagueId, players, formation, preference } }) => ({
 			...state,
 			[userId]: {
@@ -37,7 +39,18 @@ export const profilePlayersReducer = createReducer<IState, ProfilePlayersAction>
 			},
 		})
 	)
-	.handleAction(actions.fetchProfilePlayers, (state, { payload: { userId, leagueId } }) => ({
+	.handleAction(actions.fetchMyPlayersError, (state, { payload: { userId, leagueId, errorCode, errorMessage } }) => ({
+		...state,
+		[userId]: {
+			...(state[userId] || {}),
+			[leagueId]: {
+				loading: false,
+				errorCode,
+				errorMessage,
+			},
+		},
+	}))
+	.handleAction(actions.fetchMyPlayers, (state, { payload: { userId, leagueId } }) => ({
 		...state,
 		[userId]: {
 			...(state[userId] || {}),

@@ -2,6 +2,11 @@
 	width: 100%;
 }
 
+.sw-full-screen {
+	height: 100vh !important;
+	width: 100vh !important;
+}
+
 .sw-overflow-x {
 	max-width: 100%;
 	overflow-x: hidden;
