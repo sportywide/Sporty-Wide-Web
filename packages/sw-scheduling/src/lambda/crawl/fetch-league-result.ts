@@ -5,7 +5,7 @@ import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
 import { SCHEDULING_CONFIG } from '@core/config/config.constants';
 import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
 import { ScoreboardCrawlerService } from '@data/crawler/scoreboard-crawler.service';
-import { SQSEvent } from '@root/node_modules/@types/aws-lambda';
+import { SQSEvent } from 'aws-lambda';
 import { INestApplicationContext } from '@nestjs/common';
 import { BrowserService } from '@data/crawler/browser.service';
 

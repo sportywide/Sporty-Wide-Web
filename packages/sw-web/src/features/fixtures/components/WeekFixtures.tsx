@@ -5,8 +5,8 @@ import { groupBy, sortBy } from 'lodash';
 import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
 import { format, startOfDay } from 'date-fns';
 import { redirect } from '@web/shared/lib/navigation/helper';
-import { ErrorMessage } from '@web/shared/lib/error/Error';
-import { Spinner } from '@web/shared/lib/spinner/Spinner';
+import { ErrorMessage } from '@web/shared/lib/ui/components/error/Error';
+import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
 import * as S from './WeekFixtures.styled';
 
 interface IProps {

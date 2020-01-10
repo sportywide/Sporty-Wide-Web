@@ -47,11 +47,6 @@ const routeMappings = [
 		page: 'league/play-league',
 	},
 	{
-		name: 'lineup-builder',
-		pattern: '/lineup-builder/:id',
-		page: 'lineup/builder',
-	},
-	{
 		name: 'user-leagues',
 		pattern: '/user-leagues',
 		page: 'league/user-leagues',

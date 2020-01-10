@@ -9,7 +9,7 @@ import { leagueStandingReducer } from '@web/features/leagues/base/store/reducers
 import { fetchLeagueStandings } from '@web/features/leagues/base/store/actions';
 import { LeagueStandingsDto } from '@shared/lib/dtos/leagues/league-standings.dto';
 import { Icon, Popup, Table } from 'semantic-ui-react';
-import { Spinner } from '@web/shared/lib/spinner/Spinner';
+import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
 
 interface IProps {
 	league: SelectableLeagueDto;
