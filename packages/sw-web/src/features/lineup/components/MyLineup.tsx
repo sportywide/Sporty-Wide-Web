@@ -3,8 +3,9 @@ import { ContainerContext } from '@web/shared/lib/store';
 import { ProfilePlayersService } from '@web/features/profile/players/services/profile-players.service';
 import { useAsync } from 'react-async-hook';
 import { sortPlayers } from '@web/features/players/utility/player';
-import { ErrorMessage } from '@web/shared/lib/error/Error';
-import { Spinner } from '@web/shared/lib/spinner/Spinner';
+import { ErrorMessage } from '@web/shared/lib/ui/components/error/Error';
+import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
+import { SwDragLayer } from '@web/shared/lib/ui/components/dnd/DragLayer';
 import { SwLineupBuilder } from './pitch/LineupBuilder';
 
 interface IProps {
@@ -52,6 +53,7 @@ const SwMyLineupComponent: React.FC<IProps> = function({ leagueId }) {
 
 	return (
 		<>
+			<SwDragLayer />
 			<SwLineupBuilder initialLineup={lineupResult.result} />
 		</>
 	);

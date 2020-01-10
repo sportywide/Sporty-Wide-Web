@@ -17,7 +17,7 @@ import { ContainerContext } from '@web/shared/lib/store';
 import { SHOW_CONFIRM, SHOW_MODAL } from '@web/shared/lib/popup/event.constants';
 import { SHOW_LEAGUE_PREFERENCE } from '@web/shared/lib/popup/modal.constants';
 import { redirect } from '@web/shared/lib/navigation/helper';
-import { Spinner } from '@web/shared/lib/spinner/Spinner';
+import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
 import { fetchUserLeagues, leaveUserLeague } from '../store/actions';
 
 interface IProps {

@@ -28,8 +28,8 @@ import {
 	NOT_IN_WEEKDAY,
 	NOT_PLAYING,
 } from '@shared/lib/exceptions/generate-player-exception';
-import { ErrorMessage } from '@web/shared/lib/error/Error';
-import { Spinner } from '@web/shared/lib/spinner/Spinner';
+import { ErrorMessage } from '@web/shared/lib/ui/components/error/Error';
+import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
 
 const PlayButton = styled(Button)`
 	position: initial;
@@ -118,9 +118,11 @@ const SwMyManagedPlayersComponent: React.FC<IProps> = ({
 				color={'blue'}
 				onClick={() =>
 					redirect({
-						route: 'lineup-builder',
+						route: 'play-league',
+						replace: true,
 						params: {
-							id: this.props.leagueId,
+							id: leagueId,
+							tab: 'lineup',
 						},
 					})
 				}

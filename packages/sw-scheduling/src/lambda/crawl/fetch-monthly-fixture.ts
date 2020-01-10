@@ -6,7 +6,7 @@ import { SCHEDULING_CONFIG } from '@core/config/config.constants';
 import { error } from '@scheduling/lib/http';
 import { format, startOfMonth } from 'date-fns';
 import { initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
-import { SQSEvent } from '@root/node_modules/@types/aws-lambda';
+import { SQSEvent } from 'aws-lambda';
 import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
 
 export async function handler(event: SQSEvent) {

@@ -1,5 +1,6 @@
 import { findPathForRoute, Router } from '@web/routes';
 import { TEMPORARY_REDIRECT } from '@web/shared/lib/http/status-codes';
+import { interpolateUrl } from '@web/shared/lib/url';
 
 export async function redirect({
 	context = {},
@@ -7,7 +8,7 @@ export async function redirect({
 	replace = false,
 	redirect = false,
 	refresh,
-	params = undefined,
+	params = {},
 }: {
 	context?: any;
 	route?: string;
@@ -17,7 +18,9 @@ export async function redirect({
 	params?: any;
 }) {
 	if (context && context.res) {
-		context.res.location(findPathForRoute(route) || '/auth/redirect');
+		let url = findPathForRoute(route) || '/auth/redirect';
+		url = interpolateUrl(url, params);
+		context.res.location(url);
 		context.res.status(TEMPORARY_REDIRECT);
 		if (context.res.originalEnd) {
 			context.res.originalEnd();
@@ -29,10 +32,14 @@ export async function redirect({
 			const path = findPathForRoute(route);
 			let url;
 			if (!route || redirect) {
-				url = path ? `/auth/redirect?url=${encodeURIComponent(path)}` : '/auth/redirect';
+				if (path) {
+					url = '/auth/redirect';
+					params = { ...params, url: path };
+				}
 			} else {
 				url = path;
 			}
+			url = interpolateUrl(url, params);
 			if (replace) {
 				window.location.replace(url);
 			} else {
