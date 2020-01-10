@@ -41,5 +41,14 @@ export const SwContainer = styled(Container)`
 		border-radius: 5px;
 		box-shadow: 0 1px 1px 1px rgba(0, 0, 0, 0.2);
 		position: relative;
+		display: flex;
+		flex-direction: column;
+	}
+`;
+
+export const SwFullWidth = styled(Container)`
+	&&& {
+		width: 100%;
+		height: 100%;
 	}
 `;

@@ -6,6 +6,7 @@ import { groupBy, sortBy } from 'lodash';
 import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
 import { format, startOfDay } from 'date-fns';
 import { redirect } from '@web/shared/lib/navigation/helper';
+import { SwIcon } from '@web/shared/lib/icon';
 import * as S from './WeekFixtures.styled';
 
 interface IProps {
@@ -29,6 +30,14 @@ const SwWeekFixturesComponent: React.FC<IProps> = ({ leagueId }) => {
 	const fixtureGroup = groupBy(fixtures, fixture => {
 		return startOfDay(fixture.time).getTime();
 	});
+	if (!fixtures.length) {
+		return (
+			<div className={'sw-center sw-mt4'}>
+				<SwIcon name={'sad'} width={150} height={150} />
+				<div className={'sw-mt2'}>No fixtures found</div>
+			</div>
+		);
+	}
 	return (
 		<>
 			{Object.entries(fixtureGroup)

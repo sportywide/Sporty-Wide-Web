@@ -10,18 +10,10 @@ export class ProfilePlayersService {
 		private readonly apiService: ApiService
 	) {}
 
-	getProfilePlayers({
-		userId,
-		leagueId,
-		includes = [],
-	}: {
-		userId: number;
-		leagueId: number;
-		includes?: string[];
-	}): Observable<any> {
+	getMyPlayers({ leagueId, includes = [] }: { leagueId: number; includes?: string[] }): Observable<any> {
 		return this.apiService
 			.api()
-			.get(`/player/user/${userId}/league/${leagueId}`, {
+			.get(`/player/me/league/${leagueId}`, {
 				params: {
 					includes,
 				},

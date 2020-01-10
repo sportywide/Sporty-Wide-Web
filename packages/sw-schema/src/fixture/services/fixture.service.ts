@@ -92,12 +92,34 @@ export class FixtureService extends BaseEntityService<Fixture> {
 	findMatchesForWeek({ leagueId, date = new Date() }) {
 		const thisMonday = startOfDay(startOfWeek(date, { weekStartsOn: 1 }));
 		const nextMonday = addWeeks(thisMonday, 1);
+		return this.findMatchesInRange({ leagueId, start: thisMonday, end: nextMonday });
+	}
+
+	numMatchesForWeek({ leagueId, date = new Date() }) {
+		const thisMonday = startOfDay(startOfWeek(date, { weekStartsOn: 1 }));
+		const nextMonday = addWeeks(thisMonday, 1);
+		return this.numMatchesInRange({ leagueId, start: thisMonday, end: nextMonday });
+	}
+
+	numMatchesInRange({ leagueId, start, end }) {
 		const queryBuilder = this.fixtureRepository
 			.createQueryBuilder()
 			.where('time >= :start AND time < :end AND league_id = :leagueId');
 		queryBuilder.setParameters({
-			start: thisMonday,
-			end: nextMonday,
+			start,
+			end,
+			leagueId,
+		});
+		return queryBuilder.getCount();
+	}
+
+	findMatchesInRange({ leagueId, start, end }) {
+		const queryBuilder = this.fixtureRepository
+			.createQueryBuilder()
+			.where('time >= :start AND time < :end AND league_id = :leagueId');
+		queryBuilder.setParameters({
+			start,
+			end,
 			leagueId,
 		});
 		return queryBuilder.getMany();
@@ -116,12 +138,7 @@ export class FixtureService extends BaseEntityService<Fixture> {
 		date = startOfDay(date);
 		const today = format(date, 'yyyy-MM-dd');
 		const tomorrow = format(addDays(date, 1), 'yyyy-MM-dd');
-		return this.fixtureRepository.find({
-			where: {
-				leagueId,
-				time: Between(today, tomorrow),
-			},
-		});
+		return this.findMatchesInRange({ leagueId, start: today, end: tomorrow });
 	}
 
 	findByMonth(leagueId, date = new Date()) {
@@ -136,12 +153,31 @@ export class FixtureService extends BaseEntityService<Fixture> {
 		});
 	}
 
-	async getNextFixtures(teamIds: number[] = []) {
+	async getNextFixturesForTeams(teamIds: number[] = []) {
 		if (!teamIds.length) {
 			return {};
 		}
 		const rows = await this.fixtureRepository.query(
 			`SELECT select_next_match(id) AS fixture_id, id AS team_id FROM team WHERE id IN (${teamIds.join(',')})`
+		);
+
+		const fixtures = await this.fixtureRepository.findByIds(rows.map(row => row.fixture_id));
+		const fixtureMap = keyBy(fixtures, 'id');
+
+		return rows.reduce((currentMap, row) => {
+			return {
+				...currentMap,
+				[row.team_id]: fixtureMap[row.fixture_id],
+			};
+		}, {});
+	}
+
+	async getWeeklyMatchesForTeams(teamIds: number[] = []) {
+		if (!teamIds.length) {
+			return {};
+		}
+		const rows = await this.fixtureRepository.query(
+			`SELECT select_match_week(id) AS fixture_id, id AS team_id FROM team WHERE id IN (${teamIds.join(',')})`
 		);
 
 		const fixtures = await this.fixtureRepository.findByIds(rows.map(row => row.fixture_id));

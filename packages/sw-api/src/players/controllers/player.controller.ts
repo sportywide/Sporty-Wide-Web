@@ -6,15 +6,21 @@ import { toDto } from '@api/utils/dto/transform';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { LeagueService } from '@api/leagues/services/league.service';
 import { keyBy } from 'lodash';
+import { BusinessException } from '@shared/lib/exceptions/business-exception';
+import { UserPlayersDocument } from '@schema/player/models/user-players.schema';
+import { CurrentUser } from '@api/core/decorators/user';
+import { ActiveUser } from '@api/auth/decorators/user-check.decorator';
+import { User } from '@schema/user/models/user.entity';
 
 @Controller('/player')
 export class PlayerController {
 	constructor(private readonly playerService: PlayerService, private readonly leagueService: LeagueService) {}
 
+	@ActiveUser()
 	@UseGuards(JwtAuthGuard)
-	@Get('/user/:userId/league/:leagueId')
+	@Get('/me/league/:leagueId')
 	async getUserPlayers(
-		@Param('userId', new ParseIntPipe()) userId: number,
+		@CurrentUser() user: User,
 		@Param('leagueId', new ParseIntPipe()) leagueId: number,
 		@Query('date') dateString: string,
 		@Query('includes') includes: string[]
@@ -33,13 +39,21 @@ export class PlayerController {
 		}
 		let date = dateString ? parse(dateString, 'yyyy-MM-dd', new Date()) : new Date();
 		date = startOfWeek(date, { weekStartsOn: 1 });
-		const userPlayers = await this.playerService.getPlayersForUser({
-			userId,
-			leagueId,
-			date,
-		});
-		if (!userPlayers) {
-			return userPlayers;
+		let userPlayers: UserPlayersDocument;
+		try {
+			userPlayers = await this.playerService.getOrCreatePlayersForUser({
+				userId: user.id,
+				leagueId,
+				date,
+			});
+		} catch (e) {
+			if (e instanceof BusinessException) {
+				return {
+					errorCode: e.code,
+					errorMessage: e.message,
+				};
+			}
+			throw e;
 		}
 
 		const players = await this.playerService.getPlayerByIds(
@@ -61,7 +75,7 @@ export class PlayerController {
 		return {
 			...userPlayers.toJSON(),
 			players: playerDtos,
-			preference: await this.leagueService.getUserLeaguePreference({ userId, leagueId }),
+			preference: await this.leagueService.getUserLeaguePreference({ userId: user.id, leagueId }),
 		};
 	}
 }

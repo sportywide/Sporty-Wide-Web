@@ -6,13 +6,31 @@ interface IState {
 	upcoming: {
 		[key: number]: FixtureDto;
 	};
+	weekly: {
+		[key: number]: FixtureDto;
+	};
 }
+
+export type FixtureActions = ActionType<typeof actions>;
+
 const initialState = {
 	upcoming: {},
+	weekly: {},
 };
-export type FixtureActions = ActionType<typeof actions>;
-export const fixtureReducer = createReducer<IState, FixtureActions>(initialState).handleAction(
-	actions.fetchUpcomingFixturesSuccess,
+
+const upcomingReducer = createReducer<IState, FixtureActions>(initialState).handleAction(
+	actions.fetchWeeklyFixturesForTeamsSuccess,
+	(state, { payload: weeklyFixtures = {} }) => ({
+		...state,
+		weekly: {
+			...state.weekly,
+			...weeklyFixtures,
+		},
+	})
+);
+
+const weeklyReducer = createReducer<IState, FixtureActions>(initialState).handleAction(
+	actions.fetchUpcomingFixturesForTeamsSuccess,
 	(state, { payload: upcomingFixtures = {} }) => ({
 		...state,
 		upcoming: {
@@ -21,3 +39,8 @@ export const fixtureReducer = createReducer<IState, FixtureActions>(initialState
 		},
 	})
 );
+
+export const fixtureReducer = createReducer<IState, FixtureActions>(initialState, {
+	...weeklyReducer.handlers,
+	...upcomingReducer.handlers,
+});

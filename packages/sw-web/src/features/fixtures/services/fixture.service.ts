@@ -25,6 +25,29 @@ export class FixtureService {
 			);
 	}
 
+	fetchWeeklyFixturesForTeams(teamIds): Observable<{ [key: number]: FixtureDto }> {
+		return this.apiService
+			.api()
+			.get(`/fixtures/team/weekly`, {
+				params: {
+					// eslint-disable-next-line @typescript-eslint/camelcase
+					team_id: teamIds,
+				},
+			})
+			.pipe(
+				map(({ data: fixtureMap }) =>
+					fromPairs(
+						toPairs(fixtureMap).map(([key, value]) => [
+							key,
+							plainToClass(FixtureDto, value, {
+								useProperties: true,
+							}),
+						])
+					)
+				)
+			);
+	}
+
 	fetchFixtureDetails(fixtureId: number): Observable<FixtureDetailsDto> {
 		return this.apiService
 			.api()
@@ -38,10 +61,10 @@ export class FixtureService {
 			);
 	}
 
-	fetchUpcomingFixtures(teamIds: number[]): Observable<{ [key: number]: FixtureDto }> {
+	fetchUpcomingFixturesForTeams(teamIds: number[]): Observable<{ [key: number]: FixtureDto }> {
 		return this.apiService
 			.api()
-			.get(`/fixtures/upcoming`, {
+			.get(`/fixtures/team/upcoming`, {
 				params: {
 					// eslint-disable-next-line @typescript-eslint/camelcase
 					team_id: teamIds,

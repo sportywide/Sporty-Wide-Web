@@ -9,9 +9,17 @@ import { NUM_PLAYERS, sortPlayers } from '@web/features/players/utility/player';
 export interface ILineupState {
 	strategy: FormationDto;
 	positions: (PlayerDto | null)[];
-	players: PlayerDto[];
-	originalPlayers: PlayerDto[];
+	players?: PlayerDto[];
+	originalPlayers?: PlayerDto[];
+	formation?: string;
+	errorCode?: string;
+	errorMessage?: string;
+}
+
+export interface IPlayerLineupState {
+	reserved: PlayerDto[];
 	formation: string;
+	playing: PlayerDto[];
 }
 
 export type LineupAction = ActionType<typeof actions>;
@@ -20,9 +28,6 @@ const EMPTY_LINEUP = fill(Array(NUM_PLAYERS), null);
 const initialState: ILineupState = {
 	positions: EMPTY_LINEUP,
 	strategy,
-	players: undefined,
-	originalPlayers: undefined,
-	formation: undefined,
 };
 
 export const lineupReducer = createReducer<ILineupState, LineupAction>(initialState)
@@ -60,15 +65,15 @@ export const lineupReducer = createReducer<ILineupState, LineupAction>(initialSt
 			};
 		}
 	)
-	.handleAction(
-		actions.fetchPlayersSuccess,
-		(state, { payload: { players = [], formation = '4-4-2' } }: PayloadAction<string, any>) => ({
+	.handleAction(actions.initLineup, (state, { payload: { playing = [], reserved = [], formation = '4-4-2' } }) => {
+		return {
 			...state,
-			players: players,
-			originalPlayers: players,
+			positions: playing,
 			formation,
-		})
-	)
+			players: reserved,
+			originalPlayers: playing.concat(reserved),
+		};
+	})
 	.handleAction(
 		actions.fillPositionSuccess,
 		(state, { payload: filledPositions = [] }: PayloadAction<string, PlayerDto[]>) => {

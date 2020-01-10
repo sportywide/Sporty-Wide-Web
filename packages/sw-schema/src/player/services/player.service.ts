@@ -25,11 +25,18 @@ import { SCHEMA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import { BaseEntityService } from '@schema/core/entity/base-entity.service';
 import { PlayerRatingDocument } from '@schema/player/models/player-rating.schema';
+import {
+	NotEnoughFixturesException,
+	NotInSeasonException,
+	NotPlayingException,
+} from '@shared/lib/exceptions/generate-player-exception';
+import { FixtureService } from '@schema/fixture/services/fixture.service';
 
 @Injectable()
 export class PlayerService extends BaseEntityService<Player> {
 	constructor(
 		@InjectSwRepository(Player) private readonly playerRepository: SwRepository<Player>,
+		private readonly fixtureService: FixtureService,
 		private readonly userLeaguePreferenceService: UserLeaguePreferenceService,
 		@InjectModel('UserPlayers') private readonly userPlayersModel: Model<UserPlayersDocument>,
 		@InjectModel('PlayerStat') private readonly playerStatModel: Model<PlayerStatDocument>,
@@ -39,10 +46,10 @@ export class PlayerService extends BaseEntityService<Player> {
 		super(playerRepository);
 	}
 
-	async getPlayersForUser({ userId, leagueId, date = new Date() }) {
+	async getOrCreatePlayersForUser({ userId, leagueId, date = new Date() }) {
 		const season = getSeason(date);
 		if (!season) {
-			return null;
+			throw new NotInSeasonException('Not in season');
 		}
 		let userPlayers = await this.userPlayersModel.findOne({
 			userId,
@@ -50,6 +57,10 @@ export class PlayerService extends BaseEntityService<Player> {
 			week: date,
 		});
 		if (!userPlayers) {
+			const numFixtures = await this.fixtureService.numMatchesForWeek({ leagueId, date });
+			if (!numFixtures) {
+				throw new NotPlayingException('League is not in play this week');
+			}
 			const userPreference = await this.userLeaguePreferenceService.find({ userId, leagueId });
 			const formationName = userPreference ? userPreference.formation : '4-4-2';
 			const formation = formationMap[formationName];
@@ -222,7 +233,9 @@ export class PlayerService extends BaseEntityService<Player> {
 		for (const position of requiredPositions) {
 			const availablePlayers: any[] = (positionMap[position] || { players: [] }).players;
 			if (!availablePlayers || !availablePlayers.length) {
-				throw new Error(`Not a valid formation ${strategy.name}. Position not found ${position}`);
+				throw new NotEnoughFixturesException(
+					`Not a valid formation ${strategy.name}. Position not found ${position}`
+				);
 			}
 			const trials = 5;
 			for (let i = 0; i < trials; i++) {

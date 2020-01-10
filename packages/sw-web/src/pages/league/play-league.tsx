@@ -1,27 +1,16 @@
 import React from 'react';
 import Head from 'next/head';
 import { SwContainer, SwGreyBackground } from '@web/shared/styled/Background.styled';
-import { Button, Header, Icon, Tab } from 'semantic-ui-react';
-import { SwManageProfilePlayers } from '@web/features/profile/players/components/ManageProfilePlayers';
+import { Header, Tab } from 'semantic-ui-react';
+import { SwMyManagedPlayers } from '@web/features/profile/players/components/MyProfilePlayers';
 import { LeagueService } from '@web/features/leagues/base/services/league.service';
 import { SwLeagueStandings } from '@web/features/leagues/base/components/LeagueStanding';
 import { SwWeekFixtures } from '@web/features/fixtures/components/WeekFixtures';
-import styled from 'styled-components';
-import { redirect } from '@web/shared/lib/navigation/helper';
-import { device } from '@web/styles/constants/size';
+import { DndProvider } from 'react-dnd-cjs';
+import html5Backend from 'react-dnd-html5-backend-cjs';
+import { SwMyLineup } from '@web/features/lineup/components/MyLineup';
 
-const PlayButton = styled(Button)`
-	position: initial;
-	right: 10px;
-	&&& {
-		margin-bottom: 20px;
-	}
-
-	@media ${device.laptop} {
-		position: absolute;
-	}
-`;
-class SwManagePlayersPage extends React.Component<any> {
+class SwPlayerLeaguePage extends React.Component<any> {
 	static async getInitialProps({ query, store }) {
 		const container = store.container;
 		const leagueService = container.get(LeagueService);
@@ -43,21 +32,8 @@ class SwManagePlayersPage extends React.Component<any> {
 			{
 				menuItem: 'Players',
 				render: () => (
-					<Tab.Pane as="div" attached={false} className={'sw-relative'}>
-						<PlayButton
-							color={'blue'}
-							onClick={() =>
-								redirect({
-									route: 'lineup-builder',
-									params: {
-										id: this.props.leagueId,
-									},
-								})
-							}
-						>
-							Build your lineup <Icon name={'arrow right'} />
-						</PlayButton>
-						<SwManageProfilePlayers leagueId={this.props.leagueId} />
+					<Tab.Pane as="div" attached={false} className={'sw-flex-grow sw-relative'}>
+						<SwMyManagedPlayers leagueId={this.props.leagueId} />
 					</Tab.Pane>
 				),
 			},
@@ -78,6 +54,16 @@ class SwManagePlayersPage extends React.Component<any> {
 					</Tab.Pane>
 				),
 			},
+			{
+				menuItem: 'Lineup',
+				render: () => (
+					<Tab.Pane as="div" attached={false}>
+						<DndProvider backend={html5Backend}>
+							<SwMyLineup leagueId={this.props.leagueId} />
+						</DndProvider>
+					</Tab.Pane>
+				),
+			},
 		];
 		return (
 			<SwGreyBackground padding={true}>
@@ -86,11 +72,15 @@ class SwManagePlayersPage extends React.Component<any> {
 				</Head>
 				<SwContainer>
 					<Header as={'h1'}>Welcome to {this.props.league.title}</Header>
-					<Tab menu={{ secondary: true, pointing: true }} panes={panes} />
+					<Tab
+						menu={{ secondary: true, pointing: true }}
+						panes={panes}
+						className={'sw-flex-grow sw-flex sw-flex-column'}
+					/>
 				</SwContainer>
 			</SwGreyBackground>
 		);
 	}
 }
 
-export default SwManagePlayersPage;
+export default SwPlayerLeaguePage;
