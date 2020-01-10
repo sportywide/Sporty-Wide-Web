@@ -5,7 +5,6 @@ import { CompleteSocialProfileDto } from '@shared/lib/dtos/user/complete-social-
 import { ResetPasswordDto } from '@shared/lib/dtos/user/reset-password-dto';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { LoginDto } from '@shared/lib/dtos/user/login.dto';
-import { isBrowser } from '@web/shared/lib/environment';
 
 @Service()
 export class AuthService {

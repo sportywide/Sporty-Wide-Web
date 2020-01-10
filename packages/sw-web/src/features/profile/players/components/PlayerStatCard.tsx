@@ -5,7 +5,7 @@ import { formatDistance } from 'date-fns';
 import { SwIcon } from '@web/shared/lib/icon';
 import { getPositionColor, getRatingColor } from '@web/shared/lib/color';
 import React from 'react';
-import { GridColumn, Card, Popup, Image, Label } from 'semantic-ui-react';
+import { Card, GridColumn, Image, Label, Popup } from 'semantic-ui-react';
 
 interface IProps {
 	player: PlayerDto;

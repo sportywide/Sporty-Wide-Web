@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
-import { Dimmer, Grid, Loader, Select, Icon, Button } from 'semantic-ui-react';
+import { Button, Grid, Icon, Select } from 'semantic-ui-react';
 import { IProfilePlayers, profilePlayersReducer } from '@web/features/profile/players/store/reducers';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { registerReducer } from '@web/shared/lib/redux/register-reducer';
@@ -28,7 +28,8 @@ import {
 	NOT_IN_WEEKDAY,
 	NOT_PLAYING,
 } from '@shared/lib/exceptions/generate-player-exception';
-import { SwIcon } from '@web/shared/lib/icon';
+import { ErrorMessage } from '@web/shared/lib/error/Error';
+import { Spinner } from '@web/shared/lib/spinner/Spinner';
 
 const PlayButton = styled(Button)`
 	position: initial;
@@ -72,12 +73,7 @@ function renderError(errorCode) {
 			errorMessage = 'You cant play during the weekends. Please come back next week';
 			break;
 	}
-	return (
-		<div className={'sw-center sw-mt4'}>
-			<SwIcon name={'sad'} width={150} height={150} />
-			<div className={'sw-mt2'}>{errorMessage}</div>
-		</div>
-	);
+	return <ErrorMessage message={errorMessage} />;
 }
 
 const SwMyManagedPlayersComponent: React.FC<IProps> = ({
@@ -104,11 +100,7 @@ const SwMyManagedPlayersComponent: React.FC<IProps> = ({
 	}, [container, fetchWeeklyFixturesForTeams, profilePlayers]);
 	const options = useFormationOptions();
 	if (!profilePlayers || profilePlayers.loading) {
-		return (
-			<Dimmer active inverted>
-				<Loader active inline={'centered'} />
-			</Dimmer>
-		);
+		return <Spinner />;
 	}
 	const players = profilePlayers.players;
 

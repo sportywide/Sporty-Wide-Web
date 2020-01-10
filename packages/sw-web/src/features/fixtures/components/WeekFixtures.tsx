@@ -1,12 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { ContainerContext } from '@web/shared/lib/store';
 import { FixtureService } from '@web/features/fixtures/services/fixture.service';
-import { Loader } from 'semantic-ui-react';
 import { groupBy, sortBy } from 'lodash';
 import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
 import { format, startOfDay } from 'date-fns';
 import { redirect } from '@web/shared/lib/navigation/helper';
-import { SwIcon } from '@web/shared/lib/icon';
+import { ErrorMessage } from '@web/shared/lib/error/Error';
+import { Spinner } from '@web/shared/lib/spinner/Spinner';
 import * as S from './WeekFixtures.styled';
 
 interface IProps {
@@ -25,18 +25,13 @@ const SwWeekFixturesComponent: React.FC<IProps> = ({ leagueId }) => {
 	}, [container, leagueId]);
 
 	if (!fixtures) {
-		return <Loader active inline={'centered'} />;
+		return <Spinner />;
 	}
 	const fixtureGroup = groupBy(fixtures, fixture => {
 		return startOfDay(fixture.time).getTime();
 	});
 	if (!fixtures.length) {
-		return (
-			<div className={'sw-center sw-mt4'}>
-				<SwIcon name={'sad'} width={150} height={150} />
-				<div className={'sw-mt2'}>No fixtures found</div>
-			</div>
-		);
+		return <ErrorMessage message={'No fixtures found'} />;
 	}
 	return (
 		<>
