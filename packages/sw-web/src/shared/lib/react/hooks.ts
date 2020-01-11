@@ -1,4 +1,4 @@
-import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState, EffectCallback } from 'react';
 import { keyBy } from 'lodash';
 import { useSelector } from 'react-redux';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
