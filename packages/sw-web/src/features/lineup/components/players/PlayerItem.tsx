@@ -31,7 +31,7 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 			<List.Content>
 				<SwDraggablePlayer ref={drag} isDragging={isDragging}>
 					<SwPlayerLogo circular avatar src={fifaImage(player.image)} />
-					<div className={'sw-flex-grow'}>
+					<div className={'sw-flex-grow-equal sw-truncate sw-mr1'}>
 						<span>
 							{player.shirt}. {player.name}
 						</span>
