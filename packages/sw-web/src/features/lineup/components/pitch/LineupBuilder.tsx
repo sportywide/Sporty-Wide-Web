@@ -19,6 +19,7 @@ import {
 } from '@web/features/lineup/store/actions';
 import { changeStrategyEpic, fillPositionsEpic, substitutePlayersEpic } from '@web/features/lineup/store/epics';
 import { useFormationOptions } from '@web/shared/lib/react/hooks';
+import { LineupControl } from '@web/features/lineup/components/pitch/LineupBuilder.styled';
 import { SwLineup } from './Lineup';
 import { SwPitch } from './Pitch';
 
@@ -57,22 +58,24 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 	return (
 		<>
 			<Header as={'h3'}>Manchester United</Header>
-			<div className={'sw-mb3'}>
+			<LineupControl className={'sw-mb3'}>
 				{lineupBuilder.formation && (
 					<Select
-						className={'sw-mr2'}
+						className={'sw-mr2 sw-mb2'}
 						defaultValue={lineupBuilder.formation}
 						options={options}
 						onChange={(e, { value }) => changeStrategy(value as string)}
 					/>
 				)}
-				<Button primary onClick={() => fillPositions()}>
-					Fill
-				</Button>
-				<Button negative onClick={() => clearLineup()}>
-					Clear
-				</Button>
-			</div>
+				<div>
+					<Button primary onClick={() => fillPositions()}>
+						Fill
+					</Button>
+					<Button negative onClick={() => clearLineup()}>
+						Clear
+					</Button>
+				</div>
+			</LineupControl>
 			<Grid stackable>
 				<GridColumn tablet={'7'}>
 					<SwLineup players={lineupBuilder.players} />

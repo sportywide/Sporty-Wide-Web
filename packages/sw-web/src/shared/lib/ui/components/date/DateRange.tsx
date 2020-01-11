@@ -4,6 +4,7 @@ import { DatesRangeInput } from 'semantic-ui-react-calendar';
 import { noop } from '@shared/lib/utils/functions';
 import styled from 'styled-components';
 import { isValidDate } from '@shared/lib/utils/date/validation';
+import { device } from '@web/styles/constants/size';
 
 export interface IDateRange {
 	start: Date | null;
@@ -21,7 +22,13 @@ interface IProps {
 }
 
 const InputWrapper = styled(DatesRangeInput)`
-	width: 250px;
+	max-width: 140px;
+	@media ${device.mobileM} {
+		max-width: 170px;
+	}
+	@media ${device.tablet} {
+		max-width: 220px;
+	}
 	.ui.input {
 		width: 100%;
 	}

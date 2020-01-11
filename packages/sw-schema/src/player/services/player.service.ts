@@ -28,6 +28,7 @@ import { PlayerRatingDocument } from '@schema/player/models/player-rating.schema
 import {
 	NotEnoughFixturesException,
 	NotInSeasonException,
+	NotInWeekDayException,
 	NotPlayingException,
 } from '@shared/lib/exceptions/generate-player-exception';
 import { FixtureService } from '@schema/fixture/services/fixture.service';
@@ -60,6 +61,9 @@ export class PlayerService extends BaseEntityService<Player> {
 			const numFixtures = await this.fixtureService.numMatchesForWeek({ leagueId, date });
 			if (!numFixtures) {
 				throw new NotPlayingException('League is not in play this week');
+			}
+			if ([0, 6].includes(new Date().getDay())) {
+				throw new NotInWeekDayException('Cant play during the weekends');
 			}
 			const userPreference = await this.userLeaguePreferenceService.find({ userId, leagueId });
 			const formationName = userPreference ? userPreference.formation : '4-4-2';

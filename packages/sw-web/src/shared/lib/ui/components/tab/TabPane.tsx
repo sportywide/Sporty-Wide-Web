@@ -2,7 +2,7 @@ import React from 'react';
 import { Tab } from 'semantic-ui-react';
 import { updateCurrentUrl } from '@web/shared/lib/url';
 
-export function TabPane({ children }) {
+export function SwTabPane({ children }) {
 	return (
 		<Tab.Pane as="div" attached={false} className={'sw-flex-grow sw-relative sw-flex sw-flex-column'}>
 			{children}

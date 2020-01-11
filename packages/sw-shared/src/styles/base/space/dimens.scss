@@ -20,4 +20,8 @@
 	.sw-min-width-#{$dimen} {
 		min-width: #{$dimen}px;
 	}
+
+	.sw-max-width-#{$dimen} {
+		max-width: #{$dimen}px;
+	}
 }
