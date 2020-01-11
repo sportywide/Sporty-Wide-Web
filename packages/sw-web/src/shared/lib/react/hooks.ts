@@ -85,3 +85,7 @@ export function useEmptyPreviewImage(preview) {
 		// eslint-disable-next-line
 	}, []);
 }
+
+export function useEffectOnce(effect: EffectCallback) {
+	useEffect(effect, []);
+}

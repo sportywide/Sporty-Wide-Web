@@ -5,7 +5,7 @@ import { Header, Tab } from 'semantic-ui-react';
 import { SwMyManagedPlayers } from '@web/features/profile/players/components/MyProfilePlayers';
 import { LeagueService } from '@web/features/leagues/base/services/league.service';
 import { SwLeagueStandings } from '@web/features/leagues/base/components/LeagueStanding';
-import { SwWeekFixtures } from '@web/features/fixtures/components/WeekFixtures';
+import { SwFixturesList } from '@web/features/fixtures/components/FixturesList';
 import { DndProvider } from 'react-dnd-cjs';
 import html5Backend from 'react-dnd-html5-backend-cjs';
 import { SwMyLineup } from '@web/features/lineup/components/MyLineup';
@@ -57,8 +57,7 @@ class SwPlayerLeaguePage extends React.Component<any, any> {
 				menuItem: 'Fixtures',
 				render: () => (
 					<TabPane>
-						<Header as={'h3'}>This week fixtures</Header>
-						<SwWeekFixtures leagueId={this.props.leagueId} />
+						<SwFixturesList leagueId={this.props.leagueId} />
 					</TabPane>
 				),
 			},

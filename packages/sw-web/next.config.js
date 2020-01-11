@@ -133,7 +133,7 @@ const nextConfig = {
 						'react-notification-system',
 						'react-notification-system-redux',
 						'react-redux-loading-bar',
-						'semantic-ui-calendar-react',
+						'semantic-ui-react-calendar',
 					],
 				},
 				config: {
