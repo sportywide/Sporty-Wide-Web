@@ -2,7 +2,7 @@ import React from 'react';
 import { getFormikFieldError, setFormikFieldValue } from '@web/shared/lib/form/components/FormField';
 import { Field, FieldProps } from 'formik';
 import { format, isAfter, isBefore, parse } from 'date-fns';
-import { DateInput, DateInputProps } from 'semantic-ui-calendar-react';
+import { DateInput, DateInputProps } from 'semantic-ui-react-calendar';
 import { isValidDate } from '@shared/lib/utils/date/validation';
 
 export interface CalendarFieldProps extends Omit<Omit<DateInputProps, 'value'>, 'onChange'> {

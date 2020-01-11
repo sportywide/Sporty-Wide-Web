@@ -5,6 +5,7 @@ import { map } from 'rxjs/operators';
 import { plainToClass } from 'class-transformer-imp';
 import { FixtureDetailsDto, FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
 import { fromPairs, toPairs } from 'lodash';
+import { toISO } from '@shared/lib/utils/date/conversion';
 
 @Service()
 export class FixtureService {
@@ -14,6 +15,26 @@ export class FixtureService {
 		return this.apiService
 			.api()
 			.get(`/fixtures/week/${leagueId}`)
+			.pipe(
+				map(({ data: payload }) =>
+					payload.map(league =>
+						plainToClass(FixtureDto, league, {
+							useProperties: true,
+						})
+					)
+				)
+			);
+	}
+
+	fetchFixturesInRange({ leagueId, start, end }): Observable<FixtureDto[]> {
+		return this.apiService
+			.api()
+			.get(`/fixtures/range/${leagueId}`, {
+				params: {
+					start: toISO(start),
+					end: toISO(end),
+				},
+			})
 			.pipe(
 				map(({ data: payload }) =>
 					payload.map(league =>

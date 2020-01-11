@@ -67,6 +67,10 @@
 	order: 99999;
 }
 
+.sw-flex-align-self-end {
+	align-self: flex-end;
+}
+
 @media (--breakpoint-lg) {
 	.sw-lg-flex {
 		display: flex;
