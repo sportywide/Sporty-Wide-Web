@@ -70,7 +70,7 @@ function renderError(errorCode) {
 			errorMessage = 'Not in season';
 			break;
 		case NOT_IN_WEEKDAY:
-			errorMessage = 'You cant play during the weekends. Please come back next week';
+			errorMessage = "You can't play during the weekends. Please come back next week";
 			break;
 	}
 	return <ErrorMessage message={errorMessage} />;
@@ -129,7 +129,7 @@ const SwMyManagedPlayersComponent: React.FC<IProps> = ({
 			>
 				Build your lineup <Icon name={'arrow right'} />
 			</PlayButton>
-			<span className={'sw-mr2'}>Your favorite formation</span>
+			<div className={'sw-mr2'}>Your favorite formation</div>
 			<Select
 				className={'sw-mb3'}
 				disabled={isSettingFormation}
