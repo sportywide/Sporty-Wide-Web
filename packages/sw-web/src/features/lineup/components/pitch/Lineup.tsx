@@ -1,11 +1,11 @@
 import React from 'react';
 import { List } from 'semantic-ui-react';
-import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
+import { UserPlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { SwPlayerItem } from '@web/features/lineup/components/players/PlayerItem';
 import { LineupContainer } from './Lineup.styled';
 
 interface IProps {
-	players: PlayerDto[];
+	players: UserPlayerDto[];
 }
 
 const SwLineupBuilder: React.FC<IProps> = function({ players = [] }) {
