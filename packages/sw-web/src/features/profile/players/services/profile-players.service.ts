@@ -20,4 +20,11 @@ export class ProfilePlayersService {
 			})
 			.pipe(map(response => response.data));
 	}
+
+	getMyLineup(leagueId) {
+		return this.apiService
+			.api()
+			.get(`/player/me/lineup/${leagueId}`)
+			.pipe(map(response => response.data));
+	}
 }

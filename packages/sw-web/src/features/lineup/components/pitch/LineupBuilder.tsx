@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Button, Grid, Header, Select } from 'semantic-ui-react';
+import { Button, Grid, Select } from 'semantic-ui-react';
 import GridColumn from 'semantic-ui-react/dist/commonjs/collections/Grid/GridColumn';
 import { ILineupState, IPlayerLineupState, lineupReducer } from '@web/features/lineup/store/reducers/lineup-reducer';
 import { connect } from 'react-redux';
@@ -57,7 +57,6 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 	const options = useFormationOptions();
 	return (
 		<>
-			<Header as={'h3'}>Manchester United</Header>
 			<LineupControl className={'sw-mb3'}>
 				{lineupBuilder.formation && (
 					<Select

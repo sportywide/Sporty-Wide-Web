@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDrag, useDrop } from 'react-dnd-cjs';
 import { PLAYER, PLAYER_BOX_ZONE, PLAYER_ITEM_ZONE } from '@web/features/lineup/components/item.constant';
-import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
+import { UserPlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { PositionDto } from '@shared/lib/dtos/formation/formation.dto';
 import {
 	SwPlayerCircle,
@@ -13,11 +13,11 @@ import { fifaImage } from '@web/shared/lib/images/links';
 
 interface IProps {
 	rect: any;
-	player: PlayerDto;
+	player: UserPlayerDto;
 	position: PositionDto;
-	onSwapPlayers?: (source: PlayerDto, dest: PlayerDto) => void;
-	onSubstitutePlayer?: (source: PlayerDto, dest: PlayerDto) => void;
-	onRemovePlayerFromLineup?: (player: PlayerDto) => void;
+	onSwapPlayers?: (source: UserPlayerDto, dest: UserPlayerDto) => void;
+	onSubstitutePlayer?: (source: UserPlayerDto, dest: UserPlayerDto) => void;
+	onRemovePlayerFromLineup?: (player: UserPlayerDto) => void;
 }
 
 const SwPlayerBoxComponent: React.FC<IProps> = ({

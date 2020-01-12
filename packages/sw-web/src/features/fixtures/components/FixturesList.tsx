@@ -50,7 +50,7 @@ const SwFixtureListComponent: React.FC<IProps> = ({ leagueId }) => {
 	});
 
 	return (
-		<div className={'sw-flex sw-flex-column'}>
+		<div className={'sw-flex sw-flex-column sw-flex-grow'}>
 			<div className={'sw-mb2 sw-flex'}>
 				<div className={'sw-mr1'}>
 					<SwDateRange

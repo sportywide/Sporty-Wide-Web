@@ -1,7 +1,7 @@
 import React from 'react';
 import { Label, List, Popup } from 'semantic-ui-react';
 import { useDrag } from 'react-dnd-cjs';
-import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
+import { UserPlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { PLAYER, PLAYER_ITEM_ZONE } from '@web/features/lineup/components/item.constant';
 import {
 	SwDraggablePlayer,
@@ -14,13 +14,14 @@ import { fifaImage } from '@web/shared/lib/images/links';
 import { getPositionColor, getRatingColor } from '@web/shared/lib/color';
 
 interface IProps {
-	player: PlayerDto;
+	player: UserPlayerDto;
 }
 
 const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 	const [{ isDragging }, drag, preview] = useDrag({
 		item: { type: PLAYER, player, zone: PLAYER_ITEM_ZONE },
-		isDragging: monitor => monitor.getItem().player === player,
+		isDragging: monitor => monitor.canDrag() && monitor.getItem().player === player,
+		canDrag: () => player.available,
 		collect: monitor => ({ isDragging: monitor.isDragging() }),
 	});
 
@@ -29,7 +30,7 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 	return (
 		<List.Item>
 			<List.Content>
-				<SwDraggablePlayer ref={drag} isDragging={isDragging}>
+				<SwDraggablePlayer ref={drag} isDragging={isDragging} canDrag={player.available}>
 					<SwPlayerLogo circular avatar src={fifaImage(player.image)} />
 					<div className={'sw-flex-grow-equal sw-truncate sw-mr1'}>
 						<span>
