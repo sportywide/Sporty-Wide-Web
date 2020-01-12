@@ -1,12 +1,13 @@
 import urlParser from 'url';
 import { noop } from '@shared/lib/utils/functions';
+import { Router } from '@web/routes';
 
-export function updateUrl({ url, title, data = {} }) {
+export function updateUrl(url) {
 	const newUrl = urlParser.format({
 		...url,
 		search: null,
 	});
-	history.replaceState(data, title, newUrl);
+	return Router.replaceRoute(newUrl, {}, { shallow: true });
 }
 
 export function parseUrl(url) {
@@ -19,10 +20,7 @@ export function updateCurrentUrl(updates) {
 	}
 	let url = parseUrl(window.location.href);
 	url = { ...url, ...updates };
-	updateUrl({
-		url,
-		title: null,
-	});
+	return updateUrl(url);
 }
 
 export function interpolateUrl(url, vars) {
@@ -57,26 +55,4 @@ export function interpolateUrl(url, vars) {
 		...urlObject,
 		search: null,
 	});
-}
-
-export function registerUrlChange(onChange) {
-	if (typeof window !== 'undefined') {
-		const currentPath = window.location.pathname;
-		const listener = (event: any) => {
-			if (!event.arguments[2]) {
-				return;
-			}
-			const newUrl = parseUrl(event.arguments[2]);
-			const newPath = newUrl.pathname;
-			if (newPath === currentPath) {
-				onChange(newUrl);
-			}
-		};
-		window.addEventListener('replaceState', listener);
-		return () => {
-			window.removeEventListener('replaceState', listener);
-		};
-	}
-
-	return noop;
 }
