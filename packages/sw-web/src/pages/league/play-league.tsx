@@ -10,13 +10,12 @@ import { DndProvider } from 'react-dnd-cjs';
 import html5Backend from 'react-dnd-html5-backend-cjs';
 import { SwMyLineup } from '@web/features/lineup/components/MyLineup';
 import { SwTabPane, updateTab } from '@web/shared/lib/ui/components/tab/TabPane';
-import { registerUrlChange } from '@web/shared/lib/url';
 import { SwTab } from '@web/shared/lib/ui/components/tab/Tab';
+import { withRouter } from 'next/router';
 
 class SwPlayerLeaguePage extends React.Component<any, any> {
 	panes: any[];
 	defaultTabIndex: number;
-	urlChangeListener: Function;
 
 	static async getInitialProps({ query, store }) {
 		const container = store.container;
@@ -80,18 +79,15 @@ class SwPlayerLeaguePage extends React.Component<any, any> {
 		};
 	}
 
-	componentDidMount(): void {
-		this.urlChangeListener = registerUrlChange(newUrl => {
-			const newTab = newUrl.query.tab;
+	componentDidUpdate(prevProps) {
+		const { query } = this.props.router;
+		if (query.tab !== prevProps.router.query.tab) {
+			const newTab = query.tab;
 			const newActiveIndex = this.panes.findIndex(({ name }) => name === newTab);
 			this.setState({
 				activeTabIndex: newActiveIndex,
 			});
-		});
-	}
-
-	componentWillUnmount(): void {
-		this.urlChangeListener();
+		}
 	}
 
 	render() {
@@ -122,4 +118,4 @@ class SwPlayerLeaguePage extends React.Component<any, any> {
 	}
 }
 
-export default SwPlayerLeaguePage;
+export default withRouter(SwPlayerLeaguePage);
