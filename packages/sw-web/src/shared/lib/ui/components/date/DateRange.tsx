@@ -24,10 +24,12 @@ interface IProps {
 const InputWrapper = styled(DatesRangeInput)`
 	max-width: 140px;
 	@media ${device.mobileM} {
-		max-width: 170px;
+		max-width: inherit;
+		width: 170px;
 	}
 	@media ${device.tablet} {
-		max-width: 220px;
+		max-width: inherit;
+		width: 250px;
 	}
 	.ui.input {
 		width: 100%;
