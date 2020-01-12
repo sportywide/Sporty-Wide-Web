@@ -1,7 +1,7 @@
 import React from 'react';
 import Head from 'next/head';
 import { SwContainer, SwGreyBackground } from '@web/shared/styled/Background.styled';
-import { Header, Tab } from 'semantic-ui-react';
+import { Header } from 'semantic-ui-react';
 import { SwMyManagedPlayers } from '@web/features/profile/players/components/MyProfilePlayers';
 import { LeagueService } from '@web/features/leagues/base/services/league.service';
 import { SwLeagueStandings } from '@web/features/leagues/base/components/LeagueStanding';
@@ -9,13 +9,13 @@ import { SwFixturesList } from '@web/features/fixtures/components/FixturesList';
 import { DndProvider } from 'react-dnd-cjs';
 import html5Backend from 'react-dnd-html5-backend-cjs';
 import { SwMyLineup } from '@web/features/lineup/components/MyLineup';
-import { TabPane, updateTab } from '@web/shared/lib/tab/TabPane';
-import { registerUrlChange } from '@web/shared/lib/url';
+import { SwTabPane, updateTab } from '@web/shared/lib/ui/components/tab/TabPane';
+import { SwTab } from '@web/shared/lib/ui/components/tab/Tab';
+import { withRouter } from 'next/router';
 
 class SwPlayerLeaguePage extends React.Component<any, any> {
 	panes: any[];
 	defaultTabIndex: number;
-	urlChangeListener: Function;
 
 	static async getInitialProps({ query, store }) {
 		const container = store.container;
@@ -38,38 +38,38 @@ class SwPlayerLeaguePage extends React.Component<any, any> {
 				name: 'players',
 				menuItem: 'Players',
 				render: () => (
-					<TabPane>
+					<SwTabPane>
 						<SwMyManagedPlayers leagueId={this.props.leagueId} />
-					</TabPane>
+					</SwTabPane>
 				),
 			},
 			{
 				name: 'standings',
 				menuItem: 'Standings',
 				render: () => (
-					<TabPane>
+					<SwTabPane>
 						<SwLeagueStandings league={this.props.league} />
-					</TabPane>
+					</SwTabPane>
 				),
 			},
 			{
 				name: 'fixtures',
 				menuItem: 'Fixtures',
 				render: () => (
-					<TabPane>
+					<SwTabPane>
 						<SwFixturesList leagueId={this.props.leagueId} />
-					</TabPane>
+					</SwTabPane>
 				),
 			},
 			{
 				name: 'lineup',
 				menuItem: 'Lineup',
 				render: () => (
-					<TabPane>
+					<SwTabPane>
 						<DndProvider backend={html5Backend}>
 							<SwMyLineup leagueId={this.props.leagueId} />
 						</DndProvider>
-					</TabPane>
+					</SwTabPane>
 				),
 			},
 		];
@@ -79,18 +79,15 @@ class SwPlayerLeaguePage extends React.Component<any, any> {
 		};
 	}
 
-	componentDidMount(): void {
-		this.urlChangeListener = registerUrlChange(newUrl => {
-			const newTab = newUrl.query.tab;
+	componentDidUpdate(prevProps) {
+		const { query } = this.props.router;
+		if (query.tab !== prevProps.router.query.tab) {
+			const newTab = query.tab;
 			const newActiveIndex = this.panes.findIndex(({ name }) => name === newTab);
 			this.setState({
 				activeTabIndex: newActiveIndex,
 			});
-		});
-	}
-
-	componentWillUnmount(): void {
-		this.urlChangeListener();
+		}
 	}
 
 	render() {
@@ -104,7 +101,7 @@ class SwPlayerLeaguePage extends React.Component<any, any> {
 				</Head>
 				<SwContainer>
 					<Header as={'h1'}>Welcome to {this.props.league.title}</Header>
-					<Tab
+					<SwTab
 						activeIndex={this.state.activeTabIndex}
 						onTabChange={(e, { activeIndex }) => {
 							const selectedTab = this.panes[activeIndex];
@@ -121,4 +118,4 @@ class SwPlayerLeaguePage extends React.Component<any, any> {
 	}
 }
 
-export default SwPlayerLeaguePage;
+export default withRouter(SwPlayerLeaguePage);
