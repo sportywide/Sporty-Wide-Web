@@ -11,6 +11,7 @@ import { registerReducer } from '@web/shared/lib/redux/register-reducer';
 import { ILineupState, lineupReducer } from '@web/features/lineup/store/reducers/lineup-reducer';
 import { compose } from '@shared/lib/utils/fp/combine';
 import { connect } from 'react-redux';
+import { range } from '@shared/lib/utils/array/range';
 import { SwLineupBuilder } from './pitch/LineupBuilder';
 
 interface IProps {
@@ -35,7 +36,7 @@ const SwMyLineupComponent: React.FC<IProps> = function({ leagueId, currentLineup
 		async leagueId => {
 			const { players = [], formation } = await profilePlayerService.getMyLineup(leagueId).toPromise();
 			return {
-				playing: [],
+				playing: range(11).map(() => null),
 				hasPlayer: players && players.length,
 				reserved: sortPlayers(players),
 				formation,

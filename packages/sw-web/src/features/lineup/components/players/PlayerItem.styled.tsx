@@ -6,8 +6,8 @@ export const SwDraggablePlayer = styled.div`
 	cursor: pointer;
 	opacity: 1;
 
-	${({ isDragging, canDrag }) =>
-		(isDragging || !canDrag) &&
+	${({ isDragging }) =>
+		isDragging &&
 		`
 			opacity: 0.4;
 		`}
@@ -15,6 +15,7 @@ export const SwDraggablePlayer = styled.div`
 	${({ canDrag }) =>
 		!canDrag &&
 		`
+			opacity: 0.4;
 			img {
 				user-drag: none; 
 				user-select: none;

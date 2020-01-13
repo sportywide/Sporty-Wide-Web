@@ -1,10 +1,11 @@
 import * as actions from '@web/features/lineup/store/actions';
 import { ActionType, createReducer, PayloadAction } from 'typesafe-actions';
-import { PlayerDto, UserPlayerDto } from '@shared/lib/dtos/player/player.dto';
+import { UserPlayerDto } from '@shared/lib/dtos/player/player.dto';
 import strategy from '@shared/lib/strategy/4-4-2.json';
 import { fill } from 'lodash';
 import { FormationDto } from '@shared/lib/dtos/formation/formation.dto';
 import { NUM_PLAYERS, sortPlayers } from '@web/features/players/utility/player';
+import { range } from '@shared/lib/utils/array/range';
 
 export interface ILineupState {
 	strategy: FormationDto;
