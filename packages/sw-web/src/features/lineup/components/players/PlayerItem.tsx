@@ -20,7 +20,7 @@ interface IProps {
 const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 	const [{ isDragging }, drag, preview] = useDrag({
 		item: { type: PLAYER, player, zone: PLAYER_ITEM_ZONE },
-		isDragging: monitor => monitor.canDrag() && monitor.getItem().player === player,
+		isDragging: monitor => monitor.getItem().player === player,
 		canDrag: () => player.available,
 		collect: monitor => ({ isDragging: monitor.isDragging() }),
 	});

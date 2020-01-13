@@ -9,13 +9,14 @@ import { SchemaLeagueModule } from '@schema/league/league.module';
 import { PlayerStatSchema } from '@schema/player/models/player-stat.schema';
 import { PlayerRatingSchema } from '@schema/player/models/player-rating.schema';
 import { SchemaFixtureModule } from '@schema/fixture/fixture.module';
+import { PlayerBetting } from '@schema/player/models/player-betting.entity';
 
 @Module({
 	imports: [
 		CoreSchemaModule,
 		SchemaLeagueModule,
 		forwardRef(() => SchemaFixtureModule),
-		SwRepositoryModule.forFeature({ entities: [Player] }),
+		SwRepositoryModule.forFeature({ entities: [Player, PlayerBetting] }),
 		MongooseModule.forFeature([{ name: 'UserPlayers', schema: UserPlayersSchema }]),
 		MongooseModule.forFeature([{ name: 'PlayerStat', schema: PlayerStatSchema }]),
 		MongooseModule.forFeature([{ name: 'PlayerRating', schema: PlayerRatingSchema }]),
