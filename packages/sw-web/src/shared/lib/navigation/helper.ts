@@ -32,8 +32,8 @@ export async function redirect({
 			const path = findPathForRoute(route);
 			let url;
 			if (!route || redirect) {
+				url = '/auth/redirect';
 				if (path) {
-					url = '/auth/redirect';
 					params = { ...params, url: path };
 				}
 			} else {
