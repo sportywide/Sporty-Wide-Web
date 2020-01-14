@@ -2,7 +2,7 @@ import React from 'react';
 import Head from 'next/head';
 import { SwContainer, SwGreyBackground } from '@web/shared/styled/Background.styled';
 import { Header } from 'semantic-ui-react';
-import { SwMyManagedPlayers } from '@web/features/profile/players/components/MyProfilePlayers';
+import { SwMyManagedPlayers } from '@web/features/players/components/MyProfilePlayers';
 import { LeagueService } from '@web/features/leagues/base/services/league.service';
 import { SwLeagueStandings } from '@web/features/leagues/base/components/LeagueStanding';
 import { SwFixturesList } from '@web/features/fixtures/components/FixturesList';
@@ -12,6 +12,7 @@ import { SwMyLineup } from '@web/features/lineup/components/MyLineup';
 import { SwTabPane, updateTab } from '@web/shared/lib/ui/components/tab/TabPane';
 import { SwTab } from '@web/shared/lib/ui/components/tab/Tab';
 import { withRouter } from 'next/router';
+import { SwMyPlayersBetting } from '@web/features/players/components/MyPlayerBetting';
 
 class SwPlayerLeaguePage extends React.Component<any, any> {
 	panes: any[];
@@ -69,6 +70,15 @@ class SwPlayerLeaguePage extends React.Component<any, any> {
 						<DndProvider backend={html5Backend}>
 							<SwMyLineup leagueId={this.props.leagueId} />
 						</DndProvider>
+					</SwTabPane>
+				),
+			},
+			{
+				name: 'betting',
+				menuItem: 'Betting',
+				render: () => (
+					<SwTabPane>
+						<SwMyPlayersBetting leagueId={this.props.leagueId} />
 					</SwTabPane>
 				),
 			},

@@ -1,3 +1,5 @@
 a.sw-link {
+	text-decoration: none;
+	cursor: pointer;
 	@include map-modifiers($colors, 'color', '--');
 }

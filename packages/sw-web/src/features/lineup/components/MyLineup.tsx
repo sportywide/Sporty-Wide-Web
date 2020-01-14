@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { ContainerContext } from '@web/shared/lib/store';
-import { ProfilePlayersService } from '@web/features/profile/players/services/profile-players.service';
+import { ProfilePlayersService } from '@web/features/players/services/profile-players.service';
 import { useAsync, useAsyncCallback } from 'react-async-hook';
 import { sortPlayers } from '@web/features/players/utility/player';
 import { ErrorMessage } from '@web/shared/lib/ui/components/error/Error';

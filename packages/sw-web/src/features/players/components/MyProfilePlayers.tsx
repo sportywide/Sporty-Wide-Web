@@ -1,24 +1,23 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { Button, Grid, Icon, Select } from 'semantic-ui-react';
-import { IProfilePlayers, profilePlayersReducer } from '@web/features/profile/players/store/reducers';
+import { IProfilePlayers, profilePlayersReducer } from '@web/features/players/store/reducers';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { registerReducer } from '@web/shared/lib/redux/register-reducer';
 import { registerEpic } from '@web/shared/lib/redux/register-epic';
-import { fetchMyPlayersEpic } from '@web/features/profile/players/store/epics';
-import { fetchMyPlayers } from '@web/features/profile/players/store/actions';
+import { fetchMyPlayersEpic } from '@web/features/players/store/epics';
+import { fetchMyPlayers } from '@web/features/players/store/actions';
 import { compose } from '@shared/lib/utils/fp/combine';
 import { connect } from 'react-redux';
 import { useFormationOptions, useUser } from '@web/shared/lib/react/hooks';
 import { safeGet } from '@shared/lib/utils/object/get';
-import { ContainerContext } from '@web/shared/lib/store';
+import { ContainerContext, getUserIdFromState } from '@web/shared/lib/store';
 import { UserLeagueService } from '@web/features/leagues/user/services/user-league.service';
 import { get } from 'lodash';
 import { fetchWeeklyFixtureForTeamsEpic } from '@web/features/fixtures/store/epics';
 import { fixtureReducer } from '@web/features/fixtures/store/reducers';
 import { fetchWeeklyFixturesForTeams } from '@web/features/fixtures/store/actions';
 import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
-import { SwPlayerStatCard } from '@web/features/profile/players/components/PlayerStatCard';
+import { SwPlayerStatCard } from '@web/features/players/components/PlayerStatCard';
 import { redirect } from '@web/shared/lib/navigation/helper';
 import { device } from '@web/styles/constants/size';
 import styled from 'styled-components';
@@ -42,11 +41,6 @@ const PlayButton = styled(Button)`
 		position: absolute;
 	}
 `;
-
-interface IProps {
-	players: PlayerDto[];
-	renewContract: () => void;
-}
 
 interface IProps {
 	profilePlayers: IProfilePlayers;
@@ -175,7 +169,7 @@ const enhancer = compose(
 	registerEpic(fetchMyPlayersEpic, fetchWeeklyFixtureForTeamsEpic),
 	connect(
 		(state, ownProps) => {
-			const userId = safeGet(() => state.auth.user.id);
+			const userId = getUserIdFromState(state);
 			return {
 				profilePlayers: safeGet(() => state.profilePlayers[userId][ownProps.leagueId]),
 				weeklyFixtures: state.fixtures.weekly,

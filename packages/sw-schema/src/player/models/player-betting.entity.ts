@@ -4,6 +4,7 @@ import { TrackTimestamp } from '@schema/core/timestamp/track-timestamp.mixin';
 import { Fixture } from '@schema/fixture/models/fixture.entity';
 import { User } from '@schema/user/models/user.entity';
 import { Player } from '@schema/player/models/player.entity';
+import { Team } from '@schema/team/models/team.entity';
 
 @Entity()
 export class PlayerBetting extends TrackTimestamp(BaseEntity) {
@@ -54,6 +55,12 @@ export class PlayerBetting extends TrackTimestamp(BaseEntity) {
 		name: 'user_id',
 	})
 	user: User;
+
+	@ManyToOne(type => Team)
+	@JoinColumn({
+		name: 'team_id',
+	})
+	team: Team;
 
 	@ManyToOne(type => Player)
 	@JoinColumn({

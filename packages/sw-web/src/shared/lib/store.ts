@@ -14,6 +14,7 @@ import React from 'react';
 import { leagueReducer } from '@web/features/leagues/base/store/reducers/league-reducer';
 import { fetchLeaguesEpic } from '@web/features/leagues/base/store/epics';
 import { observableToPromiseMiddleware } from '@web/shared/lib/redux/middlewares/observable-to-promise';
+import { safeGet } from '@shared/lib/utils/object/get';
 import { createReducerManager, ReducerManager } from './redux/reducer-manager';
 
 export interface IDependencies {
@@ -65,6 +66,10 @@ export interface ISportyWideStore extends Store {
 export function getUser(store) {
 	const state = store.getState();
 	return state.auth && state.auth.user;
+}
+
+export function getUserIdFromState(state) {
+	return safeGet(() => state.auth.user.id);
 }
 
 function registerContainer({ context }) {

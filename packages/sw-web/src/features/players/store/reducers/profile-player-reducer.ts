@@ -1,5 +1,5 @@
 import { ActionType, createReducer } from 'typesafe-actions';
-import * as actions from '@web/features/profile/players/store/actions';
+import * as actions from '@web/features/players/store/actions';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 
 export type ProfilePlayersAction = ActionType<typeof actions>;

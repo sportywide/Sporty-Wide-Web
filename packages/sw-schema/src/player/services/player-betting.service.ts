@@ -17,13 +17,14 @@ export class PlayerBettingService extends BaseEntityService<PlayerBetting> {
 		super(playerBettingRepository);
 	}
 
-	getBettings({ userId, week, leagueId }) {
+	getBetting({ userId, week, leagueId }, includes = []) {
 		return this.playerBettingRepository.find({
 			where: {
 				userId,
 				week,
 				leagueId,
 			},
+			relations: includes,
 		});
 	}
 
