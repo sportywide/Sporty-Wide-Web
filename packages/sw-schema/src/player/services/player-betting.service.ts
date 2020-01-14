@@ -7,6 +7,7 @@ import { BaseEntityService } from '@schema/core/entity/base-entity.service';
 import { PlayerBetting } from '@schema/player/models/player-betting.entity';
 import { keyBy } from 'lodash';
 import { range } from '@shared/lib/utils/array/range';
+import { startOfWeek } from 'date-fns';
 
 @Injectable()
 export class PlayerBettingService extends BaseEntityService<PlayerBetting> {
@@ -26,6 +27,19 @@ export class PlayerBettingService extends BaseEntityService<PlayerBetting> {
 			},
 			relations: includes,
 		});
+	}
+
+	async hasBetting({ userId, week, leagueId }) {
+		week = startOfWeek(week, { weekStartsOn: 1 });
+		return (
+			(await this.playerBettingRepository.count({
+				where: {
+					userId,
+					week,
+					leagueId,
+				},
+			})) > 0
+		);
 	}
 
 	async getBettingPositions({ userId, week, leagueId }) {

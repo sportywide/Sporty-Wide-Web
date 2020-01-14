@@ -13,6 +13,7 @@ import { SwTabPane, updateTab } from '@web/shared/lib/ui/components/tab/TabPane'
 import { SwTab } from '@web/shared/lib/ui/components/tab/Tab';
 import { withRouter } from 'next/router';
 import { SwMyPlayersBetting } from '@web/features/players/components/MyPlayerBetting';
+import { PlayerBettingService } from '@web/features/players/services/player-betting.service';
 
 class SwPlayerLeaguePage extends React.Component<any, any> {
 	panes: any[];
@@ -21,13 +22,18 @@ class SwPlayerLeaguePage extends React.Component<any, any> {
 	static async getInitialProps({ query, store }) {
 		const container = store.container;
 		const leagueService = container.get(LeagueService);
+		const playerBettingService = container.get(PlayerBettingService);
 		if (isNaN(query.id)) {
 			return {};
 		}
 		const leagueId = parseInt(query.id, 10);
-		const league = await leagueService.fetchLeague(leagueId).toPromise();
+		const [league, { hasBetting }] = await Promise.all([
+			leagueService.fetchLeague(leagueId).toPromise(),
+			playerBettingService.hasBetting({ leagueId }).toPromise(),
+		]);
 		return {
 			leagueId,
+			hasBetting,
 			league,
 			defaultTab: query.tab,
 		};
@@ -76,13 +82,14 @@ class SwPlayerLeaguePage extends React.Component<any, any> {
 			{
 				name: 'betting',
 				menuItem: 'Betting',
+				condition: () => this.props.hasBetting,
 				render: () => (
 					<SwTabPane>
 						<SwMyPlayersBetting leagueId={this.props.leagueId} />
 					</SwTabPane>
 				),
 			},
-		];
+		].filter(({ condition }) => !condition || condition());
 		this.defaultTabIndex = updateTab(this.panes, this.props.defaultTab);
 		this.state = {
 			activeTabIndex: this.defaultTabIndex,

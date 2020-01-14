@@ -158,6 +158,27 @@ export class PlayerController {
 
 	@ActiveUser()
 	@UseGuards(JwtAuthGuard)
+	@Get('/me/check/betting/:leagueId')
+	async hasBetting(
+		@CurrentUser() user: User,
+		@Param('leagueId', new ParseIntPipe()) leagueId: number,
+		@Query('date') dateString: string
+	) {
+		this.validateLeague(leagueId);
+		const date = this.validateDate(dateString);
+		const hasBetting = await this.playerBettingService.hasBetting({
+			leagueId,
+			userId: user.id,
+			week: date,
+		});
+
+		return {
+			hasBetting,
+		};
+	}
+
+	@ActiveUser()
+	@UseGuards(JwtAuthGuard)
 	@Post('/me/lineup/:leagueId')
 	async postMyLineup(
 		@CurrentUser() user: User,

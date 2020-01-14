@@ -30,7 +30,7 @@ export const fetchMyBettingEpic = createStandardEpic<any, PlayerBettingDto[]>({
 	actionType: FETCH_MY_BETTING,
 	successAction: ({ payload }, data) => fetchMyBettingSuccess({ leagueId: payload.leagueId, betting: data }),
 	effect: ({ payload: { week, leagueId } }, container) => {
-		const fixtureService = container.get(PlayerBettingService);
-		return fixtureService.getMyBetting({ leagueId, week });
+		const playerBettingService = container.get(PlayerBettingService);
+		return playerBettingService.getMyBetting({ leagueId, week });
 	},
 });
