@@ -47,7 +47,7 @@ export const fetchExtraUserProfileEpic = (action$, state$, { container }: { cont
 			switchMap((action: ActionType<typeof fetchExtraUserProfile>) =>
 				userService
 					.getExtraProfile({ userId: action.payload, relations: ['address'] })
-					.pipe(map(fetchExtraUserProfileSuccess))
+					.pipe(map(value => fetchExtraUserProfileSuccess(value)))
 			)
 		);
 };

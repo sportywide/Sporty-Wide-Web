@@ -10,20 +10,17 @@ import { PlayerBettingService } from '@web/features/players/services/player-bett
 
 export const fetchMyPlayersEpic = (action$, state$, { container }: { container: ContainerInstance }) => {
 	const profilePlayersService = container.get(ProfilePlayersService);
-	const userId = state$.value.auth.user.id;
 	return action$.ofType(FETCH_MY_PLAYERS).pipe(
 		switchMap(({ payload: { leagueId } }) =>
 			profilePlayersService.getMyPlayers({ leagueId, includes: ['stats'] }).pipe(
 				map(({ players, formation, preference, errorCode, errorMessage }) => {
 					if (errorCode && errorMessage) {
-						return fetchMyPlayersError({ userId, leagueId, errorCode, errorMessage });
+						return fetchMyPlayersError({ leagueId, errorCode, errorMessage });
 					} else {
-						return fetchMyPlayersSuccess({ players, userId, leagueId, formation, preference });
+						return fetchMyPlayersSuccess({ players, leagueId, formation, preference });
 					}
 				}),
-				catchAndThrow(() =>
-					fetchMyPlayersError({ userId, leagueId, errorCode: '', errorMessage: 'Unexpected error' })
-				)
+				catchAndThrow(() => fetchMyPlayersError({ leagueId, errorCode: '', errorMessage: 'Unexpected error' }))
 			)
 		)
 	);
@@ -31,8 +28,7 @@ export const fetchMyPlayersEpic = (action$, state$, { container }: { container: 
 
 export const fetchMyBettingEpic = createStandardEpic<any, PlayerBettingDto[]>({
 	actionType: FETCH_MY_BETTING,
-	successAction: ({ payload }, data) =>
-		fetchMyBettingSuccess({ leagueId: payload.leagueId, betting: data, userId: payload.userId }),
+	successAction: ({ payload }, data) => fetchMyBettingSuccess({ leagueId: payload.leagueId, betting: data }),
 	effect: ({ payload: { week, leagueId } }, container) => {
 		const fixtureService = container.get(PlayerBettingService);
 		return fixtureService.getMyBetting({ leagueId, week });

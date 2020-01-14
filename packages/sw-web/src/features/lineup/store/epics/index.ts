@@ -15,13 +15,13 @@ import {
 import { IDependencies } from '@web/shared/lib/store';
 import { LineupService } from '@web/features/lineup/services/lineup.service';
 import { Epic } from 'redux-observable';
-import { ActionType, PayloadAction } from 'typesafe-actions';
+import { ActionType, PayloadMetaAction } from 'typesafe-actions';
 import { ILineupState } from '@web/features/lineup/store/reducers/lineup-reducer';
 import { EMPTY } from 'rxjs';
 
 export const fillPositionsEpic: Epic<
 	ActionType<typeof fillPositions>,
-	PayloadAction<string, any>,
+	PayloadMetaAction<string, any, any>,
 	{ lineupBuilder: ILineupState },
 	IDependencies
 > = (action$, state$, { container }) => {
@@ -43,7 +43,7 @@ export const fillPositionsEpic: Epic<
 
 export const substitutePlayersEpic: Epic<
 	ActionType<typeof substitutePlayers>,
-	PayloadAction<string, any>,
+	PayloadMetaAction<string, any, any>,
 	{ lineupBuilder: ILineupState }
 > = (action$, state$) => {
 	return action$.ofType(SUBSTITUTE_PLAYERS as any).pipe(

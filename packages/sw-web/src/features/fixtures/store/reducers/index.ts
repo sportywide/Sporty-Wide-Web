@@ -1,6 +1,7 @@
-import { ActionType, createReducer } from 'typesafe-actions';
+import { ActionType } from 'typesafe-actions';
 import * as actions from '@web/features/fixtures/store/actions';
 import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
+import { createReducer } from '@web/shared/lib/redux/action-creators';
 
 interface IState {
 	upcoming: {
