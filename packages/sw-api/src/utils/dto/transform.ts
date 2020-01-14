@@ -41,7 +41,10 @@ export function toDto<T>({
 	} else if (value instanceof BaseGeneratedEntity || value instanceof BaseEntity) {
 		plain = value.toPlain();
 	} else if (!dtoType && typeof value === 'object') {
-		return Object.entries(value).reduce((currentObject, [key, value]) => {
+		if (value instanceof Date) {
+			return value.toISOString();
+		}
+		plain = Object.entries(value).reduce((currentObject, [key, value]) => {
 			return {
 				...currentObject,
 				[key]: toDto({
@@ -50,6 +53,10 @@ export function toDto<T>({
 				}),
 			};
 		}, {});
+	}
+
+	if (!dtoType) {
+		return plain;
 	}
 
 	return plainToClass(dtoType, plain, {

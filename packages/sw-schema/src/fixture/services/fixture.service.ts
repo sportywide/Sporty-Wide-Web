@@ -153,7 +153,7 @@ export class FixtureService extends BaseEntityService<Fixture> {
 		});
 	}
 
-	async getNextFixturesForTeams(teamIds: number[] = []) {
+	async getNextFixturesForTeams(teamIds: number[] = []): Promise<Record<number, Fixture>> {
 		if (!teamIds.length) {
 			return {};
 		}

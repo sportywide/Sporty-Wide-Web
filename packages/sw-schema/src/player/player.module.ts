@@ -10,6 +10,7 @@ import { PlayerStatSchema } from '@schema/player/models/player-stat.schema';
 import { PlayerRatingSchema } from '@schema/player/models/player-rating.schema';
 import { SchemaFixtureModule } from '@schema/fixture/fixture.module';
 import { PlayerBetting } from '@schema/player/models/player-betting.entity';
+import { PlayerBettingService } from '@schema/player/services/player-betting.service';
 
 @Module({
 	imports: [
@@ -21,7 +22,7 @@ import { PlayerBetting } from '@schema/player/models/player-betting.entity';
 		MongooseModule.forFeature([{ name: 'PlayerStat', schema: PlayerStatSchema }]),
 		MongooseModule.forFeature([{ name: 'PlayerRating', schema: PlayerRatingSchema }]),
 	],
-	providers: [PlayerService],
-	exports: [SwRepositoryModule, PlayerService, MongooseModule],
+	providers: [PlayerService, PlayerBettingService],
+	exports: [SwRepositoryModule, PlayerService, MongooseModule, PlayerBettingService],
 })
 export class SchemaPlayerModule {}

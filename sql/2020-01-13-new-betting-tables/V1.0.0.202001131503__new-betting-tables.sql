@@ -12,7 +12,9 @@ CREATE TABLE "player_betting"
     fixture_id    INTEGER NOT NULL,
     user_id       INTEGER NOT NULL,
     player_id     INTEGER NOT NULL,
-    team_id       INTEGER NOT NULL
+    team_id       INTEGER NOT NULL,
+    league_id     INTEGER NOT NULL,
+    pos           INTEGER NOT NULL
 );
 
 CREATE INDEX idx_player_betting_user_id_date ON player_betting (user_id, week);

@@ -7,6 +7,7 @@ const ordering = {
 	RB: 3,
 	DM: 4,
 	CM: 5,
+	CDM: 5,
 	LM: 6,
 	RM: 7,
 	AM: 8,
