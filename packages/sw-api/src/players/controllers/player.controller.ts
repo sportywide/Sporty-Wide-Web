@@ -134,6 +134,30 @@ export class PlayerController {
 
 	@ActiveUser()
 	@UseGuards(JwtAuthGuard)
+	@Get('/me/betting/:leagueId')
+	async getMyBetting(
+		@CurrentUser() user: User,
+		@Param('leagueId', new ParseIntPipe()) leagueId: number,
+		@Query('date') dateString: string
+	) {
+		this.validateLeague(leagueId);
+		const date = this.validateDate(dateString);
+		const positions = await this.playerBettingService.getBetting(
+			{
+				leagueId,
+				userId: user.id,
+				week: date,
+			},
+			['player', 'fixture']
+		);
+
+		return toDto({
+			value: positions,
+		});
+	}
+
+	@ActiveUser()
+	@UseGuards(JwtAuthGuard)
 	@Post('/me/lineup/:leagueId')
 	async postMyLineup(
 		@CurrentUser() user: User,
@@ -147,8 +171,8 @@ export class PlayerController {
 		if (date > new Date()) {
 			throw new BadRequestException('Invalid date');
 		}
-		const existingBettings = await this.playerBettingService.getBettings({ userId: user.id, week: date, leagueId });
-		if (existingBettings.length) {
+		const existingBetting = await this.playerBettingService.getBetting({ userId: user.id, week: date, leagueId });
+		if (existingBetting.length) {
 			return;
 		}
 		const ownedPlayers = await this.playerService.getOwnedPlayers({ userId: user.id, leagueId, date });
@@ -168,7 +192,7 @@ export class PlayerController {
 		if (!Object.keys(playerMappedByIds).length) {
 			return;
 		}
-		const playerBettings = await this.playerBettingService.save(
+		const playerBetting = await this.playerBettingService.save(
 			Object.entries(playerMappedByIds).map(([playerId, player]) => {
 				const parsedPlayerId = parseInt(playerId, 10);
 				return {
@@ -183,7 +207,7 @@ export class PlayerController {
 			})
 		);
 		return toDto({
-			value: playerBettings,
+			value: playerBetting,
 		});
 	}
 
