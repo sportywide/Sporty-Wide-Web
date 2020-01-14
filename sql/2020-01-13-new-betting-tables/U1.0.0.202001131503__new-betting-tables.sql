@@ -1,2 +1,2 @@
-DROP TABLE "play_betting";
+DROP TABLE "player_betting";
 DROP TABLE "user_score";

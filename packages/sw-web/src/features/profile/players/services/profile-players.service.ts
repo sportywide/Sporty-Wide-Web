@@ -27,4 +27,18 @@ export class ProfilePlayersService {
 			.get(`/player/me/lineup/${leagueId}`)
 			.pipe(map(response => response.data));
 	}
+
+	saveMyLineup({ leagueId, positions }) {
+		positions = positions.map(position => {
+			if (position) {
+				return position.id;
+			} else {
+				return position;
+			}
+		});
+		return this.apiService
+			.api()
+			.post(`/player/me/lineup/${leagueId}`, { positions })
+			.pipe(map(response => response.data));
+	}
 }

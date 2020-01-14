@@ -33,9 +33,22 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 				<SwDraggablePlayer ref={drag} isDragging={isDragging} canDrag={player.available}>
 					<SwPlayerLogo circular avatar src={fifaImage(player.image)} />
 					<div className={'sw-flex-grow-equal sw-truncate sw-mr1'}>
-						<span>
-							{player.shirt}. {player.name}
-						</span>
+						{player.available ? (
+							<span>
+								{player.shirt}. {player.name}
+							</span>
+						) : (
+							<Popup
+								trigger={
+									<span>
+										{player.shirt}. {player.name}
+									</span>
+								}
+								content={'Player has already played'}
+								inverted
+								position="top center"
+							/>
+						)}
 						<div>
 							{player.positions.map(position => (
 								<Label as="a" key={position} color={getPositionColor(position)} size={'mini'}>

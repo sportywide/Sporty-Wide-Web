@@ -8,7 +8,7 @@ import { SwRepository } from '@schema/core/repository/sql/base.repository';
 
 export class BaseEntityService<T extends BaseGeneratedEntity> {
 	private cache: SwLRUCache<DataLoader<number, T>>;
-	constructor(private readonly repository: SwRepository<T>) {
+	constructor(protected readonly repository: SwRepository<T>) {
 		this.cache = new SwLRUCache();
 	}
 
@@ -18,6 +18,10 @@ export class BaseEntityService<T extends BaseGeneratedEntity> {
 
 	public async findAll(): Promise<T[]> {
 		return this.repository.find();
+	}
+
+	public async getMappedByIds(ids: number[], options?: FindManyOptions) {
+		return this.repository.getMappedByIds(ids, options);
 	}
 
 	find(conditions: FindManyOptions<T>) {
@@ -62,10 +66,12 @@ export class BaseEntityService<T extends BaseGeneratedEntity> {
 		id: number;
 		options?: FindManyOptions<T> & { property: keyof T };
 	}) {
-		return (await this.findIdsByDataLoader({
-			ids: [id],
-			options,
-		}))[0];
+		return (
+			await this.findIdsByDataLoader({
+				ids: [id],
+				options,
+			})
+		)[0];
 	}
 
 	public async findOne(params: FindConditions<T>): Promise<T | undefined> {

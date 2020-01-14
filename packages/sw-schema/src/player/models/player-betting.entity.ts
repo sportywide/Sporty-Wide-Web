@@ -11,6 +11,9 @@ export class PlayerBetting extends TrackTimestamp(BaseEntity) {
 	betRating: number;
 
 	@Column()
+	pos: number;
+
+	@Column()
 	realRating: number;
 
 	@Column()
@@ -36,6 +39,9 @@ export class PlayerBetting extends TrackTimestamp(BaseEntity) {
 
 	@Column()
 	teamId: number;
+
+	@Column()
+	leagueId: number;
 
 	@ManyToOne(type => Fixture)
 	@JoinColumn({

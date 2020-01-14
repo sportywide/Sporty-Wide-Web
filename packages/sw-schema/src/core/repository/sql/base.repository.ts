@@ -14,10 +14,12 @@ import {
 	Repository,
 	SelectQueryBuilder,
 	UpdateQueryBuilder,
+	FindManyOptions,
 } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { SwSubscriber } from '@schema/core/subscriber/sql/base.subscriber';
 import { wrap } from '@shared/lib/utils/object/proxy';
+import { keyBy } from 'lodash';
 import { BaseGeneratedEntity } from '@schema/core/base.entity';
 
 class SwBaseRepository<T> {
@@ -177,6 +179,29 @@ class SwBaseRepository<T> {
 		return rows.map(({ id }) => id);
 	}
 
+	async advancedFindSelect(
+		selectColumns = [],
+		criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindConditions<T>
+	) {
+		let queryBuilder: SelectQueryBuilder<T>;
+		if (
+			typeof criteria === 'string' ||
+			typeof criteria === 'number' ||
+			criteria instanceof Date ||
+			criteria instanceof Array
+		) {
+			queryBuilder = await this.repository.createQueryBuilder().whereInIds(criteria);
+		} else {
+			queryBuilder = await this.repository.createQueryBuilder().where(criteria);
+		}
+
+		selectColumns.forEach(column => {
+			queryBuilder.addSelect(column);
+		});
+
+		return queryBuilder.getRawMany();
+	}
+
 	async getByIdsOrdered(ids: number[], includes: string[] = []) {
 		const tableName = this.getTableName();
 		let queryBuilder = this.createQueryBuilder(tableName);
@@ -187,6 +212,12 @@ class SwBaseRepository<T> {
 			queryBuilder = queryBuilder.leftJoinAndSelect(`${tableName}.${include}`, include);
 		});
 		return queryBuilder.getMany();
+	}
+
+	async getMappedByIds(ids: number[], options?: FindManyOptions): Promise<Record<number, T>> {
+		ids = ids.filter(id => id);
+		const entities = await this.repository.findByIds(ids, options);
+		return keyBy(entities, 'id');
 	}
 }
 

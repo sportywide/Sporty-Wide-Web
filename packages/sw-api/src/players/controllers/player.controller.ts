@@ -1,4 +1,14 @@
-import { BadRequestException, Controller, Get, Param, ParseIntPipe, Query, UseGuards } from '@nestjs/common';
+import {
+	BadRequestException,
+	Controller,
+	Get,
+	Post,
+	Body,
+	Param,
+	ParseIntPipe,
+	Query,
+	UseGuards,
+} from '@nestjs/common';
 import { PlayerService } from '@schema/player/services/player.service';
 import { parse, startOfWeek } from 'date-fns';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
@@ -13,13 +23,16 @@ import { ActiveUser } from '@api/auth/decorators/user-check.decorator';
 import { User } from '@schema/user/models/user.entity';
 import { FixtureService } from '@schema/fixture/services/fixture.service';
 import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
+import { PlayerBettingService } from '@schema/player/services/player-betting.service';
+import { toISO } from '@shared/lib/utils/date/conversion';
 
 @Controller('/player')
 export class PlayerController {
 	constructor(
 		private readonly playerService: PlayerService,
 		private readonly leagueService: LeagueService,
-		private readonly fixtureService: FixtureService
+		private readonly fixtureService: FixtureService,
+		private readonly playerBettingService: PlayerBettingService
 	) {}
 
 	@ActiveUser()
@@ -106,10 +119,72 @@ export class PlayerController {
 			};
 		});
 
+		const positions = await this.playerBettingService.getBettingPositions({
+			leagueId,
+			userId: user.id,
+			week: date,
+		});
+
 		return {
 			...(generatePlayerResult as UserPlayersDocument).toJSON(),
+			positions,
 			players: playerDtos,
 		};
+	}
+
+	@ActiveUser()
+	@UseGuards(JwtAuthGuard)
+	@Post('/me/lineup/:leagueId')
+	async postMyLineup(
+		@CurrentUser() user: User,
+		@Param('leagueId', new ParseIntPipe()) leagueId: number,
+		@Query('date') dateString: string,
+		@Body() body: { positions: number[] }
+	) {
+		let { positions } = body;
+		this.validateLeague(leagueId);
+		const date = this.validateDate(dateString);
+		if (date > new Date()) {
+			throw new BadRequestException('Invalid date');
+		}
+		const existingBettings = await this.playerBettingService.getBettings({ userId: user.id, week: date, leagueId });
+		if (existingBettings.length) {
+			return;
+		}
+		const ownedPlayers = await this.playerService.getOwnedPlayers({ userId: user.id, leagueId, date });
+		positions = positions.filter(position => !position || ownedPlayers.players.includes(position));
+		if (!positions.length) {
+			throw new BadRequestException('Must specify at least a valid player');
+		}
+		const playerMappedByIds = await this.playerService.getMappedByIds(positions);
+		const players = Object.values(playerMappedByIds);
+		const teamIds = players.map(player => player.teamId);
+		const fixtureMap = await this.fixtureService.getNextFixturesForTeams(teamIds);
+		for (const [playerId, player] of Object.entries(playerMappedByIds)) {
+			if (!fixtureMap[player.teamId]) {
+				delete playerMappedByIds[playerId];
+			}
+		}
+		if (!Object.keys(playerMappedByIds).length) {
+			return;
+		}
+		const playerBettings = await this.playerBettingService.save(
+			Object.entries(playerMappedByIds).map(([playerId, player]) => {
+				const parsedPlayerId = parseInt(playerId, 10);
+				return {
+					playerId: parsedPlayerId,
+					teamId: player.teamId,
+					fixtureId: fixtureMap[player.teamId].id,
+					leagueId,
+					userId: user.id,
+					week: toISO(date),
+					pos: positions.indexOf(parsedPlayerId),
+				};
+			})
+		);
+		return toDto({
+			value: playerBettings,
+		});
 	}
 
 	private async validateLeague(leagueId) {

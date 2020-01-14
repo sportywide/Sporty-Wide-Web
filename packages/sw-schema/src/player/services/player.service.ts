@@ -47,16 +47,20 @@ export class PlayerService extends BaseEntityService<Player> {
 		super(playerRepository);
 	}
 
+	async getOwnedPlayers({ userId, leagueId, date }) {
+		return this.userPlayersModel.findOne({
+			userId,
+			leagueId,
+			week: date,
+		});
+	}
+
 	async getOrCreatePlayersForUser({ userId, leagueId, date = new Date() }) {
 		const season = getSeason(date);
 		if (!season) {
 			throw new NotInSeasonException('Not in season');
 		}
-		let userPlayers = await this.userPlayersModel.findOne({
-			userId,
-			leagueId,
-			week: date,
-		});
+		let userPlayers = await this.getOwnedPlayers({ userId, leagueId, date });
 		if (!userPlayers) {
 			const numFixtures = await this.fixtureService.numMatchesForWeek({ leagueId, date });
 			if (!numFixtures) {
