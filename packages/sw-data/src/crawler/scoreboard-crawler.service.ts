@@ -71,15 +71,12 @@ export class ScoreboardCrawlerService extends ResultsService {
 	}
 
 	private parseSeason($: CheerioStatic): string {
-		const text = $(
-			'body > div.container > div.main > div.main-left > div.center.col-center.tournament_page > .tournament'
-		).text();
-		const parts = text.split('»');
-		return parts[parts.length - 1].replace('/', '-').trim();
+		const text = $('#fscon > div.teamHeader > div > div.teamHeader__information > div.teamHeader__text').text();
+		return text.replace('/', '-').trim();
 	}
 
 	private parseTeams($: CheerioStatic): ScoreboardTeam[] {
-		const teamRows = $('#table-type-1 > tbody > tr');
+		const teamRows = $('#table-type-1 .table__body > .table__row');
 
 		return Array.from(teamRows).map(teamRowNode => {
 			const teamRow = $(teamRowNode);
@@ -87,26 +84,26 @@ export class ScoreboardCrawlerService extends ResultsService {
 			const teamName = teamNameElement.text();
 			let teamUrl = teamNameElement.find('a').attr('onclick');
 			[, teamUrl] = teamUrl.match(/javascript:getUrlByWinType\('(.*)'\)/);
-			const played = parseInt(teamRow.find('.matches_played').text(), 10);
-			const wins = parseInt(teamRow.find('.wins_regular').text(), 10);
-			const draws = parseInt(teamRow.find('.draws').text(), 10);
-			const losses = parseInt(teamRow.find('.losses_regular').text(), 10);
+			const played = parseInt(teamRow.find('.table__cell--matches_played').text(), 10);
+			const wins = parseInt(teamRow.find('.table__cell--wins_regular').text(), 10);
+			const draws = parseInt(teamRow.find('.table__cell--draws').text(), 10);
+			const losses = parseInt(teamRow.find('.table__cell--losses_regular').text(), 10);
 			const [scored, conceded] = teamRow
-				.find('.goals')
+				.find('.table__cell--goals')
 				.text()
 				.split(':')
 				.map(number => parseInt(number, 10));
-			const points = parseInt(teamRow.find('.points').text(), 10);
-			const forms = Array.from(teamRow.find('.form-bg')).map(formNode => {
+			const points = parseInt(teamRow.find('.table__cell--points').text(), 10);
+			const forms = Array.from(teamRow.find('.form__cell')).map(formNode => {
 				let type;
 				const formElement = $(formNode);
-				if (formElement.hasClass('form-w')) {
+				if (formElement.hasClass('form__cell--win')) {
 					type = 'w';
-				} else if (formElement.hasClass('form-l')) {
+				} else if (formElement.hasClass('form__cell--loss')) {
 					type = 'l';
-				} else if (formElement.hasClass('form-d')) {
+				} else if (formElement.hasClass('form__cell--draw')) {
 					type = 'd';
-				} else if (formElement.hasClass('form-s')) {
+				} else if (formElement.hasClass('form__cell--upcoming')) {
 					type = 's';
 				}
 				let score, date, teams;
@@ -121,6 +118,7 @@ export class ScoreboardCrawlerService extends ResultsService {
 					const matches = title.match(/\[b](.+?)\s*\[\/b]\((.+?)\)\n*(.*?)$/s);
 					if (matches) {
 						[, score, teams, date] = matches;
+						score = score.replace('&nbsp;', '');
 					}
 				}
 
