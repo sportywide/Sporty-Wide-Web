@@ -12,17 +12,14 @@ import {
 } from './actions.constants';
 
 export const fetchMyPlayers = createSwStandardAction(FETCH_MY_PLAYERS)<{
-	userId: number;
 	leagueId: number;
 }>();
 
 export const fetchMyBetting = createSwStandardAction(FETCH_MY_BETTING)<{
-	userId: number;
 	leagueId: number;
 }>();
 
 export const fetchMyBettingSuccess = createSwStandardAction(FETCH_MY_BETTING_SUCCESS)<{
-	userId: number;
 	leagueId: number;
 	betting: PlayerBettingDto[];
 }>();
@@ -43,14 +40,12 @@ export const updateToken = createSwStandardAction(UPDATE_TOKEN)<{
 
 export const fetchMyPlayersSuccess = createSwStandardAction(FETCH_MY_PLAYERS_SUCCESS)<{
 	players: PlayerDto[];
-	userId: number;
 	leagueId: number;
 	formation: string;
 	preference: any;
 }>();
 
 export const fetchMyPlayersError = createSwStandardAction(FETCH_MY_PLAYERS_ERROR)<{
-	userId: number;
 	leagueId: number;
 	errorCode: string;
 	errorMessage: string;

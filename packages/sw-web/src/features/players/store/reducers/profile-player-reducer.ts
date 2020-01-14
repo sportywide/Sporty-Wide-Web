@@ -1,6 +1,7 @@
-import { ActionType, createReducer } from 'typesafe-actions';
+import { ActionType } from 'typesafe-actions';
 import * as actions from '@web/features/players/store/actions';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
+import { createReducer } from '@web/shared/lib/redux/action-creators';
 
 export type ProfilePlayersAction = ActionType<typeof actions>;
 
@@ -26,7 +27,15 @@ const initialState = {
 export const profilePlayersReducer = createReducer<IState, ProfilePlayersAction>(initialState)
 	.handleAction(
 		actions.fetchMyPlayersSuccess,
-		(state, { payload: { userId, leagueId, players, formation, preference } }) => ({
+		(
+			state,
+			{
+				payload: { leagueId, players, formation, preference },
+				meta: {
+					user: { id: userId },
+				},
+			}
+		) => ({
 			...state,
 			[userId]: {
 				...(state[userId] || {}),
@@ -39,18 +48,29 @@ export const profilePlayersReducer = createReducer<IState, ProfilePlayersAction>
 			},
 		})
 	)
-	.handleAction(actions.fetchMyPlayersError, (state, { payload: { userId, leagueId, errorCode, errorMessage } }) => ({
-		...state,
-		[userId]: {
-			...(state[userId] || {}),
-			[leagueId]: {
-				loading: false,
-				errorCode,
-				errorMessage,
+	.handleAction(
+		actions.fetchMyPlayersError,
+		(
+			state,
+			{
+				payload: { leagueId, errorCode, errorMessage },
+				meta: {
+					user: { id: userId },
+				},
+			}
+		) => ({
+			...state,
+			[userId]: {
+				...(state[userId] || {}),
+				[leagueId]: {
+					loading: false,
+					errorCode,
+					errorMessage,
+				},
 			},
-		},
-	}))
-	.handleAction(actions.fetchMyPlayers, (state, { payload: { userId, leagueId } }) => ({
+		})
+	)
+	.handleAction(actions.fetchMyPlayers, (state, { payload: { leagueId }, meta: { user: { id: userId } } }) => ({
 		...state,
 		[userId]: {
 			...(state[userId] || {}),

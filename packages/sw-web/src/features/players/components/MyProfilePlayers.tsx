@@ -81,7 +81,7 @@ const SwMyManagedPlayersComponent: React.FC<IProps> = ({
 	const [isSettingFormation, setIsSettingFormation] = useState(false);
 	const container = useContext(ContainerContext);
 	useEffect(() => {
-		fetchMyPlayers({ leagueId, userId: user.id });
+		fetchMyPlayers({ leagueId });
 	}, [fetchMyPlayers, leagueId, user.id]);
 
 	useEffect(() => {

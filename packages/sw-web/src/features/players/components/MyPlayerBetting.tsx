@@ -38,7 +38,6 @@ const SwMyPlayerBettingComponent: React.FC<IProps> = ({
 	const user = useUser();
 	useEffectOnce(() => {
 		fetchMyBetting({
-			userId: user.id,
 			leagueId,
 		});
 	});

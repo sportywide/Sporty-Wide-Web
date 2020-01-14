@@ -1,11 +1,11 @@
 import * as actions from '@web/features/lineup/store/actions';
-import { ActionType, createReducer, PayloadAction } from 'typesafe-actions';
+import { ActionType, PayloadAction } from 'typesafe-actions';
 import { UserPlayerDto } from '@shared/lib/dtos/player/player.dto';
 import strategy from '@shared/lib/strategy/4-4-2.json';
 import { fill } from 'lodash';
 import { FormationDto } from '@shared/lib/dtos/formation/formation.dto';
 import { NUM_PLAYERS, sortPlayers } from '@web/features/players/utility/player';
-import { range } from '@shared/lib/utils/array/range';
+import { createReducer } from '@web/shared/lib/redux/action-creators';
 
 export interface ILineupState {
 	strategy: FormationDto;
@@ -49,23 +49,20 @@ export const lineupReducer = createReducer<ILineupState, LineupAction>(initialSt
 			positions: [...state.positions.slice(0, payload), null, ...state.positions.slice(payload + 1)],
 		};
 	})
-	.handleAction(
-		actions.switchLineupPositions,
-		(state, { payload }: PayloadAction<string, { player: UserPlayerDto; index: number }>) => {
-			const player = payload.player;
-			const currentIndex = state.positions.findIndex(position => position === player);
-			if (currentIndex < 0) {
-				return state;
-			}
-			const newPositions = [...state.positions];
-			newPositions[currentIndex] = null;
-			newPositions[payload.index] = player;
-			return {
-				...state,
-				positions: newPositions,
-			};
+	.handleAction(actions.switchLineupPositions, (state, { payload }) => {
+		const player = payload.player;
+		const currentIndex = state.positions.findIndex(position => position === player);
+		if (currentIndex < 0) {
+			return state;
 		}
-	)
+		const newPositions = [...state.positions];
+		newPositions[currentIndex] = null;
+		newPositions[payload.index] = player;
+		return {
+			...state,
+			positions: newPositions,
+		};
+	})
 	.handleAction(actions.initLineup, (state, { payload: { playing = [], reserved = [], formation = '4-4-2' } }) => {
 		return {
 			...state,

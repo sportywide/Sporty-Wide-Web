@@ -15,6 +15,7 @@ import { leagueReducer } from '@web/features/leagues/base/store/reducers/league-
 import { fetchLeaguesEpic } from '@web/features/leagues/base/store/epics';
 import { observableToPromiseMiddleware } from '@web/shared/lib/redux/middlewares/observable-to-promise';
 import { safeGet } from '@shared/lib/utils/object/get';
+import { metaMiddleware } from '@web/shared/lib/redux/middlewares/meta';
 import { createReducerManager, ReducerManager } from './redux/reducer-manager';
 
 export interface IDependencies {
@@ -43,7 +44,8 @@ export function initStore(initialState = {}, context) {
 	const reduxMiddleware = applyMiddleware(
 		thunkMiddleware.withExtraArgument({ container }),
 		observableToPromiseMiddleware,
-		epicMiddleware
+		epicMiddleware,
+		metaMiddleware
 	);
 	const epicManager = createEpicManager(logoutEpic, fetchLeaguesEpic);
 	const enhancers = isDevelopment() ? composeWithDevTools({ serialize: true })(reduxMiddleware) : reduxMiddleware;
