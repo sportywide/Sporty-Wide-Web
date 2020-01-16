@@ -16,6 +16,7 @@ export const playerBettingReducer = produce(
 				.map(betting => ({
 					...betting,
 					newBetRating: betting.betRating,
+					newBetTokens: betting.betTokens,
 				}));
 			setObjectKey(state, `[${meta.user.id}][${payload.leagueId}].players`, keyBy(betting, 'playerId'));
 			return state;

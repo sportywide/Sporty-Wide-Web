@@ -12,6 +12,7 @@ import { Button, Icon } from 'semantic-ui-react';
 import { useAsyncCallback } from 'react-async-hook';
 import { useEffectOnce } from '@web/shared/lib/react/hooks';
 import { getSeasonRange } from '@shared/lib/utils/season';
+import { weekStart } from '@shared/lib/utils/date/relative';
 import * as S from './FixtureList.styled';
 
 interface IProps {
@@ -23,7 +24,7 @@ const SwFixtureListComponent: React.FC<IProps> = ({ leagueId }) => {
 	const [fixtures, setFixtures] = useState<FixtureDto[]>(null);
 
 	const defaultDateRange = useMemo(() => {
-		const monday = startOfWeek(startOfDay(new Date()), { weekStartsOn: 1 });
+		const monday = weekStart(startOfDay(new Date()));
 		const nextMonday = addWeeks(monday, 1);
 		return {
 			start: monday,

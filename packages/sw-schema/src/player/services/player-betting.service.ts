@@ -7,7 +7,9 @@ import { BaseEntityService } from '@schema/core/entity/base-entity.service';
 import { PlayerBetting } from '@schema/player/models/player-betting.entity';
 import { keyBy } from 'lodash';
 import { range } from '@shared/lib/utils/array/range';
-import { startOfWeek } from 'date-fns';
+import { weekStart } from '@shared/lib/utils/date/relative';
+import { Not, IsNull } from 'typeorm';
+import { PlayerBettingInputDto } from '@shared/lib/dtos/player/player-betting.dto';
 
 @Injectable()
 export class PlayerBettingService extends BaseEntityService<PlayerBetting> {
@@ -19,6 +21,7 @@ export class PlayerBettingService extends BaseEntityService<PlayerBetting> {
 	}
 
 	getBetting({ userId, week, leagueId }, includes = []) {
+		week = weekStart(week);
 		return this.playerBettingRepository.find({
 			where: {
 				userId,
@@ -30,7 +33,7 @@ export class PlayerBettingService extends BaseEntityService<PlayerBetting> {
 	}
 
 	async hasBetting({ userId, week, leagueId }) {
-		week = startOfWeek(week, { weekStartsOn: 1 });
+		week = weekStart(week);
 		return (
 			(await this.playerBettingRepository.count({
 				where: {
@@ -42,7 +45,22 @@ export class PlayerBettingService extends BaseEntityService<PlayerBetting> {
 		);
 	}
 
+	async hasAlreadyBet({ userId, week, leagueId }) {
+		week = weekStart(week);
+		return (
+			(await this.playerBettingRepository.count({
+				where: {
+					userId,
+					week,
+					leagueId,
+					betTime: Not(IsNull()),
+				},
+			})) > 0
+		);
+	}
+
 	async getBettingPositions({ userId, week, leagueId }) {
+		week = weekStart(week);
 		const rows = await this.repository.advancedFindSelect(['player_id', 'pos'], {
 			userId,
 			week,
@@ -56,5 +74,31 @@ export class PlayerBettingService extends BaseEntityService<PlayerBetting> {
 				return null;
 			}
 		});
+	}
+
+	async saveUserBetting({
+		playerBetting,
+		userId,
+		leagueId,
+	}: {
+		playerBetting: PlayerBettingInputDto[];
+		userId: number;
+		leagueId: number;
+	}) {
+		const existingBetting = await this.getBetting({ userId, leagueId, week: weekStart(new Date()) });
+		const playerBettingMap = keyBy(playerBetting, 'playerId');
+		const currentDate = new Date();
+
+		for (const bettingDb of existingBetting) {
+			const betting = playerBettingMap[bettingDb.playerId];
+			if (betting) {
+				bettingDb.betRating = betting.betRating;
+				bettingDb.betTokens = betting.betTokens;
+				bettingDb.betTime = currentDate;
+			} else {
+				bettingDb.betTime = currentDate;
+			}
+		}
+		return this.repository.save(existingBetting);
 	}
 }

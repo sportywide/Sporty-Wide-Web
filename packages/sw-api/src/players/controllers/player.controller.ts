@@ -25,6 +25,9 @@ import { FixtureService } from '@schema/fixture/services/fixture.service';
 import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
 import { PlayerBettingService } from '@schema/player/services/player-betting.service';
 import { toISO } from '@shared/lib/utils/date/conversion';
+import { weekStart } from '@shared/lib/utils/date/relative';
+import { PlayerBettingDto, PlayerBettingInputDto } from '@shared/lib/dtos/player/player-betting.dto';
+import { isEmptyValuesArray } from '@shared/lib/utils/array/check';
 
 @Controller('/player')
 export class PlayerController {
@@ -158,6 +161,58 @@ export class PlayerController {
 
 	@ActiveUser()
 	@UseGuards(JwtAuthGuard)
+	@Post('/me/betting/:leagueId')
+	async postBetting(
+		@CurrentUser() user: User,
+		@Body() body: { betting: PlayerBettingInputDto[] },
+		@Param('leagueId', new ParseIntPipe()) leagueId: number
+	) {
+		let { betting: playerBetting = [] } = body || {};
+		this.validateLeague(leagueId);
+		const date = weekStart(new Date());
+		const hasAlreadyBet = await this.playerBettingService.hasAlreadyBet({
+			leagueId,
+			userId: user.id,
+			week: date,
+		});
+
+		if (hasAlreadyBet) {
+			throw new BadRequestException('You have already bet');
+		}
+
+		const ownedPlayers = await this.playerService.getOwnedPlayerIds({ userId: user.id, leagueId, date });
+		// discard not owned players
+		playerBetting = playerBetting.filter(betting => ownedPlayers.players.includes(betting.playerId));
+
+		const playerIds = playerBetting.map(({ playerId }) => playerId);
+		const playerMappedByIds = await this.playerService.getMappedByIds(playerIds);
+		const players = Object.values(playerMappedByIds);
+
+		const teamIds = players.map(player => player.teamId);
+		const fixtureMap = await this.fixtureService.getNextFixturesForTeams(teamIds);
+		//discard players that have already played
+		playerBetting = playerBetting.filter(({ playerId }) => {
+			const player = playerMappedByIds[playerId];
+			if (!player) {
+				return false;
+			}
+			return !!fixtureMap[player.teamId];
+		});
+		if (!playerBetting.length) {
+			throw new BadRequestException('Invalid betting');
+		}
+		return toDto({
+			value: await this.playerBettingService.saveUserBetting({
+				playerBetting,
+				leagueId,
+				userId: user.id,
+			}),
+			dtoType: PlayerBettingDto,
+		});
+	}
+
+	@ActiveUser()
+	@UseGuards(JwtAuthGuard)
 	@Get('/me/check/betting/:leagueId')
 	async hasBetting(
 		@CurrentUser() user: User,
@@ -196,9 +251,14 @@ export class PlayerController {
 		if (existingBetting.length) {
 			return;
 		}
-		const ownedPlayers = await this.playerService.getOwnedPlayers({ userId: user.id, leagueId, date });
-		positions = positions.filter(position => !position || ownedPlayers.players.includes(position));
-		if (!positions.length) {
+		const ownedPlayers = await this.playerService.getOwnedPlayerIds({ userId: user.id, leagueId, date });
+		positions = positions.map(position => {
+			if (ownedPlayers.players.includes(position)) {
+				return position;
+			}
+			return null;
+		});
+		if (isEmptyValuesArray(positions)) {
 			throw new BadRequestException('Must specify at least a valid player');
 		}
 		const playerMappedByIds = await this.playerService.getMappedByIds(positions);
@@ -245,7 +305,7 @@ export class PlayerController {
 
 	private validateDate(dateString) {
 		const date = dateString ? parse(dateString, 'yyyy-MM-dd', new Date()) : new Date();
-		return startOfWeek(date, { weekStartsOn: 1 });
+		return weekStart(date);
 	}
 
 	private async getOrCreatePlayers({ userId, leagueId, date }) {

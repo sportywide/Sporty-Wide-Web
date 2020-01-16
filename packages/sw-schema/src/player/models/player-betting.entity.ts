@@ -41,6 +41,9 @@ export class PlayerBetting extends TrackTimestamp(BaseEntity) {
 	@Column()
 	teamId: number;
 
+	@Column({ type: 'timestamptz' })
+	betTime: Date;
+
 	@Column()
 	leagueId: number;
 

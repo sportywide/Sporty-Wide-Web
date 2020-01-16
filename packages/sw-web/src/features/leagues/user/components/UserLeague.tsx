@@ -18,6 +18,7 @@ import { SHOW_CONFIRM, SHOW_MODAL } from '@web/shared/lib/popup/event.constants'
 import { SHOW_LEAGUE_PREFERENCE } from '@web/shared/lib/popup/modal.constants';
 import { redirect } from '@web/shared/lib/navigation/helper';
 import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
+import { SwApp } from '@web/shared/lib/app';
 import { fetchUserLeagues, leaveUserLeague } from '../store/actions';
 
 interface IProps {
@@ -50,8 +51,8 @@ const SwUserLeaguesComponent: React.FC<IProps> = ({ leagues, fetchUserLeagues, f
 	);
 
 	function onLeave(leagueDto: SelectableLeagueDto) {
-		const eventDispatcher = container.get(EventDispatcher);
-		eventDispatcher.trigger(SHOW_CONFIRM, {
+		const app = container.get(SwApp);
+		app.showConfirm({
 			content: `Do you want to quit league ${leagueDto.title}?`,
 			onConfirm: close => {
 				leaveUserLeague({ leagueId: leagueDto.id, userId: user.id });
@@ -61,7 +62,7 @@ const SwUserLeaguesComponent: React.FC<IProps> = ({ leagues, fetchUserLeagues, f
 	}
 
 	async function onPlay(leagueDto: SelectableLeagueDto) {
-		const eventDispatcher = container.get(EventDispatcher);
+		const app = container.get(SwApp);
 		if (leagueDto.selected) {
 			await redirect({
 				refresh: false,
@@ -71,7 +72,7 @@ const SwUserLeaguesComponent: React.FC<IProps> = ({ leagues, fetchUserLeagues, f
 				},
 			});
 		} else {
-			eventDispatcher.trigger(SHOW_MODAL, {
+			app.showModal({
 				popupState: { userId: user.id, league: leagueDto },
 				modalName: SHOW_LEAGUE_PREFERENCE,
 			});

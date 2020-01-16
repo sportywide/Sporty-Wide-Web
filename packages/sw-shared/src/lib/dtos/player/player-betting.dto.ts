@@ -12,6 +12,7 @@ export class PlayerBettingDto {
 	earnedTokens: number;
 	calculated: boolean;
 	week: string;
+	betTime: Date;
 	fixtureId: number;
 	userId: number;
 	playerId: number;
@@ -20,4 +21,11 @@ export class PlayerBettingDto {
 	fixture: FixtureDto;
 	user: UserDto;
 	player: PlayerDto;
+}
+
+export class PlayerBettingInputDto {
+	betRating: number;
+	betTokens: number;
+	fixtureId: number;
+	playerId: number;
 }

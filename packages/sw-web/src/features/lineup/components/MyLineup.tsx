@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useMemo } from 'react';
 import { ContainerContext } from '@web/shared/lib/store';
 import { ProfilePlayersService } from '@web/features/players/services/profile-players.service';
 import { useAsync, useAsyncCallback } from 'react-async-hook';
@@ -12,6 +12,7 @@ import { ILineupState, lineupReducer } from '@web/features/lineup/store/reducers
 import { compose } from '@shared/lib/utils/fp/combine';
 import { connect } from 'react-redux';
 import { keyBy } from 'lodash';
+import { SwApp } from '@web/shared/lib/app';
 import { SwLineupBuilder } from './pitch/LineupBuilder';
 
 interface IProps {
@@ -50,7 +51,6 @@ const SwMyLineupComponent: React.FC<IProps> = function({ leagueId, currentLineup
 		},
 		[profilePlayerService]
 	);
-	const [isSaving, setIsSaving] = useState(false);
 	const lineupResult = useAsync(fetchPlayerLineup, [leagueId]);
 	const saveBetting = useAsyncCallback(async positions => {
 		await profilePlayerService
@@ -80,23 +80,26 @@ const SwMyLineupComponent: React.FC<IProps> = function({ leagueId, currentLineup
 			<SwDragLayer />
 			<SwLineupBuilder initialLineup={lineupResult.result} />
 			<div className={'sw-flex-align-self-end'}>
-				{lineupResult.result.numPlaying === 0 && (
+				{lineupResult.result.numPlaying === 0 ? (
 					<Button
 						primary
-						disabled={isSaving || numFilledPositions === 0}
-						onClick={async () => {
-							try {
-								setIsSaving(true);
-								await saveBetting.execute(currentLineup.positions);
-							} finally {
-								setIsSaving(false);
-							}
+						disabled={saveBetting.loading || numFilledPositions === 0}
+						onClick={() => {
+							const swApp = container.get(SwApp);
+							swApp.showConfirm({
+								content: 'Once you proceed, you will not be able to change your lineup again',
+								onConfirm: async close => {
+									close();
+									await saveBetting.execute(currentLineup.positions);
+								},
+							});
 						}}
 					>
 						Start betting
 					</Button>
+				) : (
+					<Message warning>You have already created your line up</Message>
 				)}
-				{lineupResult.result.numPlaying > 0 && <Message warning>You have already bet</Message>}
 			</div>
 		</div>
 	);

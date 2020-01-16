@@ -14,6 +14,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Player } from '@schema/player/models/player.entity';
 import { keyBy } from 'lodash';
 import { PlayerRatingDocument } from '@schema/player/models/player-rating.schema';
+import { weekStart } from '@shared/lib/utils/date/relative';
 
 @Injectable()
 export class FixtureService extends BaseEntityService<Fixture> {
@@ -90,13 +91,13 @@ export class FixtureService extends BaseEntityService<Fixture> {
 	}
 
 	findMatchesForWeek({ leagueId, date = new Date() }) {
-		const thisMonday = startOfDay(startOfWeek(date, { weekStartsOn: 1 }));
+		const thisMonday = startOfDay(weekStart(date));
 		const nextMonday = addWeeks(thisMonday, 1);
 		return this.findMatchesInRange({ leagueId, start: thisMonday, end: nextMonday });
 	}
 
 	numMatchesForWeek({ leagueId, date = new Date() }) {
-		const thisMonday = startOfDay(startOfWeek(date, { weekStartsOn: 1 }));
+		const thisMonday = startOfDay(weekStart(date));
 		const nextMonday = addWeeks(thisMonday, 1);
 		return this.numMatchesInRange({ leagueId, start: thisMonday, end: nextMonday });
 	}
