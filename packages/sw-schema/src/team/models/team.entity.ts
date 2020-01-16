@@ -1,6 +1,9 @@
 import { Column, Entity } from 'typeorm';
 import { BaseEntity } from '@schema/core/base.entity';
+import { TeamDto } from '@shared/lib/dtos/team/team.dto';
+import { DtoType } from '@shared/lib/dtos/decorators/dto-type.decorator';
 
+@DtoType(TeamDto)
 @Entity()
 export class Team extends BaseEntity {
 	@Column()

@@ -17,6 +17,15 @@ export function getSeason(date: Date) {
 	}
 	return null;
 }
+export function getPastSeason(date: Date) {
+	const month = date.getMonth();
+	const year = date.getFullYear();
+	if (month >= 7) {
+		return [year, year + 1].join('-');
+	} else {
+		return [year - 1, year].join('-');
+	}
+}
 export function getSeasonYears(season: string) {
 	return season.split('-').map(num => parseInt(num, 10));
 }

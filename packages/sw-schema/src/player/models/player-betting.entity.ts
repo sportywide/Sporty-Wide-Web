@@ -5,7 +5,12 @@ import { Fixture } from '@schema/fixture/models/fixture.entity';
 import { User } from '@schema/user/models/user.entity';
 import { Player } from '@schema/player/models/player.entity';
 import { Team } from '@schema/team/models/team.entity';
+import { DtoType } from '@shared/lib/dtos/decorators/dto-type.decorator';
+import { PlayerBettingDto } from '@shared/lib/dtos/player/player-betting.dto';
+import { PlayerBettingStatus } from '@shared/lib/dtos/player/enum/player-betting.enum';
+import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 
+@DtoType(PlayerBettingDto)
 @Entity()
 export class PlayerBetting extends TrackTimestamp(BaseEntity) {
 	@Column()
@@ -22,9 +27,6 @@ export class PlayerBetting extends TrackTimestamp(BaseEntity) {
 
 	@Column()
 	earnedTokens: number;
-
-	@Column()
-	calculated: boolean;
 
 	@Column({ type: 'date' })
 	week: string;
@@ -43,6 +45,13 @@ export class PlayerBetting extends TrackTimestamp(BaseEntity) {
 
 	@Column({ type: 'timestamptz' })
 	betTime: Date;
+
+	@Column({
+		type: 'enum',
+		enum: PlayerBettingStatus,
+		default: PlayerBettingStatus.PENDING,
+	})
+	status: PlayerBettingStatus;
 
 	@Column()
 	leagueId: number;

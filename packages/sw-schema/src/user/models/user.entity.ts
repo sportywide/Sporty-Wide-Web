@@ -9,7 +9,10 @@ import { BadRequestException } from '@nestjs/common';
 import { UserGender } from '@shared/lib/dtos/user/enum/user-gender.enum';
 import { UserProfile } from '@schema/user/profile/models/user-profile.entity';
 import { UserLeague } from '@schema/league/models/user-league.entity';
+import { DtoType } from '@shared/lib/dtos/decorators/dto-type.decorator';
+import { UserDto } from '@shared/lib/dtos/user/user.dto';
 
+@DtoType(UserDto)
 @Entity()
 export class User extends TrackTimestamp(BaseGeneratedEntity) {
 	@Column({

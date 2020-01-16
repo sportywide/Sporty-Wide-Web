@@ -11,9 +11,16 @@ import html5Backend from 'react-dnd-html5-backend-cjs';
 import { SwMyLineup } from '@web/features/lineup/components/MyLineup';
 import { SwTabPane, updateTab } from '@web/shared/lib/ui/components/tab/TabPane';
 import { SwTab } from '@web/shared/lib/ui/components/tab/Tab';
-import { withRouter } from 'next/router';
 import { SwMyPlayersBetting } from '@web/features/players/components/MyPlayerBetting';
 import { PlayerBettingService } from '@web/features/players/services/player-betting.service';
+import { fetchMyScore } from '@web/features/user/store/actions';
+import { compose } from '@shared/lib/utils/fp/combine';
+import { connect } from 'react-redux';
+import { registerReducer } from '@web/shared/lib/redux/register-reducer';
+import { userScoreReducer } from '@web/features/user/store/reducers';
+import { fetchMyUserScoreEpic } from '@web/features/user/store/epics';
+import { registerEpic } from '@web/shared/lib/redux/register-epic';
+import { withRouter } from '@web/routes';
 
 class SwPlayerLeaguePage extends React.Component<any, any> {
 	panes: any[];
@@ -30,7 +37,9 @@ class SwPlayerLeaguePage extends React.Component<any, any> {
 		const [league, { hasBetting }] = await Promise.all([
 			leagueService.fetchLeague(leagueId).toPromise(),
 			playerBettingService.hasBetting({ leagueId }).toPromise(),
+			store.dispatch(fetchMyScore(query.id)),
 		]);
+
 		return {
 			leagueId,
 			hasBetting,
@@ -135,4 +144,10 @@ class SwPlayerLeaguePage extends React.Component<any, any> {
 	}
 }
 
-export default withRouter(SwPlayerLeaguePage);
+const enhance = compose(
+	withRouter,
+	registerReducer({ userScore: userScoreReducer }),
+	registerEpic(fetchMyUserScoreEpic),
+	connect(null, { fetchMyScore })
+);
+export default enhance(SwPlayerLeaguePage);

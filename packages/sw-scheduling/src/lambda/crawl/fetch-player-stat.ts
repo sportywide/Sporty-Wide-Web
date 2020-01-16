@@ -20,7 +20,10 @@ export async function handler(event: SQSEvent, context) {
 		const leagueTeams = JSON.parse(objectDetails.Body!.toString('utf8'));
 		const scoreboardCrawler = module.get(ScoreboardCrawlerService);
 		const { league, teams, season } = leagueTeams;
-		const teamUrlMap = await scoreboardCrawler.crawlPlayers(teams.map(team => team.url), season);
+		const teamUrlMap = await scoreboardCrawler.crawlPlayers(
+			teams.map(team => team.url),
+			season
+		);
 
 		const result = {};
 		for (const team of teams) {

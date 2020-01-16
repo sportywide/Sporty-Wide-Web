@@ -1,6 +1,7 @@
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { UserDto } from '@shared/lib/dtos/user/user.dto';
 import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
+import { PlayerBettingStatus } from '@shared/lib/dtos/player/enum/player-betting.enum';
 
 export class PlayerBettingDto {
 	betRating: number;
@@ -10,7 +11,7 @@ export class PlayerBettingDto {
 	betTokens: number;
 	newBetTokens: number;
 	earnedTokens: number;
-	calculated: boolean;
+	status: PlayerBettingStatus;
 	week: string;
 	betTime: Date;
 	fixtureId: number;

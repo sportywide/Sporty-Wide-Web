@@ -1,4 +1,6 @@
 import Routes from 'next-routes-handler';
+import { withRouter as withNextRouter } from 'next/router';
+import hoistNonReactStatics from 'hoist-non-react-statics';
 
 const routeMappings = [
 	{
@@ -74,4 +76,10 @@ export function findPathForRoute(routeName) {
 	}
 	const routeMapping = routeMappings.find(route => route.name === routeName);
 	return (routeMapping && routeMapping.pattern) || `/${routeName}`;
+}
+
+export function withRouter(WrappedComponent) {
+	const NewComponent = withNextRouter(WrappedComponent);
+	hoistNonReactStatics(NewComponent, WrappedComponent);
+	return NewComponent;
 }

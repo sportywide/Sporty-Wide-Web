@@ -1,3 +1,5 @@
+CREATE TYPE player_betting_status AS ENUM ('calculating', 'pending', 'calculated');
+
 CREATE TABLE "player_betting"
 (
     id            SERIAL PRIMARY KEY,
@@ -5,6 +7,8 @@ CREATE TABLE "player_betting"
     updated_at    timestamptz  DEFAULT CURRENT_TIMESTAMP,
     bet_rating    INTEGER,
     real_rating   INTEGER,
+    bet_time      timestamptz,
+    status        player_betting_status DEFAULT 'pending',
     bet_tokens    INTEGER,
     earned_tokens INTEGER,
     calculated    BOOLEAN DEFAULT FALSE,
@@ -22,8 +26,11 @@ CREATE INDEX idx_player_betting_player_fixture_id ON player_betting (player_id, 
 
 CREATE TABLE "user_score"
 (
+    id         SERIAL PRIMARY KEY,
     user_id    INTEGER NOT NULL,
     league_id  INTEGER NOT NULL,
+    created_at    timestamptz  DEFAULT CURRENT_TIMESTAMP,
+    updated_at    timestamptz  DEFAULT CURRENT_TIMESTAMP,
     season     VARCHAR(10),
     tokens     INTEGER DEFAULT 0
 );

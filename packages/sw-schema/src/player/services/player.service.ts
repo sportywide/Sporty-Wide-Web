@@ -83,7 +83,7 @@ export class PlayerService extends BaseEntityService<Player> {
 				leagueId,
 				week: date,
 				formation: formationName,
-				season: getSeason(date),
+				season,
 				players: playerIds,
 			});
 
