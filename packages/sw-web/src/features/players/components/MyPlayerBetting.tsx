@@ -19,6 +19,7 @@ import { sortProperty } from '@shared/lib/utils/object/sort';
 import { comparePlayerFunc } from '@web/features/players/utility/player';
 import { SwApp } from '@web/shared/lib/app';
 import { useAsyncCallback } from 'react-async-hook';
+import { format } from 'date-fns';
 import { PlayerBettingService } from '@web/features/players/services/player-betting.service';
 
 interface IProps {
@@ -58,6 +59,7 @@ const SwMyPlayerBettingComponent: React.FC<IProps> = ({
 	const alreadyBet = hasPlayerBet(playerBetting);
 	return (
 		<div className={'sw-flex sw-flex-column'}>
+			{alreadyBet && <span className={'sw-mt2 sw-mb2'}>Last bet was {getLastBet(playerBetting)}</span>}
 			<Table padded stackable>
 				<Table.Header>
 					<Table.Row>
@@ -133,7 +135,7 @@ const SwMyPlayerBettingComponent: React.FC<IProps> = ({
 					))}
 				</Table.Body>
 			</Table>
-			<div className={'sw-flex-align-self-end'}>
+			<div className={'sw-flex sw-flex-center sw-flex-align-self-end'}>
 				{alreadyBet ? (
 					<Message warning>You cannot bet again</Message>
 				) : (
@@ -165,6 +167,10 @@ const SwMyPlayerBettingComponent: React.FC<IProps> = ({
 		</div>
 	);
 };
+
+function getLastBet(playerBetting: Record<number, PlayerBettingDto>) {
+	return format(new Date(Object.values(playerBetting)[0].betTime), 'dd-MM-yyyy HH:mm:ss');
+}
 
 function hasPlayerBet(playerBetting: Record<number, PlayerBettingDto>) {
 	return Object.values(playerBetting).some(betting => betting.betTime != undefined);

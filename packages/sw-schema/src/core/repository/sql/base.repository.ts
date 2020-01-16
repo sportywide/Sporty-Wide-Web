@@ -47,15 +47,20 @@ class SwBaseRepository<T> {
 
 	async update(
 		conditions: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindConditions<T>,
-		partialObject: QueryDeepPartialEntity<T>
+		partialObject: QueryDeepPartialEntity<T>,
+		{ shouldNotifyUpdate = true }
 	) {
-		const updatedEntityIds = await this.advancedFindIds(conditions);
-		let updateResult;
-		if (updatedEntityIds.length) {
-			updateResult = await this.repository.update(conditions, partialObject);
-			notifyUpdate(this.repository, updatedEntityIds);
+		if (shouldNotifyUpdate) {
+			const updatedEntityIds = await this.advancedFindIds(conditions);
+			let updateResult;
+			if (updatedEntityIds.length) {
+				updateResult = await this.repository.update(conditions, partialObject);
+				notifyUpdate(this.repository, updatedEntityIds);
+			}
+			return updateResult;
+		} else {
+			return this.repository.update(conditions, partialObject);
 		}
-		return updateResult;
 	}
 
 	getTableName() {

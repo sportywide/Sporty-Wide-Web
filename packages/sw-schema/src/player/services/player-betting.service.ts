@@ -101,4 +101,27 @@ export class PlayerBettingService extends BaseEntityService<PlayerBetting> {
 		}
 		return this.repository.save(existingBetting);
 	}
+
+	async updatePlayerRealBetting({
+		playerId,
+		fixtureId,
+		rating,
+	}: {
+		playerId: number;
+		fixtureId: any;
+		rating: number;
+	}) {
+		return this.repository.update(
+			{
+				playerId,
+				fixtureId,
+			},
+			{
+				realRating: rating,
+			},
+			{
+				shouldNotifyUpdate: false,
+			}
+		);
+	}
 }

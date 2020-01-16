@@ -12,6 +12,7 @@ import { chunk, keyBy, omit } from 'lodash';
 import { PlayerService } from '@schema/player/services/player.service';
 import { WhoscorePlayerRating } from '@shared/lib/dtos/player/player-rating.dto';
 import { TeamService } from '@schema/team/services/team.service';
+import { PlayerBettingService } from '@schema/player/services/player-betting.service';
 
 const glob = util.promisify(require('glob'));
 
@@ -20,7 +21,8 @@ export class PlayerPersisterService {
 	constructor(
 		@Inject(DATA_LOGGER) private readonly logger: Logger,
 		private readonly playerService: PlayerService,
-		private readonly teamService: TeamService
+		private readonly teamService: TeamService,
+		private readonly playerBettingService: PlayerBettingService
 	) {}
 
 	async saveFifaPlayersFromPlayerInfoFiles() {
@@ -182,6 +184,11 @@ export class PlayerPersisterService {
 					teamId: matchedPlayer.teamId,
 					playerId: matchedPlayer.id,
 					fixtureId,
+				});
+				await this.playerBettingService.updatePlayerRealBetting({
+					playerId: matchedPlayer.id,
+					fixtureId,
+					rating: playerRating.rating,
 				});
 			})
 		);
