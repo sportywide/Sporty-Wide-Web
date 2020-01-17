@@ -58,12 +58,9 @@ const enhancer = compose(
 		saveBasicUserProfileEpic,
 		saveExtraUserProfileEpic
 	),
-	connect(
-		state => ({ userProfile: state.userProfile, user: state.auth && state.auth.user }),
-		{
-			fetchUserProfile,
-		}
-	)
+	connect(state => ({ userProfile: state.userProfile, user: state.auth && state.auth.user }), {
+		fetchUserProfile,
+	})
 );
 
 export default enhancer(SwEditProfilePage);

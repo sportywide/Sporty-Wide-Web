@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback, useMemo } from 'react';
+import React, { useCallback, useContext, useMemo, useState } from 'react';
 import { ContainerContext } from '@web/shared/lib/store';
 import { FixtureService } from '@web/features/fixtures/services/fixture.service';
 import { groupBy, sortBy } from 'lodash';
@@ -6,7 +6,7 @@ import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
 import { redirect } from '@web/shared/lib/navigation/helper';
 import { ErrorMessage } from '@web/shared/lib/ui/components/error/Error';
 import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
-import { startOfWeek, addWeeks, startOfDay, format } from 'date-fns';
+import { addWeeks, format, startOfDay } from 'date-fns';
 import { SwDateRange } from '@web/shared/lib/ui/components/date/DateRange';
 import { Button, Icon } from 'semantic-ui-react';
 import { useAsyncCallback } from 'react-async-hook';

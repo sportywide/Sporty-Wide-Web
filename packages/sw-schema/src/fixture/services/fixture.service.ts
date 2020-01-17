@@ -3,7 +3,7 @@ import { InjectSwRepository } from '@schema/core/repository/sql/inject-repositor
 import { SwRepository } from '@schema/core/repository/sql/base.repository';
 import { BaseEntityService } from '@schema/core/entity/base-entity.service';
 import { Fixture } from '@schema/fixture/models/fixture.entity';
-import { addDays, addHours, addMonths, addWeeks, format, startOfDay, startOfMonth, startOfWeek } from 'date-fns';
+import { addDays, addHours, addMonths, addWeeks, format, startOfDay, startOfMonth } from 'date-fns';
 import { Between, In, MoreThan, Not } from 'typeorm';
 import { Logger } from 'log4js';
 import { SCHEMA_LOGGER } from '@core/logging/logging.constant';

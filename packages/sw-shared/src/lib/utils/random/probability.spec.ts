@@ -1,6 +1,5 @@
 import { randomCfRange, sumProbability } from '@shared/lib/utils/random/probability';
 import { range } from '@shared/lib/utils/array/range';
-import { countBy } from 'lodash';
 
 describe('probability', () => {
 	describe('#randomCfRange', () => {

@@ -8,7 +8,6 @@ import { Team } from '@schema/team/models/team.entity';
 import { DtoType } from '@shared/lib/dtos/decorators/dto-type.decorator';
 import { PlayerBettingDto } from '@shared/lib/dtos/player/player-betting.dto';
 import { PlayerBettingStatus } from '@shared/lib/dtos/player/enum/player-betting.enum';
-import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 
 @DtoType(PlayerBettingDto)
 @Entity()
@@ -56,25 +55,25 @@ export class PlayerBetting extends TrackTimestamp(BaseEntity) {
 	@Column()
 	leagueId: number;
 
-	@ManyToOne(type => Fixture)
+	@ManyToOne(() => Fixture)
 	@JoinColumn({
 		name: 'fixture_id',
 	})
 	fixture: Fixture;
 
-	@ManyToOne(type => User)
+	@ManyToOne(() => User)
 	@JoinColumn({
 		name: 'user_id',
 	})
 	user: User;
 
-	@ManyToOne(type => Team)
+	@ManyToOne(() => Team)
 	@JoinColumn({
 		name: 'team_id',
 	})
 	team: Team;
 
-	@ManyToOne(type => Player)
+	@ManyToOne(() => Player)
 	@JoinColumn({
 		name: 'player_id',
 	})

@@ -1,5 +1,3 @@
-import { Expose } from 'class-transformer-imp';
-
 export type Interface<E> = {
 	[k in keyof E]: E[k];
 };

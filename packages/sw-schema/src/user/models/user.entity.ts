@@ -74,13 +74,13 @@ export class User extends TrackTimestamp(BaseGeneratedEntity) {
 	socialProvider: SocialProvider;
 
 	@OneToMany(
-		type => UserLeague,
+		() => UserLeague,
 		userLeague => userLeague.user
 	)
 	leagues: UserLeague[];
 
 	@OneToOne(
-		type => UserProfile,
+		() => UserProfile,
 		userProfile => userProfile.user,
 		{ cascade: true }
 	)

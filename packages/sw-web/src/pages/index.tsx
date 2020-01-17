@@ -81,14 +81,11 @@ const enhance = compose(
 	checkUser(allowActiveOnly),
 	registerReducer({ home: homeReducer }),
 	registerEpic(fetchUserEpic),
-	connect(
-		state => ({ user: state.auth.user }),
-		{
-			startFetchingCharacters,
-			stopFetchingCharacters,
-			logout,
-		}
-	)
+	connect(state => ({ user: state.auth.user }), {
+		startFetchingCharacters,
+		stopFetchingCharacters,
+		logout,
+	})
 );
 
 export default enhance(SwHomePage);

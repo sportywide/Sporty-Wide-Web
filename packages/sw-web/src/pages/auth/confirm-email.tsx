@@ -41,10 +41,7 @@ const enhance = compose(
 	checkUser(notAllowActive, 'home'),
 	registerReducer({ auth: authReducer }),
 	registerEpic(resendVerificationEpic),
-	connect(
-		null,
-		{ resendVerificationEmail }
-	)
+	connect(null, { resendVerificationEmail })
 );
 
 export default enhance(SwConfirmEmailPage);

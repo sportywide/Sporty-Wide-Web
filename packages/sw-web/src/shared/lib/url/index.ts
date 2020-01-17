@@ -1,5 +1,4 @@
 import urlParser from 'url';
-import { noop } from '@shared/lib/utils/functions';
 import { Router } from '@web/routes';
 
 export function updateUrl(url) {

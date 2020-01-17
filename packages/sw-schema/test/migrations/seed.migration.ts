@@ -19,7 +19,7 @@ export class SeedPostCategory1567772263000 implements MigrationInterface {
 		await queryRunner.manager.save(post);
 	}
 
-	public async down(_: QueryRunner): Promise<any> {
+	public async down(): Promise<any> {
 		// do nothing
 	}
 }

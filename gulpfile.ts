@@ -30,6 +30,11 @@ export class Gulpfile {
 		return spawn('git add . && git-cz');
 	}
 
+	@Task('lint')
+	lint() {
+		return spawn("eslint '**/*.{js,jsx,ts,tsx}'");
+	}
+
 	@Task('dev:exec')
 	exec() {
 		return spawn(`npx lerna exec "gulp dev:exec --entry ${argv.entry}" --stream --scope ${argv.scope}`);

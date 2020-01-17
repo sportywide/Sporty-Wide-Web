@@ -72,10 +72,7 @@ const enhance = compose(
 	checkUser(allowAnonymousOnly, 'home'),
 	registerReducer({ auth: authReducer }),
 	registerEpic(signupEpic),
-	connect(
-		null,
-		{ signup }
-	)
+	connect(null, { signup })
 );
 
 export default enhance(SwSignupPage);

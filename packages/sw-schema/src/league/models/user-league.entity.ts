@@ -9,7 +9,7 @@ import { DtoType } from '@shared/lib/dtos/decorators/dto-type.decorator';
 @DtoType(UserLeagueDto)
 @Entity()
 export class UserLeague extends TrackCreated(BaseGeneratedEntity) {
-	@ManyToOne(type => User, { cascade: ['remove'] })
+	@ManyToOne(() => User, { cascade: ['remove'] })
 	@JoinColumn({
 		name: 'user_id',
 	})
@@ -18,7 +18,7 @@ export class UserLeague extends TrackCreated(BaseGeneratedEntity) {
 	@Column()
 	userId: number;
 
-	@ManyToOne(type => League, { cascade: ['remove'] })
+	@ManyToOne(() => League, { cascade: ['remove'] })
 	@JoinColumn({
 		name: 'league_id',
 	})

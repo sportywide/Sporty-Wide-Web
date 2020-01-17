@@ -271,11 +271,6 @@ export class WhoScoreCrawlerService extends ResultsService {
 				const groupElement = resultTable.find(`#g${groupId}`);
 				const tournamentLink = groupElement.find('.tournament-link').attr('href');
 				const [, whoscoreLeagueId] = /\/Regions\/\d+\/Tournaments\/(\d+)/.exec(tournamentLink);
-				let [, league] = groupElement
-					.find('.group-name')
-					.text()
-					.split('-');
-				league = league.trim().replace(/^\d+\./, '');
 				const matchDetails = this.parseMatchDetails(resultElement, date);
 				const incidents = this.parseIncident($, resultTable, matchId);
 				return {

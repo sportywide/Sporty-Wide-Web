@@ -20,7 +20,7 @@ export class UserProfile extends BaseGeneratedEntity {
 	@Column()
 	addressId: number;
 
-	@OneToOne(type => Address, { cascade: true })
+	@OneToOne(() => Address, { cascade: true })
 	@JoinColumn({
 		name: 'address_id',
 	})
@@ -29,7 +29,7 @@ export class UserProfile extends BaseGeneratedEntity {
 	@Column()
 	userId: number;
 
-	@OneToOne(type => User)
+	@OneToOne(() => User)
 	@JoinColumn({
 		name: 'user_id',
 	})

@@ -45,10 +45,7 @@ const SwEditProfileComponent: React.FC<IProps> = ({ userProfile, saveBasicUserPr
 		</div>
 	);
 };
-export const SwEditProfile = connect(
-	null,
-	{
-		saveBasicUserProfile,
-		saveExtraUserProfile,
-	}
-)(SwEditProfileComponent);
+export const SwEditProfile = connect(null, {
+	saveBasicUserProfile,
+	saveExtraUserProfile,
+})(SwEditProfileComponent);

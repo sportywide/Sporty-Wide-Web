@@ -1,8 +1,7 @@
 import fs from 'fs';
 import path from 'path';
-import { uniq, merge } from 'lodash';
+import { merge, uniq } from 'lodash';
 import fsExtra from 'fs-extra';
-import sortPackageJson from 'sort-package-json';
 
 export const nodeBuiltInModules = [
 	'assert',
