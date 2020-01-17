@@ -7,3 +7,4 @@ export const FETCH_MY_BETTING = Symbol('FETCH_MY_BETTING');
 
 export const UPDATE_RATING = Symbol('UPDATE_RATING');
 export const UPDATE_TOKEN = Symbol('UPDATE_TOKEN');
+export const SYNC_TOKEN = Symbol('SYNC_TOKEN');

@@ -48,7 +48,7 @@ class SwBaseRepository<T> {
 	async update(
 		conditions: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindConditions<T>,
 		partialObject: QueryDeepPartialEntity<T>,
-		{ shouldNotifyUpdate = true }
+		{ shouldNotifyUpdate = true } = {}
 	) {
 		if (shouldNotifyUpdate) {
 			const updatedEntityIds = await this.advancedFindIds(conditions);

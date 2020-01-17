@@ -7,6 +7,7 @@ import {
 	FETCH_MY_PLAYERS,
 	FETCH_MY_PLAYERS_ERROR,
 	FETCH_MY_PLAYERS_SUCCESS,
+	SYNC_TOKEN,
 	UPDATE_RATING,
 	UPDATE_TOKEN,
 } from './actions.constants';
@@ -34,7 +35,7 @@ export const updateRating = createSwStandardAction(UPDATE_RATING)<{
 export const updateToken = createSwStandardAction(UPDATE_TOKEN)<{
 	userId: number;
 	leagueId: number;
-	token: number;
+	tokens: number;
 	playerId: number;
 }>();
 
@@ -49,4 +50,9 @@ export const fetchMyPlayersError = createSwStandardAction(FETCH_MY_PLAYERS_ERROR
 	leagueId: number;
 	errorCode: string;
 	errorMessage: string;
+}>();
+
+export const syncToken = createSwStandardAction(SYNC_TOKEN)<{
+	leagueId: number;
+	userId: number;
 }>();

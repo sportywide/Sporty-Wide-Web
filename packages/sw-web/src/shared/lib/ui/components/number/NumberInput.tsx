@@ -37,12 +37,14 @@ export function SwNumberInput({
 	onChange,
 	minValue,
 	precision,
+	onBlur,
 	maxValue,
 }: {
 	disabled?: boolean;
 	value: string | number;
 	stepAmount?: number;
 	onChange: Function;
+	onBlur?: Function;
 	minValue?: number;
 	precision?: number;
 	maxValue?: number;
@@ -56,6 +58,7 @@ export function SwNumberInput({
 				snap
 				precision={precision}
 				strict
+				onBlur={onBlur}
 				onChange={valueAsNumber => {
 					if (minValue != undefined && valueAsNumber < minValue) {
 						return;

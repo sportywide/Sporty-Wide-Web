@@ -3,14 +3,14 @@ import { useEffectOnce, useUser } from '@web/shared/lib/react/hooks';
 import { compose } from '@shared/lib/utils/fp/combine';
 import { registerReducer } from '@web/shared/lib/redux/register-reducer';
 import { registerEpic } from '@web/shared/lib/redux/register-epic';
-import { fetchMyBettingEpic } from '@web/features/players/store/epics';
+import { fetchMyBettingEpic, syncTokenEpic } from '@web/features/players/store/epics';
 import { safeGet } from '@shared/lib/utils/object/get';
 import { connect } from 'react-redux';
-import { fetchMyBetting, updateRating, updateToken } from '@web/features/players/store/actions';
+import { fetchMyBetting, syncToken, updateRating, updateToken } from '@web/features/players/store/actions';
 import { fetchWeeklyFixturesForTeams } from '@web/features/fixtures/store/actions';
 import { playerBettingReducer } from '@web/features/players/store/reducers';
 import { ContainerContext, getUserIdFromState } from '@web/shared/lib/store';
-import { Table, Button, Message } from 'semantic-ui-react';
+import { Button, Message, Table } from 'semantic-ui-react';
 import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
 import { PlayerBettingDto, PlayerBettingInputDto } from '@shared/lib/dtos/player/player-betting.dto';
 import { SwNumberInput } from '@web/shared/lib/ui/components/number/NumberInput';
@@ -21,6 +21,7 @@ import { SwApp } from '@web/shared/lib/app';
 import { useAsyncCallback } from 'react-async-hook';
 import { format } from 'date-fns';
 import { PlayerBettingService } from '@web/features/players/services/player-betting.service';
+import { IUserScoreState, userScoreReducer } from '@web/features/user/store/reducers';
 
 interface IProps {
 	playerBetting: Record<number, PlayerBettingDto>;
@@ -28,6 +29,8 @@ interface IProps {
 	fetchMyBetting: typeof fetchMyBetting;
 	updateRating: typeof updateRating;
 	updateToken: typeof updateToken;
+	syncToken: typeof syncToken;
+	userScore: IUserScoreState;
 }
 
 const SwMyPlayerBettingComponent: React.FC<IProps> = ({
@@ -36,6 +39,8 @@ const SwMyPlayerBettingComponent: React.FC<IProps> = ({
 	fetchMyBetting,
 	updateRating,
 	updateToken,
+	userScore,
+	syncToken,
 }) => {
 	const user = useUser();
 	const container = useContext(ContainerContext);
@@ -100,12 +105,19 @@ const SwMyPlayerBettingComponent: React.FC<IProps> = ({
 									disabled={betting.betTokens != undefined}
 									value={betting.newBetTokens || 0}
 									precision={0}
-									onChange={token =>
+									maxValue={userScore.current.tokens}
+									onChange={tokens =>
 										updateToken({
 											userId: user.id,
 											leagueId: betting.leagueId,
 											playerId: betting.playerId,
-											token,
+											tokens,
+										})
+									}
+									onBlur={() =>
+										syncToken({
+											userId: user.id,
+											leagueId: betting.leagueId,
 										})
 									}
 									minValue={0}
@@ -156,6 +168,7 @@ const SwMyPlayerBettingComponent: React.FC<IProps> = ({
 											fixtureId: betting.fixtureId,
 										}))
 									);
+									window.location.reload();
 								},
 							});
 						}}
@@ -178,18 +191,24 @@ function hasPlayerBet(playerBetting: Record<number, PlayerBettingDto>) {
 const enhancer = compose(
 	registerReducer({
 		playerBetting: playerBettingReducer,
+		userScore: {
+			reducer: userScoreReducer,
+			unmount: false,
+		},
 	}),
-	registerEpic(fetchMyBettingEpic),
+	registerEpic(fetchMyBettingEpic, syncTokenEpic),
 	connect(
 		(state, ownProps) => {
 			const userId = getUserIdFromState(state);
 			return {
 				playerBetting: safeGet(() => state.playerBetting[userId][ownProps.leagueId].players),
+				userScore: state.userScore,
 			};
 		},
 		{
 			fetchMyBetting,
 			updateToken,
+			syncToken,
 			fetchWeeklyFixturesForTeams,
 			updateRating,
 		}

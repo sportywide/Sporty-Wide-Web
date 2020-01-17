@@ -30,4 +30,16 @@ export class UserScoreService extends BaseEntityService<UserScore> {
 			tokens: DEFAULT_TOKENS,
 		});
 	}
+
+	async decrementTokens({ userId, leagueId, season, tokens }) {
+		await this.repository.decrement(
+			{
+				userId,
+				leagueId,
+				season,
+			},
+			'tokens',
+			tokens
+		);
+	}
 }

@@ -33,7 +33,7 @@ export const playerBettingReducer = produce(
 			setObjectKey(
 				state,
 				`[${payload.userId}][${payload.leagueId}].players[${payload.playerId}].newBetTokens`,
-				payload.token
+				payload.tokens
 			);
 			return state;
 		})

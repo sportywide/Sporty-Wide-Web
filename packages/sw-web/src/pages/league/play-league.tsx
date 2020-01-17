@@ -21,6 +21,14 @@ import { userScoreReducer } from '@web/features/user/store/reducers';
 import { fetchMyUserScoreEpic } from '@web/features/user/store/epics';
 import { registerEpic } from '@web/shared/lib/redux/register-epic';
 import { withRouter } from '@web/routes';
+import styled from 'styled-components';
+import { SwIcon } from '@web/shared/lib/icon';
+
+const LeagueHeader = styled(Header)`
+	&&& {
+		margin: 5px;
+	}
+`;
 
 class SwPlayerLeaguePage extends React.Component<any, any> {
 	panes: any[];
@@ -126,7 +134,13 @@ class SwPlayerLeaguePage extends React.Component<any, any> {
 					<title>{this.props.league.title}</title>
 				</Head>
 				<SwContainer>
-					<Header as={'h1'}>Welcome to {this.props.league.title}</Header>
+					<div className={'sw-flex sw-flex-center sw-flex-wrap'}>
+						<LeagueHeader as={'h1'}>Welcome to {this.props.league.title}</LeagueHeader>
+						<div className={'sw-flex sw-flex-center sw-ml2'}>
+							<SwIcon width={25} name={'token'} />
+							<span className={'sw-ml1'}>{this.props.userScore.current.tokens}</span>
+						</div>
+					</div>
 					<SwTab
 						activeIndex={this.state.activeTabIndex}
 						onTabChange={(e, { activeIndex }) => {
@@ -148,6 +162,6 @@ const enhance = compose(
 	withRouter,
 	registerReducer({ userScore: userScoreReducer }),
 	registerEpic(fetchMyUserScoreEpic),
-	connect(null, { fetchMyScore })
+	connect(state => ({ userScore: state.userScore }), { fetchMyScore })
 );
 export default enhance(SwPlayerLeaguePage);

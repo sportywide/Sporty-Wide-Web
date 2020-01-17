@@ -13,6 +13,7 @@ import { compose } from '@shared/lib/utils/fp/combine';
 import { connect } from 'react-redux';
 import { keyBy } from 'lodash';
 import { SwApp } from '@web/shared/lib/app';
+import { redirect } from '@web/shared/lib/navigation/helper';
 import { SwLineupBuilder } from './pitch/LineupBuilder';
 
 interface IProps {
@@ -91,6 +92,15 @@ const SwMyLineupComponent: React.FC<IProps> = function({ leagueId, currentLineup
 								onConfirm: async close => {
 									close();
 									await saveBetting.execute(currentLineup.positions);
+									redirect({
+										replace: true,
+										params: {
+											id: leagueId,
+											tab: 'betting',
+										},
+										route: 'play-league',
+										refresh: true,
+									});
 								},
 							});
 						}}

@@ -4,6 +4,7 @@ import RedCard from './images/red-card.svg';
 import YellowCard from './images/yellow-card.svg';
 import SoccerBall from './images/soccer-ball.svg';
 import SadFace from './images/sad.svg';
+import Token from './images/token.svg';
 
 type IconSize = 'massive' | 'huge' | 'big' | 'large' | 'normal' | 'small' | 'tiny' | 'mini';
 const componentMap = {
@@ -12,6 +13,7 @@ const componentMap = {
 	'yellow-card': YellowCard,
 	'soccer-ball': SoccerBall,
 	sad: SadFace,
+	token: Token,
 };
 
 export type IconName = keyof typeof componentMap;

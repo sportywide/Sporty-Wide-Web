@@ -1,3 +1,3 @@
 export function isEmptyValuesArray(arr) {
-	return arr.filter(val => val).length;
+	return !arr.filter(val => val).length;
 }

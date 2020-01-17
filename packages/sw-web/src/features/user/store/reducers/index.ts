@@ -26,10 +26,10 @@ export const userScoreReducer = createReducer<IUserScoreState, UserScoreAction>(
 			tokens: payload.tokens,
 		},
 	}))
-	.handleAction(actions.changeMyScore, (state, { payload }) => ({
+	.handleAction(actions.useTokens, (state, { payload: tokens }) => ({
 		...state,
 		current: {
-			tokens: payload.tokens,
+			tokens: state.saved.tokens > tokens ? state.saved.tokens - tokens : 0,
 		},
 	}))
 	.handleAction(actions.resetMyScore, state => ({

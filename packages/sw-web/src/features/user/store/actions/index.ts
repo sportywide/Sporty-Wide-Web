@@ -1,6 +1,6 @@
 import { createSwStandardAction } from '@web/shared/lib/redux/action-creators';
 import {
-	CHANGE_MY_SCORE,
+	USE_TOKENS,
 	FETCH_MY_SCORE,
 	FETCH_MY_SCORE_ERROR,
 	FETCH_MY_SCORE_SUCCESS,
@@ -21,4 +21,4 @@ export const fetchMyScoreSuccess = createSwStandardAction(FETCH_MY_SCORE_SUCCESS
 export const fetchMyScoreError = createSwStandardAction(FETCH_MY_SCORE_ERROR)<Error>();
 export const setMyScore = createSwStandardAction(SET_MY_SCORE)<{ tokens: number }>();
 export const resetMyScore = createSwStandardAction(RESET_MY_SCORE)();
-export const changeMyScore = createSwStandardAction(CHANGE_MY_SCORE)<{ tokens: number }>();
+export const useTokens = createSwStandardAction(USE_TOKENS)<number>();

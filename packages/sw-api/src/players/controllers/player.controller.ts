@@ -1,21 +1,21 @@
 import {
 	BadRequestException,
+	Body,
 	Controller,
 	Get,
-	Post,
-	Body,
 	Param,
 	ParseIntPipe,
+	Post,
 	Query,
 	UseGuards,
 } from '@nestjs/common';
 import { PlayerService } from '@schema/player/services/player.service';
-import { parse, startOfWeek } from 'date-fns';
+import { parse } from 'date-fns';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { toDto } from '@api/utils/dto/transform';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { LeagueService } from '@api/leagues/services/league.service';
-import { keyBy } from 'lodash';
+import { keyBy, sum } from 'lodash';
 import { BusinessException } from '@shared/lib/exceptions/business-exception';
 import { UserPlayersDocument } from '@schema/player/models/user-players.schema';
 import { CurrentUser } from '@api/core/decorators/user';
@@ -28,6 +28,8 @@ import { toISO } from '@shared/lib/utils/date/conversion';
 import { weekStart } from '@shared/lib/utils/date/relative';
 import { PlayerBettingDto, PlayerBettingInputDto } from '@shared/lib/dtos/player/player-betting.dto';
 import { isEmptyValuesArray } from '@shared/lib/utils/array/check';
+import { UserScoreService } from '@schema/user/services/user-score.service';
+import { getSeason } from '@shared/lib/utils/season';
 
 @Controller('/player')
 export class PlayerController {
@@ -35,7 +37,8 @@ export class PlayerController {
 		private readonly playerService: PlayerService,
 		private readonly leagueService: LeagueService,
 		private readonly fixtureService: FixtureService,
-		private readonly playerBettingService: PlayerBettingService
+		private readonly playerBettingService: PlayerBettingService,
+		private readonly userScoreService: UserScoreService
 	) {}
 
 	@ActiveUser()
@@ -169,18 +172,33 @@ export class PlayerController {
 	) {
 		let { betting: playerBetting = [] } = body || {};
 		this.validateLeague(leagueId);
-		const date = weekStart(new Date());
+		const currentDate = new Date();
+		const season = getSeason(currentDate);
+		if (!season) {
+			throw new BadRequestException('Not in season');
+		}
+		const week = weekStart(currentDate);
 		const hasAlreadyBet = await this.playerBettingService.hasAlreadyBet({
 			leagueId,
 			userId: user.id,
-			week: date,
+			week,
 		});
 
 		if (hasAlreadyBet) {
 			throw new BadRequestException('You have already bet');
 		}
 
-		const ownedPlayers = await this.playerService.getOwnedPlayerIds({ userId: user.id, leagueId, date });
+		const userScore = await this.userScoreService.newUserScore({
+			userId: user.id,
+			leagueId,
+			season,
+		});
+		const totalBetTokens = sum(playerBetting.map(betting => betting.betTokens));
+		if (totalBetTokens > userScore.tokens) {
+			throw new BadRequestException('You bet too many tokens');
+		}
+
+		const ownedPlayers = await this.playerService.getOwnedPlayerIds({ userId: user.id, leagueId, date: week });
 		// discard not owned players
 		playerBetting = playerBetting.filter(betting => ownedPlayers.players.includes(betting.playerId));
 
@@ -201,12 +219,19 @@ export class PlayerController {
 		if (!playerBetting.length) {
 			throw new BadRequestException('Invalid betting');
 		}
+		const playerBettings = await this.playerBettingService.saveUserBetting({
+			playerBetting,
+			leagueId,
+			userId: user.id,
+		});
+		await this.userScoreService.decrementTokens({
+			userId: user.id,
+			leagueId,
+			season,
+			tokens: totalBetTokens,
+		});
 		return toDto({
-			value: await this.playerBettingService.saveUserBetting({
-				playerBetting,
-				leagueId,
-				userId: user.id,
-			}),
+			value: playerBettings,
 			dtoType: PlayerBettingDto,
 		});
 	}
