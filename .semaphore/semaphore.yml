@@ -35,8 +35,6 @@ blocks:
                     - npx lerna run build --stream --parallel
     - name: Test and lint
       task:
-          secrets:
-              - name: codecov-token
           prologue:
               commands:
                   - checkout
@@ -49,8 +47,8 @@ blocks:
                     - npx gulp lint
               - name: Test
                 commands:
+                    - cache restore node-modules-$(checksum package-lock.json)
                     - npx gulp test --coverage
-                    - bash <(curl -s https://codecov.io/bash)
 promotions:
     - name: Production deploy
       pipeline_file: deploy.yml
