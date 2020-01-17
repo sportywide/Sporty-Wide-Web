@@ -7,21 +7,21 @@ export class PlayerDto {
 	id: number;
 	name: string;
 	age?: number;
-	nationality: string;
+	nationality?: string;
 	nationalityId?: number;
 	positions: string[];
 	shirt: number;
 	teamName: string;
 	team?: TeamDto;
-	teamId: number;
+	teamId?: number;
 	image: string;
 	rating: number;
 	stats?: PlayerStatDto;
 }
 
 export class UserPlayerDto extends PlayerDto {
-	available: boolean;
-	match: FixtureDto;
+	available?: boolean;
+	match?: FixtureDto;
 }
 
 export interface ScoreboardPlayer extends Omit<Diff<PlayerStatDto, MongooseDocument>, 'playerId'> {

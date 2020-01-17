@@ -29,15 +29,13 @@ blocks:
               commands:
                   - checkout
                   - nvm use
-                  - node --version
-                  - npm --version
           jobs:
               - name: Build
                 commands:
                     - cache restore node-modules-$(checksum package-lock.json)
                     - npx lerna link
                     - npx lerna run build --stream --parallel
-    - name: Test
+    - name: Test and lint
       task:
           secrets:
               - name: codecov-token
@@ -45,13 +43,14 @@ blocks:
               commands:
                   - checkout
                   - nvm use
-                  - node --version
-                  - npm --version
           jobs:
-              - name: Test
+              - name: Lint
                 commands:
                     - cache restore node-modules-$(checksum package-lock.json)
                     - npx lerna link
+                    - npx gulp lint
+              - name: Test
+                commands:
                     - npx gulp test --coverage
                     - bash <(curl -s https://codecov.io/bash)
 promotions:

@@ -63,8 +63,8 @@ export const substitutePlayersEpic: Epic<
 
 export const changeStrategyEpic = (action$, $state, { container }) => {
 	const lineupService = container.get(LineupService);
-	return action$.ofType(CHANGE_STRATEGY as any).pipe(
-		map(({ payload: formationName }) => {
+	return action$.ofType(CHANGE_STRATEGY).pipe(
+		map<any, any>(({ payload: formationName }) => {
 			const formation = lineupService.getFormation(formationName);
 			return changeStrategySuccess(formation);
 		})

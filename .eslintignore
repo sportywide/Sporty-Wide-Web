@@ -9,7 +9,7 @@ dist
 .DS_Store
 ._*
 coverage
-node_modules/
+**/node_modules/*
 .npm
 .eslintcache
 next-build

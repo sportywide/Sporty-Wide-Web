@@ -1,6 +1,7 @@
 require('reflect-metadata');
 require('tsconfig-paths/register');
-import { Gulpclass, Task } from 'gulpclass';
+import { Gulpclass, SequenceTask, Task } from 'gulpclass';
+import gulp from 'gulp';
 import { spawn } from '@root/helpers/process';
 
 const argv = require('yargs').argv;
@@ -30,9 +31,19 @@ export class Gulpfile {
 		return spawn('git add . && git-cz');
 	}
 
-	@Task('lint')
-	lint() {
+	@Task('eslint')
+	eslint() {
 		return spawn("eslint '**/*.{js,jsx,ts,tsx}'");
+	}
+
+	@Task('tsc')
+	tsCheck() {
+		return spawn('node --max-old-space-size=4096 node_modules/.bin/tsc --noEmit');
+	}
+
+	@SequenceTask('lint')
+	lint() {
+		return [gulp.parallel(['tsc', 'eslint'])];
 	}
 
 	@Task('dev:exec')
