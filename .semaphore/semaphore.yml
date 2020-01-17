@@ -49,6 +49,7 @@ blocks:
                     - npx gulp lint
               - name: Test
                 commands:
+                    - cache restore node-modules-$(checksum package-lock.json)
                     - npx gulp test --coverage
                     - bash <(curl -s https://codecov.io/bash)
 promotions:
