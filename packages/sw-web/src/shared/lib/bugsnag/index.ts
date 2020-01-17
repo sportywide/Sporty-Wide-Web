@@ -1,7 +1,7 @@
 import bugsnag, { Bugsnag } from '@bugsnag/js';
 import bugsnagReact from '@bugsnag/plugin-react';
 import React from 'react';
-import { isDevelopment } from '@shared/lib/utils/env';
+import { isProduction } from '@shared/lib/utils/env';
 import { isBrowser } from '@web/shared/lib/environment';
 import { logger } from '@web/shared/lib/logging';
 
@@ -11,7 +11,7 @@ export const bugsnagClient = bugsnag({
 	appVersion: process.env.APP_VERSION,
 	releaseStage: process.env.NODE_ENV,
 	beforeSend: (report, cb) => {
-		if (isDevelopment()) {
+		if (!isProduction()) {
 			report.ignore();
 		}
 		cb(null);
