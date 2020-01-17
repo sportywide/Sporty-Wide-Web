@@ -79,8 +79,8 @@ const SwMyLineupComponent: React.FC<IProps> = function({ leagueId, currentLineup
 	return (
 		<div className={'sw-flex sw-flex-column'}>
 			<SwDragLayer />
-			<SwLineupBuilder initialLineup={lineupResult.result} />
-			<div className={'sw-flex-align-self-end'}>
+			<SwLineupBuilder initialLineup={lineupResult.result} readonly={lineupResult.result.numPlaying > 0} />
+			<div className={'sw-flex-align-self-end sw-mt2'}>
 				{lineupResult.result.numPlaying === 0 ? (
 					<Button
 						primary

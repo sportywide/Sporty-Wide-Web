@@ -6,15 +6,16 @@ import { LineupContainer } from './Lineup.styled';
 
 interface IProps {
 	players: UserPlayerDto[];
+	readonly: boolean;
 }
 
-const SwLineupBuilder: React.FC<IProps> = function({ players = [] }) {
+const SwLineupBuilder: React.FC<IProps> = function({ players = [], readonly }) {
 	return (
 		<div>
 			<LineupContainer>
 				<List divided={true}>
 					{players.map(player => (
-						<SwPlayerItem key={player.name} player={player} />
+						<SwPlayerItem key={player.name} readonly={readonly} player={player} />
 					))}
 				</List>
 			</LineupContainer>

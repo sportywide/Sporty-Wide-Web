@@ -12,17 +12,18 @@ export const SwDraggablePlayer = styled.div`
 			opacity: 0.4;
 		`}
 
+	${({ available }) =>
+		!available &&
+		`
+				opacity: 0.4;
+		`}
+	
 	${({ canDrag }) =>
 		!canDrag &&
 		`
-			opacity: 0.4;
 			img {
 				user-drag: none; 
 				user-select: none;
-				-moz-user-select: none;
-				-webkit-user-drag: none;
-				-webkit-user-select: none;
-				-ms-user-select: none;
 			}
 		`}
 `;

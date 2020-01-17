@@ -15,13 +15,15 @@ import { getPositionColor, getRatingColor } from '@web/shared/lib/color';
 
 interface IProps {
 	player: UserPlayerDto;
+	readonly: boolean;
 }
 
-const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
+const SwPlayerItemComponent: React.FC<IProps> = ({ player, readonly }) => {
+	const canDrag = player.available && !readonly;
 	const [{ isDragging }, drag, preview] = useDrag({
 		item: { type: PLAYER, player, zone: PLAYER_ITEM_ZONE },
 		isDragging: monitor => monitor.getItem().player === player,
-		canDrag: () => player.available,
+		canDrag: () => canDrag,
 		collect: monitor => ({ isDragging: monitor.isDragging() }),
 	});
 
@@ -30,7 +32,7 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 	return (
 		<List.Item>
 			<List.Content>
-				<SwDraggablePlayer ref={drag} isDragging={isDragging} canDrag={player.available}>
+				<SwDraggablePlayer ref={drag} isDragging={isDragging} canDrag={canDrag} available={player.available}>
 					<SwPlayerLogo circular avatar src={fifaImage(player.image)} />
 					<div className={'sw-flex-grow-equal sw-truncate sw-mr1'}>
 						{player.available ? (

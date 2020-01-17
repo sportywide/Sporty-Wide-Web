@@ -14,8 +14,6 @@ blocks:
               commands:
                   - checkout
                   - nvm use
-                  - node --version
-                  - npm --version
           jobs:
               - name: client npm install and cache
                 commands:

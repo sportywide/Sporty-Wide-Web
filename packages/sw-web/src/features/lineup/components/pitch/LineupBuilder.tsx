@@ -36,6 +36,7 @@ interface IProps {
 	clearLineup: typeof clearLineup;
 	changeStrategy: typeof changeStrategy;
 	leagueId: number;
+	readonly?: boolean;
 }
 
 const SwLineupBuilderComponent: React.FC<IProps> = function({
@@ -50,6 +51,7 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 	substitutePlayers,
 	clearLineup,
 	changeStrategy,
+	readonly,
 }) {
 	useEffect(() => {
 		initLineup(initialLineup);
@@ -57,30 +59,33 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 	const options = useFormationOptions();
 	return (
 		<>
-			<LineupControl className={'sw-mb3'}>
-				{lineupBuilder.formation && (
-					<Select
-						className={'sw-mr2 sw-mb2'}
-						defaultValue={lineupBuilder.formation}
-						options={options}
-						onChange={(e, { value }) => changeStrategy(value as string)}
-					/>
+			<div>
+				{!readonly && (
+					<LineupControl className={'sw-mb3'}>
+						{lineupBuilder.formation && (
+							<Select
+								className={'sw-mr2 sw-mb2'}
+								defaultValue={lineupBuilder.formation}
+								options={options}
+								onChange={(e, { value }) => changeStrategy(value as string)}
+							/>
+						)}
+						<Button primary onClick={() => fillPositions()}>
+							Fill
+						</Button>
+						<Button negative onClick={() => clearLineup()}>
+							Clear
+						</Button>
+					</LineupControl>
 				)}
-				<div>
-					<Button primary onClick={() => fillPositions()}>
-						Fill
-					</Button>
-					<Button negative onClick={() => clearLineup()}>
-						Clear
-					</Button>
-				</div>
-			</LineupControl>
+			</div>
 			<Grid stackable>
 				<GridColumn tablet={'7'}>
-					<SwLineup players={lineupBuilder.players} />
+					<SwLineup readonly={readonly} players={lineupBuilder.players} />
 				</GridColumn>
 				<GridColumn tablet={'9'}>
 					<SwPitch
+						readonly={readonly}
 						strategy={lineupBuilder.strategy}
 						positions={lineupBuilder.positions}
 						onAddPlayerToLineup={(player, index) => addPlayerToLineup({ player, index })}

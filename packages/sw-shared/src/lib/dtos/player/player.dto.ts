@@ -32,3 +32,19 @@ export interface ScoreboardPlayer extends Omit<Diff<PlayerStatDto, MongooseDocum
 	status: string;
 	url: string;
 }
+
+export function getShortName(playerName) {
+	const parts = playerName.split(/\s+/);
+	let names = [];
+	if (parts.length >= 3) {
+		names = [parts[0], parts[parts.length - 1]];
+	} else {
+		names = parts;
+	}
+
+	if (names.length === 2) {
+		return `${names[0][0]}.${names[1]}`;
+	} else {
+		return names[0];
+	}
+}

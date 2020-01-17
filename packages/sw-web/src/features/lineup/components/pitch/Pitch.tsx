@@ -16,6 +16,7 @@ interface IProps {
 	onSubstitutePlayer?: (source: UserPlayerDto, dest: UserPlayerDto) => void;
 	onRemovePlayerFromLineup?: (player: UserPlayerDto, index: number) => void;
 	onSwitchLineupPosition?: (player: UserPlayerDto, index: number) => void;
+	readonly: boolean;
 }
 
 const SwPitchComponent: React.FC<IProps> = function({
@@ -26,6 +27,7 @@ const SwPitchComponent: React.FC<IProps> = function({
 	onRemovePlayerFromLineup,
 	onSwitchLineupPosition,
 	onSubstitutePlayer,
+	readonly,
 }) {
 	const [rect, setRect] = useState<any>({});
 	const [, drop] = useDrop({
@@ -62,6 +64,7 @@ const SwPitchComponent: React.FC<IProps> = function({
 								player={positions[index]}
 								position={position}
 								key={index}
+								readonly={readonly}
 								onSubstitutePlayer={(source, dest) => onSubstitutePlayer(source, dest)}
 								onRemovePlayerFromLineup={player => onRemovePlayerFromLineup(player, index)}
 								onSwapPlayers={(source, dest) => onSwapPlayers(source, dest)}

@@ -22,6 +22,7 @@ import { useAsyncCallback } from 'react-async-hook';
 import { format } from 'date-fns';
 import { PlayerBettingService } from '@web/features/players/services/player-betting.service';
 import { IUserScoreState, userScoreReducer } from '@web/features/user/store/reducers';
+import { resetMyScore } from '@web/features/user/store/actions';
 
 interface IProps {
 	playerBetting: Record<number, PlayerBettingDto>;
@@ -31,6 +32,7 @@ interface IProps {
 	updateToken: typeof updateToken;
 	syncToken: typeof syncToken;
 	userScore: IUserScoreState;
+	resetMyScore: typeof resetMyScore;
 }
 
 const SwMyPlayerBettingComponent: React.FC<IProps> = ({
@@ -41,6 +43,7 @@ const SwMyPlayerBettingComponent: React.FC<IProps> = ({
 	updateToken,
 	userScore,
 	syncToken,
+	resetMyScore,
 }) => {
 	const user = useUser();
 	const container = useContext(ContainerContext);
@@ -49,6 +52,10 @@ const SwMyPlayerBettingComponent: React.FC<IProps> = ({
 		fetchMyBetting({
 			leagueId,
 		});
+
+		return () => {
+			resetMyScore();
+		};
 	});
 	const saveBetting = useAsyncCallback(async (betting: PlayerBettingInputDto[]) => {
 		await bettingService
@@ -211,6 +218,7 @@ const enhancer = compose(
 			syncToken,
 			fetchWeeklyFixturesForTeams,
 			updateRating,
+			resetMyScore,
 		}
 	)
 );
