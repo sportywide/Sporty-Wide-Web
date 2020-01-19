@@ -51,3 +51,28 @@ FROM (
      ) numbered
 WHERE numbered.x = $1
 $$ LANGUAGE SQL STABLE;
+
+CREATE OR REPLACE FUNCTION select_rating(real_rating NUMERIC, betting player_betting)
+  RETURNS INTEGER AS $$
+DECLARE
+    rating_diff INTEGER := abs(real_rating - betting.bet_rating);
+	diff_factor NUMERIC := 0;
+BEGIN
+  IF rating_diff <= 0.5 THEN
+  	diff_factor := 2;
+  ELSIF rating_diff <= 0.75 THEN
+  	diff_factor := 1.5;
+  ELSIF rating_diff <= 1 THEN
+  	diff_factor := 1.25;
+  ELSIF rating_diff <= 1.25 THEN
+  	diff_factor := 1;
+  ELSIF rating_diff <= 1.5 THEN
+  	diff_factor := 0.75;
+  ELSIF rating_diff <= 1.75 THEN
+  	diff_factor := 0.5;
+  ELSIF rating_diff <= 2 THEN
+  	diff_factor := 0.3;
+  END IF;
+  RETURN diff_factor * betting.bet_tokens;
+END;$$
+LANGUAGE 'plpgsql';
