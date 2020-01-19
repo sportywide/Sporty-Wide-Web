@@ -20,15 +20,18 @@
 		"dotenv": "8.1.0",
 		"puppeteer-core": "1.20.0",
 		"chrome-aws-lambda": "2.0.1",
-		"dataloader": "1.4.0",
 		"p-throttle": "3.1.0",
+		"dataloader": "1.4.0",
 		"class-transformer-imp": "0.2.7",
 		"ioredis": "4.14.1",
 		"logzio-nodejs": "1.0.7",
 		"type-graphql": "0.17.5",
+		"yup-decorator": "2.1.0",
+		"@nestjs/swagger": "3.1.0",
 		"pg": "7.12.1",
 		"source-map-support": "0.5.13",
 		"rxjs": "6.5.3",
-		"graphql": "14.5.8"
+		"graphql": "14.5.8",
+		"yup": "0.27.0"
 	}
 }

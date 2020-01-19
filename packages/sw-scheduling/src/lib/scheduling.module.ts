@@ -1,7 +1,4 @@
 import { SimpleLoggerService } from '@scheduling/lib/simple-logger.service';
-
-process.env.TZ = 'UTC';
-
 import { Module } from '@nestjs/common';
 import { CoreSchedulingModule } from '@scheduling/lib/core/core.module';
 import { NestFactory } from '@nestjs/core';
@@ -12,6 +9,9 @@ import { getConnectionManager } from 'typeorm';
 import { DataModule } from '@data/data.module';
 import mongoose from 'mongoose';
 import { FixtureModule } from '@scheduling/lib/fixture/fixture.module';
+import { SCHEDULING_LOGGER } from '@core/logging/logging.constant';
+
+process.env.TZ = 'UTC';
 
 @Module({
 	imports: [CoreSchedulingModule, FixtureModule, CrawlerModule, AwsModule],
@@ -45,4 +45,9 @@ export async function initModule(moduleClass) {
 	return NestFactory.createApplicationContext(moduleClass, {
 		logger: new SimpleLoggerService(),
 	});
+}
+
+export function getLogger(module) {
+	const logger = module && module.get(SCHEDULING_LOGGER);
+	return logger || console;
 }

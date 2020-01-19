@@ -177,34 +177,41 @@ export class ScoreboardCrawlerService extends ResultsService {
 	}
 
 	private parsePlayers($: CheerioStatic, season: string): ScoreboardPlayer[] {
-		const playerRows = $('#fsbody > table > tbody > tr.player');
-		return Array.from(playerRows).map(playerNode => {
-			const playerRow = $(playerNode);
-			const jersey = parseInt(playerRow.find('.jersey-number').text());
-			const playerName = playerRow.find('.player-name a').text();
-			const nationality = (playerRow.find('.player-name .flag').attr('title') || '').toLowerCase();
-			const age = parseInt(playerRow.find('.player-age').text(), 10);
-			const tds = playerRow.find('td');
-			const played = parseInt(tds.eq(3).text(), 10);
-			const scored = parseInt(tds.eq(4).text(), 10);
-			const url = playerRow.find('.player-name a').attr('href');
-			const yellow = parseInt(tds.eq(5).text(), 10);
-			const red = parseInt(tds.eq(6).text(), 10);
-			const injured = !!playerRow.find('.absence.injury').length;
-			return {
-				jersey,
-				nationality,
-				age,
-				played,
-				name: playerName,
-				scored,
-				yellow,
-				red,
-				status: injured ? 'injured' : 'active',
-				url,
-				season,
-			};
-		});
+		const playerRows = $('.squad-table')
+			.eq(0)
+			.find('.profileTable__row.profileTable__row--between');
+		return Array.from(playerRows)
+			.map(playerNode => {
+				const playerRow = $(playerNode);
+				if (playerRow.hasClass('profileTable__row--main')) {
+					return;
+				}
+				const jersey = parseInt(playerRow.find('.tableTeam__squadNumber').text());
+				const playerName = playerRow.find('.tableTeam__squadName a').text();
+				const nationality = (playerRow.find('.tableTeam__squadName .flag').attr('title') || '').toLowerCase();
+				const statCells = playerRow.find('.playerTable__sportIcon');
+				const age = parseInt(statCells.eq(0).text(), 10);
+				const played = parseInt(statCells.eq(1).text(), 10);
+				const scored = parseInt(statCells.eq(2).text(), 10);
+				const yellow = parseInt(statCells.eq(3).text(), 10);
+				const red = parseInt(statCells.eq(4).text(), 10);
+				const url = playerRow.find('.tableTeam__squadName a').attr('href');
+				const injured = !!playerRow.find('.absence.injury').length;
+				return {
+					jersey,
+					nationality,
+					age,
+					played,
+					name: playerName,
+					scored,
+					yellow,
+					red,
+					status: injured ? 'injured' : 'active',
+					url,
+					season,
+				};
+			})
+			.filter(val => val);
 	}
 
 	private async waitForTeamResult(page: SwPage) {

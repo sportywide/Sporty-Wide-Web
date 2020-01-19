@@ -115,6 +115,8 @@ export class PlayerPersisterService {
 					await this.playerService.savePlayerStat({
 						...player,
 						playerId: dbPlayer.id,
+						teamId: dbPlayer.teamId,
+						leagueId,
 						season: player.season,
 					});
 				})

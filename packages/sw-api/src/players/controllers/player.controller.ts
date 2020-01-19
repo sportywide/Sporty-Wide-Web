@@ -79,7 +79,7 @@ export class PlayerController {
 			const statMap = keyBy(playerStats, 'playerId');
 			playerDtos = playerDtos.map(player => ({
 				...player,
-				stats: statMap[player.id] && statMap[player.id].toJSON(),
+				stats: statMap[player.id] && statMap[player.id].toPlain(),
 			}));
 		}
 		return {

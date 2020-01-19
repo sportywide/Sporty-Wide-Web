@@ -414,11 +414,12 @@ export class WhoScoreCrawlerService extends ResultsService {
 				if (!Object.values(stats).length) {
 					return null;
 				}
+				const rating: any = last(Object.values(stats.ratings || {})) || -1;
 				return {
 					name: playerData.name,
 					position: playerData.position,
 					shirt: playerData.shirtNo,
-					rating: last<number>(Object.values(stats.ratings || {})) || -1,
+					rating: parseFloat(rating),
 					touches: sum(Object.values(stats.touches || {})),
 					shotsTotal: sum(Object.values(stats.shotsTotal || {})),
 					shotsOffTarget: sum(Object.values(stats.shotsOffTarget || {})),

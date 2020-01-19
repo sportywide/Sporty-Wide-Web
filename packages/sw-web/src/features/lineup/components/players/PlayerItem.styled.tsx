@@ -49,3 +49,10 @@ export const SwPlayerLogo = styled(Image)`
 		height: 50px;
 	}
 `;
+
+export const SwPlayerDraggingLogo = styled(Image)`
+	&&& {
+		width: 60px;
+		height: 60px;
+	}
+`;

@@ -1,5 +1,5 @@
 import { error, ok } from '@scheduling/lib/http';
-import { initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
+import { getLogger, initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
 import { FifaCrawlerService } from '@data/crawler/fifa-crawler.service';
 import { SCHEDULING_CONFIG } from '@core/config/config.constants';
 import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
@@ -30,7 +30,8 @@ export async function handler(event: SNSEvent) {
 		});
 		return ok('SUCCESS');
 	} catch (e) {
-		console.error(__filename, e);
+		const logger = getLogger(module);
+		logger.error(__filename, e);
 		return error(e);
 	}
 }

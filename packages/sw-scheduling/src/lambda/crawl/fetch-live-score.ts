@@ -1,5 +1,5 @@
 import { error } from '@scheduling/lib/http';
-import { cleanup, initModule, SchedulingModule } from '@scheduling/lib/scheduling.module';
+import { cleanup, getLogger, initModule, SchedulingModule } from '@scheduling/lib/scheduling.module';
 import { WhoScoreCrawlerService } from '@data/crawler/who-score-crawler.service';
 import { groupBy } from 'lodash';
 import { leagues } from '@shared/lib/data/data.constants';
@@ -22,7 +22,8 @@ export async function handler(event, context) {
 		await processMatches(module, matches);
 		await scheduleNextCall(module);
 	} catch (e) {
-		console.error(__filename, e);
+		const logger = getLogger(module);
+		logger.error(__filename, e);
 		return error(e);
 	} finally {
 		const browserService = module.get(BrowserService);

@@ -1,4 +1,5 @@
 import { error, ok } from '@scheduling/lib/http';
+import { getLogger } from '@scheduling/lib/scheduling.module';
 
 export async function handler() {
 	try {
@@ -6,7 +7,8 @@ export async function handler() {
 			message: 'OK',
 		});
 	} catch (e) {
-		console.error(__filename, e);
+		const logger = getLogger(module);
+		logger.error(__filename, e);
 		return error(e);
 	}
 }

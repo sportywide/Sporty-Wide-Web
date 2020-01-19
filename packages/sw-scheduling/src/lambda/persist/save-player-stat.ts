@@ -1,5 +1,5 @@
 import { error, ok } from '@scheduling/lib/http';
-import { cleanup, initModule, SchedulingPersisterModule } from '@scheduling/lib/scheduling.module';
+import { cleanup, getLogger, initModule, SchedulingPersisterModule } from '@scheduling/lib/scheduling.module';
 import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
 import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
 import { S3Event } from 'aws-lambda';
@@ -26,7 +26,8 @@ export async function handler(event: S3Event, context) {
 		});
 		return ok('SUCCESS');
 	} catch (e) {
-		console.error(__filename, e);
+		const logger = getLogger(module);
+		logger.error(__filename, e);
 		return error(e);
 	} finally {
 		await cleanup();
