@@ -71,32 +71,49 @@ class SwBaseRepository<T> {
 		return this.repository.metadata.connection.getMetadata(entity).tableName;
 	}
 
-	async upsert(obj, upsertColumns?: string[]): Promise<T> {
-		const keys: string[] = Object.keys(obj);
+	async upsert({
+		object,
+		upsertColumns,
+		conflictColumns = ['id'],
+	}: {
+		object;
+		upsertColumns?: string[];
+		conflictColumns?: string[];
+	}): Promise<T> {
+		const keys: string[] = Object.keys(object).filter(k => this.getDatabaseColumnName(k));
 		const setterString = keys
 			.map(k => {
 				if (upsertColumns && !upsertColumns.includes(k)) {
 					return;
 				}
-				const columnMetadata = this.repository.metadata.findColumnWithPropertyName(k);
-				const databaseName = columnMetadata ? columnMetadata.databaseName : k;
+				const databaseName = this.getDatabaseColumnName(k);
+				if (!databaseName) {
+					return;
+				}
 				return `${databaseName} = :${k}`;
 			})
 			.filter(str => str)
 			.join(',');
 		const queryBuilder = this.repository.createQueryBuilder();
 
+		const conflictColumnStr = conflictColumns.map(column => `"${this.getDatabaseColumnName(column)}"`).join(',');
+
 		const qb = queryBuilder
 			.insert()
 			.into(this.repository.metadata.tableName)
-			.values(obj)
-			.onConflict(`("id") DO UPDATE SET ${setterString}`);
+			.values(object)
+			.onConflict(`(${conflictColumnStr}) DO UPDATE SET ${setterString}`);
 
 		keys.forEach(k => {
-			qb.setParameter(k, (obj as any)[k]);
+			qb.setParameter(k, (object as any)[k]);
 		});
 
 		return (await qb.returning('*').execute()).generatedMaps[0] as T;
+	}
+
+	getDatabaseColumnName(key) {
+		const columnMetadata = this.repository.metadata.findColumnWithPropertyName(key);
+		return columnMetadata ? columnMetadata.databaseName : null;
 	}
 
 	async save(...args) {

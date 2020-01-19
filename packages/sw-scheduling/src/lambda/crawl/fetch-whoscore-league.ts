@@ -2,7 +2,7 @@ import { WhoScoreCrawlerService } from '@data/crawler/who-score-crawler.service'
 import { INestApplicationContext } from '@nestjs/common';
 import { BrowserService } from '@data/crawler/browser.service';
 import { error } from '@scheduling/lib/http';
-import { initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
+import { getLogger, initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
 import { SqsService } from '@scheduling/lib/aws/sqs/sqs.service';
 
 export async function handler() {
@@ -21,7 +21,8 @@ export async function handler() {
 			)
 		);
 	} catch (e) {
-		console.error(__filename, e);
+		const logger = getLogger(module);
+		logger.error(__filename, e);
 		return error(e);
 	} finally {
 		const browserService = module.get(BrowserService);

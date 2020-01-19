@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import AWS, { CloudWatchEvents } from 'aws-sdk';
 import { toCron } from '@shared/lib/utils/date/conversion';
 import { SCHEDULING_CONFIG } from '@core/config/config.constants';

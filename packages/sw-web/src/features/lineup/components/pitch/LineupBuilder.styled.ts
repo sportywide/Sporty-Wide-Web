@@ -6,6 +6,7 @@ export const LineupControl = styled.div`
 
 	@media ${device.laptop} {
 		display: flex;
+		align-items: center;
 		flex-wrap: wrap;
 	}
 `;

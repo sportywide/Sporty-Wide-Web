@@ -1,6 +1,6 @@
 import { error, ok } from '@scheduling/lib/http';
 import { FixtureProcessService } from '@scheduling/lib/fixture/services/fixture-process.service';
-import { cleanup, initModule, SchedulingPersisterModule } from '@scheduling/lib/scheduling.module';
+import { cleanup, getLogger, initModule, SchedulingPersisterModule } from '@scheduling/lib/scheduling.module';
 import { SqsService } from '@scheduling/lib/aws/sqs/sqs.service';
 
 export async function handler(event, context) {
@@ -20,7 +20,8 @@ export async function handler(event, context) {
 		);
 		return ok('SUCCESS');
 	} catch (e) {
-		console.error(__filename, e);
+		const logger = getLogger(module);
+		logger.error(__filename, e);
 		return error(e);
 	} finally {
 		await cleanup();

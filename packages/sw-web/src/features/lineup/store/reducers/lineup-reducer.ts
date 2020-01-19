@@ -69,7 +69,7 @@ export const lineupReducer = createReducer<ILineupState, LineupAction>(initialSt
 			positions: playing,
 			formation,
 			players: reserved,
-			originalPlayers: playing.concat(reserved),
+			originalPlayers: playing.concat(reserved).filter(player => player),
 		};
 	})
 	.handleAction(

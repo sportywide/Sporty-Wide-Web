@@ -1,6 +1,6 @@
 import util from 'util';
 import { SQS } from 'aws-sdk';
-import { Injectable, Inject } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { SCHEDULING_CONFIG } from '@core/config/config.constants';
 import { Provider } from 'nconf';
 import { omit } from 'lodash';

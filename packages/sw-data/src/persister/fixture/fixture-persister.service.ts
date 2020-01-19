@@ -95,7 +95,7 @@ export class FixturePersisterService {
 				};
 
 				try {
-					await this.fixtureRepository.upsert(dbObj);
+					await this.fixtureRepository.upsert({ object: dbObj });
 				} catch (e) {
 					this.logger.error(`Failed to save fixture ${dbObj.link}`, e);
 				}

@@ -64,7 +64,7 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 					<LineupControl className={'sw-mb3'}>
 						{lineupBuilder.formation && (
 							<Select
-								className={'sw-mr2 sw-mb2'}
+								className={'sw-mr2 sw-mb2 sw-mt2'}
 								defaultValue={lineupBuilder.formation}
 								options={options}
 								onChange={(e, { value }) => changeStrategy(value as string)}

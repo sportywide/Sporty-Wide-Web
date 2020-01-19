@@ -221,17 +221,24 @@ export class FixtureService extends BaseEntityService<Fixture> {
 					this.logger.error(`Cannot find fixture for teams ${fixture.home} - ${fixture.away}`);
 					return;
 				}
-				dbFixture.whoscoreUrl = fixture.link;
-				dbFixture.status = fixture.status;
-				dbFixture.current = fixture.current;
-				if (fixture.time) {
-					dbFixture.time = fixture.time;
+				try {
+					dbFixture.whoscoreUrl = fixture.link;
+					dbFixture.status = fixture.status;
+					dbFixture.current = fixture.current;
+					if (fixture.time) {
+						dbFixture.time = fixture.time;
+					}
+					dbFixture.homeScore = fixture.homeScore;
+					dbFixture.awayScore = fixture.awayScore;
+					dbFixture.incidents = fixture.incidents;
+					mapping.set(fixture, dbFixture);
+					await this.saveOne(dbFixture);
+				} catch (e) {
+					this.logger.error(
+						`Failed to save match ${fixture.link} \n\n ${JSON.stringify(fixture, null, 4)}`,
+						e
+					);
 				}
-				dbFixture.homeScore = fixture.homeScore;
-				dbFixture.awayScore = fixture.awayScore;
-				dbFixture.incidents = fixture.incidents;
-				mapping.set(fixture, dbFixture);
-				await this.saveOne(dbFixture);
 			})
 		);
 		return mapping;

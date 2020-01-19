@@ -13,6 +13,7 @@ export class LineupService {
 		players: UserPlayerDto[];
 		strategy: FormationDto;
 	}) {
+		players = players.filter(player => player.available);
 		const filledPositions = [...positions];
 		const playerByPosition: { [key: string]: UserPlayerDto[] } = players.reduce((currentMap, player) => {
 			if (positions.includes(player)) {

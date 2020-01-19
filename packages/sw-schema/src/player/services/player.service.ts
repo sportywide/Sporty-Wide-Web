@@ -6,7 +6,7 @@ import { Player } from '@schema/player/models/player.entity';
 import { InjectSwRepository } from '@schema/core/repository/sql/inject-repository.decorator';
 import { SwRepository } from '@schema/core/repository/sql/base.repository';
 import { Fixture } from '@schema/fixture/models/fixture.entity';
-import { Brackets } from 'typeorm';
+import { Brackets, In } from 'typeorm';
 import { max, min } from 'lodash';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -14,7 +14,6 @@ import { UserPlayersDocument } from '@schema/player/models/user-players.schema';
 import { getSeason } from '@shared/lib/utils/season';
 import { UserLeaguePreferenceService } from '@schema/league/services/user-league-preference.service';
 import { startOfDay } from 'date-fns';
-import { PlayerStatDocument } from '@schema/player/models/player-stat.schema';
 import { PlayerStatDto } from '@shared/lib/dtos/player/player-stat.dto';
 import { Diff, MongooseDocument } from '@shared/lib/utils/types';
 import { PlayerRatingDto } from '@shared/lib/dtos/player/player-rating.dto';
@@ -32,15 +31,16 @@ import {
 	NotPlayingException,
 } from '@shared/lib/exceptions/generate-player-exception';
 import { FixtureService } from '@schema/fixture/services/fixture.service';
+import { PlayerStat } from '@schema/player/models/player-stat.entity';
 
 @Injectable()
 export class PlayerService extends BaseEntityService<Player> {
 	constructor(
 		@InjectSwRepository(Player) private readonly playerRepository: SwRepository<Player>,
+		@InjectSwRepository(PlayerStat) private readonly playerStatRepository: SwRepository<PlayerStat>,
 		private readonly fixtureService: FixtureService,
 		private readonly userLeaguePreferenceService: UserLeaguePreferenceService,
 		@InjectModel('UserPlayers') private readonly userPlayersModel: Model<UserPlayersDocument>,
-		@InjectModel('PlayerStat') private readonly playerStatModel: Model<PlayerStatDocument>,
 		@InjectModel('PlayerRating') private readonly playerRatingModel: Model<PlayerRatingDocument>,
 		@Inject(SCHEMA_LOGGER) private readonly logger: Logger
 	) {
@@ -104,12 +104,13 @@ export class PlayerService extends BaseEntityService<Player> {
 		return this.playerRepository.getByIdsOrdered(playerIds, includes);
 	}
 
-	async getPlayerStats(playerIds) {
-		return this.playerStatModel
-			.find({
-				playerId: { $in: playerIds },
-			})
-			.exec();
+	async getPlayerStats(playerIds, season = getSeason(new Date())) {
+		return this.playerStatRepository.find({
+			where: {
+				playerId: In(playerIds),
+				season,
+			},
+		});
 	}
 
 	async generateFormation({ formation, leagueId, maxPlayers = 15, date = new Date() }) {
@@ -270,18 +271,11 @@ export class PlayerService extends BaseEntityService<Player> {
 		}
 	}
 
-	savePlayerStat(playerStat: Diff<PlayerStatDto, MongooseDocument>) {
-		return this.playerStatModel.findOneAndUpdate(
-			{
-				playerId: playerStat.playerId,
-				season: playerStat.season,
-			},
-			playerStat,
-			{
-				upsert: true,
-				new: true,
-			}
-		);
+	async savePlayerStat(playerStat: PlayerStatDto) {
+		return this.playerStatRepository.upsert({
+			object: playerStat,
+			conflictColumns: ['playerId', 'season'],
+		});
 	}
 
 	savePlayerRating(playerRating: Diff<PlayerRatingDto, MongooseDocument>) {

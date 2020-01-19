@@ -6,10 +6,10 @@ import { Team } from '@schema/team/models/team.entity';
 import { TestingModule } from '@nestjs/testing';
 import { League } from '@schema/league/models/league.entity';
 import { UserPlayersSchema } from '@schema/player/models/user-players.schema';
-import { PlayerStatSchema } from '@schema/player/models/player-stat.schema';
 import { PlayerRatingSchema } from '@schema/player/models/player-rating.schema';
 import { UserLeaguePreferenceService } from '@schema/league/services/user-league-preference.service';
 import { createSpyObj } from 'jest-createspyobj';
+import { PlayerStat } from '@schema/player/models/player-stat.entity';
 
 const formation = require('@shared/lib/strategy/4-4-2');
 
@@ -18,11 +18,10 @@ describe('Testing player service', () => {
 	let module: TestingModule;
 	beforeAll(async () => {
 		module = await setupDatabaseModule({
-			entities: [Player, Team, Fixture, League],
+			entities: [Player, Team, Fixture, League, PlayerStat],
 			providers: [PlayerService, UserLeaguePreferenceService],
 			schemas: {
 				UserPlayers: UserPlayersSchema,
-				PlayerStat: PlayerStatSchema,
 				PlayerRating: PlayerRatingSchema,
 			},
 		})
