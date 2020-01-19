@@ -118,6 +118,7 @@ export class PlayerBettingService extends BaseEntityService<PlayerBetting> {
 			},
 			{
 				realRating: rating,
+				earnedTokens: () => `select_rating(${rating}, player_betting)`,
 			},
 			{
 				shouldNotifyUpdate: false,

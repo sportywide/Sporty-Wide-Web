@@ -15,6 +15,8 @@ import { Player } from '@schema/player/models/player.entity';
 import { keyBy } from 'lodash';
 import { PlayerRatingDocument } from '@schema/player/models/player-rating.schema';
 import { weekStart } from '@shared/lib/utils/date/relative';
+import { leagues } from '@shared/lib/data/data.constants';
+import { FixtureProcessInput } from '@scheduling/lib/fixture/services/fixture-process.service';
 
 @Injectable()
 export class FixtureService extends BaseEntityService<Fixture> {
@@ -242,5 +244,32 @@ export class FixtureService extends BaseEntityService<Fixture> {
 			})
 		);
 		return mapping;
+	}
+
+	async matchDbFixtures(
+		module,
+		leagueMatches: Record<number, WhoscoreFixture[]>,
+		date
+	): Promise<Map<WhoscoreFixture, Fixture>> {
+		const whoscoreLeagueIds = Object.keys(leagueMatches);
+		const fixtureService = module.get(FixtureService);
+		const relevantLeagues = leagues.filter(league => whoscoreLeagueIds.includes(String(league.whoscoreId)));
+
+		const result = new Map();
+		for (const league of relevantLeagues) {
+			const dbFixtures = await fixtureService.findMatchesForDay({
+				leagueId: league.id,
+				date,
+			});
+			const mapping = await fixtureService.saveWhoscoreFixtures(
+				league.id,
+				dbFixtures,
+				leagueMatches[league.whoscoreId]
+			);
+			for (const [fixture, dbFixture] of mapping.entries()) {
+				result.set(fixture, dbFixture);
+			}
+		}
+		return result;
 	}
 }

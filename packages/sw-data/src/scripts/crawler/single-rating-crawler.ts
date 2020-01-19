@@ -1,7 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { INestApplicationContext } from '@nestjs/common';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
-import { groupBy } from 'lodash';
+import { keyBy } from 'lodash';
 import { WhoScoreCrawlerService } from '@data/crawler/who-score-crawler.service';
 import { BrowserService } from '@data/crawler/browser.service';
 import { PlayerPersisterService } from '@data/persister/player/player-persister.service';
@@ -15,30 +15,24 @@ async function bootstrap() {
 	const fixtureService = context.get(FixtureService);
 
 	try {
-		const date = new Date(2020, 0, 18);
-		const matches = await crawlerService.getLiveMatches(date);
+		const matches = [
+			{
+				fixtureId: 408206,
+				url: '/Matches/1376144/Live/England-Premier-League-2019-2020-Newcastle-United-Chelsea',
+			},
+		];
+		const matchGroup = keyBy(matches, 'url');
+		const matchRatings = await crawlerService.getRatings(matches.map(match => match.url));
 		const logger = context.get(DATA_LOGGER);
-
-		const finishedMatches = matches.filter(match => match.status === 'FT');
-		const finishedMatchLinks = finishedMatches.map(match => match.link).filter(link => link);
-		const matchGroup = groupBy(matches, 'whoscoreLeagueId');
-		const mappedMatches = await fixtureService.matchDbFixtures(context, matchGroup, date);
-		const dbFixtureMatchedByLink = {};
-
-		logger.info(`Getting ratings for ${finishedMatches.length} matches`);
-		const ratingMap = await crawlerService.getRatings(finishedMatchLinks);
-
-		for (const [fixture, dbFixture] of mappedMatches.entries()) {
-			dbFixtureMatchedByLink[fixture.link] = dbFixture;
-		}
 		await Promise.all(
-			Object.entries(ratingMap).map(async ([ratingUrl, ratingData]) => {
-				const { away, home } = ratingData;
-				const fixture = dbFixtureMatchedByLink[ratingUrl];
+			Object.entries(matchRatings).map(async ([ratingUrl, ratingData]) => {
+				const { fixtureId } = matchGroup[ratingUrl];
+				const fixture = await fixtureService.findById({ id: fixtureId });
 				if (!fixture) {
 					logger.error(`Cannot find match ${ratingUrl}`);
 					return;
 				}
+				const { away, home } = ratingData;
 				try {
 					await Promise.all([
 						playerPersisterService.savePlayerRatings(
@@ -72,5 +66,5 @@ async function bootstrap() {
 
 bootstrap().then(context => {
 	const logger = context.get(DATA_LOGGER);
-	logger.info('Finished score crawler service');
+	logger.info('Finished single score crawler service');
 });
