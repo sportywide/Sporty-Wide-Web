@@ -42,6 +42,9 @@ const theme = {
 		transparent: 'rgba(0, 0, 0, 0)',
 		black: '#000',
 	},
+	dimen: {
+		navBar: '47px',
+	},
 };
 
 class SwApp extends App<IProps> {

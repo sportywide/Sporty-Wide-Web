@@ -4,7 +4,8 @@ import { SwNavBar } from '@web/shared/lib/ui/components/navbar/Navbar';
 import { logout } from '@web/features/auth/store/actions';
 import { connect } from 'react-redux';
 import { SwMenuItem } from '@web/shared/lib/ui/components/menu/MenuItem';
-import { useApp, useStateRef, useEffectOnce } from '@web/shared/lib/react/hooks';
+import { useApp, useEffectOnce, useStateRef } from '@web/shared/lib/react/hooks';
+import { SwMobile } from '@web/shared/lib/ui/components/responsive/Responsive';
 import * as S from './Sidebar.styled';
 
 export function SwSideBarComponent({ logout, children }) {
@@ -81,17 +82,57 @@ export function SwSideBarComponent({ logout, children }) {
 						</SwMenuItem>
 					</Menu.Menu>
 				</SwMenuItem>
+				<SwMobile>
+					<SwMenuItem>
+						Navigation
+						<Menu.Menu>{navbarItems()}</Menu.Menu>
+					</SwMenuItem>
+				</SwMobile>
 			</Sidebar>
-			<SwNavBar
-				logout={() => logout()}
-				onSidebarClicked={() => {
-					setSidebarVisible(true);
-				}}
-			>
+			<Sidebar.Pusher>
+				<SwNavBar
+					logout={() => logout()}
+					onSidebarClicked={() => {
+						setSidebarVisible(true);
+					}}
+				>
+					{navbarItems()}
+				</SwNavBar>
 				{children}
-			</SwNavBar>
+			</Sidebar.Pusher>
 		</S.SidebarPushable>
 	);
+
+	function navbarItems() {
+		return (
+			<>
+				<SwMenuItem name="home" route={'home'}>
+					<S.MenuIcon name="home" />
+					<span className={'sw-nav-title'}>Home</span>
+				</SwMenuItem>
+				<SwMenuItem name="profile" route={'profile-edit'}>
+					<S.MenuIcon name="user circle" />
+					<span className={'sw-nav-title'}>Profile</span>
+				</SwMenuItem>
+				<SwMenuItem name="messages">
+					<S.MenuIcon name="conversation" />
+					<span className={'sw-nav-title'}>Messages</span>
+				</SwMenuItem>
+				<SwMenuItem name="notifications">
+					<S.MenuIcon name="bell" />
+					<span className={'sw-nav-title'}>Notifications</span>
+				</SwMenuItem>
+				<SwMenuItem name="help">
+					<S.MenuIcon name="help" />
+					<span className={'sw-nav-title'}>Help</span>
+				</SwMenuItem>
+				<SwMenuItem name="logout" onClick={() => logout()}>
+					<S.MenuIcon name="log out" />
+					<span className={'sw-nav-title'}>Log out</span>
+				</SwMenuItem>
+			</>
+		);
+	}
 }
 
 export const SwSideBar = connect(null, {

@@ -8,7 +8,6 @@ export const SidebarSegment = styled(Segment)`
 		border-radius: 0;
 		box-shadow: none;
 		border: none;
-		box-shadow: 0 3px 2px -2px rgba(34, 36, 38, 0.15);
 
 		.item {
 			text-align: left;

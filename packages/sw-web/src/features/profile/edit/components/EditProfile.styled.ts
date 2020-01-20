@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import { Segment } from 'semantic-ui-react';
+import { SwResponsiveSegment } from '@web/shared/lib/ui/components/responsive/Responsive';
 
-export const SwFormSegment = styled(Segment)`
+export const SwFormSegment = styled(SwResponsiveSegment)`
 	&&& {
 		padding: var(--space-3) var(--space-3);
 	}

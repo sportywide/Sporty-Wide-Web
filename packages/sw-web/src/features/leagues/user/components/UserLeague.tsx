@@ -41,7 +41,7 @@ const SwUserLeaguesComponent: React.FC<IProps> = ({ leagues, fetchUserLeagues, f
 	return (
 		<Grid verticalAlign={'middle'} centered>
 			{leagues.map(league => (
-				<SwLeagueContainer key={league.name} mobile={8} tablet={6} computer={4}>
+				<SwLeagueContainer key={league.name} mobile={16} tablet={6} computer={4}>
 					<SwLeague league={league} onPlay={onPlayCallback} onLeave={onLeaveCallback} />
 				</SwLeagueContainer>
 			))}

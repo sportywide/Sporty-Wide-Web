@@ -6,6 +6,7 @@ const swBackground = css`
 	width: 100%;
 	height: 100%;
 	min-height: 100vh;
+	display: flex;
 	@media ${device.tablet} {
 		${({ padding }) =>
 			padding &&
@@ -36,6 +37,11 @@ export const SwTransparentBackground = styled.div`
 
 export const SwFluidContainer = styled.div`
 	width: 100%;
+	margin-top: ${props => props.theme.dimen.navBar};
+	@media ${device.tablet} {
+		margin: var(--space-3) auto;
+		margin-top: calc(var(--space-3) + ${props => props.theme.dimen.navBar});
+	}
 `;
 
 export const SwContainer = styled(Container).attrs({ id: 'container' })`
@@ -43,8 +49,10 @@ export const SwContainer = styled(Container).attrs({ id: 'container' })`
 		background-color: ${props => props.theme.colors.white};
 		padding: var(--space-3);
 		margin: 0;
+		margin-top: ${props => props.theme.dimen.navBar};
 		@media ${device.tablet} {
 			margin: var(--space-3) auto;
+			margin-top: calc(var(--space-3) + ${props => props.theme.dimen.navBar});
 			border-radius: 5px;
 			box-shadow: 0 1px 1px 1px rgba(0, 0, 0, 0.2);
 		}
