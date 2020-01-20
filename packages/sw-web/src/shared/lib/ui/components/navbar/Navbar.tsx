@@ -26,7 +26,7 @@ export const SwNavBarComponent: React.FC<IProps> = function({ onSidebarClicked, 
 	return (
 		<Sidebar.Pusher>
 			<NavbarMenu inverted>
-				<Menu.Item onClick={() => onSidebarClicked()}>
+				<Menu.Item data-element-name={'sidebar-open'} onClick={() => onSidebarClicked()}>
 					<Icon name="th" />
 				</Menu.Item>
 				<SwMenuItem route={'home'} showActive={false}>

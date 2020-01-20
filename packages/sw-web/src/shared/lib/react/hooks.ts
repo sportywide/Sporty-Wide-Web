@@ -1,9 +1,11 @@
-import { MutableRefObject, useCallback, useEffect, useMemo, useRef, useState, EffectCallback } from 'react';
+import { EffectCallback, MutableRefObject, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { keyBy } from 'lodash';
 import { useSelector } from 'react-redux';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import { getEmptyImage } from 'react-dnd-html5-backend-cjs';
 import { formationMap } from '@shared/lib/dtos/formation/formation.dto';
+import { SwApp } from '@web/shared/lib/app';
+import { ContainerContext } from '@web/shared/lib/store';
 
 export function usePrevious<T>(value) {
 	const ref = useRef<T>();
@@ -17,6 +19,11 @@ export function usePrevious<T>(value) {
 
 export function useUser(): IUser {
 	return useSelector(state => state.auth && state.auth.user);
+}
+
+export function useApp(): SwApp {
+	const container = useContext(ContainerContext);
+	return container.get(SwApp);
 }
 
 export function useFormationOptions() {
@@ -77,6 +84,14 @@ export function useCurrentRef<T>(initialValue: T): [T, MutableRefObject<T>, Func
 		setValue(updater);
 	}, []);
 	return [value, valueRef, setValueCallback, previous];
+}
+
+export function useStateRef<T>(initialValue: T): [() => T, Function] {
+	const [state, setState] = useState<T>(initialValue);
+	const ref = useRef(state);
+	ref.current = state;
+	const getValue = useCallback(() => ref.current, []);
+	return [getValue, setState];
 }
 
 export function useEmptyPreviewImage(preview) {

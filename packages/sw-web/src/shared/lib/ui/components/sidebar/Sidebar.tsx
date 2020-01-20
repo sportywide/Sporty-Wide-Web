@@ -1,48 +1,61 @@
-import React, { useState } from 'react';
-import { Segment, Menu, Icon, Sidebar } from 'semantic-ui-react';
+import React, { useRef } from 'react';
+import { Menu, Sidebar } from 'semantic-ui-react';
 import { SwNavBar } from '@web/shared/lib/ui/components/navbar/Navbar';
 import { logout } from '@web/features/auth/store/actions';
-import styled from 'styled-components';
 import { connect } from 'react-redux';
 import { SwMenuItem } from '@web/shared/lib/ui/components/menu/MenuItem';
-
-const SidebarSegment = styled(Segment)`
-	&&&& {
-		margin: 0;
-		border-radius: 0;
-		box-shadow: none;
-		border: none;
-		box-shadow: 0 3px 2px -2px rgba(34, 36, 38, 0.15);
-
-		.item {
-			text-align: left;
-		}
-	}
-`;
-
-const MenuIcon = styled(Icon)`
-	&&&&&&&& {
-		display: inline-block;
-		font-size: 1.1em !important;
-		float: none;
-		margin: 0em 0.35714286em 0em 0em;
-	}
-`;
+import { useApp, useStateRef, useEffectOnce } from '@web/shared/lib/react/hooks';
+import * as S from './Sidebar.styled';
 
 export function SwSideBarComponent({ logout, children }) {
-	const [sidebarVisible, setSidebarVisible] = useState(false);
+	const [getSideBarVisible, setSidebarVisible] = useStateRef(false);
+	const sideBarRef = useRef<any>();
+	const app = useApp();
+	useEffectOnce(() => {
+		const clickDisposal = app.onWindowClick((eventType, e: MouseEvent) => {
+			if (!getSideBarVisible()) {
+				return;
+			}
+			const sideBarDiv: HTMLElement = sideBarRef.current?.ref?.current;
+			const targetNode = e.target as HTMLElement;
+			if (
+				!sideBarDiv ||
+				sideBarDiv.contains(targetNode) ||
+				targetNode.closest('[data-element-name=sidebar-open]')
+			) {
+				return;
+			}
+			setSidebarVisible(false);
+		});
+		const eventDisposal = app.onSideBarClosed(() => {
+			setSidebarVisible(false);
+		});
+
+		return () => {
+			clickDisposal();
+			eventDisposal();
+		};
+	});
 	return (
-		<Sidebar.Pushable as={SidebarSegment} className={'sw-full-screen-height'}>
-			<Sidebar as={Menu} animation="push" inverted vertical width="thin" visible={sidebarVisible}>
+		<S.SidebarPushable as={S.SidebarSegment} className={'sw-full-screen-height'}>
+			<Sidebar
+				ref={sideBarRef}
+				as={Menu}
+				animation="overlay"
+				inverted
+				vertical
+				width="thin"
+				visible={getSideBarVisible()}
+			>
 				<SwMenuItem>
 					Community
 					<Menu.Menu>
 						<SwMenuItem as="a">
-							<MenuIcon name="time" />
+							<S.MenuIcon name="time" />
 							Forum
 						</SwMenuItem>
 						<SwMenuItem as="a">
-							<MenuIcon name="flag outline" />
+							<S.MenuIcon name="flag outline" />
 							Market
 						</SwMenuItem>
 					</Menu.Menu>
@@ -51,19 +64,19 @@ export function SwSideBarComponent({ logout, children }) {
 					Soccer
 					<Menu.Menu>
 						<SwMenuItem as="a">
-							<MenuIcon name="time" />
+							<S.MenuIcon name="time" />
 							Live Score
 						</SwMenuItem>
 						<SwMenuItem as="a" route={'user-leagues'}>
-							<MenuIcon name="flag outline" />
+							<S.MenuIcon name="flag outline" />
 							Leagues
 						</SwMenuItem>
 						<SwMenuItem as="a">
-							<MenuIcon name="users" />
+							<S.MenuIcon name="users" />
 							Teams
 						</SwMenuItem>
 						<SwMenuItem as="a">
-							<MenuIcon name="user" />
+							<S.MenuIcon name="user" />
 							Players
 						</SwMenuItem>
 					</Menu.Menu>
@@ -72,12 +85,12 @@ export function SwSideBarComponent({ logout, children }) {
 			<SwNavBar
 				logout={() => logout()}
 				onSidebarClicked={() => {
-					setSidebarVisible(!sidebarVisible);
+					setSidebarVisible(true);
 				}}
 			>
 				{children}
 			</SwNavBar>
-		</Sidebar.Pushable>
+		</S.SidebarPushable>
 	);
 }
 

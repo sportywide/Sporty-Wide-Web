@@ -1,10 +1,13 @@
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useContext } from 'react';
 import { Menu } from 'semantic-ui-react';
 import { Router } from 'next/router';
 import { findPathForRoute, withRouter } from '@web/routes';
 import { IRouteOptions, redirect } from '@web/shared/lib/navigation/helper';
 import { noop } from '@shared/lib/utils/functions';
 import { match as pathMatch } from 'path-to-regexp';
+import { SIDEBAR_CLOSED } from '@web/shared/lib/popup/event.constants';
+import { ContainerContext } from '@web/shared/lib/store';
+import { EventDispatcher } from '@web/shared/lib/events/event-dispatcher';
 
 interface IProps {
 	name?: string;
@@ -31,6 +34,8 @@ export const SwMenuItemComponent: React.FC<IProps> = function({
 	routeParams,
 	children,
 }) {
+	const container = useContext(ContainerContext);
+	const eventDispatcher = container.get(EventDispatcher);
 	return (
 		<Menu.Item
 			as={as}
@@ -56,6 +61,7 @@ export const SwMenuItemComponent: React.FC<IProps> = function({
 		if (!route) {
 			return;
 		}
+		eventDispatcher.trigger(SIDEBAR_CLOSED);
 		return redirect({
 			route,
 			params: routeParams,

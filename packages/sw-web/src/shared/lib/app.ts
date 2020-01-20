@@ -1,5 +1,5 @@
 import { EventDispatcher } from '@web/shared/lib/events/event-dispatcher';
-import { SHOW_CONFIRM, SHOW_MODAL } from '@web/shared/lib/popup/event.constants';
+import { SHOW_CONFIRM, SHOW_MODAL, SIDEBAR_CLOSED, WINDOW_CLICK } from '@web/shared/lib/popup/event.constants';
 import { Service } from 'typedi';
 
 @Service()
@@ -20,6 +20,14 @@ export class SwApp {
 			onConfirm,
 			onCancel,
 		});
+	}
+
+	onWindowClick(eventHandler) {
+		return this.eventDispatcher.on(WINDOW_CLICK, eventHandler);
+	}
+
+	onSideBarClosed(eventHandler) {
+		return this.eventDispatcher.on(SIDEBAR_CLOSED, eventHandler);
 	}
 
 	showModal({ popupState, modalName }) {
