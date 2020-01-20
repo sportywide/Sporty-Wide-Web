@@ -78,8 +78,10 @@ export function findPathForRoute(routeName) {
 	return (routeMapping && routeMapping.pattern) || `/${routeName}`;
 }
 
-export function withRouter(WrappedComponent) {
-	const NewComponent = withNextRouter(WrappedComponent);
+export function withRouter<Props>(
+	WrappedComponent: React.ComponentType<Props>
+): React.ComponentType<Omit<Props, 'router'>> {
+	const NewComponent: any = withNextRouter(WrappedComponent as any);
 	hoistNonReactStatics(NewComponent, WrappedComponent);
 	return NewComponent;
 }

@@ -90,7 +90,7 @@ const SwFixtureListComponent: React.FC<IProps> = ({ leagueId }) => {
 
 	function renderMatches() {
 		if (!fixtures || fixtureFetchAsyncCallback.loading) {
-			return <Spinner />;
+			return <Spinner portalRoot={'#container'} />;
 		}
 		if (!fixtures.length) {
 			return <ErrorMessage message={'No fixtures found'} />;

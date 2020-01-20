@@ -66,7 +66,7 @@ const SwMyPlayerBettingComponent: React.FC<IProps> = ({
 			.toPromise();
 	});
 	if (!playerBetting) {
-		return <Spinner />;
+		return <Spinner portalRoot={'#container'} />;
 	}
 	const alreadyBet = hasPlayerBet(playerBetting);
 	return (
