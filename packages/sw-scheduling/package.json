@@ -1,6 +1,7 @@
 {
 	"name": "sportywide-scheduling",
-	"version": "1.0.3",
+	"version": "0.0.0",
+	"private": true,
 	"description": "Contain scheduling functions",
 	"repository": {
 		"type": "git",
@@ -8,15 +9,26 @@
 	},
 	"license": "ISC",
 	"scripts": {
-		"deploy": "sls deploy",
-		"dev": "sls offline start"
+		"deploy": "sls deploy --stage production",
+		"start": "sls offline start --useSeparateProcesses"
 	},
 	"dependencies": {
-		"sportywide-data": "^1.0.3"
+		"aws-lambda": "0.1.2",
+		"dynamoose-improved": "1.10.2",
+		"source-map-support": "0.5.13",
+		"sportywide-data": "0.0.0"
 	},
 	"devDependencies": {
+		"@types/aws-lambda": "8.10.36",
+		"aws-sdk": "2.564.0",
 		"serverless": "1.56.1",
-		"serverless-offline": "5.12.0",
-		"serverless-webpack": "5.3.1"
+		"serverless-dynamodb-local": "0.2.38",
+		"serverless-iam-roles-per-function": "2.0.2",
+		"serverless-lambda-layers": "1.4.6",
+		"serverless-offline": "5.12.1",
+		"serverless-offline-message-queue": "3.0.7",
+		"serverless-offline-sns": "0.65.0",
+		"serverless-s3-local": "0.5.3",
+		"serverless-webpack": "https://github.com/vdtn359/serverless-webpack.git#sw-5.3.2"
 	}
 }

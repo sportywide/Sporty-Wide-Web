@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react';
-import { Label, List } from 'semantic-ui-react';
+import React from 'react';
+import { Label, List, Popup } from 'semantic-ui-react';
 import { useDrag } from 'react-dnd-cjs';
-import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
+import { UserPlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { PLAYER, PLAYER_ITEM_ZONE } from '@web/features/lineup/components/item.constant';
 import {
 	SwDraggablePlayer,
@@ -9,17 +9,21 @@ import {
 	SwStatsLabel,
 	SwTeamLogo,
 } from '@web/features/lineup/components/players/PlayerItem.styled';
-import { getEmptyImage } from 'react-dnd-html5-backend-cjs';
 import { useEmptyPreviewImage } from '@web/shared/lib/react/hooks';
+import { fifaImage } from '@web/shared/lib/images/links';
+import { getPositionColor, getRatingColor } from '@web/shared/lib/color';
 
 interface IProps {
-	player: PlayerDto;
+	player: UserPlayerDto;
+	readonly: boolean;
 }
 
-const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
+const SwPlayerItemComponent: React.FC<IProps> = ({ player, readonly }) => {
+	const canDrag = player.available && !readonly;
 	const [{ isDragging }, drag, preview] = useDrag({
 		item: { type: PLAYER, player, zone: PLAYER_ITEM_ZONE },
 		isDragging: monitor => monitor.getItem().player === player,
+		canDrag: () => canDrag,
 		collect: monitor => ({ isDragging: monitor.isDragging() }),
 	});
 
@@ -28,12 +32,25 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 	return (
 		<List.Item>
 			<List.Content>
-				<SwDraggablePlayer ref={drag} isDragging={isDragging}>
-					<SwPlayerLogo circular avatar src={player.image} />
-					<div className={'sw-flex-grow'}>
-						<span>
-							{player.shirt}. {player.name}
-						</span>
+				<SwDraggablePlayer ref={drag} isDragging={isDragging} canDrag={canDrag} available={player.available}>
+					<SwPlayerLogo circular avatar src={fifaImage(player.image)} />
+					<div className={'sw-flex-grow-equal sw-truncate sw-mr1'}>
+						{player.available ? (
+							<span>
+								{player.shirt}. {player.name}
+							</span>
+						) : (
+							<Popup
+								trigger={
+									<span>
+										{player.shirt}. {player.name}
+									</span>
+								}
+								content={'Player has already played'}
+								inverted
+								position="top center"
+							/>
+						)}
 						<div>
 							{player.positions.map(position => (
 								<Label as="a" key={position} color={getPositionColor(position)} size={'mini'}>
@@ -46,7 +63,16 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 						<SwStatsLabel circular size={'small'} color={getRatingColor(player.rating)}>
 							{player.rating}
 						</SwStatsLabel>
-						<SwTeamLogo avatar src={player.team!.image} />
+						<Popup
+							trigger={
+								<span>
+									<SwTeamLogo avatar src={fifaImage(player.team!.image)} />
+								</span>
+							}
+							content={player.teamName}
+							inverted
+							position="top center"
+						/>
 					</div>
 				</SwDraggablePlayer>
 			</List.Content>
@@ -55,24 +81,3 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player }) => {
 };
 
 export const SwPlayerItem = SwPlayerItemComponent;
-
-function getRatingColor(rating: number): any {
-	if (rating >= 90) {
-		return 'red';
-	} else if (80 <= rating && rating < 90) {
-		return 'blue';
-	} else if (70 <= rating && rating < 80) {
-		return 'green';
-	}
-	return 'yellow';
-}
-function getPositionColor(position: string): any {
-	const map: { [name: string]: string } = {
-		GK: 'red',
-		CM: 'green',
-		LM: 'green',
-		RM: 'green',
-		ST: 'blue',
-	};
-	return map[position] || 'blue';
-}

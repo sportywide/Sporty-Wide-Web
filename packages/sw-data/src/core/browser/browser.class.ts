@@ -4,6 +4,7 @@ import puppeteer, { Browser, Page, LaunchOptions, ClickOptions } from 'puppeteer
 import { Logger } from 'log4js';
 const MAX_ATTEMPTS = 3;
 import { Provider } from 'nconf';
+import { isDevelopment } from '@shared/lib/utils/env';
 
 export type SwBrowser = SwBrowserWrapper & Browser;
 
@@ -26,20 +27,30 @@ export class SwBrowserWrapper {
 			proxyServer = options.proxyServer;
 			delete options.proxyServer;
 		}
-		const browserOptions: LaunchOptions = {
-			ignoreHTTPSErrors: true,
-			headless: true,
-			args: [
-				'--no-sandbox',
-				'--disable-setuid-sandbox',
-				'--lang=en-US,en;q=0.9',
-				proxyServer ? `--proxy-server=${proxyServer}` : null,
-			].filter(arg => arg),
-			executablePath: config.get('puppeteer:executable'),
-			...options,
-		};
-
-		const browser = await puppeteer.launch(browserOptions);
+		let browser;
+		if (process.env.IS_LAMBDA && !isDevelopment()) {
+			const chromium = require('chrome-aws-lambda');
+			browser = await chromium.puppeteer.launch({
+				args: [...chromium.args, proxyServer ? `--proxy-server=${proxyServer}` : null].filter(arg => arg),
+				defaultViewport: chromium.defaultViewport,
+				executablePath: await chromium.executablePath,
+				headless: chromium.headless,
+			});
+		} else {
+			const browserOptions: LaunchOptions = {
+				ignoreHTTPSErrors: true,
+				headless: true,
+				args: [
+					'--no-sandbox',
+					'--disable-setuid-sandbox',
+					'--lang=en-US,en;q=0.9',
+					proxyServer ? `--proxy-server=${proxyServer}` : null,
+				].filter(arg => arg),
+				executablePath: config.get('puppeteer:executable'),
+				...options,
+			};
+			browser = await puppeteer.launch(browserOptions);
+		}
 		const browserWrapper = new SwBrowserWrapper({ browser, logger });
 
 		return wrap(browserWrapper, browser);
@@ -106,7 +117,7 @@ export class SwBrowserWrapper {
 			});
 		});
 
-		const pageWrapper = new SwPageWrapper({ page, logger: this.logger });
+		const pageWrapper = new SwPageWrapper({ page, logger: this.logger, browser: this });
 
 		return wrap(pageWrapper, page);
 	}
@@ -124,9 +135,16 @@ export type SwPage = SwPageWrapper & Page;
 class SwPageWrapper {
 	private readonly page: Page;
 	private readonly logger: Logger;
-	constructor({ page, logger }) {
+	private readonly browserWrapper: SwBrowser;
+
+	constructor({ page, logger, browser }) {
 		this.page = page;
 		this.logger = logger;
+		this.browserWrapper = browser;
+	}
+
+	browser() {
+		return this.browserWrapper;
 	}
 
 	async retryGoTo({ url, opts, maxAttempts = MAX_ATTEMPTS }) {

@@ -1,8 +1,8 @@
-FROM node:10-alpine AS node
+FROM node:12-alpine AS node
 
 RUN apk update && apk upgrade && \
     apk add --no-cache bash git openssh curl jq
-    
+
 RUN apk add dos2unix --no-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community/ --allow-untrusted
 
 ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.5.0/wait /usr/local/bin/wait
@@ -16,7 +16,7 @@ RUN mkdir -p /opt/app
 
 ENV PROJECT_ROOT /opt/app
 
-COPY package*.json lerna.json *.ts *.js *.gql tsconfig.json $PROJECT_ROOT/
+COPY package*.json lerna.json *.ts *.js *.gql *.graphql tsconfig.json $PROJECT_ROOT/
 COPY bin $PROJECT_ROOT/bin
 COPY helpers $PROJECT_ROOT/helpers
 
@@ -30,6 +30,6 @@ ENTRYPOINT ["/opt/scripts/bootstrap.sh"]
 WORKDIR $PROJECT_ROOT
 
 FROM base as prod
-ENV NODE_ENV=production
+ENV NO_OPTIONAL 1
 RUN npm run install:dependencies
-
+COPY package-lock.json /opt/app/package-lock.json

@@ -1,6 +1,7 @@
 require('reflect-metadata');
 require('tsconfig-paths/register');
-import { Gulpclass, Task } from 'gulpclass';
+import { Gulpclass, SequenceTask, Task } from 'gulpclass';
+import gulp from 'gulp';
 import { spawn } from '@root/helpers/process';
 
 const argv = require('yargs').argv;
@@ -11,17 +12,17 @@ export class Gulpfile {
 	@Task('bootstrap')
 	bootstrap() {
 		if (argv.ci) {
-			return spawn('lerna bootstrap -- --ci --no-optional && link-parent-bin');
+			return spawn('npx lerna bootstrap -- --ci --no-optional && link-parent-bin');
 		} else if (argv.production) {
 			return spawn(
-				'lerna bootstrap -- --production --no-optional --ci && link-parent-bin -s true -d false -o false'
+				'npx lerna bootstrap -- --production --no-optional && link-parent-bin -s true -d false -o false'
 			);
 		} else if (argv.packageLockOnly) {
-			return spawn('lerna bootstrap -- --no-optional --package-lock-only');
+			return spawn('npx lerna bootstrap -- --no-optional --package-lock-only');
 		} else if (argv.optional) {
-			return spawn('lerna bootstrap && link-parent-bin');
+			return spawn('npx lerna bootstrap && link-parent-bin');
 		} else {
-			return spawn('lerna bootstrap -- --no-optional && link-parent-bin');
+			return spawn('npx lerna bootstrap -- --no-optional && link-parent-bin');
 		}
 	}
 
@@ -30,14 +31,29 @@ export class Gulpfile {
 		return spawn('git add . && git-cz');
 	}
 
+	@Task('eslint')
+	eslint() {
+		return spawn("eslint '**/*.{js,jsx,ts,tsx}'");
+	}
+
+	@Task('tsc')
+	tsCheck() {
+		return spawn('node --max-old-space-size=4096 node_modules/.bin/tsc --noEmit');
+	}
+
+	@SequenceTask('lint')
+	lint() {
+		return [gulp.parallel(['tsc', 'eslint'])];
+	}
+
 	@Task('dev:exec')
 	exec() {
-		return spawn(`lerna run dev:exec --stream --scope ${argv.scope} -- -- --entry ${argv.entry}`);
+		return spawn(`npx lerna exec "gulp dev:exec --entry ${argv.entry}" --stream --scope ${argv.scope}`);
 	}
 
 	@Task('generate:migration')
 	generateMigration() {
-		return spawn('ts-node -T bin/migration.ts');
+		return spawn('npx ts-node -T bin/migration.ts');
 	}
 
 	/** Test tasks **/
@@ -55,6 +71,7 @@ export class Gulpfile {
 
 		if (argv.it) {
 			args.push('--testRegex=\\.it-spec\\.ts$');
+			args.push('--detectOpenHandles');
 		}
 
 		if (argv.e2e) {
@@ -65,6 +82,7 @@ export class Gulpfile {
 			args.push('--testRegex=\\.it-spec\\.tsx?$');
 			args.push('--testRegex=\\.e2e-spec\\.tsx?$');
 			args.push('--testRegex=\\.spec\\.tsx?$');
+			args.push('--detectOpenHandles');
 		}
 
 		for (const key of Object.keys(argv)) {
@@ -77,12 +95,17 @@ export class Gulpfile {
 			}
 		}
 
-		return spawn(`jest ${args.join(' ')}`);
+		return spawn(`npx jest ${args.join(' ')}`);
 	}
 
 	@Task('test:api')
 	apiTest() {
-		return spawn('ts-node e2e/api/api-test.ts');
+		return spawn('npx ts-node e2e/api/api-test.ts');
+	}
+
+	@Task('typecheck')
+	typeCheck() {
+		return spawn('node --max-old-space-size=4096 node_modules/.bin/tsc --noEmit');
 	}
 
 	/** CI tasks **/

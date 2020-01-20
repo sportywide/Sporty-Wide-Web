@@ -7,8 +7,9 @@ import {
 	resendVerificationEmailSuccess,
 	signupSuccess,
 } from '@web/features/auth/store/actions';
-import { IDependencies } from '@web/shared/lib/store';
+import { IDependencies, ISportyWideStore } from '@web/shared/lib/store';
 import { redirect } from '@web/shared/lib/navigation/helper';
+import { success } from 'react-notification-system-redux';
 
 export const logoutEpic = (action$, state$, { container }: IDependencies) => {
 	return action$.ofType(LOGOUT).pipe(
@@ -16,8 +17,13 @@ export const logoutEpic = (action$, state$, { container }: IDependencies) => {
 			const authService = container.get(AuthService);
 			return authService.logout().pipe(
 				mapTo(logoutSuccess),
-				tap(() => {
-					window.location.href = '/login';
+				tap(async () => {
+					await redirect({
+						context: container.get('context'),
+						route: 'login',
+						replace: true,
+						refresh: true,
+					});
 				})
 			);
 		})
@@ -33,6 +39,7 @@ export const signupEpic = (action$, state$, { container }: IDependencies) => {
 				tap(() => {
 					redirect({
 						refresh: true,
+						replace: true,
 					});
 				})
 			);
@@ -49,6 +56,7 @@ export const loginEpic = (action$, state$, { container }: IDependencies) => {
 				tap(() => {
 					redirect({
 						refresh: true,
+						replace: true,
 					});
 				})
 			);
@@ -60,7 +68,17 @@ export const resendVerificationEpic = (action$, state$, { container }: IDependen
 	return action$.ofType(RESEND_VERIFICATION_EMAIL).pipe(
 		mergeMap(({ payload }) => {
 			const authService = container.get(AuthService);
-			return authService.resendVerficationEmail(payload).pipe(mapTo(resendVerificationEmailSuccess));
+			const observable = authService.resendVerficationEmail(payload).pipe(mapTo(resendVerificationEmailSuccess));
+			observable.subscribe(() => {
+				const store: ISportyWideStore = container.get('store');
+				store.dispatch(
+					success({
+						message: 'An email has been sent',
+						title: 'Success',
+					})
+				);
+			});
+			return observable;
 		})
 	);
 };

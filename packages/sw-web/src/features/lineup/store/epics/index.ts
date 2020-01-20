@@ -1,14 +1,12 @@
 import { concatMap, map } from 'rxjs/operators';
 import {
 	CHANGE_STRATEGY,
-	FETCH_PLAYERS,
 	FILL_POSITIONS,
 	SUBSTITUTE_PLAYERS,
 } from '@web/features/lineup/store/actions/actions.constants';
 import {
 	addPlayerToLineup,
 	changeStrategySuccess,
-	fetchPlayersSuccess,
 	fillPositions,
 	fillPositionSuccess,
 	removePlayerFromLineup,
@@ -17,31 +15,13 @@ import {
 import { IDependencies } from '@web/shared/lib/store';
 import { LineupService } from '@web/features/lineup/services/lineup.service';
 import { Epic } from 'redux-observable';
-import { ActionType, PayloadAction } from 'typesafe-actions';
-import teams from '@web/features/lineup/store/epics/teams.json';
-import players from '@web/features/lineup/store/epics/players.json';
-import { keyBy } from 'lodash';
-import { sortPlayers } from '@web/features/players/utility/player';
+import { ActionType, PayloadMetaAction } from 'typesafe-actions';
 import { ILineupState } from '@web/features/lineup/store/reducers/lineup-reducer';
 import { EMPTY } from 'rxjs';
 
-export const playerEpic = action$ => {
-	return action$.ofType(FETCH_PLAYERS).pipe(
-		map(() => {
-			const teamMap = keyBy(teams, 'name');
-			const playerDtos = players.map(player => ({
-				...player,
-				team: teamMap[player.teamName],
-			}));
-
-			return fetchPlayersSuccess(sortPlayers(playerDtos));
-		})
-	);
-};
-
 export const fillPositionsEpic: Epic<
 	ActionType<typeof fillPositions>,
-	PayloadAction<string, any>,
+	PayloadMetaAction<string, any, any>,
 	{ lineupBuilder: ILineupState },
 	IDependencies
 > = (action$, state$, { container }) => {
@@ -63,7 +43,7 @@ export const fillPositionsEpic: Epic<
 
 export const substitutePlayersEpic: Epic<
 	ActionType<typeof substitutePlayers>,
-	PayloadAction<string, any>,
+	PayloadMetaAction<string, any, any>,
 	{ lineupBuilder: ILineupState }
 > = (action$, state$) => {
 	return action$.ofType(SUBSTITUTE_PLAYERS as any).pipe(
@@ -83,8 +63,8 @@ export const substitutePlayersEpic: Epic<
 
 export const changeStrategyEpic = (action$, $state, { container }) => {
 	const lineupService = container.get(LineupService);
-	return action$.ofType(CHANGE_STRATEGY as any).pipe(
-		map(({ payload: formationName }) => {
+	return action$.ofType(CHANGE_STRATEGY).pipe(
+		map<any, any>(({ payload: formationName }) => {
 			const formation = lineupService.getFormation(formationName);
 			return changeStrategySuccess(formation);
 		})

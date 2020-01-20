@@ -1,7 +1,7 @@
 import React from 'react';
 import { useDrag, useDrop } from 'react-dnd-cjs';
 import { PLAYER, PLAYER_BOX_ZONE, PLAYER_ITEM_ZONE } from '@web/features/lineup/components/item.constant';
-import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
+import { getShortName, UserPlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { PositionDto } from '@shared/lib/dtos/formation/formation.dto';
 import {
 	SwPlayerCircle,
@@ -9,14 +9,16 @@ import {
 	SwPlayerCircleName,
 } from '@web/features/lineup/components/pitch/markers/PlayeCircle.styled';
 import { useEmptyPreviewImage } from '@web/shared/lib/react/hooks';
+import { fifaImage } from '@web/shared/lib/images/links';
 
 interface IProps {
 	rect: any;
-	player: PlayerDto;
+	player: UserPlayerDto;
 	position: PositionDto;
-	onSwapPlayers?: (source: PlayerDto, dest: PlayerDto) => void;
-	onSubstitutePlayer?: (source: PlayerDto, dest: PlayerDto) => void;
-	onRemovePlayerFromLineup?: (player: PlayerDto) => void;
+	onSwapPlayers?: (source: UserPlayerDto, dest: UserPlayerDto) => void;
+	onSubstitutePlayer?: (source: UserPlayerDto, dest: UserPlayerDto) => void;
+	onRemovePlayerFromLineup?: (player: UserPlayerDto) => void;
+	readonly: boolean;
 }
 
 const SwPlayerBoxComponent: React.FC<IProps> = ({
@@ -26,12 +28,14 @@ const SwPlayerBoxComponent: React.FC<IProps> = ({
 	onSwapPlayers,
 	onRemovePlayerFromLineup,
 	onSubstitutePlayer,
+	readonly,
 }) => {
 	const [{ isDragging }, drag, preview] = useDrag({
 		item: { type: PLAYER, player, position, zone: PLAYER_BOX_ZONE },
 		isDragging: monitor => {
 			return monitor.getItem().player === player;
 		},
+		canDrag: !readonly,
 		collect: monitor => ({ isDragging: monitor.isDragging() }),
 		end: (item, monitor) => {
 			if (!monitor.didDrop()) {
@@ -70,14 +74,15 @@ const SwPlayerBoxComponent: React.FC<IProps> = ({
 	return (
 		<SwPlayerCircle
 			ref={connectedRef}
+			canDrag={!readonly}
 			style={{
 				left: rect.width * (position.left / 100),
 				top: rect.height * (position.top / 100),
 			}}
 			isDragging={isDragging}
 		>
-			<SwPlayerCircleAvatar avatar src={player.image} />
-			<SwPlayerCircleName>{player.name}</SwPlayerCircleName>
+			<SwPlayerCircleAvatar avatar src={fifaImage(player.image)} />
+			<SwPlayerCircleName className={'sw-truncate'}>{getShortName(player.name)}</SwPlayerCircleName>
 		</SwPlayerCircle>
 	);
 };

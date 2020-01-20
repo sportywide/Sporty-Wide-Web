@@ -1,0 +1,16 @@
+Resources:
+    FifaTeamTopic:
+        Type: AWS::SNS::Topic
+        Properties:
+            TopicName: fifa-team-topic
+    FifaTeamQueueSubscription:
+        DependsOn: ScoreboardTeamQueue
+        Type: 'AWS::SNS::Subscription'
+        Properties:
+            TopicArn: !Ref FifaTeamTopic
+            Region: ${self:provider.region}
+            Endpoint: !GetAtt
+                - ScoreboardTeamQueue
+                - Arn
+            Protocol: sqs
+            RawMessageDelivery: 'true'

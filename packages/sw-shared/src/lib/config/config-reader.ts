@@ -2,7 +2,6 @@ import nconf from 'nconf';
 import { merge } from 'lodash';
 
 export function getConfigProvider() {
-	//@ts-ignore
 	const provider = new nconf.Provider();
 	provider.key = nconf.key;
 	provider.path = nconf.path;
@@ -18,7 +17,7 @@ export function getConfigProvider() {
 	return provider;
 }
 
-export function createConfig(config, env = 'development') {
+export function createConfig(config = {}, env = 'development') {
 	const nconf = getConfigProvider();
 
 	const envConfig = config[env] || {};

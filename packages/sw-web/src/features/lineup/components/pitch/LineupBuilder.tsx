@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
-import { Button, Grid, Header, Select } from 'semantic-ui-react';
+import { Button, Grid, Select } from 'semantic-ui-react';
 import GridColumn from 'semantic-ui-react/dist/commonjs/collections/Grid/GridColumn';
-import { ILineupState, lineupReducer } from '@web/features/lineup/store/reducers/lineup-reducer';
+import { ILineupState, IPlayerLineupState, lineupReducer } from '@web/features/lineup/store/reducers/lineup-reducer';
 import { connect } from 'react-redux';
 import { compose } from '@shared/lib/utils/fp/combine';
 import { registerReducer } from '@web/shared/lib/redux/register-reducer';
@@ -10,25 +10,23 @@ import {
 	addPlayerToLineup,
 	changeStrategy,
 	clearLineup,
-	fetchPlayers,
 	fillPositions,
+	initLineup,
 	removePlayerFromLineup,
 	substitutePlayers,
 	swapPlayers,
 	switchLineupPositions,
 } from '@web/features/lineup/store/actions';
-import {
-	changeStrategyEpic,
-	fillPositionsEpic,
-	playerEpic,
-	substitutePlayersEpic,
-} from '@web/features/lineup/store/epics';
+import { changeStrategyEpic, fillPositionsEpic, substitutePlayersEpic } from '@web/features/lineup/store/epics';
+import { useFormationOptions } from '@web/shared/lib/react/hooks';
+import { LineupControl } from '@web/features/lineup/components/pitch/LineupBuilder.styled';
 import { SwLineup } from './Lineup';
 import { SwPitch } from './Pitch';
 
 interface IProps {
 	lineupBuilder: ILineupState;
-	fetchPlayers: typeof fetchPlayers;
+	initialLineup: IPlayerLineupState;
+	initLineup: typeof initLineup;
 	addPlayerToLineup: typeof addPlayerToLineup;
 	removePlayerFromLineup: typeof removePlayerFromLineup;
 	swapPlayers: typeof swapPlayers;
@@ -37,12 +35,15 @@ interface IProps {
 	substitutePlayers: typeof substitutePlayers;
 	clearLineup: typeof clearLineup;
 	changeStrategy: typeof changeStrategy;
+	leagueId: number;
+	readonly?: boolean;
 }
 
 const SwLineupBuilderComponent: React.FC<IProps> = function({
 	lineupBuilder,
-	fetchPlayers,
 	addPlayerToLineup,
+	initLineup,
+	initialLineup,
 	swapPlayers,
 	removePlayerFromLineup,
 	fillPositions,
@@ -50,42 +51,41 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 	substitutePlayers,
 	clearLineup,
 	changeStrategy,
+	readonly,
 }) {
 	useEffect(() => {
-		fetchPlayers();
-	}, [fetchPlayers]);
+		initLineup(initialLineup);
+	}, [initLineup, initialLineup]);
+	const options = useFormationOptions();
 	return (
 		<>
-			<Header as={'h2'}>Manchester United</Header>
-			<div className={'sw-mb3'}>
-				<Select
-					className={'sw-mr2'}
-					defaultValue={'4-4-2'}
-					options={[
-						{
-							text: '4-4-2',
-							value: '4-4-2',
-						},
-						{
-							text: '4-3-3',
-							value: '4-3-3',
-						},
-					]}
-					onChange={(e, { value }) => changeStrategy(value as string)}
-				/>
-				<Button primary onClick={() => fillPositions()}>
-					Fill
-				</Button>
-				<Button negative onClick={() => clearLineup()}>
-					Clear
-				</Button>
+			<div>
+				{!readonly && (
+					<LineupControl className={'sw-mb3'}>
+						{lineupBuilder.formation && (
+							<Select
+								className={'sw-mr2 sw-mb2 sw-mt2'}
+								defaultValue={lineupBuilder.formation}
+								options={options}
+								onChange={(e, { value }) => changeStrategy(value as string)}
+							/>
+						)}
+						<Button primary onClick={() => fillPositions()}>
+							Fill
+						</Button>
+						<Button negative onClick={() => clearLineup()}>
+							Clear
+						</Button>
+					</LineupControl>
+				)}
 			</div>
 			<Grid stackable>
 				<GridColumn tablet={'7'}>
-					<SwLineup players={lineupBuilder.players} />
+					<SwLineup readonly={readonly} players={lineupBuilder.players} />
 				</GridColumn>
 				<GridColumn tablet={'9'}>
 					<SwPitch
+						readonly={readonly}
 						strategy={lineupBuilder.strategy}
 						positions={lineupBuilder.positions}
 						onAddPlayerToLineup={(player, index) => addPlayerToLineup({ player, index })}
@@ -102,20 +102,17 @@ const SwLineupBuilderComponent: React.FC<IProps> = function({
 
 const enhance = compose(
 	registerReducer({ lineupBuilder: lineupReducer }),
-	registerEpic(playerEpic, fillPositionsEpic, changeStrategyEpic, substitutePlayersEpic),
-	connect(
-		state => ({ lineupBuilder: state.lineupBuilder }),
-		{
-			fetchPlayers,
-			addPlayerToLineup,
-			removePlayerFromLineup,
-			substitutePlayers,
-			swapPlayers,
-			clearLineup,
-			switchLineupPositions,
-			fillPositions,
-			changeStrategy,
-		}
-	)
+	registerEpic(fillPositionsEpic, changeStrategyEpic, substitutePlayersEpic),
+	connect(state => ({ lineupBuilder: state.lineupBuilder }), {
+		initLineup,
+		addPlayerToLineup,
+		removePlayerFromLineup,
+		substitutePlayers,
+		swapPlayers,
+		clearLineup,
+		switchLineupPositions,
+		fillPositions,
+		changeStrategy,
+	})
 );
 export const SwLineupBuilder = enhance(SwLineupBuilderComponent);

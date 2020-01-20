@@ -21,12 +21,6 @@ ensureNpmInstall();
 // eslint-disable-next-line import/order
 import { argv } from 'yargs';
 const forceInstall = argv.f || argv.force;
-const savePackageLock = argv.save || argv.s;
-const packageLockPath = path.resolve(__dirname, '..', 'package-lock.json');
-let packageLock = '';
-if (fs.existsSync(packageLockPath)) {
-	packageLock = fs.readFileSync(packageLockPath, { encoding: 'utf8' });
-}
 checkLatestInstall();
 
 function checkLatestInstall() {
@@ -117,12 +111,6 @@ function installSubPackagesDependencies() {
 		execSync('npx gulp bootstrap');
 	} else {
 		execSync('npx gulp bootstrap --optional');
-	}
-
-	if (!savePackageLock && packageLock !== '') {
-		fs.writeFileSync(packageLockPath, packageLock, {
-			encoding: 'utf8',
-		});
 	}
 }
 

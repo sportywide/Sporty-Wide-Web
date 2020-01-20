@@ -1,6 +1,7 @@
 import { ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { getRequest } from '@api/utils/context';
+import { bugsnagClient } from '@api/utils/bugsnag';
 
 @Injectable()
 export class LocalAuthGuard extends AuthGuard('local') {
@@ -14,6 +15,7 @@ export class LocalAuthGuard extends AuthGuard('local') {
 		} else if (err || !user) {
 			throw err || new UnauthorizedException();
 		}
+		bugsnagClient.user = user.getBugsnagData();
 		return user;
 	}
 }

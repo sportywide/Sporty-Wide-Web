@@ -1,6 +1,7 @@
 {
 	"name": "sportywide-api",
-	"version": "1.0.3",
+	"version": "0.0.0",
+	"private": true,
 	"description": "This package contains all related API code",
 	"keywords": [],
 	"license": "ISC",
@@ -9,6 +10,7 @@
 		"dev": "gulp dev --color"
 	},
 	"dependencies": {
+		"@bugsnag/plugin-express": "6.5.0",
 		"@nestjs/graphql": "6.5.3",
 		"@nestjs/jwt": "6.1.1",
 		"@nestjs/passport": "6.1.0",
@@ -25,9 +27,9 @@
 		"passport-google-oauth2": "0.2.0",
 		"passport-jwt": "4.0.0",
 		"passport-local": "1.0.0",
-		"sportywide-core": "^1.0.3",
-		"sportywide-schema": "^1.0.3",
-		"sportywide-shared": "^1.0.3",
+		"sportywide-core": "0.0.0",
+		"sportywide-schema": "0.0.0",
+		"sportywide-shared": "0.0.0",
 		"swagger-ui-express": "4.0.7"
 	}
 }

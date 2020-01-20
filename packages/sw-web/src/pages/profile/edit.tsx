@@ -30,7 +30,7 @@ class SwEditProfilePage extends React.Component<IProps> {
 
 	render() {
 		if (!(this.props.userProfile && this.props.userProfile.basic)) {
-			return <Loader />;
+			return <Loader active />;
 		}
 		return (
 			<SwGreyBackground>
@@ -58,12 +58,9 @@ const enhancer = compose(
 		saveBasicUserProfileEpic,
 		saveExtraUserProfileEpic
 	),
-	connect(
-		state => ({ userProfile: state.userProfile, user: state.auth && state.auth.user }),
-		{
-			fetchUserProfile,
-		}
-	)
+	connect(state => ({ userProfile: state.userProfile, user: state.auth && state.auth.user }), {
+		fetchUserProfile,
+	})
 );
 
 export default enhancer(SwEditProfilePage);

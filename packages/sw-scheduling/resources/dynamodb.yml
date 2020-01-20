@@ -1,0 +1,26 @@
+Resources:
+    FixtureProcessTable:
+        Type: 'AWS::DynamoDB::Table'
+        Properties:
+            TableName: fixture-process
+            AttributeDefinitions:
+                - AttributeName: matchUrl
+                  AttributeType: S
+                - AttributeName: status
+                  AttributeType: S
+            KeySchema:
+                - AttributeName: matchUrl
+                  KeyType: HASH
+            ProvisionedThroughput:
+                ReadCapacityUnits: 5
+                WriteCapacityUnits: 5
+            GlobalSecondaryIndexes:
+                - IndexName: statusIndex
+                  KeySchema:
+                      - AttributeName: status
+                        KeyType: HASH
+                  Projection:
+                      ProjectionType: ALL
+                  ProvisionedThroughput:
+                      ReadCapacityUnits: 5
+                      WriteCapacityUnits: 5

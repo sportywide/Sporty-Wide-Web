@@ -2,18 +2,23 @@ import { DATA_CONFIG } from '@core/config/config.constants';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { WorkerQueueService } from '@core/worker/worker-queue.service';
 import { SwPage } from '@data/core/browser/browser.class';
-import { PuppeteerService } from '@data/core/browser/browser.service';
 import { Inject, Injectable } from '@nestjs/common';
-import { leagues as popularLeagues } from '@data/data.constants';
+import { leagues as popularLeagues } from '@shared/lib/data/data.constants';
 import { sleep } from '@shared/lib/utils/sleep';
 import { AxiosInstance } from 'axios';
 import Cheerio from 'cheerio';
-import { format, isSameDay } from 'date-fns';
+import { format, isSameDay, parse } from 'date-fns';
 import { Logger } from 'log4js';
 import { Provider } from 'nconf';
-import { BrowserService } from './browser.service';
+import { ResultsService } from '@data/crawler/results.service';
+import { BrowserService } from '@data/crawler/browser.service';
+import { keyBy, last, sum } from 'lodash';
+import { nothing } from '@shared/lib/utils/functions';
+import { WhoscoreFixture } from '@shared/lib/dtos/fixture/fixture.dto';
+import { WhoscorePlayerRating } from '@shared/lib/dtos/player/player-rating.dto';
 
 const popularLeagueIds = popularLeagues.map(({ whoscoreId }) => whoscoreId);
+const whoscoreLeagueMap = keyBy(popularLeagues, 'whoscoreId');
 
 const WHOSCORE_URL = 'https://www.whoscored.com';
 const PAGE_TIMEOUT = 60000;
@@ -21,15 +26,16 @@ const DATA_TIMEOUT = 30000;
 const MAX_ATTEMPTS = 4;
 
 @Injectable()
-export class WhoScoreCrawlerService extends BrowserService {
+export class WhoScoreCrawlerService extends ResultsService {
 	private readonly axios: AxiosInstance;
+
 	constructor(
-		puppeteerService: PuppeteerService,
 		@Inject(DATA_CONFIG) config: Provider,
 		private readonly workerQueueService: WorkerQueueService,
-		@Inject(DATA_LOGGER) private readonly dataLogger: Logger
+		@Inject(DATA_LOGGER) private readonly dataLogger: Logger,
+		private readonly browserService: BrowserService
 	) {
-		super(puppeteerService, config);
+		super();
 	}
 
 	async getLiveMatches(date: Date) {
@@ -38,13 +44,12 @@ export class WhoScoreCrawlerService extends BrowserService {
 		for (let i = 0; i < MAX_ATTEMPTS; i++) {
 			try {
 				this.dataLogger.info(`Attempt ${i + 1}: Getting matches for date`, dateString);
-				const browser = await this.browser();
+				const browser = await this.browserService.browser();
 				page = await browser.newPage();
-				browser.setQuiet(true);
 				await this.navigateTo(page, '/LiveScores#');
-				browser.setQuiet(false);
 				await this.selectDate(page, date);
-				const leagueMap = await this.expandIncidents(page);
+				await this.expandLiveScoreIncidents(page);
+				const leagueMap = await this.getPopularLeagueMap(page);
 				const content = await page.content();
 				await page.close();
 				const $ = Cheerio.load(content);
@@ -65,22 +70,92 @@ export class WhoScoreCrawlerService extends BrowserService {
 		for (let i = 0; i < MAX_ATTEMPTS; i++) {
 			try {
 				this.dataLogger.info(`Attempt ${i + 1}: Getting leagues`);
-				const browser = await this.browser();
+				const browser = await this.browserService.browser();
 				page = await browser.newPage();
-				browser.setQuiet(true);
 				await this.navigateTo(page, '/', {
 					waitUntil: ['domcontentloaded'],
 				});
-				browser.setQuiet(false);
 				const content = await page.content();
 				return this.parseLeagues(Cheerio.load(content));
 			} catch (e) {
-				this.dataLogger.error(`Failed to get leagues`);
+				this.dataLogger.error(`Failed to get leagues`, e);
 				if (page) {
 					await page.close();
 				}
 			}
 		}
+	}
+
+	async getMonthlyFixtures(leagueUrl) {
+		let page;
+		for (let i = 0; i < MAX_ATTEMPTS; i++) {
+			try {
+				this.dataLogger.info(`Attempt ${i + 1}: Getting monthly fixture ${leagueUrl}`);
+				const browser = await this.browserService.browser();
+				page = await browser.newPage();
+				await this.navigateTo(page, leagueUrl, {
+					waitUntil: ['domcontentloaded'],
+				});
+				const fixtureLink = await page.$eval('#sub-navigation > ul > li:nth-child(2) > a', element => {
+					return element.getAttribute('href');
+				});
+				await this.navigateTo(page, fixtureLink, {
+					waitUntil: ['domcontentloaded'],
+				});
+				await page.waitForSelector('#tournament-fixture', {
+					visible: true,
+					timeout: DATA_TIMEOUT,
+				});
+				await this.expandFixtureIncidents(page);
+				const content = await page.content();
+				let [, leagueId] = leagueUrl.match(/Regions\/\d+\/Tournaments\/(\d+)\//);
+				leagueId = parseInt(leagueId, 10);
+				return this.parseFixtureTable(leagueId, Cheerio.load(content));
+			} catch (e) {
+				this.dataLogger.error(`Failed to get leagues`, e);
+				if (page) {
+					await page.close();
+				}
+			}
+		}
+	}
+
+	private async expandFixtureIncidents(page: SwPage) {
+		const linkHandles = await page.$$('.item .show-incidents');
+		await Promise.all(
+			linkHandles.map(async linkHandle => {
+				const matchId = await linkHandle.evaluate((element: any) => {
+					element.click();
+					return element.closest('.item').getAttribute('data-id');
+				});
+				return page
+					.waitForResponse(`${WHOSCORE_URL}/matchesfeed/${matchId}/IncidentsSummary/`)
+					.then(nothing, nothing);
+			})
+		);
+	}
+
+	private parseFixtureTable(leagueId: number, $: CheerioStatic): WhoscoreFixture[] {
+		const fixtureTable = $('#tournament-fixture');
+		const fixtureRows = fixtureTable.find('tr.item');
+		return Array.from(fixtureRows).map(fixtureNode => {
+			const fixtureElement = $(fixtureNode);
+			const dateElement = fixtureElement
+				.prevUntil('.rowgroupheader')
+				.last()
+				.prev();
+			const dateStr = dateElement.find('th').text();
+			const date = parse(dateStr, 'EEEE, MMM d yyyy', new Date());
+			const matchDetails = this.parseMatchDetails(fixtureElement, date);
+			const matchId = fixtureElement.data('id');
+			const incidents = this.parseIncident($, fixtureTable, `m${matchId}`);
+
+			return {
+				...matchDetails,
+				whoscoreLeagueId: leagueId,
+				incidents,
+			};
+		});
 	}
 
 	private parseLeagues($: CheerioStatic) {
@@ -89,18 +164,49 @@ export class WhoScoreCrawlerService extends BrowserService {
 				const link = $(linkNode);
 				return link.attr('href');
 			})
-			.filter(link => {
+			.map(link => {
 				const [, leagueId] = link.match(/Regions\/\d+\/Tournaments\/(\d+)\//);
-				return popularLeagueIds.includes(parseInt(leagueId, 10));
-			});
+				const whoscoreLeagueId = parseInt(leagueId, 10);
+				if (!whoscoreLeagueMap[whoscoreLeagueId]) {
+					return;
+				}
+				return {
+					link,
+					league: whoscoreLeagueMap[whoscoreLeagueId],
+				};
+			})
+			.filter(data => data);
 	}
 
-	private async expandIncidents(page: SwPage) {
+	private async getPopularLeagueMap(page: SwPage) {
+		return page.$$eval(
+			'.group .group-name-container .tournament-link',
+			(groups, popularLeagueIds) => {
+				const popularLeagueMap = {};
+				groups.forEach(group => {
+					const link = group.getAttribute('href');
+					if (!link) {
+						return false;
+					}
+					const [, leagueId, stageId] = link.match(
+						/Regions\/\d+\/Tournaments\/(\d+)\/Seasons\/\d+\/Stages\/(\d+)/
+					);
+					if (!popularLeagueIds.includes(parseInt(leagueId, 10))) {
+						return false;
+					}
+					popularLeagueMap[stageId] = leagueId;
+				});
+				return popularLeagueMap;
+			},
+			popularLeagueIds
+		);
+	}
+
+	private async expandLiveScoreIncidents(page: SwPage) {
 		return page.$$eval(
 			'.item .show-incidents',
 			(expandArrows, popularLeagueIds) => {
-				const popularLeagueMap = {};
-				expandArrows.filter(expandArrow => {
+				expandArrows.forEach(expandArrow => {
 					const item = expandArrow.closest('.item');
 					if (!item) {
 						return false;
@@ -119,9 +225,7 @@ export class WhoScoreCrawlerService extends BrowserService {
 						return false;
 					}
 					(expandArrow as any).click();
-					popularLeagueMap[stageId] = leagueId;
 				});
-				return popularLeagueMap;
 			},
 			popularLeagueIds
 		);
@@ -153,7 +257,7 @@ export class WhoScoreCrawlerService extends BrowserService {
 		await this.waitForResults(page, date, !isToday);
 	}
 
-	private parseLiveScores($: CheerioStatic, date, leagueMap): any[] {
+	private parseLiveScores($: CheerioStatic, date, leagueMap): WhoscoreFixture[] {
 		const resultTable = $('#livescores > table');
 		const scores = resultTable.find('tr.item');
 		return Array.from(scores)
@@ -167,86 +271,95 @@ export class WhoScoreCrawlerService extends BrowserService {
 				const groupElement = resultTable.find(`#g${groupId}`);
 				const tournamentLink = groupElement.find('.tournament-link').attr('href');
 				const [, whoscoreLeagueId] = /\/Regions\/\d+\/Tournaments\/(\d+)/.exec(tournamentLink);
-				let [, league] = groupElement
-					.find('.group-name')
-					.text()
-					.split('-');
-				league = league.trim().replace(/^\d+\./, '');
-				const time = resultElement.find('td.time').text();
-				const [hour, minute] = time.split(':').map(number => parseInt(number, 10));
-				let status =
-					resultElement
-						.find('.status .rc')
-						.text()
-						.trim() || 'PENDING';
-				let current;
-				if (['FT', 'HT'].includes(status)) {
-					current = status === 'FT' ? 90 : 45;
-				} else if (status !== 'PENDING') {
-					current = parseInt(status);
-					status = 'ACTIVE';
-				}
-				const home = resultElement.find('.team.home .team-name').text();
-				const away = resultElement.find('.team.away .team-name').text();
-				const resultLinkElement = resultElement.find('.result .rc');
-				const result = resultLinkElement.text();
-				const link = (resultLinkElement.attr('href') || '').replace(
-					/^\/Matches\/(.*)\/Live/,
-					'/Matches/$1/LiveStatistics'
-				);
-				const [homeScore, awayScore] = result.split(':').map(score => parseInt(score, 10));
-				const matchDate = new Date(date);
-				matchDate.setHours(hour);
-				matchDate.setMinutes(minute);
-				matchDate.setSeconds(0);
-
-				const incidentElements = resultTable.find(`.incident[data-match-id="${matchId}"]`);
-				const incidents = Array.from(incidentElements)
-					.map(incidentNode => {
-						const incidentElement = $(incidentNode);
-						const iconElement = incidentElement.find('.incidents-icon');
-						const isValid = ['i-rcard', 'i-goal'].some(iconClass => iconElement.hasClass(iconClass));
-						if (!isValid) {
-							return null;
-						}
-						const incidentType = iconElement.hasClass('i-goal') ? 'goal' : 'red-card';
-						const player = incidentElement.find('.player-link').text();
-						const isHome =
-							incidentElement
-								.find('.team.home')
-								.text()
-								.trim() !== '';
-						const goalInfo = incidentElement.find('.goal-info').text();
-						const minute = parseInt(incidentElement.find('.minute').text());
-
-						return {
-							player,
-							home: isHome,
-							minute,
-							type: incidentType,
-							info: goalInfo,
-						};
-					})
-					.filter(incident => incident);
+				const matchDetails = this.parseMatchDetails(resultElement, date);
+				const incidents = this.parseIncident($, resultTable, matchId);
 				return {
-					time: matchDate,
-					home,
-					away,
-					homeScore,
-					link,
-					whoscoreLeagueId,
-					league,
-					awayScore,
-					current,
-					status,
+					...matchDetails,
+					whoscoreLeagueId: parseInt(whoscoreLeagueId),
 					incidents,
 				};
 			})
 			.filter(data => data);
 	}
 
+	private parseMatchDetails(matchElement, date) {
+		const time = matchElement.find('td.time').text();
+		const [hour, minute] = time.split(':').map(number => parseInt(number, 10));
+		let status =
+			matchElement
+				.find('.status .rc')
+				.text()
+				.trim() || 'PENDING';
+		let current;
+		if (['FT', 'HT'].includes(status)) {
+			current = status === 'FT' ? 90 : 45;
+		} else if (status !== 'PENDING') {
+			current = parseInt(status);
+			status = 'ACTIVE';
+		}
+		const home = matchElement.find('.team.home .team-link').text();
+		const away = matchElement.find('.team.away .team-link').text();
+		const resultLinkElement = matchElement.find('.result .rc');
+		const result = resultLinkElement.text();
+		const link = (resultLinkElement.attr('href') || '').replace(
+			/^\/Matches\/(.*)\/(Live|Show|LiveStatistics)/,
+			'/Matches/$1/Live'
+		);
+		let homeScore = 0,
+			awayScore = 0;
+		if (status !== 'PENDING') {
+			[homeScore, awayScore] = result.split(':').map(score => parseInt(score.trim(), 10));
+		}
+		const matchDate = new Date(date);
+		matchDate.setHours(hour);
+		matchDate.setMinutes(minute);
+		matchDate.setSeconds(0);
+
+		return {
+			time: matchDate,
+			home,
+			away,
+			homeScore,
+			link,
+			awayScore,
+			current: current || 0,
+			status,
+		};
+	}
+
+	private parseIncident($: CheerioStatic, tableElement, matchId) {
+		const incidentElements = tableElement.find(`.incident[data-match-id="${matchId}"]`);
+		return Array.from(incidentElements)
+			.map(incidentNode => {
+				const incidentElement = $(incidentNode);
+				const iconElement = incidentElement.find('.incidents-icon');
+				const isValid = ['i-rcard', 'i-goal'].some(iconClass => iconElement.hasClass(iconClass));
+				if (!isValid) {
+					return null;
+				}
+				const incidentType = iconElement.hasClass('i-goal') ? 'goal' : 'red-card';
+				const player = incidentElement.find('.player-link').text();
+				const isHome =
+					incidentElement
+						.find('.team.home')
+						.text()
+						.trim() !== '';
+				const goalInfo = incidentElement.find('.goal-info').text();
+				const minute = parseInt(incidentElement.find('.minute').text());
+
+				return {
+					player,
+					home: isHome,
+					minute,
+					type: incidentType,
+					info: goalInfo,
+				};
+			})
+			.filter(incident => incident);
+	}
+
 	async getRatings(matchLinks) {
-		const browser = await this.browser();
+		const browser = await this.browserService.browser();
 		const workerQueue = this.workerQueueService.newWorker({
 			worker: async () => {
 				return browser.newPage();
@@ -254,26 +367,26 @@ export class WhoScoreCrawlerService extends BrowserService {
 			logger: this.dataLogger,
 			maximumWorkers: 3,
 		});
-		const result = {};
+		const result: { [key: string]: { home: WhoscorePlayerRating[]; away: WhoscorePlayerRating[] } } = {};
 		await workerQueue.submit(
 			async (page: SwPage, link: string) => {
 				for (let i = 0; i < MAX_ATTEMPTS; i++) {
 					try {
 						this.dataLogger.info(`Attempt ${i + 1}: Getting ratings for match`, link);
-						browser.setQuiet(true);
 						await this.navigateTo(page, link);
-						browser.setQuiet(false);
 						await this.waitForRatings(page);
-						const content = await page.content();
-						const $ = Cheerio.load(content);
-						result[link] = this.parseRatingPage($);
+						const matchCentreData = await page.evaluate(() => {
+							// eslint-disable-next-line no-undef
+							return (window as any).matchCentreData;
+						});
+						result[link] = this.parseMatchRatings(matchCentreData);
 						break;
 					} catch (e) {
 						this.dataLogger.error(`Failed to get ratings for match ${link}`, e);
+						result[link] = null;
 						if (e.nonRecoverable) {
 							break;
 						}
-						result[link] = null;
 						await sleep(1500 * (i + 1));
 					}
 				}
@@ -287,92 +400,68 @@ export class WhoScoreCrawlerService extends BrowserService {
 		return result;
 	}
 
-	private parseRatingPage($: CheerioStatic) {
-		const homePlayers = $(
-			'#live-player-home-summary #top-player-stats-summary-grid #player-table-statistics-body > tr'
-		);
-		if (homePlayers.length <= 1) {
-			throw new Error('Failed to fetch data');
-		}
-		const awayPlayers = $(
-			'#live-player-away-summary #top-player-stats-summary-grid #player-table-statistics-body > tr'
-		);
-		if (awayPlayers.length <= 1) {
-			throw new Error('Failed to fetch data');
-		}
+	private parseMatchRatings(matchCenterData) {
 		return {
-			home: this.parseRatingTable(homePlayers, $),
-			away: this.parseRatingTable(awayPlayers, $),
+			home: this.parsePlayerRatings(matchCenterData.home),
+			away: this.parsePlayerRatings(matchCenterData.away),
 		};
 	}
 
-	private parseRatingTable(playerElements: Cheerio, $: CheerioStatic) {
-		return Array.from(playerElements).map(playerNode => {
-			const playerElement = $(playerNode);
-			const playerName = playerElement
-				.find('.player-link')
-				.text()
-				.replace(/\(.*\)/, '')
-				.trim();
-			const playerPosition = playerElement
-				.find('.pn > .player-meta-data')
-				.eq(1)
-				.text()
-				.replace(',', '')
-				.trim();
-			let rating: string | number = parseFloat(playerElement.find('.rating').text());
-			if (isNaN(rating)) {
-				rating = 'N/A';
-			}
-			const touches = parseInt(playerElement.find('.Touches').text(), 10);
-			const shotsTotal = parseInt(playerElement.find('.ShotsTotal').text(), 10);
-			const shotsOnTarget = parseInt(playerElement.find('.ShotOnTarget').text(), 10);
-			const keyPassTotal = parseInt(playerElement.find('.KeyPassTotal').text(), 10);
-			const passSuccessInMatch = parseFloat(playerElement.find('.PassSuccessInMatch').text());
-			const duelAerialWon = parseInt(playerElement.find('.DuelAerialWon').text(), 10);
-
-			return {
-				name: playerName,
-				position: playerPosition,
-				rating,
-				touches,
-				shotsTotal,
-				shotsOnTarget,
-				keyPassTotal,
-				passSuccessInMatch,
-				duelAerialWon,
-			};
-		});
+	private parsePlayerRatings(teamData): WhoscorePlayerRating[] {
+		return Array.from(teamData.players)
+			.map((playerData: any) => {
+				const stats = playerData.stats;
+				if (!Object.values(stats).length) {
+					return null;
+				}
+				const rating: any = last(Object.values(stats.ratings || {})) || -1;
+				return {
+					name: playerData.name,
+					position: playerData.position,
+					shirt: playerData.shirtNo,
+					rating: parseFloat(rating),
+					touches: sum(Object.values(stats.touches || {})),
+					shotsTotal: sum(Object.values(stats.shotsTotal || {})),
+					shotsOffTarget: sum(Object.values(stats.shotsOffTarget || {})),
+					tacklesTotal: sum(Object.values(stats.tacklesTotal || {})),
+					tackleSuccessful: sum(Object.values(stats.tackleSuccessful || {})),
+					keyPassTotal: sum(Object.values(stats.passesKey || {})),
+					totalPasses: sum(Object.values(stats.passesTotal || {})),
+					passesAccurate: sum(Object.values(stats.passesAccurate || {})),
+					duelAerialTotal: sum(Object.values(stats.aerialsTotal || {})),
+					duelAerialWon: sum(Object.values(stats.aerialsWon || {})),
+				};
+			})
+			.filter(data => data);
 	}
 
 	private async waitForRatings(page: SwPage) {
-		await page.waitForSelector('#statistics-table-home-summary-loading', {
+		const status = await page.$eval('#match-header > table > tbody dl > dd.status > span', element =>
+			element.textContent.trim()
+		);
+		if (status !== 'FT') {
+			throw new NonRecoverable('Match not finished');
+		}
+		await page.waitForSelector('#live-match', {
 			timeout: DATA_TIMEOUT,
-			hidden: true,
-		});
-
-		await page.waitForSelector('#statistics-table-away-summary-loading', {
-			timeout: DATA_TIMEOUT,
-			hidden: true,
+			visible: true,
 		});
 	}
 
 	private async navigateTo(page: SwPage, url, options = {}) {
+		page.browser().setQuiet(true);
 		const response = await page.navigateTo(`${WHOSCORE_URL}${url}`, {
 			cookieSelector: '#qcCmpButtons > button:nth-child(2)',
-			options: {
-				timeout: PAGE_TIMEOUT,
-				waitUntil: ['domcontentloaded'],
-				...options,
-			},
+			options: { timeout: PAGE_TIMEOUT, waitUntil: ['domcontentloaded'], ...options },
 		});
 
-		if (response!.status() === 403) {
+		if (response && response.status() === 403) {
 			throw new Error(`Failed to access page ${url}`);
 		}
 		if (page.url().includes('404.html')) {
 			throw new NonRecoverable('404');
 		}
+		page.browser().setQuiet(true);
 		return response;
 	}
 

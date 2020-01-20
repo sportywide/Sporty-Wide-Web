@@ -1,7 +1,14 @@
-import { ok } from '@scheduling/lib/http';
+import { error, ok } from '@scheduling/lib/http';
+import { getLogger } from '@scheduling/lib/scheduling.module';
 
 export async function handler() {
-	return ok({
-		message: 'OK',
-	});
+	try {
+		return ok({
+			message: 'OK',
+		});
+	} catch (e) {
+		const logger = getLogger(module);
+		logger.error(__filename, e);
+		return error(e);
+	}
 }

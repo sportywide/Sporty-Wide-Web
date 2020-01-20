@@ -5,3 +5,248 @@ test:
               cors: true
               path: test
               method: get
+
+fetch-teams:
+    handler: src/lambda/crawl/fetch-teams.handler
+    events:
+        - http:
+              cors: true
+              path: teams
+              method: get
+        - schedule: cron(0 0 * * ? *)
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:putObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
+
+fetch-players:
+    handler: src/lambda/crawl/fetch-players.handler
+    events:
+        - sns: arn:aws:sns:ap-southeast-2:${self:custom.aws.accountId}:fifa-team-topic
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:*
+          Resource: arn:aws:s3:::sw-data-bucket/*
+
+fetch-all-fixtures:
+    handler: src/lambda/crawl/fetch-all-fixtures.handler
+    events:
+        - sns: arn:aws:sns:ap-southeast-2:${self:custom.aws.accountId}:fifa-team-topic
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:putObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
+
+fetch-league-result:
+    handler: src/lambda/crawl/fetch-league-result.handler
+    events:
+        - sqs:
+              arn:
+                  Fn::GetAtt: [ScoreboardTeamQueue, Arn]
+              batchSize: 1
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:putObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
+
+fetch-player-stat:
+    handler: src/lambda/crawl/fetch-player-stat.handler
+    events:
+        - sqs:
+              arn:
+                  Fn::GetAtt: [ScoreboardPlayerQueue, Arn]
+              batchSize: 1
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:*
+          Resource: arn:aws:s3:::sw-data-bucket/*
+
+save-teams:
+    handler: src/lambda/persist/save-teams.handler
+    events:
+        - s3:
+              bucket: sw-data-bucket
+              event: s3:ObjectCreated:*
+              rules:
+                  - prefix: teams/fifa/
+                  - suffix: .json
+              existing: true
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - sns:*
+          Resource: arn:aws:sns:${self:provider.region}:${self:custom.aws.accountId}:fifa-team-topic
+        - Effect: 'Allow'
+          Action:
+              - s3:getObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
+
+save-players:
+    handler: src/lambda/persist/save-players.handler
+    events:
+        - s3:
+              bucket: sw-data-bucket
+              event: s3:ObjectCreated:*
+              rules:
+                  - prefix: players/fifa/
+                  - suffix: .json
+              existing: true
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:getObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
+
+save-fixtures:
+    handler: src/lambda/persist/save-fixture.handler
+    events:
+        - s3:
+              bucket: sw-data-bucket
+              event: s3:ObjectCreated:*
+              rules:
+                  - prefix: fixtures
+                  - suffix: .json
+              existing: true
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:getObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
+
+save-league-result:
+    handler: src/lambda/persist/save-league-result.handler
+    events:
+        - s3:
+              bucket: sw-data-bucket
+              event: s3:ObjectCreated:*
+              rules:
+                  - prefix: teams/scoreboard
+                  - suffix: .json
+              existing: true
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:getObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
+        - Effect: 'Allow'
+          Action:
+              - sqs:*
+          Resource: arn:aws:sqs:ap-southeast-2:${self:custom.aws.accountId}:scoreboard-player-queue
+
+save-player-stat:
+    handler: src/lambda/persist/save-player-stat.handler
+    events:
+        - s3:
+              bucket: sw-data-bucket
+              event: s3:ObjectCreated:*
+              rules:
+                  - prefix: players/scoreboard
+                  - suffix: .json
+              existing: true
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:getObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
+
+fetch-scoreboard:
+    handler: src/lambda/crawl/fetch-scoreboard-cron.handler
+    events:
+        - schedule:
+              rate: rate(15 minutes)
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - sqs:*
+          Resource: arn:aws:sqs:ap-southeast-2:${self:custom.aws.accountId}:scoreboard-team-queue
+
+fetch-live-score:
+    handler: src/lambda/crawl/fetch-live-score.handler
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - dynamodb:*
+          Resource: arn:aws:dynamodb:ap-southeast-2:${self:custom.aws.accountId}:table/fixture-process
+        - Effect: 'Allow'
+          Action:
+              - events:putRule
+              - events:putTargets
+          Resource: '*'
+    events:
+        - schedule: cron(0 0 * * ? *)
+
+fetch-whoscore-league:
+    handler: src/lambda/crawl/fetch-whoscore-league.handler
+    events:
+        - schedule: cron(0 0 * * ? *)
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - sqs:*
+          Resource: arn:aws:sqs:ap-southeast-2:${self:custom.aws.accountId}:whoscore-league-link
+
+fetch-monthly-fixture:
+    handler: src/lambda/crawl/fetch-monthly-fixture.handler
+    events:
+        - sqs:
+              arn:
+                  Fn::GetAtt: [WhoscoreLeagueQueue, Arn]
+              batchSize: 1
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:putObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
+save-monthly-fixture:
+    handler: src/lambda/persist/save-monthly-fixture.handler
+    events:
+        - s3:
+              bucket: sw-data-bucket
+              event: s3:ObjectCreated:*
+              rules:
+                  - prefix: monthly-fixtures/whoscore
+                  - suffix: .json
+              existing: true
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - s3:getObject
+          Resource: arn:aws:s3:::sw-data-bucket/*
+        - Effect: 'Allow'
+          Action:
+              - dynamodb:*
+          Resource: arn:aws:dynamodb:ap-southeast-2:${self:custom.aws.accountId}:table/fixture-process
+
+rating-scheduler:
+    handler: src/lambda/worker/rating-scheduler.handler
+    events:
+        - schedule: rate(15 minutes)
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - dynamodb:*
+          Resource:
+              - arn:aws:dynamodb:ap-southeast-2:${self:custom.aws.accountId}:table/fixture-process
+              - arn:aws:dynamodb:ap-southeast-2:${self:custom.aws.accountId}:table/fixture-process/index/statusIndex
+        - Effect: 'Allow'
+          Action:
+              - sqs:*
+          Resource: arn:aws:sqs:ap-southeast-2:${self:custom.aws.accountId}:rating-queue
+
+fetch-rating:
+    handler: src/lambda/crawl/fetch-rating.handler
+    events:
+        - sqs:
+              arn:
+                  Fn::GetAtt: [RatingQueue, Arn]
+              batchSize: 10
+    iamRoleStatements:
+        - Effect: 'Allow'
+          Action:
+              - dynamodb:*
+          Resource: arn:aws:dynamodb:ap-southeast-2:${self:custom.aws.accountId}:table/fixture-process

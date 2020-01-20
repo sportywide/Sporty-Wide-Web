@@ -3,15 +3,14 @@ import { ApiModelProperty } from '@shared/lib/utils/api/decorators';
 import { Editable } from '@shared/lib/utils/decorators/permissions';
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { AddressDto } from '@shared/lib/dtos/address/address.dto';
-import { Expose, Type } from 'class-transformer-imp';
 import { Field, Int, ObjectType } from '@shared/lib/utils/api/graphql';
+import { Type } from 'class-transformer-imp';
 
 @ObjectType()
 @schema()
 export class UserProfileDto {
 	@Field(() => Int)
 	@ApiModelProperty()
-	@Expose()
 	id: number;
 
 	@Field({ nullable: true })
@@ -40,6 +39,5 @@ export class UserProfileDto {
 
 	@Field({ nullable: true })
 	@ApiModelProperty()
-	@Expose()
 	addressId: number;
 }

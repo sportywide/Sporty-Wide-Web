@@ -1,30 +1,10 @@
-import os from 'os';
-import { log } from 'util';
 import { Inject, Injectable } from '@nestjs/common';
 import { Provider } from 'nconf';
 import { mergeConcatArray } from '@shared/lib/utils/object/merge';
 import log4j, { Configuration } from 'log4js';
 import { CORE_CONFIG } from '@core/config/config.constants';
-import { isProduction } from '@shared/lib/utils/env';
-
-function filenameToken(logEvent) {
-	return logEvent.fileName ? logEvent.fileName.replace(__dirname, '').replace(/^\/webpack:/, '') : '';
-}
-
-const colorPatternLayout = {
-	type: 'pattern',
-	pattern: '%[ %d %p %c %] %h (%x{file}:%l) %m%n',
-	tokens: {
-		file: filenameToken,
-	},
-};
-const defaultPatternLayout = {
-	type: 'pattern',
-	pattern: '%d %p %c  %h (%x{file}:%l) %m%n',
-	tokens: {
-		file: filenameToken,
-	},
-};
+import { logzAppender } from '@shared/lib/utils/logging/logz';
+import { colorPatternLayout, defaultPatternLayout } from '@shared/lib/utils/logging/layout';
 
 @Injectable()
 export class LoggerProviderFactory {
@@ -48,7 +28,7 @@ export class LoggerProviderFactory {
 					// @ts-ignore
 					enableCallStack: true,
 				},
-				http: {
+				'api-http': {
 					appenders: [],
 					level: defaultLevel,
 					// @ts-ignore
@@ -61,13 +41,11 @@ export class LoggerProviderFactory {
 			log4jsConfig = this.buildFileLoggingConfig(coreConfig, log4jsConfig);
 		}
 
-		if (this.isLogstashEnabled(coreConfig)) {
-			log4jsConfig = this.buildLogStashConfig(log4jsConfig, coreConfig);
+		if (this.isLogzEnabled(coreConfig)) {
+			log4jsConfig = this.buildLogzConfig(log4jsConfig, coreConfig);
 		}
 
-		if (!isProduction()) {
-			log4jsConfig = this.buildConsoleConfig(log4jsConfig);
-		}
+		log4jsConfig = this.buildConsoleConfig(log4jsConfig);
 
 		for (const category of Object.keys(log4jsConfig.categories)) {
 			if (!log4jsConfig.categories[category].appenders.length) {
@@ -90,33 +68,28 @@ export class LoggerProviderFactory {
 				default: {
 					appenders: ['console'],
 				},
+				'api-http': {
+					appenders: [],
+				},
 			},
 		});
 		return log4jsConfig;
 	}
 
-	private buildLogStashConfig(log4jsConfig: Configuration, coreConfig) {
+	private buildLogzConfig(log4jsConfig: Configuration, coreConfig) {
 		log4jsConfig = mergeConcatArray(log4jsConfig, {
 			appenders: {
-				logstash: {
-					type: 'log4js-logstash-tcp',
-					category: 'default',
-					host: coreConfig.get('logging:logstash:host'),
-					port: coreConfig.get('logging:logstash:port'),
-					fields: {
-						source: 'sportywide',
-						environment: os.hostname(),
-						group: process.env.NODE_ENV,
-					},
+				logz: {
+					type: logzAppender(coreConfig.get('logging:logz:token')),
 					layout: defaultPatternLayout,
 				},
 			},
 			categories: {
 				default: {
-					appenders: ['logstash'],
+					appenders: ['logz'],
 				},
-				http: {
-					appenders: ['logstash'],
+				'api-http': {
+					appenders: ['logz'],
 				},
 			},
 		});
@@ -137,7 +110,7 @@ export class LoggerProviderFactory {
 					type: 'dateFile',
 					filename: `${logPath}/access.log`,
 					pattern: '-yyyy-MM-dd',
-					category: 'http',
+					category: 'api-http',
 					layout: defaultPatternLayout,
 				},
 				app: {
@@ -163,7 +136,7 @@ export class LoggerProviderFactory {
 				default: {
 					appenders: ['app', 'errors'],
 				},
-				http: {
+				'api-http': {
 					appenders: ['access'],
 				},
 			},
@@ -175,7 +148,7 @@ export class LoggerProviderFactory {
 		return !!config.get('logging:file');
 	}
 
-	private isLogstashEnabled(config) {
-		return !!config.get('logging:logstash');
+	private isLogzEnabled(config) {
+		return !!config.get('logging:logz');
 	}
 }

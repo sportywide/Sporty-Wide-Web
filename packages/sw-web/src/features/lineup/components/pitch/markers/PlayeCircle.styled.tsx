@@ -13,6 +13,15 @@ export const SwPlayerCircle = styled.div`
 		`
 			 opacity: 0.4;
 		`}
+
+	${({ canDrag }) =>
+		!canDrag &&
+		`
+			img {
+				user-drag: none; 
+				user-select: none;
+			}
+		`}
 `;
 
 export const SwPlayerCircleAvatar = styled(Image)`
@@ -23,6 +32,15 @@ export const SwPlayerCircleAvatar = styled(Image)`
 `;
 
 export const SwPlayerCircleName = styled.div`
-	color: black;
-	font-weight: 700;
+	max-width: 80px;
+	word-break: break-word;
+	text-align: center;
+	color: #000;
+	background: #fff;
+	padding: 0px 2px;
+	opacity: 1;
+	box-shadow: 0 0 2px 1px #111;
+	border-radius: 3px;
+	white-space: nowrap;
+	font-size: 11px;
 `;

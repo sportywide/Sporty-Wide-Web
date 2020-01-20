@@ -13,6 +13,7 @@ import {
 	setMode,
 	setOutput,
 	sourceMaps,
+	optimization,
 } from '@webpack-blocks/webpack';
 import paths from '@build/paths';
 import { babelHelper } from '../plugins/transpile';
@@ -27,6 +28,8 @@ export function makeConfig({
 	hot,
 	envFile,
 	watchMode,
+	envVars = {},
+	optimizationOptions,
 }: {
 	entries: any;
 	output: string;
@@ -34,8 +37,10 @@ export function makeConfig({
 	env?: string;
 	hot?: boolean;
 	envFile?: string;
+	envVars?: any;
 	watchMode?: boolean;
 	libraryTarget?: string;
+	optimizationOptions?: any;
 }) {
 	watchMode = isDevelopment(environment) ? (watchMode === undefined ? true : watchMode) : false;
 	const packageName = path.basename(path.dirname(output));
@@ -43,7 +48,13 @@ export function makeConfig({
 	// @ts-ignore
 	process.env.NODE_ENV = environment;
 
-	envFile = envFile || path.resolve(paths.project.root, 'packages', packageName, '.env');
+	if (envFile) {
+		if (!path.isAbsolute(envFile)) {
+			envFile = path.resolve(paths.project.root, 'packages', packageName, envFile);
+		}
+	} else {
+		envFile = path.resolve(paths.project.root, 'packages', packageName, '.env');
+	}
 
 	return createConfig([
 		setOutput(output),
@@ -62,12 +73,14 @@ export function makeConfig({
 		}),
 		setEnv({
 			NODE_ENV: environment,
+			...envVars,
 		}),
 		env('development', [
 			watchMode ? watch() : none(),
 			sourceMaps('inline-source-map'),
 			hot ? addPlugins([new webpack.HotModuleReplacementPlugin()]) : none(),
 		]),
+		optimization(optimizationOptions),
 		env('production', [sourceMaps('source-map')]),
 		addPlugins([
 			new webpack.BannerPlugin({
@@ -88,7 +101,8 @@ export function makeConfig({
 							[
 								{
 									from: envFile,
-									to: path.resolve(output),
+									to: path.resolve(output, '.env'),
+									toType: 'file',
 								},
 							],
 							{

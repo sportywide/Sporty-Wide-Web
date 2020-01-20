@@ -3,6 +3,7 @@ import { CrawlerModule } from '@data/crawler/crawler.module';
 import { WhoScoreCrawlerService } from '@data/crawler/who-score-crawler.service';
 import { INestApplicationContext } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { BrowserService } from '@data/crawler/browser.service';
 
 async function bootstrap() {
 	const context: INestApplicationContext = await NestFactory.createApplicationContext(CrawlerModule);
@@ -11,8 +12,12 @@ async function bootstrap() {
 	try {
 		const leagues = await crawlerService.getLeagues();
 		logger.info(leagues);
+		const league = leagues[0];
+		const fixtures = await crawlerService.getMonthlyFixtures(league.link);
+		logger.info(fixtures);
 	} finally {
-		await crawlerService.close();
+		const browserService = context.get(BrowserService);
+		await browserService.close();
 	}
 	return context;
 }

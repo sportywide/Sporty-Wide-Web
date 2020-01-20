@@ -4,6 +4,9 @@ import { BehaviorSubject, EMPTY, merge, Observable, of } from 'rxjs';
 import { AnyAction } from 'redux';
 import { epicError } from '@web/shared/lib/redux/core.actions';
 import { safeGet } from '@shared/lib/utils/object/get';
+import { isBrowser } from '@web/shared/lib/environment';
+import { logger } from '@web/shared/lib/logging';
+import { RethrowError } from '@shared/lib/utils/error';
 
 export interface IEpicManager {
 	add: (...epics: any[]) => void;
@@ -37,7 +40,12 @@ export function createEpicManager(...initialEpics): IEpicManager {
 								const statusCode = safeGet(() => error.response.status);
 								// we dont want to capture 4xx errors
 								if (!statusCode || statusCode >= 500) {
-									throw error;
+									const rethrownError = new RethrowError('Error in root Epic', error);
+									if (isBrowser()) {
+										throw rethrownError;
+									} else {
+										logger.error(rethrownError);
+									}
 								}
 							}, 0);
 							return merge(source, of(epicError(error)));

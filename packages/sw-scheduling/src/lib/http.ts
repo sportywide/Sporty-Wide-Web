@@ -10,7 +10,7 @@ export function error(e: any = {}) {
 	}
 
 	if (e instanceof HttpException) {
-		return failWithError({ message: e.message, status: e.status });
+		return failWithError({ message: e.message, status: e.getStatus() });
 	}
 
 	return failWithError({ status: HttpStatus.INTERNAL_SERVER_ERROR, message: 'Internal server error' });
@@ -25,7 +25,9 @@ export function response(body, { statusCode, contentType }: { statusCode: number
 		contentType = typeof body === 'object' ? 'application/json' : 'text/plain';
 	}
 	return {
-		contentType,
+		headers: {
+			'Content-Type': contentType,
+		},
 		statusCode,
 		body: body && contentType === 'application/json' ? JSON.stringify(body) : body,
 	};

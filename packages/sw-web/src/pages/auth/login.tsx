@@ -15,6 +15,7 @@ import { login } from '@web/features/auth/store/actions';
 import { SwPrimaryBackGround } from '@web/shared/styled/Background.styled';
 import { Container, Grid, GridColumn } from 'semantic-ui-react';
 import { getUser } from '@web/shared/lib/store';
+import { EqualTab } from '@web/features/tab/components/TabItem.styled';
 
 interface IProps {
 	login: Function;
@@ -49,37 +50,39 @@ class SwLoginPage extends React.Component<IProps, any> {
 				<Head>
 					<title>Welcome</title>
 				</Head>
-				<SwPrimaryBackGround>
-					<Container style={{ width: '100%' }} className="sw-py4">
+				<SwPrimaryBackGround className="sw-flex sw-flex-center sw-flex-justify-center">
+					<Container style={{ width: '100%' }}>
 						<Grid verticalAlign={'middle'} centered>
 							<GridColumn mobile={14} tablet={8} computer={6}>
-								<div className="ui top attached tabular menu">
-									<Link route="login">
-										<a className="item active" data-tab="login" onClick={e => e.preventDefault()}>
-											Login
-										</a>
-									</Link>
-									<Link route="signup">
-										<a className="item" data-tab="signup">
-											Signup
-										</a>
-									</Link>
+								<div className="ui top sw-flex attached tabular menu">
+									<EqualTab active data-tab="login">
+										<Link route="login">
+											<a onClick={e => e.preventDefault()}>Log In</a>
+										</Link>
+									</EqualTab>
+									<EqualTab data-tab="signup">
+										<Link route="signup">
+											<a>Sign Up</a>
+										</Link>
+									</EqualTab>
 								</div>
 								<div className="ui bottom attached segment" data-tab="login">
 									<SwLoginForm onLogin={userDto => this.props.login(userDto)} />
 									<div className="ui horizontal divider">or</div>
-									<button className="ui facebook button">
-										<a className="sw-link sw-link--white" href="/auth/facebook">
-											<i className="facebook icon" />
-											Facebook
-										</a>
-									</button>
-									<button className="ui google plus button">
-										<a className="sw-link sw-link--white" href="/auth/google">
-											<i className="google plus icon" />
-											Google Plus
-										</a>
-									</button>
+									<div className="sw-flex sw-flex-center sw-flex-justify-center">
+										<button className="ui facebook button">
+											<a className="sw-link sw-link--white" href="/auth/facebook">
+												<i className="facebook icon" />
+												Facebook
+											</a>
+										</button>
+										<button className="ui google plus button">
+											<a className="sw-link sw-link--white" href="/auth/google">
+												<i className="google plus icon" />
+												Google Plus
+											</a>
+										</button>
+									</div>
 								</div>
 							</GridColumn>
 						</Grid>
@@ -94,10 +97,7 @@ const enhance = compose(
 	checkUser(notAllowActive, 'home'),
 	registerReducer({ auth: authReducer }),
 	registerEpic(loginEpic),
-	connect(
-		null,
-		{ login }
-	)
+	connect(null, { login })
 );
 
 export default enhance(SwLoginPage);

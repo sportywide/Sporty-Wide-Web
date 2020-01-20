@@ -6,13 +6,14 @@ $colors: (
 		base: #000,
 	),
 	'primary': (
-		base: #4da88a,
+		base: #0288d1,
 	),
 	'blue': (
-		base: #337ab7,
+		base: #03a9f4,
 	),
 	'grey': (
 		base: #ccc,
+		dark: #777,
 	),
 	'green': (
 		base: green,
@@ -21,10 +22,14 @@ $colors: (
 		base: yellow,
 	),
 	'accent': (
-		base: #ee4c50,
+		base: #ff5722,
 	),
 );
 
 .sw-bg {
 	@include map-modifiers($colors, 'background-color', '--');
+}
+
+.sw-text {
+	@include map-modifiers($colors, 'color', '--');
 }

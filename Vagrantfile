@@ -43,7 +43,7 @@ Vagrant.configure(2) do |config|
 	config.env.enable
 	config.vm.hostname = $app_name
 	config.vm.network :private_network, ip: $vbox_ip
-  
+
 	config.vm.provider "virtualbox" do |vb|
 		vb.memory = ENV['SW_RAM'] || 4096
 		vb.customize ["modifyvm", :id, "--name", "Sportywide"]
@@ -52,18 +52,21 @@ Vagrant.configure(2) do |config|
 		vb.cpus = ENV['SW_CPU'] || 2
 		vb.gui                   = true
   	end
-  
+
 	config.vm.synced_folder ".", "/vagrant", type: "nfs", mount_options: ["rw","async","fsc","nolock","vers=3","udp","rsize=32768","wsize=32768","hard","noatime","actimeo=2"]
 
-	config.vm.provision "shell", inline: "sudo yum clean all && sudo yum makecache fast"
+	config.vm.provision "shell" do |s|
+	  s.env = { AWS_ACCESS_KEY_ID:ENV['AWS_ACCESS_KEY_ID'], AWS_SECRET_ACCESS_KEY:ENV['AWS_SECRET_ACCESS_KEY'] }
+	  s.path = 'vagrant/scripts/set-env.sh'
+	end
 	config.vm.provision "shell", path: "vagrant/scripts/node.sh"
 	config.vm.provision "shell", path: "vagrant/scripts/chromium.sh"
 
 	config.vm.provision :docker
-	
+
 	config.vm.provision :docker_compose,
     	compose_version: "1.24.0"
-        
+
 	config.vm.provision "services",
 		type: "shell",
 		keep_color: true,
@@ -73,4 +76,4 @@ Vagrant.configure(2) do |config|
 			cd /vagrant
 			docker-compose -f docker-core-services.yml up --build
 		SCRIPT
-end  
+end

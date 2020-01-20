@@ -1,17 +1,15 @@
 {
 	"name": "sportywide-core",
-	"version": "1.0.3",
+	"version": "0.0.0",
 	"description": "Core package that contains common modules for backend services",
 	"license": "ISC",
 	"dependencies": {
-		"@nestjs/common": "6.5.3",
-		"@nestjs/core": "6.5.3",
 		"bull": "3.10.0",
-		"log4js": "5.0.0",
-		"log4js-logstash-tcp": "1.0.8",
+		"ioredis": "4.14.1",
 		"nest-bull": "0.8.3",
+		"pug": "2.0.4",
 		"redis": "2.8.0",
-		"sportywide-shared": "^1.0.3",
+		"sportywide-shared": "0.0.0",
 		"url": "0.11.0"
 	},
 	"devDependencies": {

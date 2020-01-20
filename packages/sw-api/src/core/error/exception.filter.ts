@@ -4,6 +4,7 @@ import { Logger } from 'log4js';
 import { QueryFailedError } from 'typeorm';
 import { getFriendlyErrorMessage } from '@schema/core/utils/error-message';
 import { getRequest, getResponse, isGraphql } from '@api/utils/context';
+import { bugsnagClient } from '@api/utils/bugsnag';
 
 @Catch()
 export class GlobalExceptionFilter implements ExceptionFilter {
@@ -26,6 +27,7 @@ export class GlobalExceptionFilter implements ExceptionFilter {
 
 		if (status === HttpStatus.INTERNAL_SERVER_ERROR) {
 			this.apiLogger.error(message, exception);
+			bugsnagClient.notify(exception);
 		}
 
 		if (isGraphql(host)) {

@@ -23,8 +23,6 @@ import { AuthorizedApiOperation } from '@api/core/decorators/api-doc';
 import { getValidationPipe } from '@api/core/pipe/validation';
 import passport from 'passport';
 import { TokenService } from '@api/auth/services/token.service';
-import { isBefore } from 'date-fns';
-import { TokenType } from '@schema/auth/models/enums/token-type.token';
 import { UserService } from '@api/user/services/user.service';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { CurrentUser } from '@api/core/decorators/user';
@@ -59,20 +57,20 @@ export class AuthController {
 	@Get('verify-email')
 	@HttpCode(HttpStatus.OK)
 	public async verifyEmail(
+		@CurrentUser() currentUser,
 		@Query('token') verificationCode: string,
 		@Query('user', new ParseIntPipe())
 		userId: number
 	) {
-		const token = await this.tokenService.findOne({
-			content: verificationCode,
-			type: TokenType.CONFIRM_EMAIL,
-			engagementId: userId,
-		});
-		if (!token || isBefore(token.ttl, new Date())) {
-			throw new BadRequestException('Token does not exist or has expired');
+		if (currentUser && currentUser.id !== userId) {
+			throw new BadRequestException('You are already logged in');
+		}
+		const token = await this.tokenService.getVerifyEmailToken(userId);
+		if (!token) {
+			throw new BadRequestException('The link has expired. Please try again');
 		}
 		const user = await this.userService.activateUser(userId);
-		await this.tokenService.remove(token);
+		await this.tokenService.deleteVerifyEmailToken(userId);
 		return this.authService.createTokens(user);
 	}
 
@@ -98,7 +96,7 @@ export class AuthController {
 	@Get('facebook')
 	@UseGuards(AuthenticatedGuard)
 	public facebookAuth(@Req() req, @Res() res) {
-		const referrer = req.get('Referrer') || '';
+		const referrer = req.get('Referer') || '';
 		passport.authenticate('facebook', {
 			scope: ['email'],
 			callbackURL: `${referrer}/auth/facebook/callback`,
@@ -114,7 +112,7 @@ export class AuthController {
 	@Get('google')
 	@UseGuards(AuthenticatedGuard)
 	public googleAuth(@Req() req, @Res() res) {
-		const referrer = req.get('Referrer') || '';
+		const referrer = req.get('Referer') || '';
 		passport.authenticate('google', {
 			scope: ['profile', 'email'],
 			callbackURL: `${referrer}/auth/google/callback`,
@@ -172,14 +170,10 @@ export class AuthController {
 		@Body(getValidationPipe())
 		resetPasswordDto: ResetPasswordDto
 	) {
-		const token = await this.tokenService.findOne({
-			content: tokenValue,
-			engagementId: userId,
-			engagementTable: this.userService.getTableName(),
-		});
+		const token = await this.tokenService.getForgotPasswordToken(userId);
 
-		if (!token || isBefore(token.ttl, new Date())) {
-			throw new BadRequestException('Token does not exist or has expired');
+		if (!token) {
+			throw new BadRequestException('The link has expired. Please try again');
 		}
 
 		return this.authService.resetPassword(userId, resetPasswordDto);

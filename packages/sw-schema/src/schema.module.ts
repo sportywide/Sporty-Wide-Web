@@ -9,6 +9,9 @@ import { SchemaTeamModule } from '@schema/team/team.module';
 import { SchemaPlayerModule } from '@schema/player/player.module';
 import { CoreSchemaModule } from '@schema/core/core-schema.module';
 import './core/subscribers';
+import { MongooseModule } from '@nestjs/mongoose';
+import { SchemaFixtureModule } from '@schema/fixture/fixture.module';
+import { isProduction } from '@shared/lib/utils/env';
 
 @Module({
 	imports: [
@@ -18,6 +21,7 @@ import './core/subscribers';
 		SchemaLeagueModule,
 		SchemaTeamModule,
 		SchemaPlayerModule,
+		SchemaFixtureModule,
 		CoreSchemaModule,
 		SqlConnectionModule.forRootAsync({
 			inject: [SCHEMA_CONFIG],
@@ -31,6 +35,19 @@ import './core/subscribers';
 			}),
 			imports: [CoreSchemaModule],
 		}),
+		MongooseModule.forRootAsync({
+			inject: [SCHEMA_CONFIG],
+			useFactory: schemaConfig => ({
+				uri: `${isProduction() ? 'mongodb+srv' : 'mongodb'}://${schemaConfig.get(
+					'mongo:username'
+				)}:${schemaConfig.get('mongo:password')}@${schemaConfig.get('mongo:host')}/${schemaConfig.get(
+					'mongo:database'
+				)}?authSource=admin`,
+				useFindAndModify: false,
+				useNewUrlParser: true,
+			}),
+			imports: [CoreSchemaModule],
+		}),
 	],
 	exports: [
 		SqlConnectionModule,
@@ -41,6 +58,7 @@ import './core/subscribers';
 		SchemaLeagueModule,
 		SchemaTeamModule,
 		SchemaPlayerModule,
+		SchemaFixtureModule,
 	],
 })
 export class SchemaModule {}

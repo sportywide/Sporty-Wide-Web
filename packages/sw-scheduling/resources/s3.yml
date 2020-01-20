@@ -1,0 +1,92 @@
+Resources:
+    DataBucket:
+        Type: AWS::S3::Bucket
+        DependsOn:
+            - SavePlayersLambdaPermission
+            - SaveTeamsLambdaPermission
+            - SaveLeagueResultLambdaPermission
+            - SaveFixturesLambdaPermssion
+        Properties:
+            BucketName: sw-data-bucket
+            NotificationConfiguration:
+                LambdaConfigurations:
+                    - Event: 's3:ObjectCreated:*'
+                      Function:
+                          'Fn::GetAtt': [SaveDashteamsLambdaFunction, Arn]
+                      Filter:
+                          S3Key:
+                              Rules:
+                                  - Name: prefix
+                                    Value: teams/fifa/
+                                  - Name: suffix
+                                    Value: .json
+                    - Event: 's3:ObjectCreated:*'
+                      Function:
+                          'Fn::GetAtt': [SaveDashplayersLambdaFunction, Arn]
+                      Filter:
+                          S3Key:
+                              Rules:
+                                  - Name: prefix
+                                    Value: players/fifa/
+                                  - Name: suffix
+                                    Value: .json
+                    - Event: 's3:ObjectCreated:*'
+                      Function:
+                          'Fn::GetAtt': [SaveDashfixturesLambdaFunction, Arn]
+                      Filter:
+                          S3Key:
+                              Rules:
+                                  - Name: prefix
+                                    Value: fixtures
+                                  - Name: suffix
+                                    Value: .json
+                    - Event: 's3:ObjectCreated:*'
+                      Function:
+                          'Fn::GetAtt': [SaveDashleagueDashresultLambdaFunction, Arn]
+                      Filter:
+                          S3Key:
+                              Rules:
+                                  - Name: prefix
+                                    Value: teams/scoreboard
+                                  - Name: suffix
+                                    Value: .json
+    SaveTeamsLambdaPermission:
+        Type: AWS::Lambda::Permission
+        DependsOn:
+            - SaveDashteamsLambdaFunction
+        Properties:
+            Action: lambda:InvokeFunction
+            FunctionName:
+                'Fn::GetAtt': [SaveDashteamsLambdaFunction, Arn]
+            Principal: s3.amazonaws.com
+            SourceArn: arn:aws:s3:::sw-data-bucket
+    SavePlayersLambdaPermission:
+        Type: AWS::Lambda::Permission
+        DependsOn:
+            - SaveDashplayersLambdaFunction
+        Properties:
+            Action: lambda:InvokeFunction
+            FunctionName:
+                'Fn::GetAtt': [SaveDashplayersLambdaFunction, Arn]
+            Principal: s3.amazonaws.com
+            SourceArn: arn:aws:s3:::sw-data-bucket
+    SaveFixturesLambdaPermssion:
+        Type: AWS::Lambda::Permission
+        DependsOn:
+            - SaveDashfixturesLambdaFunction
+        Properties:
+            Action: lambda:InvokeFunction
+            FunctionName:
+                'Fn::GetAtt': [SaveDashfixturesLambdaFunction, Arn]
+            Principal: s3.amazonaws.com
+            SourceArn: arn:aws:s3:::sw-data-bucket
+    SaveLeagueResultLambdaPermission:
+        Type: AWS::Lambda::Permission
+        DependsOn:
+            - SaveDashleagueDashresultLambdaFunction
+        Properties:
+            Action: lambda:InvokeFunction
+            FunctionName:
+                'Fn::GetAtt': [SaveDashleagueDashresultLambdaFunction, Arn]
+            Principal: s3.amazonaws.com
+            SourceArn: arn:aws:s3:::sw-data-bucket

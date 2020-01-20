@@ -7,54 +7,30 @@ import axios, { AxiosInstance } from 'axios';
 import Cheerio from 'cheerio';
 import { Logger } from 'log4js';
 import { Provider } from 'nconf';
-import { keyBy } from 'lodash';
 import { sleep } from '@shared/lib/utils/sleep';
-import { PuppeteerService } from '@data/core/browser/browser.service';
 import { SwPage } from '@data/core/browser/browser.class';
-import { ScoreboardPlayer } from './scoreboard-crawler.service';
-import { BrowserService } from './browser.service';
+import { ScoreboardTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
+import { ScoreboardPlayer } from '@shared/lib/dtos/player/player.dto';
+import { ResultsService } from '@data/crawler/results.service';
+import { BrowserService } from '@data/crawler/browser.service';
+
 const MAX_ATTEMPTS = 4;
 const PAGE_TIMEOUT = 60000;
 const PAGE_URL = 'https://www.scoreboard.com/au/soccer';
 
 const DATA_TIMEOUT = 30000;
 
-export type ScoreboardTeam = {
-	name: string;
-	url: string;
-	played: number;
-	wins: number;
-	draws: number;
-	losses: number;
-	scored: number;
-	conceded: number;
-	points: number;
-	forms: { type: string; teams: string; score: string; date: string }[];
-};
-
-export type ScoreboardPlayer = {
-	jersey: number;
-	nationality: string;
-	age: number;
-	played: number;
-	name: string;
-	scored: number;
-	yellow: number;
-	red: number;
-	status: string;
-};
-
 @Injectable()
-export class ScoreboardCrawlerService extends BrowserService {
+export class ScoreboardCrawlerService extends ResultsService {
 	private axios: AxiosInstance;
 
 	constructor(
-		puppeteerService: PuppeteerService,
+		private readonly browserService: BrowserService,
 		@Inject(DATA_CONFIG) config: Provider,
 		private readonly workerQueueService: WorkerQueueService,
 		@Inject(DATA_LOGGER) private readonly dataLogger: Logger
 	) {
-		super(puppeteerService, config);
+		super();
 		this.axios = axios.create({
 			baseURL: 'https://www.scoreboard.com/',
 			transformResponse: (data, headers) => {
@@ -73,16 +49,17 @@ export class ScoreboardCrawlerService extends BrowserService {
 		for (let i = 0; i < MAX_ATTEMPTS; i++) {
 			try {
 				this.dataLogger.info(`Attempt ${i + 1}: Getting teams for league`, leagueUrl);
-				const browser = await this.browser();
+				const browser = await this.browserService.browser();
 				page = await browser.newPage();
-				browser.setQuiet(true);
 				await this.navigateTo(page, `${leagueUrl}standings`);
-				browser.setQuiet(false);
 				await this.waitForTeamResult(page);
 				const content = await page.content();
 				await page.close();
 				const $ = Cheerio.load(content);
-				return this.parseTeams($);
+				return {
+					teams: this.parseTeams($),
+					season: this.parseSeason($),
+				};
 			} catch (e) {
 				this.dataLogger.error(`Failed to get teams for ${leagueUrl}`, e);
 				if (page) {
@@ -90,11 +67,16 @@ export class ScoreboardCrawlerService extends BrowserService {
 				}
 			}
 		}
-		return [];
+		return {};
+	}
+
+	private parseSeason($: CheerioStatic): string {
+		const text = $('#fscon > div.teamHeader > div > div.teamHeader__information > div.teamHeader__text').text();
+		return text.replace('/', '-').trim();
 	}
 
 	private parseTeams($: CheerioStatic): ScoreboardTeam[] {
-		const teamRows = $('#table-type-1 > tbody > tr');
+		const teamRows = $('#table-type-1 .table__body > .table__row');
 
 		return Array.from(teamRows).map(teamRowNode => {
 			const teamRow = $(teamRowNode);
@@ -102,39 +84,41 @@ export class ScoreboardCrawlerService extends BrowserService {
 			const teamName = teamNameElement.text();
 			let teamUrl = teamNameElement.find('a').attr('onclick');
 			[, teamUrl] = teamUrl.match(/javascript:getUrlByWinType\('(.*)'\)/);
-			const played = parseInt(teamRow.find('.matches_played').text(), 10);
-			const wins = parseInt(teamRow.find('.wins_regular').text(), 10);
-			const draws = parseInt(teamRow.find('.draws').text(), 10);
-			const losses = parseInt(teamRow.find('.losses_regular').text(), 10);
+			const played = parseInt(teamRow.find('.table__cell--matches_played').text(), 10);
+			const wins = parseInt(teamRow.find('.table__cell--wins_regular').text(), 10);
+			const draws = parseInt(teamRow.find('.table__cell--draws').text(), 10);
+			const losses = parseInt(teamRow.find('.table__cell--losses_regular').text(), 10);
 			const [scored, conceded] = teamRow
-				.find('.goals')
+				.find('.table__cell--goals')
 				.text()
 				.split(':')
 				.map(number => parseInt(number, 10));
-			const points = parseInt(teamRow.find('.points').text(), 10);
-			const forms = Array.from(teamRow.find('.form-bg')).map(formNode => {
+			const points = parseInt(teamRow.find('.table__cell--points').text(), 10);
+			const forms = Array.from(teamRow.find('.form__cell')).map(formNode => {
 				let type;
 				const formElement = $(formNode);
-				if (formElement.hasClass('form-w')) {
+				if (formElement.hasClass('form__cell--win')) {
 					type = 'w';
-				} else if (formElement.hasClass('form-l')) {
+				} else if (formElement.hasClass('form__cell--loss')) {
 					type = 'l';
-				} else if (formElement.hasClass('form-d')) {
+				} else if (formElement.hasClass('form__cell--draw')) {
 					type = 'd';
-				} else if (formElement.hasClass('form-s')) {
+				} else if (formElement.hasClass('form__cell--upcoming')) {
 					type = 's';
 				}
 				let score, date, teams;
 				const title = formElement.attr('title');
 				if (type === 's') {
-					const matches = title.match(/\[b\](.+?)\s*\[\/b\](.+?)\n+(.*?)$/s);
+					const matches = title.match(/\[b](.+?)\s*\[\/b](.+?)\n+(.*?)$/s);
 					if (matches) {
 						[, score, teams, date] = matches;
+						score = score.replace(':', '');
 					}
 				} else {
-					const matches = title.match(/\[b\](.+?)\s*\[\/b\]\((.+?)\)\n*(.*?)$/s);
+					const matches = title.match(/\[b](.+?)\s*\[\/b]\((.+?)\)\n*(.*?)$/s);
 					if (matches) {
 						[, score, teams, date] = matches;
+						score = score.replace('&nbsp;', '');
 					}
 				}
 
@@ -160,9 +144,7 @@ export class ScoreboardCrawlerService extends BrowserService {
 		});
 	}
 
-	async crawlPlayers(teams: { url: string; id: any }[]): Promise<{ [key: string]: ScoreboardPlayer[] }> {
-		const teamUrls = teams.map(team => team.url);
-		const teamUrlMap = keyBy(teams, 'url');
+	async crawlPlayers(teamUrls: string[], season: string): Promise<{ [key: string]: ScoreboardPlayer[] }> {
 		const workerQueue = this.workerQueueService.newWorker({
 			worker: async () => {
 				return this.axios;
@@ -172,16 +154,15 @@ export class ScoreboardCrawlerService extends BrowserService {
 		const result = {};
 		await workerQueue.submit(
 			async (worker: AxiosInstance, link: string) => {
-				const id = teamUrlMap[link].id;
 				for (let i = 0; i < MAX_ATTEMPTS; i++) {
 					try {
 						this.dataLogger.info(`Attempt ${i + 1}: Getting players for team`, link);
 						const $ = await worker.get(`${link}squad`).then(({ data }) => data);
-						result[id] = this.parsePlayers($);
+						result[link] = this.parsePlayers($, season);
 						break;
 					} catch (e) {
 						this.dataLogger.error(`Failed to get players for team ${link}`, e);
-						result[id] = null;
+						result[link] = null;
 						await sleep(1500 * (i + 1));
 					}
 				}
@@ -195,49 +176,61 @@ export class ScoreboardCrawlerService extends BrowserService {
 		return result;
 	}
 
-	private parsePlayers($: CheerioStatic): ScoreboardPlayer[] {
-		const playerRows = $('#fsbody > table > tbody > tr.player');
-		return Array.from(playerRows).map(playerNode => {
-			const playerRow = $(playerNode);
-			const jersey = parseInt(playerRow.find('.jersey-number').text());
-			const playerName = playerRow.find('.player-name a').text();
-			const nationality = (playerRow.find('.player-name .flag').attr('title') || '').toLowerCase();
-			const age = parseInt(playerRow.find('.player-age').text(), 10);
-			const tds = playerRow.find('td');
-			const played = parseInt(tds.eq(3).text(), 10);
-			const scored = parseInt(tds.eq(4).text(), 10);
-			const yellow = parseInt(tds.eq(5).text(), 10);
-			const red = parseInt(tds.eq(6).text(), 10);
-			const injured = !!playerRow.find('.absence.injury').length;
-			return {
-				jersey,
-				nationality,
-				age,
-				played,
-				name: playerName,
-				scored,
-				yellow,
-				red,
-				status: injured ? 'injured' : 'active',
-			};
-		});
+	private parsePlayers($: CheerioStatic, season: string): ScoreboardPlayer[] {
+		const playerRows = $('.squad-table')
+			.eq(0)
+			.find('.profileTable__row.profileTable__row--between');
+		return Array.from(playerRows)
+			.map(playerNode => {
+				const playerRow = $(playerNode);
+				if (playerRow.hasClass('profileTable__row--main')) {
+					return;
+				}
+				const jersey = parseInt(playerRow.find('.tableTeam__squadNumber').text());
+				const playerName = playerRow.find('.tableTeam__squadName a').text();
+				const nationality = (playerRow.find('.tableTeam__squadName .flag').attr('title') || '').toLowerCase();
+				const statCells = playerRow.find('.playerTable__sportIcon');
+				const age = parseInt(statCells.eq(0).text(), 10);
+				const played = parseInt(statCells.eq(1).text(), 10);
+				const scored = parseInt(statCells.eq(2).text(), 10);
+				const yellow = parseInt(statCells.eq(3).text(), 10);
+				const red = parseInt(statCells.eq(4).text(), 10);
+				const url = playerRow.find('.tableTeam__squadName a').attr('href');
+				const injured = !!playerRow.find('.absence.injury').length;
+				return {
+					jersey,
+					nationality,
+					age,
+					played,
+					name: playerName,
+					scored,
+					yellow,
+					red,
+					status: injured ? 'injured' : 'active',
+					url,
+					season,
+				};
+			})
+			.filter(val => val);
 	}
 
 	private async waitForTeamResult(page: SwPage) {
-		await page.waitForSelector('#glib-stats-data > div.preload', {
-			hidden: true,
+		await page.waitForSelector('#box-table-type-1', {
+			visible: true,
 			timeout: DATA_TIMEOUT,
 		});
 	}
 
 	private async navigateTo(page: SwPage, url, options = {}) {
-		const response = await page.navigateTo(`${PAGE_URL}${url}`, {
+		page.browser().setQuiet(true);
+		const result = await page.navigateTo(`${PAGE_URL}${url}`, {
 			options: {
 				timeout: PAGE_TIMEOUT,
-				waitUntil: ['domcontentloaded', 'networkidle2'],
+				waitUntil: ['domcontentloaded'],
 				...options,
 			},
 		});
-		return response;
+		page.browser().setQuiet(false);
+		return result;
 	}
 }

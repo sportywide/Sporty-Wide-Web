@@ -29,6 +29,18 @@
 	justify-content: space-between;
 }
 
+.sw-flex-justify-right {
+	justify-content: flex-end;
+}
+
+.sw-flex-justify-around {
+	justify-content: space-around;
+}
+
+.sw-flex-justify-center {
+	justify-content: center;
+}
+
 /*
  * 1.sw- Fix for Chrome 44 bug. https://code.google.com/p/chromium/issues/detail?id=506893
  */
@@ -41,6 +53,9 @@
 .sw-flex-grow {
 	flex: 1 0 auto;
 }
+.sw-flex-grow-equal {
+	flex: 1;
+}
 .sw-flex-none {
 	flex: none;
 }
@@ -50,6 +65,10 @@
 }
 .sw-flex-last {
 	order: 99999;
+}
+
+.sw-flex-align-self-end {
+	align-self: flex-end;
 }
 
 @media (--breakpoint-lg) {

@@ -1,25 +1,28 @@
 import path from 'path';
 import util from 'util';
 import { FifaPlayer } from '@data/crawler/fifa-crawler.service';
-import { defaultFuzzyOptions } from '@data/data.constants';
-import { Team } from '@schema/team/models/team.entity';
-import { Injectable, Inject } from '@nestjs/common';
-import { InjectSwRepository } from '@schema/core/repository/sql/inject-repository.decorator';
-import { SwRepository } from '@schema/core/repository/sql/base.repository';
+import { defaultFuzzyOptions } from '@shared/lib/data/data.constants';
+import { Inject, Injectable } from '@nestjs/common';
 import { fsPromise } from '@shared/lib/utils/promisify/fs';
-import { Player } from '@schema/player/models/player.entity';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import Fuse from 'fuse.js';
-import { ScoreboardPlayer } from '@data/crawler/scoreboard-crawler.service';
+import { ScoreboardPlayer } from '@shared/lib/dtos/player/player.dto';
+import { chunk, keyBy, omit } from 'lodash';
+import { PlayerService } from '@schema/player/services/player.service';
+import { WhoscorePlayerRating } from '@shared/lib/dtos/player/player-rating.dto';
+import { TeamService } from '@schema/team/services/team.service';
+import { PlayerBettingService } from '@schema/player/services/player-betting.service';
+
 const glob = util.promisify(require('glob'));
 
 @Injectable()
 export class PlayerPersisterService {
 	constructor(
 		@Inject(DATA_LOGGER) private readonly logger: Logger,
-		@InjectSwRepository(Player) private readonly playerRepository: SwRepository<Player>,
-		@InjectSwRepository(Team) private readonly teamRepository: SwRepository<Team>
+		private readonly playerService: PlayerService,
+		private readonly teamService: TeamService,
+		private readonly playerBettingService: PlayerBettingService
 	) {}
 
 	async saveFifaPlayersFromPlayerInfoFiles() {
@@ -51,11 +54,6 @@ export class PlayerPersisterService {
 			cwd: path.resolve(process.cwd(), 'resources', 'players'),
 			absolute: true,
 		});
-		const allUnresolvedPlayers: { fifa: Player[]; scoreboard: ScoreboardPlayer[] } = {
-			fifa: [],
-			scoreboard: [],
-		};
-		let allMatchedPlayers = {};
 		await Promise.all(
 			files.map(async file => {
 				try {
@@ -63,10 +61,7 @@ export class PlayerPersisterService {
 					const content = await fsPromise.readFile(file, 'utf8');
 
 					const playerTeamMap = JSON.parse(content);
-					const { unresolvedPlayers, matchedPlayers } = await this.matchScoreBoardPlayers(playerTeamMap);
-					allMatchedPlayers = { ...allMatchedPlayers, ...matchedPlayers };
-					allUnresolvedPlayers.fifa.push(...unresolvedPlayers.fifa);
-					allUnresolvedPlayers.scoreboard.push(...unresolvedPlayers.scoreboard);
+					await this.saveScoreboardPlayer(playerTeamMap);
 				} catch (e) {
 					this.logger.error(`Failed to read file ${file}`, e);
 				}
@@ -74,22 +69,19 @@ export class PlayerPersisterService {
 		);
 	}
 
-	private async matchScoreBoardPlayers(playerTeamMap) {
+	async saveScoreboardPlayer(playerTeamMap: {
+		players: { [key: string]: ScoreboardPlayer[] };
+		leagueId: number;
+		season: string;
+	}) {
 		const playerMap: { [key: string]: ScoreboardPlayer[] } = playerTeamMap.players;
 		const leagueId = playerTeamMap.leagueId;
-		const dbTeams = await this.teamRepository.find({
-			leagueId: leagueId,
-		});
+		const dbTeams = await this.teamService.findByLeague(leagueId);
 		const teamFuse = new Fuse(dbTeams, {
 			...defaultFuzzyOptions,
 			keys: ['title', 'alias'],
 		});
 
-		const matchedPlayers = {};
-		const unresolvedPlayers: { scoreboard: ScoreboardPlayer[]; fifa: Player[] } = {
-			scoreboard: [],
-			fifa: [],
-		};
 		for (const [teamName, players] of Object.entries(playerMap)) {
 			const foundTeams = teamFuse.search(teamName);
 			if (!foundTeams.length) {
@@ -105,59 +97,101 @@ export class PlayerPersisterService {
 					.reverse()
 					.join(' '),
 			}));
-			const dbPlayers = await this.playerRepository.find({
-				teamId: foundTeams[0].id,
-			});
-			const playerFuse = new Fuse(dbPlayers, {
-				...defaultFuzzyOptions,
-				threshold: 0.5,
-				tokenize: true,
-				keys: ['name'],
-			});
-			for (const player of transformedPlayers) {
-				const foundPlayers = playerFuse.search(player.name);
-				if (!foundPlayers.length) {
-					this.logger.error('Cannot find scoreboard player', player.name);
-					unresolvedPlayers.scoreboard.push(player);
-					continue;
-				}
-				this.logger.trace(`Match ${foundPlayers[0].name} with ${player.name}`);
-				matchedPlayers[foundPlayers[0].id] = player;
-			}
-
-			for (const dbPlayer of dbPlayers) {
-				if (!matchedPlayers[dbPlayer.id]) {
-					unresolvedPlayers.fifa.push(dbPlayer);
-				}
-			}
+			const dbPlayers = await this.playerService.getPlayersByTeam(foundTeams[0].id);
+			const result = this.playerService.fuzzySearch(
+				dbPlayers,
+				transformedPlayers.map(player => ({
+					shirt: player.jersey,
+					name: player.name,
+					team: teamName,
+				}))
+			);
+			await Promise.all(
+				transformedPlayers.map(async (player, index) => {
+					if (!result[index]) {
+						return;
+					}
+					const dbPlayer = result[index];
+					await this.playerService.savePlayerStat({
+						...player,
+						playerId: dbPlayer.id,
+						teamId: dbPlayer.teamId,
+						leagueId,
+						season: player.season,
+					});
+				})
+			);
 		}
-
-		return {
-			matchedPlayers,
-			unresolvedPlayers,
-		};
 	}
 
-	private saveFifaPlayers(players: FifaPlayer[]) {
-		return Promise.all(
-			players.map(async player => {
-				const dbObj = {
-					...player,
-					id: player.fifaId,
-					nationality: player.nationality.title,
-					nationalityId: player.nationality.fifaId,
-					positions: player.positions,
-					teamName: player.team.title,
-					teamId: player.team.fifaId,
-				};
-				delete dbObj['fifaId'];
-				delete dbObj['team'];
-				try {
-					await this.playerRepository.save(dbObj);
-					this.logger.trace(`Persisted player ${dbObj.name} from ${dbObj.team}`);
-				} catch (e) {
-					this.logger.error(`Failed to save player ${dbObj.name}`);
+	async saveFifaPlayers(players: FifaPlayer[]) {
+		const playerGroups = chunk(players, 50);
+		const updatedFields = ['id', 'name', 'rating', 'url', 'image'];
+		for (const playerGroup of playerGroups) {
+			const playerIds = playerGroup.map(player => player.fifaId);
+			const dbPlayers = await this.playerService.findByIds(playerIds);
+			const playerMap = keyBy(dbPlayers, 'id');
+			await Promise.all(
+				playerGroup.map(async player => {
+					const updated = {
+						...player,
+						id: player.fifaId,
+						nationality: player.nationality.title,
+						nationalityId: player.nationality.fifaId,
+						positions: player.positions,
+						teamName: player.team.title,
+						teamId: player.team.fifaId,
+					};
+					delete updated['fifaId'];
+					delete updated['team'];
+					const existingDbPlayer = playerMap[updated.id];
+
+					if (existingDbPlayer) {
+						for (const key of Object.keys(existingDbPlayer.toPlain())) {
+							if (!updatedFields.includes(key) && existingDbPlayer[key]) {
+								delete updated[key];
+							}
+						}
+					}
+					try {
+						await this.playerService.saveOne(updated);
+						this.logger.trace(`Persisted player ${updated.name} from ${updated.team}`);
+					} catch (e) {
+						this.logger.error(`Failed to save player ${updated.name}`, e);
+					}
+				})
+			);
+		}
+	}
+
+	async savePlayerRatings(fixtureId, team: { id: number; name: string }, playerRatings: WhoscorePlayerRating[]) {
+		const dbPlayers = await this.playerService.getPlayersByTeam(team.id);
+		const matchedPlayers = this.playerService.fuzzySearch(
+			dbPlayers,
+			playerRatings.map(playerRating => ({
+				name: playerRating.name,
+				shirt: playerRating.shirt,
+				team: team.name,
+			}))
+		);
+
+		await Promise.all(
+			playerRatings.map(async (playerRating, index) => {
+				const matchedPlayer = matchedPlayers[index];
+				if (!matchedPlayer) {
+					return;
 				}
+				await this.playerService.savePlayerRating({
+					...omit(playerRating, 'name', 'shirt'),
+					teamId: matchedPlayer.teamId,
+					playerId: matchedPlayer.id,
+					fixtureId,
+				});
+				await this.playerBettingService.updatePlayerRealBetting({
+					playerId: matchedPlayer.id,
+					fixtureId,
+					rating: playerRating.rating,
+				});
 			})
 		);
 	}

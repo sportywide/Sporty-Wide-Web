@@ -16,9 +16,10 @@ import { Inject } from '@nestjs/common';
 import { SwQueueProcessor } from '@core/microservices/sw-queue.processor';
 import { EMAIL_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
-import { Token } from '@schema/auth/models/token.entity';
-import { TokenType } from '@schema/auth/models/enums/token-type.token';
 import { TemplateService } from '@email/core/email/template/template.service';
+import { fromString } from 'html-to-text';
+import { RedisService } from '@core/redis/redis.service';
+import { forgotPasswordKey, verifyEmailKey } from '@core/redis/redis.constants';
 
 @Queue({
 	name: USER_EMAIL_QUEUE,
@@ -30,7 +31,7 @@ export class UserEmailProcessor extends SwQueueProcessor {
 		@Inject(EMAIL_CONFIG) private readonly emailConfig: Provider,
 		@Inject(EMAIL_LOGGER) logger: Logger,
 		@InjectSwRepository(User) private readonly userRepository: SwRepository<User>,
-		@InjectSwRepository(Token) private readonly tokenRepository: SwRepository<Token>,
+		private readonly redisService: RedisService,
 		private readonly templateService: TemplateService
 	) {
 		super(logger);
@@ -42,13 +43,8 @@ export class UserEmailProcessor extends SwQueueProcessor {
 		if (!user) {
 			throw new Error('User does not exist');
 		}
-		const token = await this.tokenRepository.findOne({
-			where: {
-				engagementTable: this.userRepository.getTableName(),
-				engagementId: user.id,
-				type: TokenType.CONFIRM_EMAIL,
-			},
-		});
+		const redisKey = verifyEmailKey(user.id);
+		const token = await this.redisService.client.get(redisKey);
 		if (!token) {
 			throw new Error('Token does not exist');
 		}
@@ -56,19 +52,21 @@ export class UserEmailProcessor extends SwQueueProcessor {
 			templateFile: 'auth/verify-email.pug',
 			cssFile: 'verify-email.min.css',
 		});
+		const html = this.templateService.injectCss(
+			template({
+				appUrl: this.emailConfig.get('app:url'),
+				title: 'Please confirm your email',
+				token: token,
+				userId: user.id,
+			}),
+			css
+		);
 		const mailData: MailDto = {
 			from: this.emailService.getSupportUserEmail(),
 			to: this.emailService.getUserEmail(user),
 			subject: 'You have signed up for sportywide',
-			html: this.templateService.injectCss(
-				template({
-					appUrl: this.emailConfig.get('app:url'),
-					title: 'Please confirm your email',
-					token: token.content,
-					userId: user.id,
-				}),
-				css
-			),
+			html,
+			text: fromString(html),
 		};
 
 		return this.emailService.sendMail(mailData);
@@ -80,13 +78,8 @@ export class UserEmailProcessor extends SwQueueProcessor {
 		if (!user) {
 			throw new Error('User does not exist');
 		}
-		const token = await this.tokenRepository.findOne({
-			where: {
-				engagementTable: this.userRepository.getTableName(),
-				engagementId: user.id,
-				type: TokenType.FORGOT_PASSWORD,
-			},
-		});
+		const redisKey = forgotPasswordKey(user.id);
+		const token = await this.redisService.client.get(redisKey);
 		if (!token) {
 			throw new Error('Token does not exist');
 		}
@@ -94,18 +87,21 @@ export class UserEmailProcessor extends SwQueueProcessor {
 			templateFile: 'auth/forgot-password.pug',
 			cssFile: 'forgot-password.min.css',
 		});
+		const html = this.templateService.injectCss(
+			template({
+				appUrl: this.emailConfig.get('app:url'),
+				title: 'Please click the url to reset your password',
+				token: token,
+				username: user.name,
+			}),
+			css
+		);
 		const mailData: MailDto = {
 			from: this.emailService.getSupportUserEmail(),
 			to: this.emailService.getUserEmail(user),
 			subject: 'Reset your password',
-			html: this.templateService.injectCss(
-				template({
-					appUrl: this.emailConfig.get('app:url'),
-					title: 'Please click the url to reset your password',
-					token: token.content,
-				}),
-				css
-			),
+			html,
+			text: fromString(html),
 		};
 
 		return this.emailService.sendMail(mailData);

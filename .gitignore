@@ -16,6 +16,8 @@ certs/*.pem
 out/
 
 .vagrant
+.s3
+.dynamodb
 
 install.lock
 
@@ -64,9 +66,6 @@ dist
 .DS_Store
 .AppleDouble
 .LSOverride
-
-# Icon must end with two \r
-Icon
 
 # Thumbnails
 ._*
@@ -178,6 +177,8 @@ Thumbs.db
 ehthumbs.db
 ehthumbs_vista.db
 
+.semaphore/secrets
+
 # Dump file
 *.stackdump
 
@@ -200,5 +201,14 @@ $RECYCLE.BIN/
 .env*
 
 packages/sw-data/resources
+
+secret.*.yml
+secret.tfvars
+
+.terraform
+.next
+
+Dockerrun.aws.json
+scripts/elb/*/*.zip
 
 # End of https://www.gitignore.io/api/node,linux,macos,windows,intellij+all

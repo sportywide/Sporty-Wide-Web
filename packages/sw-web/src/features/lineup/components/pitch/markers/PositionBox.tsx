@@ -7,14 +7,14 @@ import {
 	POSITION_BOX_ZONE,
 } from '@web/features/lineup/components/item.constant';
 import { noop } from '@shared/lib/utils/functions';
-import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
+import { UserPlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { SwPositionCircle } from '@web/features/lineup/components/pitch/markers/PositionBox.styled';
 
 interface IProps {
 	position: any;
 	rect: any;
-	onAddPlayerToLineup?: (player: PlayerDto) => void;
-	onSwitchLineupPosition?: (player: PlayerDto) => void;
+	onAddPlayerToLineup?: (player: UserPlayerDto) => void;
+	onSwitchLineupPosition?: (player: UserPlayerDto) => void;
 }
 
 const SwPositionBoxComponent: React.FC<IProps> = ({

@@ -17,6 +17,11 @@ import NotificationContainer from '@web/shared/lib/ui/components/notification/No
 import { ucfirst } from '@shared/lib/utils/string/conversion';
 import { LoadingBar } from '@web/shared/lib/ui/components/loading/LoadingBar';
 import { ApiService } from '@web/shared/lib/http/api.service';
+import EventModalManager from '@web/shared/lib/popup/EventModalManager';
+import ConfirmationManager from '@web/shared/lib/popup/ConfirmationManager';
+import { bugsnagClient } from '@web/shared/lib/bugsnag';
+
+const ErrorBoundary = bugsnagClient.getPlugin('react');
 
 interface IProps {
 	store: ISportyWideStore;
@@ -26,11 +31,12 @@ interface IProps {
 
 const theme = {
 	colors: {
-		primary: '#4da88a',
-		accent: '#ee4c50',
+		primary: '#0288D1',
+		accent: '#FF5722',
 		grey: '#e9ebee',
 		white: '#fff',
 		transparent: 'rgba(0, 0, 0, 0)',
+		black: '#000',
 	},
 };
 
@@ -51,6 +57,10 @@ class SwApp extends App<IProps> {
 				replace: true,
 			});
 			return { pageProps };
+		}
+
+		if (user) {
+			bugsnagClient.user = user;
 		}
 
 		if (Component.registerEpics) {
@@ -94,17 +104,21 @@ class SwApp extends App<IProps> {
 		const container = store.container;
 		const apiService = container.get(ApiService);
 		return (
-			<ThemeProvider theme={theme}>
-				<Provider store={store}>
-					<ApolloProvider client={apiService.graphql()}>
-						<ContainerContext.Provider value={store.container}>
-							<LoadingBar />
-							<Component {...pageProps} />
-							<NotificationContainer />
-						</ContainerContext.Provider>
-					</ApolloProvider>
-				</Provider>
-			</ThemeProvider>
+			<ErrorBoundary>
+				<ThemeProvider theme={theme}>
+					<Provider store={store}>
+						<ApolloProvider client={apiService.graphql()}>
+							<ContainerContext.Provider value={store.container}>
+								<LoadingBar />
+								<Component {...pageProps} />
+								<NotificationContainer />
+								<ConfirmationManager />
+								<EventModalManager />
+							</ContainerContext.Provider>
+						</ApolloProvider>
+					</Provider>
+				</ThemeProvider>
+			</ErrorBoundary>
 		);
 	}
 }

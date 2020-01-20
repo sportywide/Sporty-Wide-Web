@@ -3,19 +3,20 @@ import Measure from 'react-measure';
 import { useDrop } from 'react-dnd-cjs';
 import { PLAYER } from '@web/features/lineup/components/item.constant';
 import { FormationDto } from '@shared/lib/dtos/formation/formation.dto';
-import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
+import { UserPlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { SwStyledPitch, SwStyledPitchBackground } from '@web/features/lineup/components/pitch/Pitch.styled';
 import { SwPositionBox } from './markers/PositionBox';
 import { SwPlayerBox } from './markers/PlayerBox';
 
 interface IProps {
 	strategy: FormationDto;
-	positions: (PlayerDto | null)[];
-	onAddPlayerToLineup?: (player: PlayerDto, index: number) => void;
-	onSwapPlayers?: (source: PlayerDto, dest: PlayerDto) => void;
-	onSubstitutePlayer?: (source: PlayerDto, dest: PlayerDto) => void;
-	onRemovePlayerFromLineup?: (player: PlayerDto, index: number) => void;
-	onSwitchLineupPosition?: (player: PlayerDto, index: number) => void;
+	positions: (UserPlayerDto | null)[];
+	onAddPlayerToLineup?: (player: UserPlayerDto, index: number) => void;
+	onSwapPlayers?: (source: UserPlayerDto, dest: UserPlayerDto) => void;
+	onSubstitutePlayer?: (source: UserPlayerDto, dest: UserPlayerDto) => void;
+	onRemovePlayerFromLineup?: (player: UserPlayerDto, index: number) => void;
+	onSwitchLineupPosition?: (player: UserPlayerDto, index: number) => void;
+	readonly: boolean;
 }
 
 const SwPitchComponent: React.FC<IProps> = function({
@@ -26,6 +27,7 @@ const SwPitchComponent: React.FC<IProps> = function({
 	onRemovePlayerFromLineup,
 	onSwitchLineupPosition,
 	onSubstitutePlayer,
+	readonly,
 }) {
 	const [rect, setRect] = useState<any>({});
 	const [, drop] = useDrop({
@@ -62,6 +64,7 @@ const SwPitchComponent: React.FC<IProps> = function({
 								player={positions[index]}
 								position={position}
 								key={index}
+								readonly={readonly}
 								onSubstitutePlayer={(source, dest) => onSubstitutePlayer(source, dest)}
 								onRemovePlayerFromLineup={player => onRemovePlayerFromLineup(player, index)}
 								onSwapPlayers={(source, dest) => onSwapPlayers(source, dest)}

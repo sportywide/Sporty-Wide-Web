@@ -6,7 +6,7 @@ import { parse } from 'date-fns';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import { ResultsService } from '@data/crawler/results.service';
-import { League } from '@data/data.constants';
+import { League } from '@shared/lib/data/data.constants';
 import { getSeasonYears, isInSeason } from '@shared/lib/utils/season';
 
 @Injectable()
@@ -38,12 +38,7 @@ export class FixtureCrawlerService extends ResultsService {
 				this.getResultsForLeague(name, season),
 				this.getFixturesForLeague(name, season),
 			]);
-			const matches = [...results, ...fixtures].sort((a, b) => a.time.getTime() - b.time.getTime());
-			this.writeResult(`fixtures/${name}.json`, {
-				id: league.id,
-				season: season,
-				matches,
-			});
+			return [...results, ...fixtures].sort((a, b) => a.time.getTime() - b.time.getTime());
 		} catch (e) {
 			this.logger.error(`Failed to get matches for league ${name}`, e);
 		}
@@ -82,7 +77,7 @@ export class FixtureCrawlerService extends ResultsService {
 				return;
 			}
 			const fixtureDateStr = headerElement.text();
-			const fixtureDate = parse(fixtureDateStr, 'EEEE do MMMM', new Date());
+			const fixtureDate = parse(fixtureDateStr, 'EEEE do MMMM', currentMonth);
 			const fixtureElements = $(headerElement).nextUntil('.fixres__header2', '.fixres__item');
 			const fixtureDetails = fixtureElements.map((index, fixtureNode) => {
 				const fixtureElement = $(fixtureNode);

@@ -1,8 +1,11 @@
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { BaseEntity, BaseGeneratedEntity } from '@schema/core/base.entity';
+import { BaseEntity } from '@schema/core/base.entity';
 import { Team } from '@schema/team/models/team.entity';
 import { League } from '@schema/league/models/league.entity';
+import { DtoType } from '@shared/lib/dtos/decorators/dto-type.decorator';
+import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
 
+@DtoType(FixtureDto)
 @Entity()
 export class Fixture extends BaseEntity {
 	@Column()
@@ -12,9 +15,12 @@ export class Fixture extends BaseEntity {
 	away: string;
 
 	@Column()
-	fixtureNumber: number;
+	homeFixture: number;
 
-	@ManyToOne(type => Team)
+	@Column()
+	awayFixture: number;
+
+	@ManyToOne(() => Team)
 	@JoinColumn({
 		name: 'home_id',
 	})
@@ -23,7 +29,7 @@ export class Fixture extends BaseEntity {
 	@JoinColumn({
 		name: 'away_id',
 	})
-	@ManyToOne(type => Team)
+	@ManyToOne(() => Team)
 	awayTeam: Team;
 
 	@Column()
@@ -38,7 +44,7 @@ export class Fixture extends BaseEntity {
 	@JoinColumn({
 		name: 'league_id',
 	})
-	@ManyToOne(type => League)
+	@ManyToOne(() => League)
 	league: League;
 
 	@Column()
@@ -61,4 +67,10 @@ export class Fixture extends BaseEntity {
 
 	@Column({ type: 'timestamptz' })
 	time: Date;
+
+	@Column({ type: 'jsonb' })
+	incidents: object;
+
+	@Column()
+	whoscoreUrl: string;
 }

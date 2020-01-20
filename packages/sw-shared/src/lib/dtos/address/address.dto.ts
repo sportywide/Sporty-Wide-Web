@@ -2,7 +2,6 @@ import { a, is, schema } from 'yup-decorator';
 import { ApiModelProperty } from '@shared/lib/utils/api/decorators';
 import { Editable } from '@shared/lib/utils/decorators/permissions';
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
-import { Expose } from 'class-transformer-imp';
 import { Field, Int, ObjectType } from '@shared/lib/utils/api/graphql';
 
 @ObjectType()
@@ -10,7 +9,6 @@ import { Field, Int, ObjectType } from '@shared/lib/utils/api/graphql';
 export class AddressDto {
 	@ApiModelProperty()
 	@Field(() => Int)
-	@Expose()
 	id?: number;
 
 	@ApiModelProperty()

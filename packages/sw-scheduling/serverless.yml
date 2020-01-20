@@ -1,18 +1,93 @@
-service: sw-scheduling
+service: sw
 
 provider:
     name: aws
+    region: ap-southeast-2
     runtime: nodejs10.x
     stage: ${opt:stage, 'development'}
+    timeout: 600
+    vpc:
+        securityGroupIds:
+            - sg-0041f89e3e7ba59e0
+        subnetIds:
+            - subnet-03673f37a665e5a78
+            - subnet-0944a6be111502367
+    environment:
+        SW_POSTGRES_USER: ${file(./secret.${self:provider.stage}.yml):rdsUser}
+        SW_POSTGRES_PASSWORD: ${file(./secret.${self:provider.stage}.yml):rdsPassword}
+        SW_MONGO_USER: ${file(./secret.${self:provider.stage}.yml):mongoUser}
+        SW_MONGO_PASSWORD: ${file(./secret.${self:provider.stage}.yml):mongoPassword}
+        SW_LOGZ_TOKEN: ${file(./secret.${self:provider.stage}.yml):logzToken}
+        SW_POSTGRES_DB: sportywide
+        SW_MONGO_DB: sportywide
+        SW_PUPPETEER_EXECUTABLE: ${file(./secret.${self:provider.stage}.yml):puppeteerExecutable}
+        IS_LAMBDA: 1
+
+package:
+    individually: ${self:custom.variables.${self:provider.stage}.package}
+    exclude:
+        - node_modules/**
+    excludeDevDependencies: true
 
 plugins:
     - serverless-webpack
+    - serverless-dynamodb-local
+    - serverless-offline-message-queue
+    - serverless-offline-sns
     - serverless-offline
+    - serverless-s3-local
+    - serverless-iam-roles-per-function
+    - serverless-lambda-layers
 
 custom:
+    variables:
+        development:
+            package: false
+        production:
+            package: true
     serverless-offline:
         port: 4000
+        host: 0.0.0.0
+    serverless-lambda-layers:
+        packageManager: npm
+        packagePath: compile/package.json
+        packageLockPath: ../../package-lock.json
+        compatibleRuntimes: ['nodejs10.x']
+        layersDeploymentBucket: sportywide-deployment
+    dynamodb:
+        stages:
+            - development
+        start:
+            port: 7000
+            migrate: true
+            inMemory: false
+            dbPath: .dynamodb
+    aws:
+        accountId: 409050499179
     webpack:
-        includeModules: true
+        includeModules: false
+    serverless-offline-message-queue:
+        autoCreate: true
+        apiVersion: '2012-11-05'
+        endpoint: http://192.168.50.10:9324
+        region: ${self:provider.region}
+        accessKeyId: root
+        secretAccessKey: root
+        skipCacheInvalidation: false
 
+    serverless-offline-sns:
+        port: 4002
+        debug: false
+        host: 0.0.0.0
+        accountId: ${self:custom.aws.accountId}
+
+    s3:
+        port: 6000
+        directory: .s3
+
+resources:
+    - ${file(resources/sqs.yml)}
+    - ${file(resources/sns.yml)}
+    - ${file(resources/dynamodb.yml)}
+    - ${file(resources/iam.yml)}
 functions: ${file(resources/functions.yml)}

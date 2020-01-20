@@ -22,7 +22,7 @@ services:
         environment:
             NO_OPTIONAL: 1
             NODE_ENV: development
-        entrypoint: npm run install:dependencies -- -s
+        entrypoint: npm run install:dependencies
         volumes:
             - .:/opt/app
             - node_modules:/opt/app/node_modules
@@ -32,7 +32,7 @@ services:
         build:
             context: .
             dockerfile: ./packages/sw-web/Dockerfile
-            target: base
+            target: dev
         ports:
             - 3000:3000
         command: dev
@@ -53,7 +53,7 @@ services:
         build:
             context: .
             dockerfile: ./packages/sw-api/Dockerfile
-            target: base
+            target: dev
         ports:
             - 5000:5000
             - 9229:9229
@@ -68,6 +68,9 @@ services:
             SW_POSTGRES_DB: ${SW_POSTGRES_DB}
             SW_FACEBOOK_CLIENT_SECRET: ${SW_FACEBOOK_CLIENT_SECRET}
             SW_GOOGLE_CLIENT_SECRET: ${SW_GOOGLE_CLIENT_SECRET}
+            SW_MONGO_USER: ${SW_MONGO_USER}
+            SW_MONGO_PASSWORD: ${SW_MONGO_PASSWORD}
+            SW_MONGO_DB: ${SW_MONGO_DB}
         depends_on:
             - base
         volumes:
@@ -81,7 +84,7 @@ services:
         build:
             context: .
             dockerfile: ./packages/sw-email/Dockerfile
-            target: base
+            target: dev
         command: dev
         environment:
             WAIT_HOSTS: redis:6379

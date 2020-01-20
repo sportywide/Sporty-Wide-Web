@@ -1,0 +1,56 @@
+version: v1.0
+
+name: Build And Test Pipeline
+
+agent:
+    machine:
+        type: e1-standard-2
+        os_image: ubuntu1804
+
+blocks:
+    - name: Install dependencies
+      task:
+          prologue:
+              commands:
+                  - checkout
+                  - nvm use
+          jobs:
+              - name: client npm install and cache
+                commands:
+                    - cache restore node-modules-$(checksum package-lock.json)
+                    - cache has_key node-modules-$(checksum package-lock.json) || npx lerna bootstrap -- --ci --no-optional
+                    - npx link-parent-bin
+                    - cache store node-modules-$(checksum package-lock.json) node_modules
+    - name: Build
+      task:
+          prologue:
+              commands:
+                  - checkout
+                  - nvm use
+          jobs:
+              - name: Build
+                commands:
+                    - cache restore node-modules-$(checksum package-lock.json)
+                    - npx lerna link
+                    - npx lerna run build --stream --parallel
+    - name: Test and lint
+      task:
+          prologue:
+              commands:
+                  - checkout
+                  - nvm use
+          jobs:
+              - name: Lint
+                commands:
+                    - cache restore node-modules-$(checksum package-lock.json)
+                    - npx lerna link
+                    - npx gulp lint
+              - name: Test
+                commands:
+                    - cache restore node-modules-$(checksum package-lock.json)
+                    - npx gulp test --coverage
+promotions:
+    - name: Production deploy
+      pipeline_file: deploy.yml
+      auto_promote:
+          when: "result = 'passed' and branch = 'release'"

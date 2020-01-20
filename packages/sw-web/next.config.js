@@ -4,10 +4,13 @@ const withPlugins = require('next-compose-plugins');
 const babel = require('next-plugin-custom-babel-config');
 const bundleAnalyzer = require('@zeit/next-bundle-analyzer');
 const webpack = require('webpack');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const { importAutoDllPlugin } = require('next/dist/build/webpack/plugins/dll-import');
+const withSourceMaps = require('@zeit/next-source-maps');
 const scss = require('./src/build/plugins/with-sass');
 const css = require('./src/build/plugins/with-css');
+
+process.env.WEB = 1;
+
 const nextConfig = {
 	webpack: (webpackConfig, options) => {
 		const { dir, config: nextConfig, isServer } = options;
@@ -21,7 +24,24 @@ const nextConfig = {
 			},
 		};
 		webpackConfig.module.rules.push({
+			test: /\.svg$/,
+			include: path.resolve('src', 'shared', 'lib', 'icon', 'images'),
+			use: [
+				'babel-loader',
+				{
+					loader: 'react-svg-loader',
+					options: {
+						svgo: {
+							plugins: [{ removeTitle: false }],
+							floatPrecision: 2,
+						},
+					},
+				},
+			],
+		});
+		webpackConfig.module.rules.push({
 			test: /\.(png|svg|eot|otf|ttf|woff|woff2)$/,
+			exclude: path.resolve('src', 'shared', 'lib', 'icon', 'images'),
 			use: {
 				loader: 'url-loader',
 				options: {
@@ -44,6 +64,21 @@ const nextConfig = {
 				},
 			},
 		});
+
+		webpackConfig.plugins.push(
+			new webpack.DefinePlugin({
+				'process.env.IS_SERVER': JSON.stringify(isServer),
+				'process.env.APP_VERSION': JSON.stringify(require('./package.json').version),
+			})
+		);
+
+		webpackConfig.plugins.push(
+			new webpack.NormalModuleReplacementPlugin(/(.*)@web\/shared\/lib\/logging/, function(resource) {
+				resource.request = resource.request + (isServer ? '/server' : '/client');
+			})
+		);
+
+		webpackConfig.output.pathinfo = false;
 
 		const originalEntry = webpackConfig.entry;
 		webpackConfig.entry = async () => {
@@ -98,7 +133,7 @@ const nextConfig = {
 						'react-notification-system',
 						'react-notification-system-redux',
 						'react-redux-loading-bar',
-						'semantic-ui-calendar-react',
+						'semantic-ui-react-calendar',
 					],
 				},
 				config: {
@@ -121,8 +156,9 @@ const nextConfig = {
 	webpackDevMiddleware: config => {
 		config.watchOptions = {
 			...(config.watchOptions || {}),
-			poll: 1000, // Check for changes every second
-			aggregateTimeout: 300, // delay before rebuilding
+			watchOptions: {
+				ignored: /node_modules/,
+			},
 		};
 		config.noInfo = false;
 		config.logLevel = 'info';
@@ -133,6 +169,9 @@ const nextConfig = {
 		};
 		return config;
 	},
+	typescript: {
+		ignoreDevErrors: true,
+	},
 	distDir: path.join('..', 'next-build'),
 	dir: paths.web.src,
 	onDemandEntries: {
@@ -141,6 +180,7 @@ const nextConfig = {
 		// number of pages that should be kept simultaneously without being disposed
 		pagesBufferLength: 10,
 	},
+	experimental: { publicDirectory: true },
 };
 
 module.exports = withPlugins(
@@ -170,6 +210,7 @@ module.exports = withPlugins(
 		],
 		scss,
 		css,
+		withSourceMaps,
 	],
 	nextConfig
 );

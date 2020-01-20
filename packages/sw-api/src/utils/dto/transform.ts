@@ -1,11 +1,14 @@
-import { BaseGeneratedEntity } from '@schema/core/base.entity';
+import { BaseEntity, BaseGeneratedEntity } from '@schema/core/base.entity';
 import { ClassTransformOptions, plainToClass } from 'class-transformer-imp';
 import { filterValues } from '@shared/lib/utils/object/filter';
 import { Type } from '@nestjs/common';
+import { Document } from 'mongoose';
+import { getDtoType } from '@shared/lib/dtos/decorators/dto-type.decorator';
 
 const defaultOptions: ClassTransformOptions = {
 	excludeExtraneousValues: true,
 	ignoreGroupDecorators: true,
+	useProperties: true,
 };
 export function toDto<T>({
 	value,
@@ -13,12 +16,47 @@ export function toDto<T>({
 	options = defaultOptions,
 }: {
 	value: any;
-	dtoType: Type<T>;
+	dtoType?: Type<T>;
 	options?: ClassTransformOptions;
-}): T {
+}) {
+	if (!value) {
+		return value;
+	}
 	let plain = value;
-	if (value instanceof BaseGeneratedEntity) {
+	const prototype = Object.getPrototypeOf(value);
+	dtoType = dtoType || getDtoType(prototype && prototype.constructor);
+	if (Array.isArray(value)) {
+		return value.map(
+			element =>
+				toDto({
+					value: element,
+					dtoType,
+					options,
+				}) as T
+		);
+	}
+
+	if (value instanceof Document) {
+		plain = (value as any).toJSON();
+	} else if (value instanceof BaseGeneratedEntity || value instanceof BaseEntity) {
 		plain = value.toPlain();
+	} else if (!dtoType && typeof value === 'object') {
+		if (value instanceof Date) {
+			return value.toISOString();
+		}
+		plain = Object.entries(value).reduce((currentObject, [key, value]) => {
+			return {
+				...currentObject,
+				[key]: toDto({
+					value: value,
+					options,
+				}),
+			};
+		}, {});
+	}
+
+	if (!dtoType) {
+		return plain;
 	}
 
 	return plainToClass(dtoType, plain, {

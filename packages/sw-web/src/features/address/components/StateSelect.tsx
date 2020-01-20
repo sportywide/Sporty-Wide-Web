@@ -96,11 +96,11 @@ const SwStateSelectComponent: React.FC<IProps> = ({
 		/>
 	);
 
-	function handleAddition(e, { value }) {
+	function handleAddition(e, { value = undefined }) {
 		onStateChange(newState(value, countryId));
 	}
 
-	function handleChange(e, { value }) {
+	function handleChange(e, { value = undefined }) {
 		onStateChange(stateMap[value]);
 	}
 };

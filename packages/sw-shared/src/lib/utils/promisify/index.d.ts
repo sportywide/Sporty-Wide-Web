@@ -64,7 +64,7 @@ export type GetOverloadArgs<T> = T extends {
 	? U
 	: never;
 
-type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends ((k: infer I) => void) ? I : never;
+type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (k: infer I) => void ? I : never;
 
 export type Promisify<T> = UnionToIntersection<PromisifyOne<GetOverloadArgs<T>>>;
 

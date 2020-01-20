@@ -1,0 +1,58 @@
+{
+	"AWSEBDockerrunVersion": "2",
+	"volumes": [
+		{
+			"name": "docker-socket",
+			"host": {
+				"sourcePath": "/var/run/docker.sock"
+			}
+		}
+	],
+	"containerDefinitions": [
+		{
+			"name": "sportywide-email",
+			"image": "sportywide/sportywide-email:<EMAIL_VERSION>",
+			"essential": false,
+			"memory": 128
+		},
+		{
+			"name": "sportywide-api",
+			"image": "sportywide/sportywide-api:<API_VERSION>",
+			"essential": true,
+			"portMappings": [
+				{
+					"hostPort": 80,
+					"containerPort": 5000
+				}
+			],
+			"memory": 256
+		},
+		{
+			"name": "docker-collector-metrics",
+			"image": "logzio/docker-collector-metrics",
+			"essential": false,
+			"environment": [
+				{
+					"name": "LOGZIO_MODULES",
+					"value": "docker"
+				},
+				{
+					"name": "LOGZIO_URL",
+					"value": "listener.logz.io"
+				},
+				{
+					"name": "LOGZIO_TOKEN",
+					"value": "WFENvaNICimiZKetzmVfjFOsaBIjMkWk"
+				}
+			],
+			"mountPoints": [
+				{
+					"sourceVolume": "docker-socket",
+					"containerPath": "/var/run/docker.sock",
+					"readOnly": true
+				}
+			],
+			"memory": 128
+		}
+	]
+}
