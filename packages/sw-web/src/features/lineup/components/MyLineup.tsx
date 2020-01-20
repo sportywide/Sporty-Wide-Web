@@ -67,7 +67,7 @@ const SwMyLineupComponent: React.FC<IProps> = function({ leagueId, currentLineup
 	}, [currentLineup]);
 
 	if (lineupResult.loading) {
-		return <Spinner />;
+		return <Spinner portalRoot={'#container'} />;
 	}
 
 	const errorMessage = getErrorMessage(lineupResult);

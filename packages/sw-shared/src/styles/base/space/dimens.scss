@@ -7,6 +7,10 @@
 	width: 100vh !important;
 }
 
+.sw-full-screen-height {
+	min-height: 100vh;
+}
+
 .sw-overflow-x {
 	max-width: 100%;
 	overflow-x: hidden;

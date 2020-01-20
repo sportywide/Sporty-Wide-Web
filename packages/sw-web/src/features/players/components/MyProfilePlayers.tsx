@@ -94,7 +94,7 @@ const SwMyManagedPlayersComponent: React.FC<IProps> = ({
 	}, [container, fetchWeeklyFixturesForTeams, profilePlayers]);
 	const options = useFormationOptions();
 	if (!profilePlayers || profilePlayers.loading) {
-		return <Spinner />;
+		return <Spinner portalRoot={'#container'} />;
 	}
 	const players = profilePlayers.players;
 

@@ -20,6 +20,8 @@ import { ApiService } from '@web/shared/lib/http/api.service';
 import EventModalManager from '@web/shared/lib/popup/EventModalManager';
 import ConfirmationManager from '@web/shared/lib/popup/ConfirmationManager';
 import { bugsnagClient } from '@web/shared/lib/bugsnag';
+import { SwSideBar } from '@web/shared/lib/ui/components/sidebar/Sidebar';
+import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 
 const ErrorBoundary = bugsnagClient.getPlugin('react');
 
@@ -100,7 +102,7 @@ class SwApp extends App<IProps> {
 	}
 
 	render() {
-		const { Component, pageProps, store } = this.props;
+		const { Component, pageProps, store, user } = this.props;
 		const container = store.container;
 		const apiService = container.get(ApiService);
 		return (
@@ -110,10 +112,17 @@ class SwApp extends App<IProps> {
 						<ApolloProvider client={apiService.graphql()}>
 							<ContainerContext.Provider value={store.container}>
 								<LoadingBar />
-								<Component {...pageProps} />
+								{user && user.status === UserStatus.ACTIVE ? (
+									<SwSideBar>
+										<Component {...pageProps} />
+									</SwSideBar>
+								) : (
+									<Component {...pageProps} />
+								)}
 								<NotificationContainer />
 								<ConfirmationManager />
 								<EventModalManager />
+								<div id={'loading-portal'} />
 							</ContainerContext.Provider>
 						</ApolloProvider>
 					</Provider>
