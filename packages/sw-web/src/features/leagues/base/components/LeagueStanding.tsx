@@ -22,7 +22,7 @@ const SwLeagueStandingsComponent: React.FC<IProps> = ({ league, leagueStandings,
 		fetchLeagueStandings(league.id);
 	}, [fetchLeagueStandings, league.id]);
 	if (!leagueStandings) {
-		return <Spinner />;
+		return <Spinner portalRoot={'#container'} />;
 	}
 	return (
 		<div style={{ maxWidth: '100%', overflowX: 'auto' }}>

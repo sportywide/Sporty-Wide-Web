@@ -1,5 +1,6 @@
 import urlParser from 'url';
 import { Router } from '@web/routes';
+import { compile } from 'path-to-regexp';
 
 export function updateUrl(url) {
 	const newUrl = urlParser.format({
@@ -22,36 +23,7 @@ export function updateCurrentUrl(updates) {
 	return updateUrl(url);
 }
 
-export function interpolateUrl(url, vars) {
-	const result = [];
-
-	const urlObject = parseUrl(url);
-
-	urlObject.pathname.split('/:').forEach(function(segment, i) {
-		if (i === 0) {
-			return result.push(segment);
-		} else {
-			const segmentMatch = segment.match(/(\w+)(.*)/);
-			const key = segmentMatch[1];
-
-			if (vars[key] !== undefined) {
-				result.push('/' + vars[key]);
-				delete vars[key];
-			} else {
-				result.push('/:' + key);
-			}
-
-			result.push(segmentMatch[2] || '');
-		}
-	});
-
-	urlObject.pathname = result.join('');
-	urlObject.query = {
-		...urlObject.query,
-		...vars,
-	};
-	return urlParser.format({
-		...urlObject,
-		search: null,
-	});
+export function interpolateUrl(url, vars = {}) {
+	const toPath = compile(url, { encode: encodeURIComponent });
+	return toPath(vars);
 }

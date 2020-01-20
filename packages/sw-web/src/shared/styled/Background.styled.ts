@@ -38,7 +38,7 @@ export const SwFluidContainer = styled.div`
 	width: 100%;
 `;
 
-export const SwContainer = styled(Container)`
+export const SwContainer = styled(Container).attrs({ id: 'container' })`
 	&&&&&&& {
 		background-color: ${props => props.theme.colors.white};
 		padding: var(--space-3);

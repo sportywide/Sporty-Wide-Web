@@ -2,6 +2,15 @@ import { findPathForRoute, Router } from '@web/routes';
 import { TEMPORARY_REDIRECT } from '@web/shared/lib/http/status-codes';
 import { interpolateUrl } from '@web/shared/lib/url';
 
+export interface IRouteOptions {
+	context?: any;
+	route?: string;
+	replace?: boolean;
+	redirect?: boolean;
+	refresh?: boolean;
+	params?: any;
+}
+
 export async function redirect({
 	context = {},
 	route,
@@ -9,14 +18,7 @@ export async function redirect({
 	redirect = false,
 	refresh,
 	params = {},
-}: {
-	context?: any;
-	route?: string;
-	replace?: boolean;
-	redirect?: boolean;
-	refresh?: boolean;
-	params?: any;
-}) {
+}: IRouteOptions) {
 	if (context && context.res) {
 		let url = findPathForRoute(route) || '/auth/redirect';
 		url = interpolateUrl(url, params);
