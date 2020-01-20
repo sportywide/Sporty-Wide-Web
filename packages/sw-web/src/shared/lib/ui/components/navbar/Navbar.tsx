@@ -19,9 +19,10 @@ const NavbarMenu = styled(Menu)`
 
 interface IProps {
 	onSidebarClicked: Function;
+	logout: typeof logout;
 }
 
-export const SwNavBarComponent: React.FC<IProps> = function({ onSidebarClicked, children }) {
+export const SwNavBarComponent: React.FC<IProps> = function({ onSidebarClicked, children, logout }) {
 	return (
 		<Sidebar.Pusher>
 			<NavbarMenu inverted>
@@ -52,7 +53,7 @@ export const SwNavBarComponent: React.FC<IProps> = function({ onSidebarClicked, 
 					<SwMenuItem name="help">
 						<Icon name="help" />
 					</SwMenuItem>
-					<SwMenuItem name="logout">
+					<SwMenuItem name="logout" onClick={() => logout()}>
 						<Icon name="log out" />
 					</SwMenuItem>
 				</Menu.Menu>
