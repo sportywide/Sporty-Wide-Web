@@ -5,6 +5,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { SwMenuItem } from '@web/shared/lib/ui/components/menu/MenuItem';
 import { SwBigScreen } from '@web/shared/lib/ui/components/responsive/Responsive';
+import { device } from '@web/styles/constants/size';
 
 const NavbarMenu = styled(Menu)`
 	&&&& {
@@ -43,8 +44,8 @@ export const SwNavBarComponent: React.FC<IProps> = function({ onSidebarClicked, 
 					Sporty wide
 				</SwMenuItem>
 			</SwBigScreen>
-			<SwMenuItem>
-				<Input icon="search" placeholder="Search..." style={{ maxWidth: '300px' }} />
+			<SwMenuItem className={'sw-flex-auto'}>
+				<Input icon="search" placeholder="Search..." />
 			</SwMenuItem>
 
 			<SwBigScreen>

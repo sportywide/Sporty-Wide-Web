@@ -187,6 +187,9 @@ export class ScoreboardCrawlerService extends ResultsService {
 					return;
 				}
 				const jersey = parseInt(playerRow.find('.tableTeam__squadNumber').text());
+				if (!jersey) {
+					return;
+				}
 				const playerName = playerRow.find('.tableTeam__squadName a').text();
 				const nationality = (playerRow.find('.tableTeam__squadName .flag').attr('title') || '').toLowerCase();
 				const statCells = playerRow.find('.playerTable__sportIcon');

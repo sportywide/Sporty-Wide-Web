@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { logout } from '@web/features/auth/store/actions';
 import { allowActiveOnly, checkUser } from '@web/shared/lib/auth/check-user';
+import Head from 'next/head';
 
 class SwIndex extends React.Component<any, any> {
 	constructor(props: Readonly<any>) {
@@ -11,7 +12,13 @@ class SwIndex extends React.Component<any, any> {
 	}
 
 	render() {
-		return null;
+		return (
+			<div>
+				<Head>
+					<title>Sporty Wide</title>
+				</Head>
+			</div>
+		);
 	}
 }
 

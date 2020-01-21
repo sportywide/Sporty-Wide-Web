@@ -46,7 +46,7 @@
  */
 
 .sw-flex-auto {
-	flex: 1 1 auto;
+	flex: 1 1 auto !important;
 	min-width: 0; /* 1 */
 	min-height: 0; /* 1 */
 }

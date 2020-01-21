@@ -17,6 +17,7 @@ import { PlayerRatingDocument } from '@schema/player/models/player-rating.schema
 import { weekStart } from '@shared/lib/utils/date/relative';
 import { leagues } from '@shared/lib/data/data.constants';
 import { FixtureProcessInput } from '@scheduling/lib/fixture/services/fixture-process.service';
+import { getSeason } from '@shared/lib/utils/season';
 
 @Injectable()
 export class FixtureService extends BaseEntityService<Fixture> {

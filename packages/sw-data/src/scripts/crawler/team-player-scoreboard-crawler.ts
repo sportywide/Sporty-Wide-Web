@@ -33,6 +33,7 @@ async function bootstrap() {
 			await crawlerService.writeResult(`players/scoreboard-${leagueTeam.league.id}.json`, {
 				players: result,
 				leagueId: leagueTeam.league.id,
+				season: leagueTeam.season,
 			});
 		}
 	} finally {

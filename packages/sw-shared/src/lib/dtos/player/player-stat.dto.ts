@@ -7,4 +7,5 @@ export class PlayerStatDto {
 	leagueId?: number;
 	teamId?: number;
 	season: string;
+	chance?: number;
 }
