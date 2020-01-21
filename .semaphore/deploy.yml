@@ -1,0 +1,49 @@
+version: v1.0
+name: Deploy Pipeline
+agent:
+    machine:
+        type: e1-standard-2
+        os_image: ubuntu1804
+blocks:
+    - name: Build and push docker images
+      skip:
+          when: "branch != 'release'"
+      task:
+          secrets:
+              - name: docker-login
+          prologue:
+              commands:
+                  - checkout
+          jobs:
+              - name: 'Build all'
+                commands:
+                    - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+                    - make pullAll
+                    - make buildAll
+                    - make pushAll
+    - name: Deploy Frontend
+      skip:
+          when: "branch != 'release'"
+      task:
+          secrets:
+              - name: aws-creds
+          prologue:
+              commands:
+                  - checkout
+          jobs:
+              - name: 'Deploy Frontend'
+                commands:
+                    - ./scripts/elb/frontend/deploy.sh
+    - name: Deploy Backend
+      skip:
+          when: "branch != 'release'"
+      task:
+          secrets:
+              - name: aws-creds
+          prologue:
+              commands:
+                  - checkout
+          jobs:
+              - name: 'Deploy Backend'
+                commands:
+                    - ./scripts/elb/backend/deploy.sh

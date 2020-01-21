@@ -1,4 +1,5 @@
 import { S3Event, SNSEvent, SQSEvent } from 'aws-lambda';
+
 export enum EventSource {
 	CLOUDFRONT,
 	API_GATEWAY_AUTHORIZER,

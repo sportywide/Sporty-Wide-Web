@@ -19,6 +19,13 @@ import { LoadingBar } from '@web/shared/lib/ui/components/loading/LoadingBar';
 import { ApiService } from '@web/shared/lib/http/api.service';
 import EventModalManager from '@web/shared/lib/popup/EventModalManager';
 import ConfirmationManager from '@web/shared/lib/popup/ConfirmationManager';
+import { bugsnagClient } from '@web/shared/lib/bugsnag';
+import { SwSideBar } from '@web/shared/lib/ui/components/sidebar/Sidebar';
+import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
+import { EventDispatcher } from '@web/shared/lib/events/event-dispatcher';
+import { WINDOW_CLICK } from '@web/shared/lib/popup/event.constants';
+
+const ErrorBoundary = bugsnagClient.getPlugin('react');
 
 interface IProps {
 	store: ISportyWideStore;
@@ -35,9 +42,13 @@ const theme = {
 		transparent: 'rgba(0, 0, 0, 0)',
 		black: '#000',
 	},
+	dimen: {
+		navBar: '47px',
+	},
 };
 
 class SwApp extends App<IProps> {
+	listeners: Function[] = [];
 	static async getInitialProps({ Component, ctx }) {
 		const store: ISportyWideStore = ctx.store;
 		let pageProps = {};
@@ -54,6 +65,10 @@ class SwApp extends App<IProps> {
 				replace: true,
 			});
 			return { pageProps };
+		}
+
+		if (user) {
+			bugsnagClient.user = user;
 		}
 
 		if (Component.registerEpics) {
@@ -90,26 +105,56 @@ class SwApp extends App<IProps> {
 				}
 			}
 		}
+		this.registerListeners();
+	}
+
+	registerClickListeners() {
+		const eventHandler = e => {
+			const eventDispatcher = this.props.store.container.get(EventDispatcher);
+			eventDispatcher.trigger(WINDOW_CLICK, e);
+		};
+		window.addEventListener('click', eventHandler);
+
+		this.listeners.push(() => {
+			window.removeEventListener('click', eventHandler);
+		});
+	}
+
+	registerListeners() {
+		this.registerClickListeners();
+	}
+
+	componentWillUnmount(): void {
+		this.listeners.forEach(listener => listener());
 	}
 
 	render() {
-		const { Component, pageProps, store } = this.props;
+		const { Component, pageProps, store, user } = this.props;
 		const container = store.container;
 		const apiService = container.get(ApiService);
 		return (
-			<ThemeProvider theme={theme}>
-				<Provider store={store}>
-					<ApolloProvider client={apiService.graphql()}>
-						<ContainerContext.Provider value={store.container}>
-							<LoadingBar />
-							<Component {...pageProps} />
-							<NotificationContainer />
-							<ConfirmationManager />
-							<EventModalManager />
-						</ContainerContext.Provider>
-					</ApolloProvider>
-				</Provider>
-			</ThemeProvider>
+			<ErrorBoundary>
+				<ThemeProvider theme={theme}>
+					<Provider store={store}>
+						<ApolloProvider client={apiService.graphql()}>
+							<ContainerContext.Provider value={store.container}>
+								<LoadingBar />
+								{user && user.status === UserStatus.ACTIVE ? (
+									<SwSideBar>
+										<Component {...pageProps} />
+									</SwSideBar>
+								) : (
+									<Component {...pageProps} />
+								)}
+								<NotificationContainer />
+								<ConfirmationManager />
+								<EventModalManager />
+								<div id={'loading-portal'} />
+							</ContainerContext.Provider>
+						</ApolloProvider>
+					</Provider>
+				</ThemeProvider>
+			</ErrorBoundary>
 		);
 	}
 }

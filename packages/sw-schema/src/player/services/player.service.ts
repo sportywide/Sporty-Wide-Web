@@ -6,7 +6,7 @@ import { Player } from '@schema/player/models/player.entity';
 import { InjectSwRepository } from '@schema/core/repository/sql/inject-repository.decorator';
 import { SwRepository } from '@schema/core/repository/sql/base.repository';
 import { Fixture } from '@schema/fixture/models/fixture.entity';
-import { Brackets } from 'typeorm';
+import { Brackets, In } from 'typeorm';
 import { max, min } from 'lodash';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -14,7 +14,6 @@ import { UserPlayersDocument } from '@schema/player/models/user-players.schema';
 import { getSeason } from '@shared/lib/utils/season';
 import { UserLeaguePreferenceService } from '@schema/league/services/user-league-preference.service';
 import { startOfDay } from 'date-fns';
-import { PlayerStatDocument } from '@schema/player/models/player-stat.schema';
 import { PlayerStatDto } from '@shared/lib/dtos/player/player-stat.dto';
 import { Diff, MongooseDocument } from '@shared/lib/utils/types';
 import { PlayerRatingDto } from '@shared/lib/dtos/player/player-rating.dto';
@@ -25,31 +24,51 @@ import { SCHEMA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import { BaseEntityService } from '@schema/core/entity/base-entity.service';
 import { PlayerRatingDocument } from '@schema/player/models/player-rating.schema';
+import {
+	NotEnoughFixturesException,
+	NotInSeasonException,
+	NotInWeekDayException,
+	NotPlayingException,
+} from '@shared/lib/exceptions/generate-player-exception';
+import { FixtureService } from '@schema/fixture/services/fixture.service';
+import { PlayerStat } from '@schema/player/models/player-stat.entity';
 
 @Injectable()
 export class PlayerService extends BaseEntityService<Player> {
 	constructor(
 		@InjectSwRepository(Player) private readonly playerRepository: SwRepository<Player>,
+		@InjectSwRepository(PlayerStat) private readonly playerStatRepository: SwRepository<PlayerStat>,
+		private readonly fixtureService: FixtureService,
 		private readonly userLeaguePreferenceService: UserLeaguePreferenceService,
 		@InjectModel('UserPlayers') private readonly userPlayersModel: Model<UserPlayersDocument>,
-		@InjectModel('PlayerStat') private readonly playerStatModel: Model<PlayerStatDocument>,
 		@InjectModel('PlayerRating') private readonly playerRatingModel: Model<PlayerRatingDocument>,
 		@Inject(SCHEMA_LOGGER) private readonly logger: Logger
 	) {
 		super(playerRepository);
 	}
 
-	async getPlayersForUser({ userId, leagueId, date = new Date() }) {
-		const season = getSeason(date);
-		if (!season) {
-			return null;
-		}
-		let userPlayers = await this.userPlayersModel.findOne({
+	async getOwnedPlayerIds({ userId, leagueId, date }) {
+		return this.userPlayersModel.findOne({
 			userId,
 			leagueId,
 			week: date,
 		});
+	}
+
+	async getOrCreatePlayersForUser({ userId, leagueId, date = new Date() }) {
+		const season = getSeason(date);
+		if (!season) {
+			throw new NotInSeasonException('Not in season');
+		}
+		let userPlayers = await this.getOwnedPlayerIds({ userId, leagueId, date });
 		if (!userPlayers) {
+			const numFixtures = await this.fixtureService.numMatchesForWeek({ leagueId, date });
+			if (!numFixtures) {
+				throw new NotPlayingException('League is not in play this week');
+			}
+			if ([0, 6].includes(new Date().getDay())) {
+				throw new NotInWeekDayException('Cant play during the weekends');
+			}
 			const userPreference = await this.userLeaguePreferenceService.find({ userId, leagueId });
 			const formationName = userPreference ? userPreference.formation : '4-4-2';
 			const formation = formationMap[formationName];
@@ -64,7 +83,7 @@ export class PlayerService extends BaseEntityService<Player> {
 				leagueId,
 				week: date,
 				formation: formationName,
-				season: getSeason(date),
+				season,
 				players: playerIds,
 			});
 
@@ -85,12 +104,13 @@ export class PlayerService extends BaseEntityService<Player> {
 		return this.playerRepository.getByIdsOrdered(playerIds, includes);
 	}
 
-	async getPlayerStats(playerIds) {
-		return this.playerStatModel
-			.find({
-				playerId: { $in: playerIds },
-			})
-			.exec();
+	async getPlayerStats(playerIds, season = getSeason(new Date())) {
+		return this.playerStatRepository.find({
+			where: {
+				playerId: In(playerIds),
+				season,
+			},
+		});
 	}
 
 	async generateFormation({ formation, leagueId, maxPlayers = 15, date = new Date() }) {
@@ -222,7 +242,9 @@ export class PlayerService extends BaseEntityService<Player> {
 		for (const position of requiredPositions) {
 			const availablePlayers: any[] = (positionMap[position] || { players: [] }).players;
 			if (!availablePlayers || !availablePlayers.length) {
-				throw new Error(`Not a valid formation ${strategy.name}. Position not found ${position}`);
+				throw new NotEnoughFixturesException(
+					`Not a valid formation ${strategy.name}. Position not found ${position}`
+				);
 			}
 			const trials = 5;
 			for (let i = 0; i < trials; i++) {
@@ -249,18 +271,11 @@ export class PlayerService extends BaseEntityService<Player> {
 		}
 	}
 
-	savePlayerStat(playerStat: Diff<PlayerStatDto, MongooseDocument>) {
-		return this.playerStatModel.findOneAndUpdate(
-			{
-				playerId: playerStat.playerId,
-				season: playerStat.season,
-			},
-			playerStat,
-			{
-				upsert: true,
-				new: true,
-			}
-		);
+	async savePlayerStat(playerStat: PlayerStatDto) {
+		return this.playerStatRepository.upsert({
+			object: playerStat,
+			conflictColumns: ['playerId', 'season'],
+		});
 	}
 
 	savePlayerRating(playerRating: Diff<PlayerRatingDto, MongooseDocument>) {

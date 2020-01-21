@@ -1,5 +1,5 @@
 import { Service } from 'typedi';
-import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
+import { UserPlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { FormationDto, formationMap } from '@shared/lib/dtos/formation/formation.dto';
 
 @Service()
@@ -9,12 +9,13 @@ export class LineupService {
 		strategy,
 		players,
 	}: {
-		positions: (PlayerDto | null)[];
-		players: PlayerDto[];
+		positions: (UserPlayerDto | null)[];
+		players: UserPlayerDto[];
 		strategy: FormationDto;
 	}) {
+		players = players.filter(player => player.available);
 		const filledPositions = [...positions];
-		const playerByPosition: { [key: string]: PlayerDto[] } = players.reduce((currentMap, player) => {
+		const playerByPosition: { [key: string]: UserPlayerDto[] } = players.reduce((currentMap, player) => {
 			if (positions.includes(player)) {
 				return currentMap;
 			}

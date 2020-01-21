@@ -15,7 +15,7 @@ spec:
                   image: u1234x1234/torpool:1.0.0
                   resources:
                       requests:
-                          cpu: 350m
+                          cpu: 300m
                   args: ['--MaxCircuitDirtiness', '30', '--NewCircuitPeriod', '30', '--Tors', '10']
                   ports:
                       - name: proxy

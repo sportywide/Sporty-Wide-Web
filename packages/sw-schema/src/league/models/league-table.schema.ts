@@ -1,6 +1,6 @@
 import mongoose, { Document } from 'mongoose';
 import { LeagueStandingsDto } from '@root/packages/sw-shared/src/lib/dtos/leagues/league-standings.dto';
-import { Diff, Interface, MongooseDocument } from '@shared/lib/utils/types';
+import { Diff, MongooseDocument } from '@shared/lib/utils/types';
 
 export const FormSchema = new mongoose.Schema({
 	type: String,

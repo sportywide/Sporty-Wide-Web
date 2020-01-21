@@ -1,11 +1,11 @@
 import { error, ok } from '@scheduling/lib/http';
-import { initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
+import { getLogger, initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
 import { leagues } from '@shared/lib/data/data.constants';
 import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
 import { SCHEDULING_CONFIG } from '@core/config/config.constants';
 import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
 import { ScoreboardCrawlerService } from '@data/crawler/scoreboard-crawler.service';
-import { SQSEvent } from '@root/node_modules/@types/aws-lambda';
+import { SQSEvent } from 'aws-lambda';
 import { INestApplicationContext } from '@nestjs/common';
 import { BrowserService } from '@data/crawler/browser.service';
 
@@ -37,7 +37,8 @@ export async function handler(event: SQSEvent) {
 		});
 		return ok('SUCCESS');
 	} catch (e) {
-		console.error(__filename, e);
+		const logger = getLogger(module);
+		logger.error(__filename, e);
 		return error(e);
 	} finally {
 		const browserService = module.get(BrowserService);

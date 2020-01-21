@@ -5,8 +5,8 @@ import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
 import { SCHEDULING_CONFIG } from '@core/config/config.constants';
 import { error } from '@scheduling/lib/http';
 import { format, startOfMonth } from 'date-fns';
-import { initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
-import { SQSEvent } from '@root/node_modules/@types/aws-lambda';
+import { getLogger, initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
+import { SQSEvent } from 'aws-lambda';
 import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
 
 export async function handler(event: SQSEvent) {
@@ -30,7 +30,8 @@ export async function handler(event: SQSEvent) {
 			},
 		});
 	} catch (e) {
-		console.error(__filename, e);
+		const logger = getLogger(module);
+		logger.error(__filename, e);
 		return error(e);
 	} finally {
 		const browserService = module.get(BrowserService);

@@ -1,4 +1,6 @@
 import Routes from 'next-routes-handler';
+import { withRouter as withNextRouter } from 'next/router';
+import hoistNonReactStatics from 'hoist-non-react-statics';
 
 const routeMappings = [
 	{
@@ -47,11 +49,6 @@ const routeMappings = [
 		page: 'league/play-league',
 	},
 	{
-		name: 'lineup-builder',
-		pattern: '/lineup-builder/:id',
-		page: 'lineup/builder',
-	},
-	{
 		name: 'user-leagues',
 		pattern: '/user-leagues',
 		page: 'league/user-leagues',
@@ -79,4 +76,12 @@ export function findPathForRoute(routeName) {
 	}
 	const routeMapping = routeMappings.find(route => route.name === routeName);
 	return (routeMapping && routeMapping.pattern) || `/${routeName}`;
+}
+
+export function withRouter<Props>(
+	WrappedComponent: React.ComponentType<Props>
+): React.ComponentType<Omit<Props, 'router'>> {
+	const NewComponent: any = withNextRouter(WrappedComponent as any);
+	hoistNonReactStatics(NewComponent, WrappedComponent);
+	return NewComponent;
 }

@@ -9,7 +9,10 @@ import { BadRequestException } from '@nestjs/common';
 import { UserGender } from '@shared/lib/dtos/user/enum/user-gender.enum';
 import { UserProfile } from '@schema/user/profile/models/user-profile.entity';
 import { UserLeague } from '@schema/league/models/user-league.entity';
+import { DtoType } from '@shared/lib/dtos/decorators/dto-type.decorator';
+import { UserDto } from '@shared/lib/dtos/user/user.dto';
 
+@DtoType(UserDto)
 @Entity()
 export class User extends TrackTimestamp(BaseGeneratedEntity) {
 	@Column({
@@ -70,16 +73,30 @@ export class User extends TrackTimestamp(BaseGeneratedEntity) {
 	})
 	socialProvider: SocialProvider;
 
-	@Column() refreshToken?: string;
-
-	@OneToMany(type => UserLeague, userLeague => userLeague.user)
+	@OneToMany(
+		() => UserLeague,
+		userLeague => userLeague.user
+	)
 	leagues: UserLeague[];
 
-	@OneToOne(type => UserProfile, userProfile => userProfile.user, { cascade: true })
+	@OneToOne(
+		() => UserProfile,
+		userProfile => userProfile.user,
+		{ cascade: true }
+	)
 	profile: UserProfile;
 
 	get name() {
 		return [this.firstName, this.lastName].filter(value => value).join(' ');
+	}
+
+	getBugsnagData() {
+		return {
+			id: this.id,
+			name: this.name,
+			type: this.socialProvider,
+			email: this.email,
+		};
 	}
 
 	@BeforeInsert()

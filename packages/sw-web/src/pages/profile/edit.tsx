@@ -2,7 +2,7 @@ import React from 'react';
 import Head from 'next/head';
 import { SwFluidContainer, SwGreyBackground } from '@web/shared/styled/Background.styled';
 import { SwEditProfile } from '@web/features/profile/edit/components/EditProfile';
-import { Grid, GridColumn, Loader } from 'semantic-ui-react';
+import { Grid, GridColumn } from 'semantic-ui-react';
 import { compose } from 'recompose';
 import { registerReducer } from '@web/shared/lib/redux/register-reducer';
 import { registerEpic } from '@web/shared/lib/redux/register-epic';
@@ -17,6 +17,7 @@ import {
 import { fetchUserProfile } from '@web/features/profile/edit/store/actions';
 import { IUserProfile, userProfileReducer } from '@web/features/profile/edit/store/reducers';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
+import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
 
 interface IProps {
 	userProfile: IUserProfile;
@@ -30,10 +31,10 @@ class SwEditProfilePage extends React.Component<IProps> {
 
 	render() {
 		if (!(this.props.userProfile && this.props.userProfile.basic)) {
-			return <Loader active />;
+			return <Spinner />;
 		}
 		return (
-			<SwGreyBackground>
+			<SwGreyBackground padding={true}>
 				<Head>
 					<title>Edit your profile</title>
 				</Head>
@@ -58,12 +59,9 @@ const enhancer = compose(
 		saveBasicUserProfileEpic,
 		saveExtraUserProfileEpic
 	),
-	connect(
-		state => ({ userProfile: state.userProfile, user: state.auth && state.auth.user }),
-		{
-			fetchUserProfile,
-		}
-	)
+	connect(state => ({ userProfile: state.userProfile, user: state.auth && state.auth.user }), {
+		fetchUserProfile,
+	})
 );
 
 export default enhancer(SwEditProfilePage);

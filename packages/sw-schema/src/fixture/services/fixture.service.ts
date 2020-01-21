@@ -3,7 +3,7 @@ import { InjectSwRepository } from '@schema/core/repository/sql/inject-repositor
 import { SwRepository } from '@schema/core/repository/sql/base.repository';
 import { BaseEntityService } from '@schema/core/entity/base-entity.service';
 import { Fixture } from '@schema/fixture/models/fixture.entity';
-import { addDays, addHours, addMonths, addWeeks, format, startOfDay, startOfMonth, startOfWeek } from 'date-fns';
+import { addDays, addHours, addMonths, addWeeks, format, startOfDay, startOfMonth } from 'date-fns';
 import { Between, In, MoreThan, Not } from 'typeorm';
 import { Logger } from 'log4js';
 import { SCHEMA_LOGGER } from '@core/logging/logging.constant';
@@ -14,6 +14,9 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Player } from '@schema/player/models/player.entity';
 import { keyBy } from 'lodash';
 import { PlayerRatingDocument } from '@schema/player/models/player-rating.schema';
+import { weekStart } from '@shared/lib/utils/date/relative';
+import { leagues } from '@shared/lib/data/data.constants';
+import { FixtureProcessInput } from '@scheduling/lib/fixture/services/fixture-process.service';
 
 @Injectable()
 export class FixtureService extends BaseEntityService<Fixture> {
@@ -90,14 +93,36 @@ export class FixtureService extends BaseEntityService<Fixture> {
 	}
 
 	findMatchesForWeek({ leagueId, date = new Date() }) {
-		const thisMonday = startOfDay(startOfWeek(date, { weekStartsOn: 1 }));
+		const thisMonday = startOfDay(weekStart(date));
 		const nextMonday = addWeeks(thisMonday, 1);
+		return this.findMatchesInRange({ leagueId, start: thisMonday, end: nextMonday });
+	}
+
+	numMatchesForWeek({ leagueId, date = new Date() }) {
+		const thisMonday = startOfDay(weekStart(date));
+		const nextMonday = addWeeks(thisMonday, 1);
+		return this.numMatchesInRange({ leagueId, start: thisMonday, end: nextMonday });
+	}
+
+	numMatchesInRange({ leagueId, start, end }) {
 		const queryBuilder = this.fixtureRepository
 			.createQueryBuilder()
 			.where('time >= :start AND time < :end AND league_id = :leagueId');
 		queryBuilder.setParameters({
-			start: thisMonday,
-			end: nextMonday,
+			start,
+			end,
+			leagueId,
+		});
+		return queryBuilder.getCount();
+	}
+
+	findMatchesInRange({ leagueId, start, end }) {
+		const queryBuilder = this.fixtureRepository
+			.createQueryBuilder()
+			.where('time >= :start AND time < :end AND league_id = :leagueId');
+		queryBuilder.setParameters({
+			start,
+			end,
 			leagueId,
 		});
 		return queryBuilder.getMany();
@@ -116,12 +141,7 @@ export class FixtureService extends BaseEntityService<Fixture> {
 		date = startOfDay(date);
 		const today = format(date, 'yyyy-MM-dd');
 		const tomorrow = format(addDays(date, 1), 'yyyy-MM-dd');
-		return this.fixtureRepository.find({
-			where: {
-				leagueId,
-				time: Between(today, tomorrow),
-			},
-		});
+		return this.findMatchesInRange({ leagueId, start: today, end: tomorrow });
 	}
 
 	findByMonth(leagueId, date = new Date()) {
@@ -134,6 +154,44 @@ export class FixtureService extends BaseEntityService<Fixture> {
 				time: Between(firstDay, lastDay),
 			},
 		});
+	}
+
+	async getNextFixturesForTeams(teamIds: number[] = []): Promise<Record<number, Fixture>> {
+		if (!teamIds.length) {
+			return {};
+		}
+		const rows = await this.fixtureRepository.query(
+			`SELECT select_next_match(id) AS fixture_id, id AS team_id FROM team WHERE id IN (${teamIds.join(',')})`
+		);
+
+		const fixtures = await this.fixtureRepository.findByIds(rows.map(row => row.fixture_id));
+		const fixtureMap = keyBy(fixtures, 'id');
+
+		return rows.reduce((currentMap, row) => {
+			return {
+				...currentMap,
+				[row.team_id]: fixtureMap[row.fixture_id],
+			};
+		}, {});
+	}
+
+	async getWeeklyMatchesForTeams(teamIds: number[] = []) {
+		if (!teamIds.length) {
+			return {};
+		}
+		const rows = await this.fixtureRepository.query(
+			`SELECT select_match_week(id) AS fixture_id, id AS team_id FROM team WHERE id IN (${teamIds.join(',')})`
+		);
+
+		const fixtures = await this.fixtureRepository.findByIds(rows.map(row => row.fixture_id));
+		const fixtureMap = keyBy(fixtures, 'id');
+
+		return rows.reduce((currentMap, row) => {
+			return {
+				...currentMap,
+				[row.team_id]: fixtureMap[row.fixture_id],
+			};
+		}, {});
 	}
 
 	async saveWhoscoreFixtures(
@@ -165,17 +223,53 @@ export class FixtureService extends BaseEntityService<Fixture> {
 					this.logger.error(`Cannot find fixture for teams ${fixture.home} - ${fixture.away}`);
 					return;
 				}
-				dbFixture.whoscoreUrl = fixture.link;
-				dbFixture.status = fixture.status;
-				dbFixture.current = fixture.current;
-				dbFixture.time = fixture.time;
-				dbFixture.homeScore = fixture.homeScore;
-				dbFixture.awayScore = fixture.awayScore;
-				dbFixture.incidents = fixture.incidents;
-				mapping.set(fixture, dbFixture);
-				await this.saveOne(dbFixture);
+				try {
+					dbFixture.whoscoreUrl = fixture.link;
+					dbFixture.status = fixture.status;
+					dbFixture.current = fixture.current;
+					if (fixture.time) {
+						dbFixture.time = fixture.time;
+					}
+					dbFixture.homeScore = fixture.homeScore;
+					dbFixture.awayScore = fixture.awayScore;
+					dbFixture.incidents = fixture.incidents;
+					mapping.set(fixture, dbFixture);
+					await this.saveOne(dbFixture);
+				} catch (e) {
+					this.logger.error(
+						`Failed to save match ${fixture.link} \n\n ${JSON.stringify(fixture, null, 4)}`,
+						e
+					);
+				}
 			})
 		);
 		return mapping;
+	}
+
+	async matchDbFixtures(
+		module,
+		leagueMatches: Record<number, WhoscoreFixture[]>,
+		date
+	): Promise<Map<WhoscoreFixture, Fixture>> {
+		const whoscoreLeagueIds = Object.keys(leagueMatches);
+		const fixtureService = module.get(FixtureService);
+		const relevantLeagues = leagues.filter(league => whoscoreLeagueIds.includes(String(league.whoscoreId)));
+
+		const result = new Map();
+		for (const league of relevantLeagues) {
+			const dbFixtures = await fixtureService.findMatchesForDay({
+				leagueId: league.id,
+				date,
+			});
+			const mapping = await fixtureService.saveWhoscoreFixtures(
+				league.id,
+				dbFixtures,
+				leagueMatches[league.whoscoreId]
+			);
+			for (const [fixture, dbFixture] of mapping.entries()) {
+				result.set(fixture, dbFixture);
+			}
+		}
+		return result;
 	}
 }

@@ -11,6 +11,21 @@ export const SwDraggablePlayer = styled.div`
 		`
 			opacity: 0.4;
 		`}
+
+	${({ available }) =>
+		!available &&
+		`
+				opacity: 0.4;
+		`}
+	
+	${({ canDrag }) =>
+		!canDrag &&
+		`
+			img {
+				user-drag: none; 
+				user-select: none;
+			}
+		`}
 `;
 
 export const SwStatsLabel = styled(Label)`
@@ -32,5 +47,12 @@ export const SwPlayerLogo = styled(Image)`
 	&&& {
 		width: 50px;
 		height: 50px;
+	}
+`;
+
+export const SwPlayerDraggingLogo = styled(Image)`
+	&&& {
+		width: 60px;
+		height: 60px;
 	}
 `;

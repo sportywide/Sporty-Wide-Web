@@ -30,7 +30,7 @@ const config = makeConfig({
 config.plugins.push(
 	new GenerateDependencyPackages({
 		excludes: ['aws-sdk'],
-		includes: ['pg', 'source-map-support', 'rxjs', 'graphql'],
+		includes: ['pg', 'source-map-support', 'rxjs', 'graphql', 'yup'],
 		packageJson: mergePackageJson({
 			rootDir: paths.project.root,
 		}),

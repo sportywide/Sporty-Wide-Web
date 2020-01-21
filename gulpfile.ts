@@ -1,6 +1,7 @@
 require('reflect-metadata');
 require('tsconfig-paths/register');
-import { Gulpclass, Task } from 'gulpclass';
+import { Gulpclass, SequenceTask, Task } from 'gulpclass';
+import gulp from 'gulp';
 import { spawn } from '@root/helpers/process';
 
 const argv = require('yargs').argv;
@@ -30,6 +31,21 @@ export class Gulpfile {
 		return spawn('git add . && git-cz');
 	}
 
+	@Task('eslint')
+	eslint() {
+		return spawn("eslint '**/*.{js,jsx,ts,tsx}'");
+	}
+
+	@Task('tsc')
+	tsCheck() {
+		return spawn('node --max-old-space-size=4096 node_modules/.bin/tsc --noEmit');
+	}
+
+	@SequenceTask('lint')
+	lint() {
+		return [gulp.parallel(['tsc', 'eslint'])];
+	}
+
 	@Task('dev:exec')
 	exec() {
 		return spawn(`npx lerna exec "gulp dev:exec --entry ${argv.entry}" --stream --scope ${argv.scope}`);
@@ -55,6 +71,7 @@ export class Gulpfile {
 
 		if (argv.it) {
 			args.push('--testRegex=\\.it-spec\\.ts$');
+			args.push('--detectOpenHandles');
 		}
 
 		if (argv.e2e) {
@@ -65,6 +82,7 @@ export class Gulpfile {
 			args.push('--testRegex=\\.it-spec\\.tsx?$');
 			args.push('--testRegex=\\.e2e-spec\\.tsx?$');
 			args.push('--testRegex=\\.spec\\.tsx?$');
+			args.push('--detectOpenHandles');
 		}
 
 		for (const key of Object.keys(argv)) {

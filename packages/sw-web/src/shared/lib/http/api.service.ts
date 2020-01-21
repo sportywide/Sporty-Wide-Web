@@ -13,7 +13,7 @@ import { logout, setAuth } from '@web/features/auth/store/actions';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { autobind } from 'core-decorators';
 import { axiosFetch } from '@web/shared/lib/http/axios-fetch';
-import { logger } from '@web/shared/lib/logging';
+import { noop } from '@shared/lib/utils/functions';
 
 @Service()
 export class ApiService {
@@ -93,6 +93,12 @@ export class ApiService {
 
 	@autobind
 	private refreshTokenFailed() {
+		const res = this.context.res;
+		if (res) {
+			const originalEnd = res.end.bind(res);
+			res.end = noop;
+			res.originalEnd = originalEnd;
+		}
 		this.store.dispatch(logout());
 	}
 

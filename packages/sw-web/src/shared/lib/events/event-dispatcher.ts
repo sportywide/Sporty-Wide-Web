@@ -11,7 +11,7 @@ export class EventDispatcher {
 		this.eventListeners = {};
 	}
 
-	trigger(event, data) {
+	trigger(event, data = null) {
 		if (!this.eventListeners[event]) {
 			return;
 		}

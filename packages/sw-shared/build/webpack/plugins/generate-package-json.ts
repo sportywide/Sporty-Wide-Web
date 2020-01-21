@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { uniq, merge } from 'lodash';
+import { merge, uniq } from 'lodash';
 import fsExtra from 'fs-extra';
 import sortPackageJson from 'sort-package-json';
 
@@ -120,7 +120,7 @@ export class GenerateDependencyPackages {
 					dependencies: generatedDependencyMap,
 				};
 
-				const packageJsonString = JSON.stringify(newPackageJson, null, 4);
+				const packageJsonString = sortPackageJson(JSON.stringify(newPackageJson, null, 4));
 
 				fsExtra.mkdirpSync(path.dirname(this.outputPath));
 				fs.writeFileSync(this.outputPath, packageJsonString, {

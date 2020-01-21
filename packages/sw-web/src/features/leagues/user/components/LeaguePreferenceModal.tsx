@@ -1,5 +1,5 @@
 import React, { memo, useState } from 'react';
-import { Button, Modal, Select, Image } from 'semantic-ui-react';
+import { Button, Image, Modal, Select } from 'semantic-ui-react';
 import { noop } from '@shared/lib/utils/functions';
 import { useFormationOptions } from '@web/shared/lib/react/hooks';
 import { connect } from 'react-redux';
@@ -43,9 +43,13 @@ const LeaguePreferenceModalComponent: React.FC<IProps> = function({
 				<Button
 					onClick={async () => {
 						await joinUserLeague({ leagueId: league.id, userId, formation });
+						onClose(null);
 						await redirect({
-							refresh: true,
-							route: `play-league/${league.id}`,
+							refresh: false,
+							route: 'play-league',
+							params: {
+								id: league.id,
+							},
 						});
 					}}
 					positive
@@ -62,12 +66,9 @@ const LeaguePreferenceModalComponent: React.FC<IProps> = function({
 
 const enhancer = compose(
 	registerEpic(joinUserLeagueEpic),
-	connect(
-		null,
-		{
-			joinUserLeague,
-		}
-	),
+	connect(null, {
+		joinUserLeague,
+	}),
 	memo
 );
 

@@ -1,16 +1,17 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Observable } from 'rxjs';
-import passport from 'passport';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from '@api/user/services/user.service';
 import { JwtStrategy } from '@api/auth/strategy/jwt.strategy';
-import { TokenExpiredError } from 'jsonwebtoken';
 import { getRequest } from '@api/utils/context';
+import { bugsnagClient } from '@api/utils/bugsnag';
+import { UserService } from '@api/user/services/user.service';
+import { TokenService } from '@api/auth/services/token.service';
 
 @Injectable()
 export class RefreshTokenGuard implements CanActivate {
 	constructor(
 		private readonly jwtService: JwtService,
+		private readonly tokenService: TokenService,
 		private readonly userService: UserService,
 		private readonly jwtStrategy: JwtStrategy
 	) {}
@@ -23,16 +24,21 @@ export class RefreshTokenGuard implements CanActivate {
 		}
 
 		return new Promise(async resolve => {
-			const decodedPayload: any = this.jwtService.decode(refreshToken);
-			if (!(decodedPayload && decodedPayload.id)) {
+			let [userId]: any[] = refreshToken.split(':');
+			userId = parseInt(userId, 10);
+			if (isNaN(userId)) {
 				return resolve(false);
 			}
-			const userId = decodedPayload.id;
 			const user = await this.userService.findById({ id: userId });
-			if (!user || user.refreshToken !== refreshToken) {
+			if (!user) {
+				return resolve(false);
+			}
+			const storedRefreshToken = await this.tokenService.getRefreshToken(userId);
+			if (storedRefreshToken !== refreshToken) {
 				return resolve(false);
 			}
 			request.user = user;
+			bugsnagClient.user = user.getBugsnagData();
 			return resolve(true);
 		});
 	}

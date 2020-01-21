@@ -1,6 +1,7 @@
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
 import * as actions from '@web/features/auth/store/actions';
-import { ActionType, createReducer } from 'typesafe-actions';
+import { ActionType } from 'typesafe-actions';
+import { createReducer } from '@web/shared/lib/redux/action-creators';
 
 export interface IAuthState {
 	csrfToken?: string;

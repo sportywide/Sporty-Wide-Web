@@ -1,6 +1,6 @@
 {
 	"name": "sportywide-parent",
-	"version": "1.0.0",
+	"version": "0.0.0",
 	"private": true,
 	"description": "A Social network for Sports",
 	"author": "Sporty Wide",
@@ -43,6 +43,8 @@
 		"@babel/core": "7.5.5",
 		"@babel/plugin-proposal-class-properties": "7.5.5",
 		"@babel/plugin-proposal-decorators": "7.4.4",
+		"@babel/plugin-proposal-nullish-coalescing-operator": "7.7.4",
+		"@babel/plugin-proposal-optional-chaining": "7.7.5",
 		"@babel/preset-env": "7.5.5",
 		"@babel/preset-typescript": "7.3.3",
 		"@babel/runtime-corejs2": "7.7.4",
@@ -61,6 +63,7 @@
 		"@webpack-blocks/babel": "2.0.1",
 		"@webpack-blocks/webpack": "2.0.1",
 		"@zeit/next-bundle-analyzer": "0.1.2",
+		"@zeit/next-source-maps": "0.0.3",
 		"autoprefixer": "9.6.1",
 		"babel-loader": "8.0.6",
 		"babel-plugin-styled-components": "1.10.6",
@@ -70,7 +73,7 @@
 		"cross-spawn": "7.0.1",
 		"css-loader": "3.2.0",
 		"cssnano": "4.1.10",
-		"eslint-plugin-react-hooks": "2.0.1",
+		"eslint-plugin-react-hooks": "2.3.0",
 		"extracted-loader": "1.0.7",
 		"file-loader": "4.2.0",
 		"find-up": "4.1.0",
@@ -95,7 +98,7 @@
 		"ts-jest": "24.0.2",
 		"ts-node": "7.0.1",
 		"tsconfig-paths": "3.8.0",
-		"typescript": "3.5.3",
+		"typescript": "3.7.4",
 		"url-loader": "2.1.0",
 		"wait-on": "3.3.0",
 		"webpack": "4.39.2",
@@ -105,8 +108,8 @@
 	},
 	"optionalDependencies": {
 		"@types/newman": "3.11.0",
-		"@typescript-eslint/eslint-plugin": "2.0.0",
-		"@typescript-eslint/parser": "2.0.0",
+		"@typescript-eslint/eslint-plugin": "2.14.0",
+		"@typescript-eslint/parser": "2.14.0",
 		"commitizen": "4.0.3",
 		"cz-sportywide-changelog": "1.0.0",
 		"eslint": "6.2.1",
@@ -118,7 +121,7 @@
 		"lint-staged": "9.2.3",
 		"newman": "4.5.4",
 		"newman-reporter-html": "1.0.3",
-		"prettier": "1.18.2",
+		"prettier": "1.19.1",
 		"pretty-quick": "1.11.1"
 	}
 }

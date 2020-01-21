@@ -2,6 +2,15 @@
 	width: 100%;
 }
 
+.sw-full-screen {
+	height: 100vh !important;
+	width: 100vh !important;
+}
+
+.sw-full-screen-height {
+	min-height: 100vh;
+}
+
 .sw-overflow-x {
 	max-width: 100%;
 	overflow-x: hidden;
@@ -14,5 +23,9 @@
 @each $dimen in (100 200) {
 	.sw-min-width-#{$dimen} {
 		min-width: #{$dimen}px;
+	}
+
+	.sw-max-width-#{$dimen} {
+		max-width: #{$dimen}px;
 	}
 }

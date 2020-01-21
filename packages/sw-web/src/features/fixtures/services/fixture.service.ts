@@ -4,6 +4,8 @@ import { ApiService } from '@web/shared/lib/http/api.service';
 import { map } from 'rxjs/operators';
 import { plainToClass } from 'class-transformer-imp';
 import { FixtureDetailsDto, FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
+import { fromPairs, toPairs } from 'lodash';
+import { toISO } from '@shared/lib/utils/date/conversion';
 
 @Service()
 export class FixtureService {
@@ -24,6 +26,49 @@ export class FixtureService {
 			);
 	}
 
+	fetchFixturesInRange({ leagueId, start, end }): Observable<FixtureDto[]> {
+		return this.apiService
+			.api()
+			.get(`/fixtures/range/${leagueId}`, {
+				params: {
+					start: toISO(start),
+					end: toISO(end),
+				},
+			})
+			.pipe(
+				map(({ data: payload }) =>
+					payload.map(league =>
+						plainToClass(FixtureDto, league, {
+							useProperties: true,
+						})
+					)
+				)
+			);
+	}
+
+	fetchWeeklyFixturesForTeams(teamIds): Observable<{ [key: number]: FixtureDto }> {
+		return this.apiService
+			.api()
+			.get(`/fixtures/team/weekly`, {
+				params: {
+					// eslint-disable-next-line @typescript-eslint/camelcase
+					team_id: teamIds,
+				},
+			})
+			.pipe(
+				map(({ data: fixtureMap }) =>
+					fromPairs(
+						toPairs(fixtureMap).map(([key, value]) => [
+							key,
+							plainToClass(FixtureDto, value, {
+								useProperties: true,
+							}),
+						])
+					)
+				)
+			);
+	}
+
 	fetchFixtureDetails(fixtureId: number): Observable<FixtureDetailsDto> {
 		return this.apiService
 			.api()
@@ -33,6 +78,29 @@ export class FixtureService {
 					plainToClass(FixtureDetailsDto, fixture, {
 						useProperties: true,
 					})
+				)
+			);
+	}
+
+	fetchUpcomingFixturesForTeams(teamIds: number[]): Observable<{ [key: number]: FixtureDto }> {
+		return this.apiService
+			.api()
+			.get(`/fixtures/team/upcoming`, {
+				params: {
+					// eslint-disable-next-line @typescript-eslint/camelcase
+					team_id: teamIds,
+				},
+			})
+			.pipe(
+				map(({ data: fixtureMap }) =>
+					fromPairs(
+						toPairs(fixtureMap).map(([key, value]) => [
+							key,
+							plainToClass(FixtureDto, value, {
+								useProperties: true,
+							}),
+						])
+					)
 				)
 			);
 	}

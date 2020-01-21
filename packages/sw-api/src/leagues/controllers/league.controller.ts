@@ -1,4 +1,4 @@
-import { Controller, Get, Param, ParseIntPipe, Put, UseGuards, Query, BadRequestException } from '@nestjs/common';
+import { BadRequestException, Controller, Get, Param, ParseIntPipe, Put, Query, UseGuards } from '@nestjs/common';
 import { LeagueService } from '@api/leagues/services/league.service';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { toDto } from '@api/utils/dto/transform';
@@ -9,7 +9,7 @@ import { formationMap, FormationName } from '@shared/lib/dtos/formation/formatio
 import { LeagueStandingsDto } from '@shared/lib/dtos/leagues/league-standings.dto';
 import { CurrentUser } from '@api/core/decorators/user';
 import { User } from '@schema/user/models/user.entity';
-import { getSeason } from '@shared/lib/utils/season';
+import { getPastSeason } from '@shared/lib/utils/season';
 
 @Controller('/leagues')
 export class LeagueController {
@@ -28,7 +28,7 @@ export class LeagueController {
 	@Get('/standings/:id')
 	public async getLeagueStandings(@Param('id') leagueId: number) {
 		return toDto({
-			value: await this.leagueService.findLeagueStanding(leagueId, getSeason(new Date())),
+			value: await this.leagueService.findLeagueStanding(leagueId, getPastSeason(new Date())),
 			dtoType: LeagueStandingsDto,
 		});
 	}

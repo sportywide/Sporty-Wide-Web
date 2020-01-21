@@ -1,27 +1,21 @@
 import React from 'react';
-import { Dimmer, List, Loader } from 'semantic-ui-react';
-import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
+import { List } from 'semantic-ui-react';
+import { UserPlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { SwPlayerItem } from '@web/features/lineup/components/players/PlayerItem';
 import { LineupContainer } from './Lineup.styled';
 
 interface IProps {
-	players: PlayerDto[];
+	players: UserPlayerDto[];
+	readonly: boolean;
 }
 
-const SwLineupBuilder: React.FC<IProps> = function({ players }) {
-	if (players === undefined) {
-		return (
-			<Dimmer active inverted>
-				<Loader active />
-			</Dimmer>
-		);
-	}
+const SwLineupBuilder: React.FC<IProps> = function({ players = [], readonly }) {
 	return (
 		<div>
 			<LineupContainer>
 				<List divided={true}>
 					{players.map(player => (
-						<SwPlayerItem key={player.name} player={player} />
+						<SwPlayerItem key={player.name} readonly={readonly} player={player} />
 					))}
 				</List>
 			</LineupContainer>

@@ -1,5 +1,5 @@
 import { error, ok } from '@scheduling/lib/http';
-import { initModule, SchedulingModule } from '@scheduling/lib/scheduling.module';
+import { getLogger, initModule, SchedulingModule } from '@scheduling/lib/scheduling.module';
 import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
 import { SQSEvent } from 'aws-lambda';
 import { FixtureProcess, FixtureProcessStatus } from '@scheduling/lib/fixture/models/fixture-process.model';
@@ -10,6 +10,7 @@ import { INestApplicationContext } from '@nestjs/common';
 import { PlayerPersisterService } from '@data/persister/player/player-persister.service';
 import { Fixture } from '@schema/fixture/models/fixture.entity';
 import { FixtureProcessService } from '@scheduling/lib/fixture/services/fixture-process.service';
+import { SCHEDULING_LOGGER } from '@core/logging/logging.constant';
 
 export async function handler(event: SQSEvent, context) {
 	let module: INestApplicationContext;
@@ -33,30 +34,37 @@ export async function handler(event: SQSEvent, context) {
 					return;
 				}
 				const { away, home } = ratingData;
-				await Promise.all([
-					playerPersisterService.savePlayerRatings(
-						fixture.id,
-						{
-							id: fixture.homeId,
-							name: fixture.home,
-						},
-						home
-					),
-					playerPersisterService.savePlayerRatings(
-						fixture.id,
-						{
-							id: fixture.awayId,
-							name: fixture.away,
-						},
-						away
-					),
-				]);
-				await fixtureProcessService.markStatus(fixtureProcess.matchUrl, FixtureProcessStatus.SUCCESS);
+				try {
+					await Promise.all([
+						playerPersisterService.savePlayerRatings(
+							fixture.id,
+							{
+								id: fixture.homeId,
+								name: fixture.home,
+							},
+							home
+						),
+						playerPersisterService.savePlayerRatings(
+							fixture.id,
+							{
+								id: fixture.awayId,
+								name: fixture.away,
+							},
+							away
+						),
+					]);
+					await fixtureProcessService.markStatus(fixtureProcess.matchUrl, FixtureProcessStatus.SUCCESS);
+				} catch (e) {
+					const logger = module.get(SCHEDULING_LOGGER);
+					logger.error(`Failed to process ${fixtureProcess.matchUrl}`, e);
+					await fixtureProcessService.failed(fixtureProcess.matchUrl);
+				}
 			})
 		);
 		return ok('SUCCESS');
 	} catch (e) {
-		console.error(__filename, e);
+		const logger = getLogger(module);
+		logger.error(__filename, e);
 		return error(e);
 	}
 }

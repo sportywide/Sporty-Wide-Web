@@ -8,7 +8,8 @@ import { fetchLeaguesStandingEpic } from '@web/features/leagues/base/store/epics
 import { leagueStandingReducer } from '@web/features/leagues/base/store/reducers/league-standing-reducer';
 import { fetchLeagueStandings } from '@web/features/leagues/base/store/actions';
 import { LeagueStandingsDto } from '@shared/lib/dtos/leagues/league-standings.dto';
-import { Table, Loader, Icon, Popup } from 'semantic-ui-react';
+import { Icon, Popup, Table } from 'semantic-ui-react';
+import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
 
 interface IProps {
 	league: SelectableLeagueDto;
@@ -21,7 +22,7 @@ const SwLeagueStandingsComponent: React.FC<IProps> = ({ league, leagueStandings,
 		fetchLeagueStandings(league.id);
 	}, [fetchLeagueStandings, league.id]);
 	if (!leagueStandings) {
-		return <Loader active={true} inline={'centered'} />;
+		return <Spinner portalRoot={'#container'} />;
 	}
 	return (
 		<div style={{ maxWidth: '100%', overflowX: 'auto' }}>

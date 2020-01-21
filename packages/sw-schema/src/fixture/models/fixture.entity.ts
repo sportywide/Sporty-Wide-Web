@@ -20,7 +20,7 @@ export class Fixture extends BaseEntity {
 	@Column()
 	awayFixture: number;
 
-	@ManyToOne(type => Team)
+	@ManyToOne(() => Team)
 	@JoinColumn({
 		name: 'home_id',
 	})
@@ -29,7 +29,7 @@ export class Fixture extends BaseEntity {
 	@JoinColumn({
 		name: 'away_id',
 	})
-	@ManyToOne(type => Team)
+	@ManyToOne(() => Team)
 	awayTeam: Team;
 
 	@Column()
@@ -44,7 +44,7 @@ export class Fixture extends BaseEntity {
 	@JoinColumn({
 		name: 'league_id',
 	})
-	@ManyToOne(type => League)
+	@ManyToOne(() => League)
 	league: League;
 
 	@Column()

@@ -1,5 +1,5 @@
 import { error, ok } from '@scheduling/lib/http';
-import { initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
+import { getLogger, initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
 import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
 import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
 import { SQSEvent } from 'aws-lambda';
@@ -20,7 +20,10 @@ export async function handler(event: SQSEvent, context) {
 		const leagueTeams = JSON.parse(objectDetails.Body!.toString('utf8'));
 		const scoreboardCrawler = module.get(ScoreboardCrawlerService);
 		const { league, teams, season } = leagueTeams;
-		const teamUrlMap = await scoreboardCrawler.crawlPlayers(teams.map(team => team.url), season);
+		const teamUrlMap = await scoreboardCrawler.crawlPlayers(
+			teams.map(team => team.url),
+			season
+		);
 
 		const result = {};
 		for (const team of teams) {
@@ -37,7 +40,8 @@ export async function handler(event: SQSEvent, context) {
 		});
 		return ok('SUCCESS');
 	} catch (e) {
-		console.error(__filename, e);
+		const logger = getLogger(module);
+		logger.error(__filename, e);
 		return error(e);
 	}
 }

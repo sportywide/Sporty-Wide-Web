@@ -1,31 +1,51 @@
 import { findPathForRoute, Router } from '@web/routes';
+import { TEMPORARY_REDIRECT } from '@web/shared/lib/http/status-codes';
+import { interpolateUrl } from '@web/shared/lib/url';
+
+export interface IRouteOptions {
+	context?: any;
+	route?: string;
+	replace?: boolean;
+	redirect?: boolean;
+	refresh?: boolean;
+	params?: any;
+}
 
 export async function redirect({
 	context = {},
 	route,
 	replace = false,
+	redirect = false,
 	refresh,
-	params = undefined,
-}: {
-	context?: any;
-	route?: string;
-	replace?: boolean;
-	refresh?: boolean;
-	params?: any;
-}) {
+	params = {},
+}: IRouteOptions) {
 	if (context && context.res) {
-		context.res.writeHead(302, {
-			Location: findPathForRoute(route) || '/auth/redirect',
-		});
-		context.res.end();
+		let url = findPathForRoute(route) || '/auth/redirect';
+		url = interpolateUrl(url, params);
+		context.res.location(url);
+		context.res.status(TEMPORARY_REDIRECT);
+		if (context.res.originalEnd) {
+			context.res.originalEnd();
+		} else {
+			context.res.end();
+		}
 	} else {
-		if (refresh || !route) {
+		if (refresh) {
 			const path = findPathForRoute(route);
-			const redirectUrl = path ? `/auth/redirect?url=${path}` : '/auth/redirect';
-			if (replace) {
-				window.location.replace(redirectUrl);
+			let url;
+			if (!route || redirect) {
+				url = '/auth/redirect';
+				if (path) {
+					params = { ...params, url: path };
+				}
 			} else {
-				window.location.href = redirectUrl;
+				url = path;
+			}
+			url = interpolateUrl(url, params);
+			if (replace) {
+				window.location.replace(url);
+			} else {
+				window.location.href = url;
 			}
 		} else {
 			if (replace) {

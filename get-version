@@ -1,11 +1,8 @@
 #! /usr/bin/env node
-const packageName = process.argv[2];
+const fs = require('fs');
 
-let packageJson;
-if (packageName) {
-	packageJson = require(`${__dirname}/packages/${packageName}/package.json`);
-} else {
-	packageJson = require(`${__dirname}/package.json`);
-}
-
-console.info(packageJson.version);
+console.info(
+	fs.readFileSync('./version', {
+		encoding: 'utf-8',
+	})
+);

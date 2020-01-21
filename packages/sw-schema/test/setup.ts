@@ -12,8 +12,6 @@ import { TypeormLoggerService } from '@schema/core/logging/typeorm.logger';
 import { createSpyObj } from 'jest-createspyobj';
 import { CoreSchemaModule } from '@schema/core/core-schema.module';
 import { MongooseModule } from '@nestjs/mongoose';
-import { SCHEMA_LOGGER } from '@core/logging/logging.constant';
-import Logger from 'log4js/lib/Logger';
 import mongoose from 'mongoose';
 import { LoggingModule } from '@core/logging/logging.module';
 

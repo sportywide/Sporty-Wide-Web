@@ -1,6 +1,6 @@
 import { UserRole } from '@shared/lib/dtos/user/enum/user-role.enum';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
-import { Expose, Type } from 'class-transformer-imp';
+import { Type } from 'class-transformer-imp';
 import { ApiModelProperty } from '@shared/lib/utils/api/decorators';
 import { UserGender } from '@shared/lib/dtos/user/enum/user-gender.enum';
 import { Field, Int, ObjectType } from '@shared/lib/utils/api/graphql';
@@ -57,7 +57,7 @@ export class UserDto {
 	@Field({ nullable: true })
 	profileUrl: string;
 
-	@Field(type => UserProfileDto, { nullable: true })
+	@Field(() => UserProfileDto, { nullable: true })
 	@Type(() => UserProfileDto)
 	profile: UserProfileDto;
 }

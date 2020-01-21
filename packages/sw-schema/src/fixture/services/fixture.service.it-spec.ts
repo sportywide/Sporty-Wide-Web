@@ -7,7 +7,8 @@ import { Player } from '@schema/player/models/player.entity';
 import { League } from '@schema/league/models/league.entity';
 import { TeamService } from '@schema/team/services/team.service';
 import { createSpyObj } from 'jest-createspyobj';
-import { QueryRunner, Connection } from 'typeorm';
+import { Connection, QueryRunner } from 'typeorm';
+import { PlayerRatingSchema } from '@schema/player/models/player-rating.schema';
 
 describe('Testing fixture service', () => {
 	let fixtureService: FixtureService;
@@ -17,6 +18,9 @@ describe('Testing fixture service', () => {
 		module = await setupDatabaseModule({
 			entities: [Fixture, Team, Player, League],
 			providers: [FixtureService, TeamService],
+			schemas: {
+				PlayerRating: PlayerRatingSchema,
+			},
 		})
 			.overrideProvider(TeamService)
 			.useValue(createSpyObj(TeamService))
@@ -45,6 +49,11 @@ describe('Testing fixture service', () => {
 	describe('#hasActiveMatches', () => {
 		it('should whether or not there is an active match', async () => {
 			await fixtureService.hasActiveMatches();
+		});
+	});
+	describe('#getNextFixtures', () => {
+		it('should return the next matches for specified teams', async () => {
+			await fixtureService.getNextFixturesForTeams([9, 1]);
 		});
 	});
 });

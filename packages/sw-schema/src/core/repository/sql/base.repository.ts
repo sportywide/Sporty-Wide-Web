@@ -14,10 +14,12 @@ import {
 	Repository,
 	SelectQueryBuilder,
 	UpdateQueryBuilder,
+	FindManyOptions,
 } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { SwSubscriber } from '@schema/core/subscriber/sql/base.subscriber';
 import { wrap } from '@shared/lib/utils/object/proxy';
+import { keyBy } from 'lodash';
 import { BaseGeneratedEntity } from '@schema/core/base.entity';
 
 class SwBaseRepository<T> {
@@ -45,15 +47,20 @@ class SwBaseRepository<T> {
 
 	async update(
 		conditions: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindConditions<T>,
-		partialObject: QueryDeepPartialEntity<T>
+		partialObject: QueryDeepPartialEntity<T>,
+		{ shouldNotifyUpdate = true } = {}
 	) {
-		const updatedEntityIds = await this.advancedFindIds(conditions);
-		let updateResult;
-		if (updatedEntityIds.length) {
-			updateResult = await this.repository.update(conditions, partialObject);
-			notifyUpdate(this.repository, updatedEntityIds);
+		if (shouldNotifyUpdate) {
+			const updatedEntityIds = await this.advancedFindIds(conditions);
+			let updateResult;
+			if (updatedEntityIds.length) {
+				updateResult = await this.repository.update(conditions, partialObject);
+				notifyUpdate(this.repository, updatedEntityIds);
+			}
+			return updateResult;
+		} else {
+			return this.repository.update(conditions, partialObject);
 		}
-		return updateResult;
 	}
 
 	getTableName() {
@@ -64,32 +71,49 @@ class SwBaseRepository<T> {
 		return this.repository.metadata.connection.getMetadata(entity).tableName;
 	}
 
-	async upsert(obj, upsertColumns?: string[]): Promise<T> {
-		const keys: string[] = Object.keys(obj);
+	async upsert({
+		object,
+		upsertColumns,
+		conflictColumns = ['id'],
+	}: {
+		object;
+		upsertColumns?: string[];
+		conflictColumns?: string[];
+	}): Promise<T> {
+		const keys: string[] = Object.keys(object).filter(k => this.getDatabaseColumnName(k));
 		const setterString = keys
 			.map(k => {
 				if (upsertColumns && !upsertColumns.includes(k)) {
 					return;
 				}
-				const columnMetadata = this.repository.metadata.findColumnWithPropertyName(k);
-				const databaseName = columnMetadata ? columnMetadata.databaseName : k;
+				const databaseName = this.getDatabaseColumnName(k);
+				if (!databaseName) {
+					return;
+				}
 				return `${databaseName} = :${k}`;
 			})
 			.filter(str => str)
 			.join(',');
 		const queryBuilder = this.repository.createQueryBuilder();
 
+		const conflictColumnStr = conflictColumns.map(column => `"${this.getDatabaseColumnName(column)}"`).join(',');
+
 		const qb = queryBuilder
 			.insert()
 			.into(this.repository.metadata.tableName)
-			.values(obj)
-			.onConflict(`("id") DO UPDATE SET ${setterString}`);
+			.values(object)
+			.onConflict(`(${conflictColumnStr}) DO UPDATE SET ${setterString}`);
 
 		keys.forEach(k => {
-			qb.setParameter(k, (obj as any)[k]);
+			qb.setParameter(k, (object as any)[k]);
 		});
 
 		return (await qb.returning('*').execute()).generatedMaps[0] as T;
+	}
+
+	getDatabaseColumnName(key) {
+		const columnMetadata = this.repository.metadata.findColumnWithPropertyName(key);
+		return columnMetadata ? columnMetadata.databaseName : null;
 	}
 
 	async save(...args) {
@@ -177,6 +201,29 @@ class SwBaseRepository<T> {
 		return rows.map(({ id }) => id);
 	}
 
+	async advancedFindSelect(
+		selectColumns = [],
+		criteria: string | string[] | number | number[] | Date | Date[] | ObjectID | ObjectID[] | FindConditions<T>
+	) {
+		let queryBuilder: SelectQueryBuilder<T>;
+		if (
+			typeof criteria === 'string' ||
+			typeof criteria === 'number' ||
+			criteria instanceof Date ||
+			criteria instanceof Array
+		) {
+			queryBuilder = await this.repository.createQueryBuilder().whereInIds(criteria);
+		} else {
+			queryBuilder = await this.repository.createQueryBuilder().where(criteria);
+		}
+
+		selectColumns.forEach(column => {
+			queryBuilder.addSelect(column);
+		});
+
+		return queryBuilder.getRawMany();
+	}
+
 	async getByIdsOrdered(ids: number[], includes: string[] = []) {
 		const tableName = this.getTableName();
 		let queryBuilder = this.createQueryBuilder(tableName);
@@ -187,6 +234,12 @@ class SwBaseRepository<T> {
 			queryBuilder = queryBuilder.leftJoinAndSelect(`${tableName}.${include}`, include);
 		});
 		return queryBuilder.getMany();
+	}
+
+	async getMappedByIds(ids: number[], options?: FindManyOptions): Promise<Record<number, T>> {
+		ids = ids.filter(id => id);
+		const entities = await this.repository.findByIds(ids, options);
+		return keyBy(entities, 'id');
 	}
 }
 

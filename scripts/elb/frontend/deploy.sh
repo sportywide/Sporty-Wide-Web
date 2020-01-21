@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-WEB_VERSION=$(./get-version sw-web)
+WEB_VERSION=$(./get-version)
 cd ./scripts/elb/frontend || exit 1
 START=$(date +%s)
 VERSION=$(date +%s)

@@ -11,11 +11,15 @@ async function bootstrap() {
 	const crawlerService = context.get(ScoreboardCrawlerService);
 
 	try {
-		const leagueTeams = (await Promise.all(
-			leagues.map(league =>
-				crawlerService.crawlTeams(league.scoreboardUrl).then(({ teams, season }) => ({ teams, season, league }))
+		const leagueTeams = (
+			await Promise.all(
+				leagues.map(league =>
+					crawlerService
+						.crawlTeams(league.scoreboardUrl)
+						.then(({ teams, season }) => ({ teams, season, league }))
+				)
 			)
-		)).filter(teamResult => !!teamResult);
+		).filter(teamResult => !!teamResult);
 		for (const leagueTeam of leagueTeams) {
 			await crawlerService.writeResult(`teams/scoreboard-${leagueTeam.league.id}.json`, leagueTeam);
 			const playersMap = await crawlerService.crawlPlayers(

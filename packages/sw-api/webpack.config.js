@@ -93,6 +93,19 @@ module.exports = /******/ (function(modules) {
 })(
 	/************************************************************************/
 	/******/ {
+		/***/ './packages/sw-api/package.json':
+			/*!**************************************!*\
+  !*** ./packages/sw-api/package.json ***!
+  \**************************************/
+			/*! exports provided: name, version, private, description, keywords, license, scripts, dependencies, default */
+			/***/ function(module) {
+				eval(
+					'module.exports = JSON.parse("{\\"name\\":\\"sportywide-api\\",\\"version\\":\\"0.0.0\\",\\"private\\":true,\\"description\\":\\"This package contains all related API code\\",\\"keywords\\":[],\\"license\\":\\"ISC\\",\\"scripts\\":{\\"build\\":\\"gulp build --color\\",\\"dev\\":\\"gulp dev --color\\"},\\"dependencies\\":{\\"@bugsnag/plugin-express\\":\\"6.5.0\\",\\"@nestjs/graphql\\":\\"6.5.3\\",\\"@nestjs/jwt\\":\\"6.1.1\\",\\"@nestjs/passport\\":\\"6.1.0\\",\\"@nestjs/platform-express\\":\\"6.5.3\\",\\"apollo-server-express\\":\\"2.9.4\\",\\"cookie-parser\\":\\"1.4.4\\",\\"cors\\":\\"2.8.5\\",\\"express-rate-limit\\":\\"5.0.0\\",\\"graphql-tools\\":\\"4.0.5\\",\\"helmet\\":\\"3.20.0\\",\\"jsonwebtoken\\":\\"8.5.1\\",\\"passport\\":\\"0.4.0\\",\\"passport-facebook\\":\\"3.0.0\\",\\"passport-google-oauth2\\":\\"0.2.0\\",\\"passport-jwt\\":\\"4.0.0\\",\\"passport-local\\":\\"1.0.0\\",\\"sportywide-core\\":\\"0.0.0\\",\\"sportywide-schema\\":\\"0.0.0\\",\\"sportywide-shared\\":\\"0.0.0\\",\\"swagger-ui-express\\":\\"4.0.7\\"}}");\n\n//# sourceURL=webpack:///./packages/sw-api/package.json?'
+				);
+
+				/***/
+			},
+
 		/***/ './packages/sw-api/webpack.config.ts':
 			/*!*******************************************!*\
   !*** ./packages/sw-api/webpack.config.ts ***!
@@ -101,7 +114,7 @@ module.exports = /******/ (function(modules) {
 			/***/ function(module, exports, __webpack_require__) {
 				'use strict';
 				eval(
-					"\n\nvar _path = _interopRequireDefault(__webpack_require__(/*! path */ \"path\"));\n\nvar _config = __webpack_require__(/*! @build/webpack/node/config */ \"./packages/sw-shared/build/webpack/node/config.ts\");\n\nvar _paths = _interopRequireDefault(__webpack_require__(/*! @build/paths */ \"./packages/sw-shared/build/paths/index.js\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nconst argv = __webpack_require__(/*! yargs */ \"yargs\").argv;\n\nconst findup = __webpack_require__(/*! find-up */ \"find-up\");\n\nconst config = (0, _config.makeConfig)({\n  env: argv.env,\n  entries: _path.default.resolve(_paths.default.api.src, 'main'),\n  output: _paths.default.api.dist,\n  alias: {\n    '@root': _paths.default.project.root,\n    '@shared': _paths.default.shared.src,\n    '@schema': _paths.default.schema.src,\n    '@core': _paths.default.core.src,\n    '@api': _paths.default.api.src\n  },\n  optimizationOptions: {\n    minimize: false\n  },\n  envFile: argv.env !== 'production' ? findup.sync('.env') : '.env'\n});\nmodule.exports = config;\n\n//# sourceURL=webpack:///./packages/sw-api/webpack.config.ts?"
+					"\n\nvar _path = _interopRequireDefault(__webpack_require__(/*! path */ \"path\"));\n\nvar _config = __webpack_require__(/*! @build/webpack/node/config */ \"./packages/sw-shared/build/webpack/node/config.ts\");\n\nvar _paths = _interopRequireDefault(__webpack_require__(/*! @build/paths */ \"./packages/sw-shared/build/paths/index.js\"));\n\nfunction _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }\n\nconst argv = __webpack_require__(/*! yargs */ \"yargs\").argv;\n\nconst findup = __webpack_require__(/*! find-up */ \"find-up\");\n\nconst config = (0, _config.makeConfig)({\n  env: argv.env,\n  entries: _path.default.resolve(_paths.default.api.src, 'main'),\n  output: _paths.default.api.dist,\n  alias: {\n    '@root': _paths.default.project.root,\n    '@shared': _paths.default.shared.src,\n    '@schema': _paths.default.schema.src,\n    '@core': _paths.default.core.src,\n    '@api': _paths.default.api.src\n  },\n  envVars: {\n    'process.env.APP_VERSION': JSON.stringify(__webpack_require__(/*! ./package.json */ \"./packages/sw-api/package.json\").version)\n  },\n  optimizationOptions: {\n    minimize: false\n  },\n  envFile: argv.env !== 'production' ? findup.sync('.env') : '.env'\n});\nmodule.exports = config;\n\n//# sourceURL=webpack:///./packages/sw-api/webpack.config.ts?"
 				);
 
 				/***/

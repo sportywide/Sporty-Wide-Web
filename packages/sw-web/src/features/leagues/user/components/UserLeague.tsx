@@ -1,5 +1,5 @@
 import React, { memo, useCallback, useContext, useEffect } from 'react';
-import { Grid, Loader } from 'semantic-ui-react';
+import { Grid } from 'semantic-ui-react';
 import { connect } from 'react-redux';
 import { compose } from '@shared/lib/utils/fp/combine';
 import { registerEpic } from '@web/shared/lib/redux/register-epic';
@@ -12,11 +12,11 @@ import { fetchLeagues } from '@web/features/leagues/base/store/actions';
 import { SelectableLeagueDto } from '@shared/lib/dtos/leagues/user-league.dto';
 import { userLeagueSelector } from '@web/features/leagues/user/store/store/league.selectors';
 import { useUser } from '@web/shared/lib/react/hooks';
-import { EventDispatcher } from '@web/shared/lib/events/event-dispatcher';
 import { ContainerContext } from '@web/shared/lib/store';
-import { SHOW_CONFIRM, SHOW_MODAL } from '@web/shared/lib/popup/event.constants';
 import { SHOW_LEAGUE_PREFERENCE } from '@web/shared/lib/popup/modal.constants';
 import { redirect } from '@web/shared/lib/navigation/helper';
+import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
+import { SwApp } from '@web/shared/lib/app';
 import { fetchUserLeagues, leaveUserLeague } from '../store/actions';
 
 interface IProps {
@@ -36,12 +36,12 @@ const SwUserLeaguesComponent: React.FC<IProps> = ({ leagues, fetchUserLeagues, f
 	const onPlayCallback = useCallback(onPlay, []);
 	const onLeaveCallback = useCallback(onLeave, []);
 	if (!leagues) {
-		return <Loader active />;
+		return <Spinner />;
 	}
 	return (
 		<Grid verticalAlign={'middle'} centered>
 			{leagues.map(league => (
-				<SwLeagueContainer key={league.name} mobile={8} tablet={6} computer={4}>
+				<SwLeagueContainer key={league.name} mobile={16} tablet={6} computer={4}>
 					<SwLeague league={league} onPlay={onPlayCallback} onLeave={onLeaveCallback} />
 				</SwLeagueContainer>
 			))}
@@ -49,8 +49,8 @@ const SwUserLeaguesComponent: React.FC<IProps> = ({ leagues, fetchUserLeagues, f
 	);
 
 	function onLeave(leagueDto: SelectableLeagueDto) {
-		const eventDispatcher = container.get(EventDispatcher);
-		eventDispatcher.trigger(SHOW_CONFIRM, {
+		const app = container.get(SwApp);
+		app.showConfirm({
 			content: `Do you want to quit league ${leagueDto.title}?`,
 			onConfirm: close => {
 				leaveUserLeague({ leagueId: leagueDto.id, userId: user.id });
@@ -60,14 +60,17 @@ const SwUserLeaguesComponent: React.FC<IProps> = ({ leagues, fetchUserLeagues, f
 	}
 
 	async function onPlay(leagueDto: SelectableLeagueDto) {
-		const eventDispatcher = container.get(EventDispatcher);
+		const app = container.get(SwApp);
 		if (leagueDto.selected) {
 			await redirect({
-				refresh: true,
-				route: `play-league/${leagueDto.id}`,
+				refresh: false,
+				route: 'play-league',
+				params: {
+					id: leagueDto.id,
+				},
 			});
 		} else {
-			eventDispatcher.trigger(SHOW_MODAL, {
+			app.showModal({
 				popupState: { userId: user.id, league: leagueDto },
 				modalName: SHOW_LEAGUE_PREFERENCE,
 			});

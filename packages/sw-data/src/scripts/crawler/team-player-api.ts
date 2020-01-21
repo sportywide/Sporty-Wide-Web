@@ -9,16 +9,18 @@ async function bootstrap() {
 	const context: INestApplicationContext = await NestFactory.createApplicationContext(DataModule);
 	const teamApiService = context.get(TeamApiService);
 	const logger = context.get(DATA_LOGGER);
-	const teams = (await Promise.all(
-		leagues.map(league =>
-			teamApiService
-				.getTeams(league.apiFootballId)
-				.then(teams => ({ teams, league: league.id }))
-				.catch(e => {
-					logger.error(`Failed to get data for league ${league.name}`, e);
-				})
+	const teams = (
+		await Promise.all(
+			leagues.map(league =>
+				teamApiService
+					.getTeams(league.apiFootballId)
+					.then(teams => ({ teams, league: league.id }))
+					.catch(e => {
+						logger.error(`Failed to get data for league ${league.name}`, e);
+					})
+			)
 		)
-	)).filter(teamResult => teamResult);
+	).filter(teamResult => teamResult);
 	teamApiService.writeResult('teams/api-football.json', teams);
 	return context;
 }

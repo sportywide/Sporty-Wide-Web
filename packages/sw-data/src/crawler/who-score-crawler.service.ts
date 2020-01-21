@@ -271,11 +271,6 @@ export class WhoScoreCrawlerService extends ResultsService {
 				const groupElement = resultTable.find(`#g${groupId}`);
 				const tournamentLink = groupElement.find('.tournament-link').attr('href');
 				const [, whoscoreLeagueId] = /\/Regions\/\d+\/Tournaments\/(\d+)/.exec(tournamentLink);
-				let [, league] = groupElement
-					.find('.group-name')
-					.text()
-					.split('-');
-				league = league.trim().replace(/^\d+\./, '');
 				const matchDetails = this.parseMatchDetails(resultElement, date);
 				const incidents = this.parseIncident($, resultTable, matchId);
 				return {
@@ -419,11 +414,12 @@ export class WhoScoreCrawlerService extends ResultsService {
 				if (!Object.values(stats).length) {
 					return null;
 				}
+				const rating: any = last(Object.values(stats.ratings || {})) || -1;
 				return {
 					name: playerData.name,
 					position: playerData.position,
 					shirt: playerData.shirtNo,
-					rating: last<number>(Object.values(stats.ratings || {})) || -1,
+					rating: parseFloat(rating),
 					touches: sum(Object.values(stats.touches || {})),
 					shotsTotal: sum(Object.values(stats.shotsTotal || {})),
 					shotsOffTarget: sum(Object.values(stats.shotsOffTarget || {})),

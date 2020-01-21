@@ -12,23 +12,25 @@ export const config = {
 				client_id: '676534372837849',
 				client_secret: process.env.SW_FACEBOOK_CLIENT_SECRET,
 			},
+			forgot_password_expiration_time: 24 * 60 * 60,
+			verify_email_expiration_time: 48 * 60 * 60,
 		},
 	},
 	development: {
 		auth: {
+			access_token_expiration_time: 60 * 60,
+			refresh_token_expiration_time: 60 * 60 * 24 * 30,
 			jwt: {
 				secret_key: 'jwtsecret',
-				access_token_expiration_time: 60 * 60,
-				refresh_token_expiration_time: 60 * 60 * 24 * 30,
 			},
 		},
 	},
 	production: {
 		auth: {
+			access_token_expiration_time: 15 * 60,
+			refresh_token_expiration_time: 60 * 60 * 24 * 30,
 			jwt: {
 				secret_key: process.env.SW_JWT_SECRET,
-				access_token_expiration_time: 15 * 60,
-				refresh_token_expiration_time: 60 * 60 * 24 * 30,
 			},
 		},
 	},

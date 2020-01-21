@@ -1,4 +1,5 @@
 import {
+	BadRequestException,
 	Body,
 	Controller,
 	Delete,
@@ -27,6 +28,9 @@ import { UserProfileDto } from '@shared/lib/dtos/user/profile/user-profile.dto';
 import { UserProfileService } from '@api/user/services/user-profile.service';
 import { toDto } from '@api/utils/dto/transform';
 import { ActiveUser } from '@api/auth/decorators/user-check.decorator';
+import { UserScoreDto } from '@shared/lib/dtos/user/user-score.dto';
+import { UserScoreService } from '@schema/user/services/user-score.service';
+import { getPastSeason } from '@shared/lib/utils/season';
 
 @ApiUseTags('users')
 @Controller('user')
@@ -34,6 +38,7 @@ export class UserController {
 	constructor(
 		private readonly userService: UserService,
 		private readonly userProfileService: UserProfileService,
+		private readonly userScoreService: UserScoreService,
 		private readonly apiValidationService: ApiValidationService
 	) {}
 
@@ -53,7 +58,15 @@ export class UserController {
 	@Get('token')
 	@HttpCode(HttpStatus.OK)
 	public async findByToken(@Query('token') token: string) {
-		const user = await this.userService.findByToken({ token });
+		if (!token) {
+			throw new BadRequestException('Token is required');
+		}
+		let [userId]: any[] = token.split(':');
+		userId = parseInt(userId, 10);
+		if (isNaN(userId)) {
+			throw new BadRequestException('Token is not valid');
+		}
+		const user = await this.userService.findById({ id: userId });
 		return toDto({
 			value: user,
 			dtoType: UserDto,
@@ -194,5 +207,28 @@ export class UserController {
 			value: user.profile || {},
 			dtoType: UserProfileDto,
 		}) as UserProfileDto;
+	}
+
+	@AuthorizedApiOperation({ title: 'Get user score endpoint' })
+	@ApiOkResponse({ description: 'User score has been retrieved', type: UserProfileDto })
+	@NotFoundResponse('user')
+	@UseGuards(JwtAuthGuard)
+	@ActiveUser()
+	@Get('score/:userId/league/:leagueId')
+	public async getUserScore(
+		@Param('userId', new ParseIntPipe()) userId: number,
+		@Param('leagueId', new ParseIntPipe()) leagueId: number
+	): Promise<UserScoreDto> {
+		const season = getPastSeason(new Date());
+		const userScore = await this.userScoreService.newUserScore({
+			userId,
+			leagueId,
+			season,
+		});
+
+		return toDto({
+			value: userScore,
+			dtoType: UserScoreDto,
+		});
 	}
 }

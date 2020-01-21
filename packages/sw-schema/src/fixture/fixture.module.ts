@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { CoreSchemaModule } from '@schema/core/core-schema.module';
 import { SwRepositoryModule } from '@schema/core/repository/sql/providers/repository.module';
 import { FixtureService } from '@schema/fixture/services/fixture.service';
@@ -10,7 +10,7 @@ import { Fixture } from './models/fixture.entity';
 	imports: [
 		CoreSchemaModule,
 		SchemaTeamModule,
-		SchemaPlayerModule,
+		forwardRef(() => SchemaPlayerModule),
 		SwRepositoryModule.forFeature({ entities: [Fixture] }),
 	],
 	providers: [FixtureService],

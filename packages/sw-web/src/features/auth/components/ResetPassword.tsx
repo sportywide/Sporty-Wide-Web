@@ -65,6 +65,7 @@ const SwResetPasswordComponent: React.FC<IProps> = ({ user, token }) => {
 			await redirect({
 				refresh: true,
 				route: 'home',
+				redirect: true,
 			});
 		}, 2000);
 	}
