@@ -13,6 +13,9 @@ import { PlayerService } from '@schema/player/services/player.service';
 import { WhoscorePlayerRating } from '@shared/lib/dtos/player/player-rating.dto';
 import { TeamService } from '@schema/team/services/team.service';
 import { PlayerBettingService } from '@schema/player/services/player-betting.service';
+import { LeagueResultService } from '@schema/league/services/league-result.service';
+import { ScoreboardTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
+import { calculateChance } from '@shared/lib/logic/player/chance';
 
 const glob = util.promisify(require('glob'));
 
@@ -22,7 +25,8 @@ export class PlayerPersisterService {
 		@Inject(DATA_LOGGER) private readonly logger: Logger,
 		private readonly playerService: PlayerService,
 		private readonly teamService: TeamService,
-		private readonly playerBettingService: PlayerBettingService
+		private readonly playerBettingService: PlayerBettingService,
+		private readonly leagueResultService: LeagueResultService
 	) {}
 
 	async saveFifaPlayersFromPlayerInfoFiles() {
@@ -82,6 +86,11 @@ export class PlayerPersisterService {
 			keys: ['title', 'alias'],
 		});
 
+		const leagueResult = await this.leagueResultService.find({
+			season: playerTeamMap.season,
+			leagueId,
+		});
+
 		for (const [teamName, players] of Object.entries(playerMap)) {
 			const foundTeams = teamFuse.search(teamName);
 			if (!foundTeams.length) {
@@ -89,39 +98,56 @@ export class PlayerPersisterService {
 				continue;
 			}
 			this.logger.info(`Match ${foundTeams[0].title} with ${teamName}`);
+			const teamResult: ScoreboardTeam =
+				leagueResult && leagueResult.table.find(teamResult => teamResult.teamId === foundTeams[0].id);
+			const totalGames = (teamResult && teamResult.played) || 0;
 
-			const transformedPlayers = players.map(player => ({
-				...player,
-				name: player.name
-					.split(/\s+/)
-					.reverse()
-					.join(' '),
-			}));
+			const transformedPlayers = transformPlayers(players);
 			const dbPlayers = await this.playerService.getPlayersByTeam(foundTeams[0].id);
-			const result = this.playerService.fuzzySearch(
+			const playerMap = this.fuzzySearchByDbPlayer({
+				teamName,
 				dbPlayers,
-				transformedPlayers.map(player => ({
-					shirt: player.jersey,
-					name: player.name,
-					team: teamName,
-				}))
-			);
+				players: transformedPlayers,
+			});
 			await Promise.all(
-				transformedPlayers.map(async (player, index) => {
-					if (!result[index]) {
-						return;
-					}
-					const dbPlayer = result[index];
+				dbPlayers.map(async dbPlayer => {
+					const player = playerMap[dbPlayer.id] || {
+						status: 'active',
+					};
 					await this.playerService.savePlayerStat({
 						...player,
+						chance: calculateChance({
+							player: { rating: dbPlayer.rating, age: dbPlayer.age, played: player.played || 0 },
+							totalGames,
+						}),
 						playerId: dbPlayer.id,
 						teamId: dbPlayer.teamId,
 						leagueId,
-						season: player.season,
+						season: playerTeamMap.season,
 					});
 				})
 			);
 		}
+	}
+
+	private fuzzySearchByDbPlayer({ teamName, players, dbPlayers }) {
+		const fuzzySearchResult = this.playerService.fuzzySearch(
+			dbPlayers,
+			players.map(player => ({
+				shirt: player.jersey,
+				name: player.name,
+				team: teamName,
+			}))
+		);
+		const playerMap = {};
+		players.forEach((player, index) => {
+			if (!fuzzySearchResult[index]) {
+				return;
+			}
+			const dbPlayer = fuzzySearchResult[index];
+			playerMap[dbPlayer.id] = player;
+		});
+		return playerMap;
 	}
 
 	async saveFifaPlayers(players: FifaPlayer[]) {
@@ -195,4 +221,14 @@ export class PlayerPersisterService {
 			})
 		);
 	}
+}
+
+function transformPlayers(players: any[]) {
+	return players.map(player => ({
+		...player,
+		name: player.name
+			.split(/\s+/)
+			.reverse()
+			.join(' '),
+	}));
 }

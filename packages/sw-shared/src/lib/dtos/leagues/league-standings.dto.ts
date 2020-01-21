@@ -5,7 +5,7 @@ export class ScoreboardTeam {
 	url: string;
 	played: number;
 	wins: number;
-	teamId?: string;
+	teamId?: number;
 	draws: number;
 	losses: number;
 	scored: number;
