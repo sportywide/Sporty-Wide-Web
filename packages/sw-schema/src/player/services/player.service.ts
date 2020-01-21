@@ -140,7 +140,13 @@ export class PlayerService extends BaseEntityService<Player> {
 		queryBuilder
 			.select(['player.id', 'player.rating', 'player.positions'])
 			.innerJoin('player.team', 'team')
-			.where('team.leagueId = :leagueId AND player.rating >= 65', { leagueId })
+			.innerJoin(
+				'player_stat',
+				'player_stat',
+				'player_stat.player_id = player.id and player_stat.season = :season',
+				{ season: getSeason(new Date()) }
+			)
+			.where('team.leagueId = :leagueId AND player_stat.chance >= 0.34', { leagueId })
 			.andWhere(qb => {
 				const subQuery = qb
 					.subQuery()
