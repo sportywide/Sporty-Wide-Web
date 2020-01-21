@@ -1,0 +1,66 @@
+{
+	"AWSEBDockerrunVersion": "2",
+	"volumes": [
+		{
+			"name": "nginx-proxy-conf",
+			"host": {
+				"sourcePath": "/var/app/current/proxy"
+			}
+		}
+	],
+	"containerDefinitions": [
+		{
+			"name": "sportywide-email",
+			"image": "sportywide/sportywide-email:<EMAIL_VERSION>",
+			"essential": false,
+			"memory": 128
+		},
+		{
+			"name": "sportywide-api",
+			"image": "sportywide/sportywide-api:<API_VERSION>",
+			"essential": true,
+			"portMappings": [
+				{
+					"containerPort": 5000
+				}
+			],
+			"memory": 256
+		},
+		{
+			"name": "sportywide-web",
+			"image": "sportywide/sportywide-web:<WEB_VERSION>",
+			"essential": true,
+			"links": ["sportywide-api"],
+			"portMappings": [
+				{
+					"containerPort": 3000
+				}
+			],
+			"memory": 256
+		},
+		{
+			"name": "nginx-proxy",
+			"image": "nginx",
+			"essential": true,
+			"memory": 128,
+			"portMappings": [
+				{
+					"hostPort": 80,
+					"containerPort": 80
+				}
+			],
+			"links": ["sportywide-api", "sportywide-web"],
+			"mountPoints": [
+				{
+					"sourceVolume": "nginx-proxy-conf",
+					"containerPath": "/etc/nginx",
+					"readOnly": true
+				},
+				{
+					"sourceVolume": "awseb-logs-nginx-proxy",
+					"containerPath": "/var/log/nginx"
+				}
+			]
+		}
+	]
+}

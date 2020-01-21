@@ -13,7 +13,7 @@ export const config = {
 	},
 	production: {
 		cookie_secret: process.env.SW_COOKIE_SECRET,
-		server_url: 'https://api.sportywide.com',
+		server_url: 'http://sportywide-api:5000',
 		logging: {
 			level: 'INFO',
 			logz: {

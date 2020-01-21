@@ -21,7 +21,7 @@ blocks:
                     - make pullAll
                     - make buildAll
                     - make pushAll
-    - name: Deploy Frontend
+    - name: Deploy
       skip:
           when: "branch != 'release'"
       task:
@@ -31,19 +31,6 @@ blocks:
               commands:
                   - checkout
           jobs:
-              - name: 'Deploy Frontend'
+              - name: 'Deploy'
                 commands:
-                    - ./scripts/elb/frontend/deploy.sh
-    - name: Deploy Backend
-      skip:
-          when: "branch != 'release'"
-      task:
-          secrets:
-              - name: aws-creds
-          prologue:
-              commands:
-                  - checkout
-          jobs:
-              - name: 'Deploy Backend'
-                commands:
-                    - ./scripts/elb/backend/deploy.sh
+                    - ./scripts/elb/deploy.sh

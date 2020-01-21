@@ -209,6 +209,6 @@ secret.tfvars
 .next
 
 Dockerrun.aws.json
-scripts/elb/*/*.zip
+scripts/elb/*.zip
 
 # End of https://www.gitignore.io/api/node,linux,macos,windows,intellij+all
