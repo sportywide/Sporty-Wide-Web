@@ -13,7 +13,7 @@ module "elastic_beanstalk_environment_frontend" {
   availability_zone_selector = "Any 2"
   elastic_beanstalk_application_name = module.elastic_beanstalk_application.elastic_beanstalk_application_name
 
-  instance_type = "t2.micro"
+  instance_type = "t2.nano"
   autoscale_min = 1
   autoscale_max = 2
   updating_min_in_service = 0
@@ -51,7 +51,7 @@ module "elastic_beanstalk_environment_backend" {
   availability_zone_selector = "Any 2"
   elastic_beanstalk_application_name = module.elastic_beanstalk_application.elastic_beanstalk_application_name
 
-  instance_type = "t2.micro"
+  instance_type = "t2.nano"
   autoscale_min = 1
   autoscale_max = 2
   updating_min_in_service = 0
