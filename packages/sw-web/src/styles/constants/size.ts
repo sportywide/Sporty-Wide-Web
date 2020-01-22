@@ -1,3 +1,5 @@
+import MobileDetect from 'mobile-detect';
+
 export const size = {
 	mobileS: 320,
 	mobileM: 375,
@@ -18,3 +20,14 @@ export const device = {
 	desktop: `(min-width: ${size.desktop}px)`,
 	desktopL: `(min-width: ${size.desktop}px)`,
 };
+
+export function getDeviceWidth(userAgent) {
+	const md = new MobileDetect(userAgent);
+	if (md.phone()) {
+		return size.mobileM;
+	} else if (md.tablet()) {
+		return size.tablet;
+	} else {
+		return size.laptop;
+	}
+}

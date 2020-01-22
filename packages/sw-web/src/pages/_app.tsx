@@ -4,7 +4,7 @@ import 'reflect-metadata';
 import { ApolloProvider } from '@apollo/react-common';
 import App from 'next/app';
 import React from 'react';
-import { Provider } from 'react-redux';
+import { Provider as StoreProvider } from 'react-redux';
 import withRedux from 'next-store-wrapper';
 import { ContainerContext, getUser, initStore, ISportyWideStore } from '@web/shared/lib/store';
 import { redirect } from '@web/shared/lib/navigation/helper';
@@ -24,12 +24,15 @@ import { SwSideBar } from '@web/shared/lib/ui/components/sidebar/Sidebar';
 import { UserStatus } from '@shared/lib/dtos/user/enum/user-status.enum';
 import { EventDispatcher } from '@web/shared/lib/events/event-dispatcher';
 import { WINDOW_CLICK } from '@web/shared/lib/popup/event.constants';
+import { Context as ResponsiveContext } from 'react-responsive';
+import { getDeviceWidth } from '@web/styles/constants/size';
 
 const ErrorBoundary = bugsnagClient.getPlugin('react');
 
 interface IProps {
 	store: ISportyWideStore;
 	user: IUser;
+	deviceWidth: number;
 	flashMessages: {};
 }
 
@@ -84,11 +87,13 @@ class SwApp extends App<IProps> {
 		}
 
 		let flashMessages = {};
+		let deviceWidth;
 		if (ctx.req) {
 			flashMessages = ctx.req.flash() || {};
+			deviceWidth = getDeviceWidth(ctx.req.headers['user-agent']);
 		}
 
-		return { pageProps, user, flashMessages };
+		return { pageProps, user, flashMessages, deviceWidth };
 	}
 
 	componentDidMount(): void {
@@ -129,31 +134,33 @@ class SwApp extends App<IProps> {
 	}
 
 	render() {
-		const { Component, pageProps, store, user } = this.props;
+		const { Component, pageProps, store, user, deviceWidth } = this.props;
 		const container = store.container;
 		const apiService = container.get(ApiService);
 		return (
 			<ErrorBoundary>
-				<ThemeProvider theme={theme}>
-					<Provider store={store}>
-						<ApolloProvider client={apiService.graphql()}>
-							<ContainerContext.Provider value={store.container}>
-								<LoadingBar />
-								{user && user.status === UserStatus.ACTIVE ? (
-									<SwSideBar>
+				<ResponsiveContext.Provider value={{ width: deviceWidth }}>
+					<ThemeProvider theme={theme}>
+						<StoreProvider store={store}>
+							<ApolloProvider client={apiService.graphql()}>
+								<ContainerContext.Provider value={store.container}>
+									<LoadingBar />
+									{user && user.status === UserStatus.ACTIVE ? (
+										<SwSideBar>
+											<Component {...pageProps} />
+										</SwSideBar>
+									) : (
 										<Component {...pageProps} />
-									</SwSideBar>
-								) : (
-									<Component {...pageProps} />
-								)}
-								<NotificationContainer />
-								<ConfirmationManager />
-								<EventModalManager />
-								<div id={'loading-portal'} />
-							</ContainerContext.Provider>
-						</ApolloProvider>
-					</Provider>
-				</ThemeProvider>
+									)}
+									<NotificationContainer />
+									<ConfirmationManager />
+									<EventModalManager />
+									<div id={'loading-portal'} />
+								</ContainerContext.Provider>
+							</ApolloProvider>
+						</StoreProvider>
+					</ThemeProvider>
+				</ResponsiveContext.Provider>
 			</ErrorBoundary>
 		);
 	}
