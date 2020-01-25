@@ -137,9 +137,14 @@ class SwApp extends App<IProps> {
 		const { Component, pageProps, store, user, deviceWidth } = this.props;
 		const container = store.container;
 		const apiService = container.get(ApiService);
+		const ResponsiveWrapper = deviceWidth
+			? ({ children }) => (
+					<ResponsiveContext.Provider value={{ width: deviceWidth }}>{children}</ResponsiveContext.Provider>
+			  )
+			: React.Fragment;
 		return (
 			<ErrorBoundary>
-				<ResponsiveContext.Provider value={{ width: deviceWidth }}>
+				<ResponsiveWrapper>
 					<ThemeProvider theme={theme}>
 						<StoreProvider store={store}>
 							<ApolloProvider client={apiService.graphql()}>
@@ -160,7 +165,7 @@ class SwApp extends App<IProps> {
 							</ApolloProvider>
 						</StoreProvider>
 					</ThemeProvider>
-				</ResponsiveContext.Provider>
+				</ResponsiveWrapper>
 			</ErrorBoundary>
 		);
 	}
