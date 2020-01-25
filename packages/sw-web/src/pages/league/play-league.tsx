@@ -138,7 +138,9 @@ class SwPlayerLeaguePage extends React.Component<any, any> {
 						<LeagueHeader as={'h1'}>Welcome to {this.props.league.title}</LeagueHeader>
 						<div className={'sw-flex sw-flex-center sw-ml2'}>
 							<SwIcon width={25} name={'token'} />
-							<span className={'sw-ml1'}>{this.props.userScore.current.tokens}</span>
+							<span className={'sw-ml1'}>
+								{this.props.userScore && this.props.userScore.current.tokens}
+							</span>
 						</div>
 					</div>
 					<SwTab
