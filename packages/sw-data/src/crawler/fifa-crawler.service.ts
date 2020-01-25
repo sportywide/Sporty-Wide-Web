@@ -1,6 +1,4 @@
-import https from 'https';
 import { Inject, Injectable } from '@nestjs/common';
-import axios, { AxiosInstance } from 'axios';
 import { Logger } from 'log4js';
 import cheerio from 'cheerio';
 import { range } from '@shared/lib/utils/array/range';
@@ -10,6 +8,8 @@ import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { ResultsService } from '@data/crawler/results.service';
 import { unaccent } from '@shared/lib/utils/string/conversion';
 import { teamAliasMapping, teamMapping } from '@shared/lib/data/data.constants';
+
+const cloudscraper = require('cloudscraper');
 
 const DEFAULT_PLAYER_PAGES = 5;
 
@@ -53,21 +53,8 @@ export type FifaPlayer = {
 export class FifaCrawlerService extends ResultsService {
 	private _fifaRegex = /\s*fifa\s*\d*/gim;
 
-	private axios: AxiosInstance;
-
 	constructor(@Inject(DATA_LOGGER) private readonly logger: Logger) {
 		super();
-		this.axios = axios.create({
-			baseURL: 'https://www.fifaindex.com',
-			transformResponse: (data, headers) => {
-				const contentType = headers['content-type'];
-				if (contentType && contentType.includes('text/html')) {
-					return cheerio.load(data);
-				}
-				return data;
-			},
-			httpsAgent: new https.Agent({ rejectUnauthorized: false }),
-		});
 	}
 
 	// region crawl by league
@@ -430,6 +417,6 @@ export class FifaCrawlerService extends ResultsService {
 	// endregion Crawl from detail page
 
 	private getParsedResponse(url) {
-		return this.axios.get(url).then(({ data }) => data);
+		return cloudscraper.get(`https://www.fifaindex.com${url}`).then(data => cheerio.load(data));
 	}
 }
