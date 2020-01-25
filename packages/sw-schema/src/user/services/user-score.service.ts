@@ -42,4 +42,30 @@ export class UserScoreService extends BaseEntityService<UserScore> {
 			tokens
 		);
 	}
+
+	async updateUserScore(userIds = []) {
+		if (!userIds.length) {
+			return;
+		}
+		await this.repository.manager.query(`
+			update
+				user_score
+			set
+				tokens = tokens + coalesce(
+					(
+						select
+							sum(player_betting.earned_tokens)
+						from
+							player_betting
+						where
+							player_betting.league_id = user_score.league_id
+							and player_betting.status = 'calculating'
+						group by
+							player_betting.user_id
+					), 0
+				)
+			where
+				user_id in (${userIds.join(',')})
+		`);
+	}
 }

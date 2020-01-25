@@ -15,6 +15,7 @@ import {
 	SelectQueryBuilder,
 	UpdateQueryBuilder,
 	FindManyOptions,
+	UpdateResult,
 } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { SwSubscriber } from '@schema/core/subscriber/sql/base.subscriber';
@@ -52,7 +53,11 @@ class SwBaseRepository<T> {
 	) {
 		if (shouldNotifyUpdate) {
 			const updatedEntityIds = await this.advancedFindIds(conditions);
-			let updateResult;
+			let updateResult: UpdateResult = {
+				affected: 0,
+				raw: [],
+				generatedMaps: [],
+			};
 			if (updatedEntityIds.length) {
 				updateResult = await this.repository.update(conditions, partialObject);
 				notifyUpdate(this.repository, updatedEntityIds);

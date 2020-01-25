@@ -8,8 +8,9 @@ import { PlayerBetting } from '@schema/player/models/player-betting.entity';
 import { keyBy } from 'lodash';
 import { range } from '@shared/lib/utils/array/range';
 import { weekStart } from '@shared/lib/utils/date/relative';
-import { Not, IsNull } from 'typeorm';
+import { Not, IsNull, In } from 'typeorm';
 import { PlayerBettingInputDto } from '@shared/lib/dtos/player/player-betting.dto';
+import { PlayerBettingStatus } from '@shared/lib/dtos/player/enum/player-betting.enum';
 
 @Injectable()
 export class PlayerBettingService extends BaseEntityService<PlayerBetting> {
@@ -57,6 +58,41 @@ export class PlayerBettingService extends BaseEntityService<PlayerBetting> {
 				},
 			})) > 0
 		);
+	}
+
+	progressPendingBetting() {
+		return this.repository.update(
+			{
+				status: PlayerBettingStatus.PENDING,
+				realRating: Not(IsNull()),
+			},
+			{
+				status: PlayerBettingStatus.CALCULATING,
+			}
+		);
+	}
+
+	completeBettingForUserIds(userIds) {
+		return this.repository.update(
+			{
+				userId: In(userIds),
+				status: PlayerBettingStatus.CALCULATING,
+			},
+			{
+				status: PlayerBettingStatus.CALCULATED,
+			}
+		);
+	}
+
+	getUserIdQueryBuilder() {
+		const queryBuilder = this.repository.createQueryBuilder();
+		queryBuilder.select('DISTINCT user_id', 'userId');
+		queryBuilder.where({
+			status: PlayerBettingStatus.CALCULATING,
+		});
+		queryBuilder.limit(1000);
+		queryBuilder.orderBy('user_id');
+		return queryBuilder;
 	}
 
 	async getBettingPositions({ userId, week, leagueId }) {
@@ -119,6 +155,22 @@ export class PlayerBettingService extends BaseEntityService<PlayerBetting> {
 			{
 				realRating: rating,
 				earnedTokens: () => `select_rating(${rating}, player_betting)`,
+			},
+			{
+				shouldNotifyUpdate: false,
+			}
+		);
+	}
+
+	async updateNotPlayedBetting(fixtureId) {
+		return this.repository.update(
+			{
+				fixtureId,
+				realRating: IsNull(),
+			},
+			{
+				realRating: 0,
+				earnedTokens: 0,
 			},
 			{
 				shouldNotifyUpdate: false,

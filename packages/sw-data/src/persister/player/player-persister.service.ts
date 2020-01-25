@@ -220,6 +220,7 @@ export class PlayerPersisterService {
 				});
 			})
 		);
+		await this.playerBettingService.updateNotPlayedBetting(fixtureId);
 	}
 }
 
