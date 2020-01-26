@@ -48,7 +48,7 @@ export const SwContainer = styled(Container).attrs({ id: 'container' })`
 		padding: var(--space-3);
 		margin-bottom: 0;
 		margin-top: ${props => props.theme.dimen.navBar};
-		@media (max-width: ${size.tablet}px) {
+		@media (max-width: ${size.tablet - 1}px) {
 			width: 100%;
 		}
 		@media ${device.tablet} {

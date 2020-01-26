@@ -9,7 +9,7 @@ export function withTabs(getTabs) {
 			constructor(props) {
 				super(props);
 				const tabs = getTabs(props);
-				const defaultTabIndex = updateTab(tabs, this.props.router.query.tab);
+				const defaultTabIndex = updateTab(tabs, props.router.query.tab);
 				this.state = {
 					activeTabIndex: defaultTabIndex,
 				};
@@ -31,7 +31,7 @@ export function withTabs(getTabs) {
 				const selectedTab = tabs[activeIndex];
 				const selectedTabName = (selectedTab && selectedTab.name) || 'players';
 				updateTab(tabs, selectedTabName);
-			}
+			};
 
 			render() {
 				const tabs = getTabs(this.props);

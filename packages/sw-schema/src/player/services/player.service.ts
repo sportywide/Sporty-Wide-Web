@@ -32,7 +32,6 @@ import {
 } from '@shared/lib/exceptions/generate-player-exception';
 import { FixtureService } from '@schema/fixture/services/fixture.service';
 import { PlayerStat } from '@schema/player/models/player-stat.entity';
-import { ScoreboardPlayer } from '@shared/lib/dtos/player/player.dto';
 
 @Injectable()
 export class PlayerService extends BaseEntityService<Player> {

@@ -17,7 +17,7 @@ const WrappedInput = styled(NumberInput)`
 	line-height: 1.21428571em;
 	width: 80px;
 	font-family: Lato, 'Helvetica Neue', Arial, Helvetica, sans-serif;
-	padding: 0.5em 1.7em 0.5em 0 !important;
+	padding: 0.5em 1.7em 0.5em 1.7em !important;
 	background: #fff;
 	border: 1px solid rgba(34, 36, 38, 0.15);
 	color: rgba(0, 0, 0, 0.87);

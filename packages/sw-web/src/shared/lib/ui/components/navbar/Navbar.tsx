@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import styled from 'styled-components';
 import { SwMenuItem } from '@web/shared/lib/ui/components/menu/MenuItem';
 import { SwBigScreen } from '@web/shared/lib/ui/components/responsive/Responsive';
-import { device } from '@web/styles/constants/size';
 
 const NavbarMenu = styled(Menu)`
 	&&&& {
