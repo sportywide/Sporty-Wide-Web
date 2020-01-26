@@ -1,6 +1,7 @@
 import Routes from 'next-routes-handler';
 import { withRouter as withNextRouter } from 'next/router';
 import hoistNonReactStatics from 'hoist-non-react-statics';
+import { match as pathMatch } from 'path-to-regexp';
 
 const routeMappings = [
 	{
@@ -76,6 +77,18 @@ export function findPathForRoute(routeName) {
 	}
 	const routeMapping = routeMappings.find(route => route.name === routeName);
 	return (routeMapping && routeMapping.pattern) || `/${routeName}`;
+}
+
+export function findRouteWithPath(routePath) {
+	let matchedParams;
+	const routeMapping = routeMappings.find(route => {
+		matchedParams = pathMatch(route.pattern)(routePath);
+		return !!matchedParams;
+	});
+	return {
+		routeName: routeMapping && routeMapping.name,
+		params: matchedParams && matchedParams.params,
+	};
 }
 
 export function withRouter<Props>(

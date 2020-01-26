@@ -1,12 +1,24 @@
 import urlParser from 'url';
-import { Router } from '@web/routes';
+import { findRouteWithPath, Router } from '@web/routes';
 
 export function updateUrl(url) {
 	const newUrl = urlParser.format({
 		...url,
 		search: null,
 	});
-	return Router.replaceRoute(newUrl, {}, { shallow: true });
+	if (newUrl === window.location.href) {
+		return;
+	}
+	const urlObject = parseUrl(newUrl);
+	const { routeName, params = {} } = findRouteWithPath(urlObject.pathname);
+	return Router.replaceRoute(
+		routeName,
+		{
+			...params,
+			...urlObject.query,
+		},
+		{ shallow: true }
+	);
 }
 
 export function parseUrl(url) {

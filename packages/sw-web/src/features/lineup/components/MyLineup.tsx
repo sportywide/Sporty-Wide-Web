@@ -36,7 +36,7 @@ const SwMyLineupComponent: React.FC<IProps> = function({ leagueId, currentLineup
 	const profilePlayerService = container.get(ProfilePlayersService);
 	const fetchPlayerLineup = useCallback(
 		async leagueId => {
-			const { players: allPlayers = [], formation, positions } = await profilePlayerService
+			const { players: allPlayers = [], formation, positions = [] } = await profilePlayerService
 				.getMyLineup(leagueId)
 				.toPromise();
 			const playerMap = keyBy(allPlayers, 'id');

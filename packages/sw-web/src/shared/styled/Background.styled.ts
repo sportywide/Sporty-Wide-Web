@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components';
 import { Container } from 'semantic-ui-react';
-import { device } from '@web/styles/constants/size';
+import { device, size } from '@web/styles/constants/size';
 
 const swBackground = css`
 	width: 100%;
@@ -18,9 +18,7 @@ const swBackground = css`
 `;
 export const SwPrimaryBackGround = styled.div`
 	${swBackground};
-	@media ${device.tablet} {
-		background-color: ${props => props.theme.colors.primary};
-	}
+	background-color: ${props => props.theme.colors.primary};
 `;
 
 export const SwGreyBackground = styled.div`
@@ -48,8 +46,11 @@ export const SwContainer = styled(Container).attrs({ id: 'container' })`
 	&&&&&&& {
 		background-color: ${props => props.theme.colors.white};
 		padding: var(--space-3);
-		margin: 0;
+		margin-bottom: 0;
 		margin-top: ${props => props.theme.dimen.navBar};
+		@media (max-width: ${size.tablet}px) {
+			width: 100%;
+		}
 		@media ${device.tablet} {
 			margin: var(--space-3) auto;
 			margin-top: calc(var(--space-3) + ${props => props.theme.dimen.navBar});

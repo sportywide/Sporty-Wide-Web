@@ -14,7 +14,7 @@ const NavbarMenu = styled(Menu)`
 		border-radius: 0;
 		position: fixed;
 		width: 100%;
-		z-index: 100;
+		z-index: 1500;
 		height: ${props => props.theme.dimen.navBar};
 
 		.active.item {

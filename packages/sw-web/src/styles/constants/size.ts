@@ -21,13 +21,17 @@ export const device = {
 	desktopL: `(min-width: ${size.desktop}px)`,
 };
 
-export function getDeviceWidth(userAgent) {
-	const md = new MobileDetect(userAgent);
-	if (md.phone()) {
-		return size.mobileM;
-	} else if (md.tablet()) {
-		return size.tablet;
+export function getDeviceWidth(userAgent?: string) {
+	if (userAgent) {
+		const md = new MobileDetect(userAgent);
+		if (md.phone()) {
+			return size.mobileM;
+		} else if (md.tablet()) {
+			return size.tablet;
+		} else {
+			return size.laptop;
+		}
 	} else {
-		return size.laptop;
+		return window.innerWidth > 0 ? window.innerWidth : screen.width;
 	}
 }

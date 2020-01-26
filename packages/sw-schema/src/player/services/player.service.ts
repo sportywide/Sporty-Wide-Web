@@ -67,9 +67,9 @@ export class PlayerService extends BaseEntityService<Player> {
 			if (!numFixtures) {
 				throw new NotPlayingException('League is not in play this week');
 			}
-			// if ([0, 6].includes(new Date().getDay())) {
-			// 	throw new NotInWeekDayException('Cant play during the weekends');
-			// }
+			if ([0, 6].includes(new Date().getDay())) {
+				throw new NotInWeekDayException('Cant play during the weekends');
+			}
 			const userPreference = await this.userLeaguePreferenceService.find({ userId, leagueId });
 			const formationName = userPreference ? userPreference.formation : '4-4-2';
 			const formation = formationMap[formationName];
