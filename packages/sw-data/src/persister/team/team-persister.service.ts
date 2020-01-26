@@ -10,6 +10,7 @@ import { fsPromise } from '@shared/lib/utils/promisify/fs';
 import { LeagueResultService } from '@schema/league/services/league-result.service';
 import { ScoreboardTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
 import { TeamService } from '@schema/team/services/team.service';
+import { FifaImageService } from '@data/persister/fifa/fifa-image.service';
 
 const glob = util.promisify(require('glob'));
 
@@ -18,6 +19,7 @@ export class TeamPersisterService {
 	constructor(
 		@Inject(DATA_LOGGER) private readonly logger: Logger,
 		private readonly leagueResultService: LeagueResultService,
+		private readonly fifaImageService: FifaImageService,
 		private readonly teamService: TeamService
 	) {}
 
@@ -120,7 +122,7 @@ export class TeamPersisterService {
 	}
 
 	async saveFifaTeams(teams: FifaTeam[]) {
-		return Promise.all(
+		await Promise.all(
 			teams.map(async team => {
 				const dbObj = {
 					...team,
@@ -138,6 +140,10 @@ export class TeamPersisterService {
 					this.logger.error(`Failed to save team ${dbObj.name}`, e);
 				}
 			})
+		);
+		await this.fifaImageService.saveFifaImages(
+			'teams',
+			teams.map(team => team.image)
 		);
 	}
 }

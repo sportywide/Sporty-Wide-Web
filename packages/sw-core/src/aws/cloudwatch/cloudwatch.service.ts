@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common';
 import AWS, { CloudWatchEvents } from 'aws-sdk';
 import { toCron } from '@shared/lib/utils/date/conversion';
-import { SCHEDULING_CONFIG } from '@core/config/config.constants';
+import { CORE_CONFIG } from '@core/config/config.constants';
 
 @Injectable()
 export class CloudwatchService {
 	private cloudwatchEvents: CloudWatchEvents;
 
-	constructor(@Inject(SCHEDULING_CONFIG) private readonly config) {
+	constructor(@Inject(CORE_CONFIG) private readonly config) {
 		this.cloudwatchEvents = new AWS.CloudWatchEvents();
 	}
 

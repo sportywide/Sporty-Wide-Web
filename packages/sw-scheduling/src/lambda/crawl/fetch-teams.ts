@@ -1,13 +1,15 @@
 import { error, ok } from '@scheduling/lib/http';
+import { INestApplicationContext } from '@nestjs/common';
 import { getLogger, initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
 import { FifaCrawlerService } from '@data/crawler/fifa-crawler.service';
 import { leagues } from '@shared/lib/data/data.constants';
-import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
 import { SCHEDULING_CONFIG } from '@core/config/config.constants';
+import { S3Service } from '@core/aws/s3/s3.service';
 
 export async function handler() {
+	let module: INestApplicationContext;
 	try {
-		const module = await initModule(SchedulingCrawlerModule);
+		module = await initModule(SchedulingCrawlerModule);
 		const fifaCrawler = module.get(FifaCrawlerService);
 		const config = module.get(SCHEDULING_CONFIG);
 		const s3Service = module.get(S3Service);

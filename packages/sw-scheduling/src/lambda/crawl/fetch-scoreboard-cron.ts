@@ -1,12 +1,13 @@
 import { leagues } from '@shared/lib/data/data.constants';
-import { getLogger, initModule } from '@scheduling/lib/scheduling.module';
-import { AwsModule } from '@scheduling/lib/aws/aws.module';
-import { SqsService } from '@scheduling/lib/aws/sqs/sqs.service';
+import { INestApplicationContext } from '@nestjs/common';
+import { getLogger, initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
+import { SqsService } from '@core/aws/sqs/sqs.service';
 
 export async function handler() {
-	const awsModule = await initModule(AwsModule);
-	const sqsService = awsModule.get(SqsService);
+	let module: INestApplicationContext;
 	try {
+		module = await initModule(SchedulingCrawlerModule);
+		const sqsService = module.get(SqsService);
 		await Promise.all(
 			leagues.map(async league =>
 				sqsService.sendMessage({

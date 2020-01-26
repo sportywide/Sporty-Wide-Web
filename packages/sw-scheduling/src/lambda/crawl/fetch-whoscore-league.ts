@@ -3,7 +3,7 @@ import { INestApplicationContext } from '@nestjs/common';
 import { BrowserService } from '@data/crawler/browser.service';
 import { error } from '@scheduling/lib/http';
 import { getLogger, initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
-import { SqsService } from '@scheduling/lib/aws/sqs/sqs.service';
+import { SqsService } from '@core/aws/sqs/sqs.service';
 
 export async function handler() {
 	let module: INestApplicationContext;

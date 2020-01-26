@@ -1,7 +1,7 @@
 import util from 'util';
 import { SQS } from 'aws-sdk';
 import { Inject, Injectable } from '@nestjs/common';
-import { SCHEDULING_CONFIG } from '@core/config/config.constants';
+import { CORE_CONFIG } from '@core/config/config.constants';
 import { Provider } from 'nconf';
 import { omit } from 'lodash';
 import { isDevelopment } from '@shared/lib/utils/env';
@@ -10,7 +10,7 @@ import { isDevelopment } from '@shared/lib/utils/env';
 export class SqsService {
 	private readonly sqs: SQS;
 	private sqsUrl: string;
-	constructor(@Inject(SCHEDULING_CONFIG) private readonly config: Provider) {
+	constructor(@Inject(CORE_CONFIG) private readonly config: Provider) {
 		this.sqs = new SQS({
 			endpoint: config.get('sqs:url'),
 			region: config.get('aws:region'),

@@ -1,6 +1,5 @@
 import { error, ok } from '@scheduling/lib/http';
 import { getLogger, initModule, SchedulingModule } from '@scheduling/lib/scheduling.module';
-import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
 import { SQSEvent } from 'aws-lambda';
 import { FixtureProcess, FixtureProcessStatus } from '@scheduling/lib/fixture/models/fixture-process.model';
 import { WhoScoreCrawlerService } from '@data/crawler/who-score-crawler.service';
@@ -11,6 +10,7 @@ import { PlayerPersisterService } from '@data/persister/player/player-persister.
 import { Fixture } from '@schema/fixture/models/fixture.entity';
 import { FixtureProcessService } from '@scheduling/lib/fixture/services/fixture-process.service';
 import { SCHEDULING_LOGGER } from '@core/logging/logging.constant';
+import { parseBody } from '@core/aws/lambda/body-parser';
 
 export async function handler(event: SQSEvent, context) {
 	let module: INestApplicationContext;

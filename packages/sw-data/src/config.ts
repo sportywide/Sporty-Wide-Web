@@ -2,6 +2,9 @@
 require('@shared/lib/utils/env/dotenv').default.config();
 export const config = {
 	default: {
+		s3: {
+			asset_bucket: 'sw-asset-bucket',
+		},
 		puppeteer: {
 			executable: process.env.SW_PUPPETEER_EXECUTABLE,
 		},

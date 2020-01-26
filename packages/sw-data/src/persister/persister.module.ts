@@ -12,6 +12,7 @@ import { SchemaFixtureModule } from '@schema/fixture/fixture.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { SchemaLeagueModule } from '@schema/league/league.module';
 import { isProduction } from '@shared/lib/utils/env';
+import { FifaImageService } from '@data/persister/fifa/fifa-image.service';
 
 @Module({
 	imports: [
@@ -48,7 +49,7 @@ import { isProduction } from '@shared/lib/utils/env';
 			imports: [CoreSchemaModule],
 		}),
 	],
-	providers: [PlayerPersisterService, TeamPersisterService, FixturePersisterService],
-	exports: [PlayerPersisterService, TeamPersisterService, FixturePersisterService],
+	providers: [PlayerPersisterService, TeamPersisterService, FixturePersisterService, FifaImageService],
+	exports: [PlayerPersisterService, TeamPersisterService, FixturePersisterService, FifaImageService],
 })
 export class PersisterModule {}

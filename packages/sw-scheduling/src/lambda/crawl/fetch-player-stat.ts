@@ -1,16 +1,18 @@
 import { error, ok } from '@scheduling/lib/http';
 import { getLogger, initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
-import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
-import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
 import { SQSEvent } from 'aws-lambda';
+import { INestApplicationContext } from '@nestjs/common';
 import { ScoreboardCrawlerService } from '@data/crawler/scoreboard-crawler.service';
 import { SCHEDULING_CONFIG } from '@core/config/config.constants';
+import { parseBody } from '@core/aws/lambda/body-parser';
+import { S3Service } from '@core/aws/s3/s3.service';
 
 export async function handler(event: SQSEvent, context) {
+	let module: INestApplicationContext;
 	try {
 		context.callbackWaitsForEmptyEventLoop = false;
 		const [{ body: leagueId }] = parseBody(event);
-		const module = await initModule(SchedulingCrawlerModule);
+		module = await initModule(SchedulingCrawlerModule);
 		const s3Service = module.get(S3Service);
 		const config = module.get(SCHEDULING_CONFIG);
 		const objectDetails = await s3Service.getObject({

@@ -1,6 +1,6 @@
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
 import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
-import { fifaImage } from '@web/shared/lib/images/links';
+import { playerFifaImage } from '@web/shared/lib/images/links';
 import { formatDistance } from 'date-fns';
 import { SwIcon } from '@web/shared/lib/icon';
 import { getPositionColor, getRatingColor } from '@web/shared/lib/color';
@@ -20,7 +20,7 @@ const SwPlayerStatCardComponent: React.FC<IProps> = ({ player, weeklyFixture }) 
 		<GridColumn mobile={16} tablet={8} computer={4}>
 			<Card key={player.id}>
 				<Card.Content style={{ height: '265px' }}>
-					<Image floated="right" size="tiny" src={fifaImage(player.image)} />
+					<Image floated="right" size="tiny" src={playerFifaImage(player.image)} />
 					<Card.Header>
 						<Popup
 							trigger={<div className={'sw-truncate'}>{player.name}</div>}

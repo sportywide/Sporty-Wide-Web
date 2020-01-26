@@ -13,14 +13,11 @@
 		"start": "sls offline start --useSeparateProcesses"
 	},
 	"dependencies": {
-		"aws-lambda": "0.1.2",
 		"dynamoose-improved": "1.10.2",
 		"source-map-support": "0.5.13",
 		"sportywide-data": "0.0.0"
 	},
 	"devDependencies": {
-		"@types/aws-lambda": "8.10.36",
-		"aws-sdk": "2.564.0",
 		"serverless": "1.56.1",
 		"serverless-dynamodb-local": "0.2.38",
 		"serverless-iam-roles-per-function": "2.0.2",

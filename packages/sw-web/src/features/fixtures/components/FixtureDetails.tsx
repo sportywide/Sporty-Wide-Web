@@ -1,7 +1,7 @@
 import React from 'react';
 import { FixtureDetailsDto, FixtureDto, FixturePlayerRatingDto } from '@shared/lib/dtos/fixture/fixture.dto';
 import { formatRelative } from 'date-fns';
-import { fifaFlag, fifaImage } from '@web/shared/lib/images/links';
+import { fifaFlag, teamFifaImage } from '@web/shared/lib/images/links';
 import { Divider, Header, Image, Popup, Table } from 'semantic-ui-react';
 import { IconName, SwIcon } from '@web/shared/lib/icon';
 import { TeamDto } from '@shared/lib/dtos/team/team.dto';
@@ -28,7 +28,7 @@ function fixtureHeader(fixtureDetails: FixtureDetailsDto) {
 					<div className={'sw-flex'}>
 						<div className={'sw-flex sw-flex-grow-equal sw-ml2'}>
 							<div className={'sw-mr4'}>
-								<img src={fifaImage(fixture.homeTeam.image)} alt={fixture.homeTeam.title} />
+								<img src={teamFifaImage(fixture.homeTeam.image)} alt={fixture.homeTeam.title} />
 								<div>{fixture.homeTeam.title}</div>
 							</div>
 							<S.FixtureScore>{fixture.homeScore}</S.FixtureScore>
@@ -37,7 +37,7 @@ function fixtureHeader(fixtureDetails: FixtureDetailsDto) {
 						<div className={'sw-flex sw-flex-grow-equal sw-mr2'}>
 							<S.FixtureScore>{fixture.awayScore}</S.FixtureScore>
 							<div className={'sw-ml4'}>
-								<img src={fifaImage(fixture.awayTeam.image)} alt={fixture.awayTeam.title} />
+								<img src={teamFifaImage(fixture.awayTeam.image)} alt={fixture.awayTeam.title} />
 								<div>{fixture.awayTeam.title}</div>
 							</div>
 						</div>

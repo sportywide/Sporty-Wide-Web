@@ -1,7 +1,7 @@
 import React from 'react';
 import { SwPlayerDraggingLogo } from '@web/features/lineup/components/players/PlayerItem.styled';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
-import { fifaImage } from '@web/shared/lib/images/links';
+import { playerFifaImage } from '@web/shared/lib/images/links';
 
 interface IProps {
 	player: PlayerDto;
@@ -12,7 +12,7 @@ const SwPlayerPreviewComponent: React.FC<IProps> = ({ player }) => {
 		<SwPlayerDraggingLogo
 			circular
 			avatar
-			src={fifaImage(player.image)}
+			src={playerFifaImage(player.image)}
 			style={{ transform: 'translate(-50%, -50%)' }}
 		/>
 	);

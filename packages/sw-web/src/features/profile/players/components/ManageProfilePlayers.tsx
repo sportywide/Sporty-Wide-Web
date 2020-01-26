@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { PlayerDto } from '@shared/lib/dtos/player/player.dto';
-import { fifaImage } from '@web/shared/lib/images/links';
+import { playerFifaImage } from '@web/shared/lib/images/links';
 import { Card, Grid, GridColumn, Image, Label, Loader, Popup, Select } from 'semantic-ui-react';
 import { IProfilePlayers, profilePlayersReducer } from '@web/features/profile/players/store/reducers';
 import { IUser } from '@web/shared/lib/interfaces/auth/user';
@@ -41,7 +41,7 @@ const playerCard = (player: PlayerDto) => {
 		<GridColumn mobile={16} tablet={8} computer={4} key={player.id}>
 			<Card key={player.id}>
 				<Card.Content style={{ height: '180px' }}>
-					<Image floated="right" size="tiny" src={fifaImage(player.image)} />
+					<Image floated="right" size="tiny" src={playerFifaImage(player.image)} />
 					<Card.Header>
 						<Popup
 							trigger={<div className={'sw-truncate'}>{player.name}</div>}

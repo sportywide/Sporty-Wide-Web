@@ -1,7 +1,7 @@
 import util from 'util';
 import { SNS } from 'aws-sdk';
 import { Inject, Injectable } from '@nestjs/common';
-import { SCHEDULING_CONFIG } from '@core/config/config.constants';
+import { CORE_CONFIG } from '@core/config/config.constants';
 import { Provider } from 'nconf';
 import { omit } from 'lodash';
 
@@ -9,7 +9,7 @@ import { omit } from 'lodash';
 export class SnsService {
 	private readonly sns: SNS;
 	private topicArnPrefix: string;
-	constructor(@Inject(SCHEDULING_CONFIG) private readonly config: Provider) {
+	constructor(@Inject(CORE_CONFIG) private readonly config: Provider) {
 		this.sns = new SNS({
 			endpoint: config.get('sns:url'),
 			region: config.get('aws:region'),

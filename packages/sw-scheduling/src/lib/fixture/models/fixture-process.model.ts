@@ -1,4 +1,4 @@
-import dynamoose from '@scheduling/lib/aws/dynamoose';
+import dynamoose from '@scheduling/lib/dynamoose';
 
 export enum FixtureProcessStatus {
 	PENDING = 'pending',

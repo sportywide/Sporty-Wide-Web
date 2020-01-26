@@ -2,14 +2,16 @@ import { error, ok } from '@scheduling/lib/http';
 import { getLogger, initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
 import { FifaCrawlerService } from '@data/crawler/fifa-crawler.service';
 import { SCHEDULING_CONFIG } from '@core/config/config.constants';
-import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
-import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
 import { SNSEvent } from 'aws-lambda';
+import { INestApplicationContext } from '@nestjs/common';
+import { parseBody } from '@core/aws/lambda/body-parser';
+import { S3Service } from '@core/aws/s3/s3.service';
 
 export async function handler(event: SNSEvent) {
+	let module: INestApplicationContext;
 	try {
 		const leagueId = parseInt(parseBody(event), 10);
-		const module = await initModule(SchedulingCrawlerModule);
+		module = await initModule(SchedulingCrawlerModule);
 		const s3Service = module.get(S3Service);
 		const config = module.get(SCHEDULING_CONFIG);
 		const objectDetails = await s3Service.getObject({

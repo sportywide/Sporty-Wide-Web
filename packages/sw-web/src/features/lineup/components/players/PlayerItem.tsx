@@ -10,7 +10,7 @@ import {
 	SwTeamLogo,
 } from '@web/features/lineup/components/players/PlayerItem.styled';
 import { useEmptyPreviewImage } from '@web/shared/lib/react/hooks';
-import { fifaImage } from '@web/shared/lib/images/links';
+import { playerFifaImage, teamFifaImage } from '@web/shared/lib/images/links';
 import { getPositionColor, getRatingColor } from '@web/shared/lib/color';
 
 interface IProps {
@@ -33,7 +33,7 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player, readonly }) => {
 		<List.Item>
 			<List.Content>
 				<SwDraggablePlayer ref={drag} isDragging={isDragging} canDrag={canDrag} available={player.available}>
-					<SwPlayerLogo circular avatar src={fifaImage(player.image)} />
+					<SwPlayerLogo circular avatar src={playerFifaImage(player.image)} />
 					<div className={'sw-flex-grow-equal sw-truncate sw-mr1'}>
 						{player.available ? (
 							<span>
@@ -66,7 +66,7 @@ const SwPlayerItemComponent: React.FC<IProps> = ({ player, readonly }) => {
 						<Popup
 							trigger={
 								<span>
-									<SwTeamLogo avatar src={fifaImage(player.team!.image)} />
+									<SwTeamLogo avatar src={teamFifaImage(player.team!.image)} />
 								</span>
 							}
 							content={player.teamName}

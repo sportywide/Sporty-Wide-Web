@@ -2,7 +2,6 @@ import { SimpleLoggerService } from '@scheduling/lib/simple-logger.service';
 import { Module } from '@nestjs/common';
 import { CoreSchedulingModule } from '@scheduling/lib/core/core.module';
 import { NestFactory } from '@nestjs/core';
-import { AwsModule } from '@scheduling/lib/aws/aws.module';
 import { PersisterModule } from '@data/persister/persister.module';
 import { CrawlerModule } from '@data/crawler/crawler.module';
 import { getConnectionManager } from 'typeorm';
@@ -14,17 +13,17 @@ import { SCHEDULING_LOGGER } from '@core/logging/logging.constant';
 process.env.TZ = 'UTC';
 
 @Module({
-	imports: [CoreSchedulingModule, FixtureModule, CrawlerModule, AwsModule],
+	imports: [CoreSchedulingModule, FixtureModule, CrawlerModule],
 })
 export class SchedulingCrawlerModule {}
 
 @Module({
-	imports: [CoreSchedulingModule, FixtureModule, DataModule, AwsModule],
+	imports: [CoreSchedulingModule, FixtureModule, DataModule],
 })
 export class SchedulingModule {}
 
 @Module({
-	imports: [CoreSchedulingModule, FixtureModule, PersisterModule, AwsModule],
+	imports: [CoreSchedulingModule, FixtureModule, PersisterModule],
 })
 export class SchedulingPersisterModule {}
 

@@ -1,15 +1,17 @@
 import { error, ok } from '@scheduling/lib/http';
+import { INestApplicationContext } from '@nestjs/common';
 import { cleanup, getLogger, initModule, SchedulingPersisterModule } from '@scheduling/lib/scheduling.module';
-import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
 import { FixturePersisterService } from '@data/persister/fixture/fixture-persister.service';
-import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
 import { S3Event } from 'aws-lambda';
+import { parseBody } from '@core/aws/lambda/body-parser';
+import { S3Service } from '@core/aws/s3/s3.service';
 
 export async function handler(event: S3Event, context) {
+	let module: INestApplicationContext;
 	try {
 		context.callbackWaitsForEmptyEventLoop = false;
 		const { key, bucketName } = parseBody(event);
-		const module = await initModule(SchedulingPersisterModule);
+		module = await initModule(SchedulingPersisterModule);
 		const s3Service = module.get(S3Service);
 		const objectDetails = await s3Service.getObject({
 			Key: key,

@@ -1,11 +1,13 @@
 import { error, ok } from '@scheduling/lib/http';
+import { INestApplicationContext } from '@nestjs/common';
 import { FixtureProcessService } from '@scheduling/lib/fixture/services/fixture-process.service';
 import { cleanup, getLogger, initModule, SchedulingPersisterModule } from '@scheduling/lib/scheduling.module';
-import { SqsService } from '@scheduling/lib/aws/sqs/sqs.service';
+import { SqsService } from '@core/aws/sqs/sqs.service';
 
 export async function handler(event, context) {
+	let module: INestApplicationContext;
 	try {
-		const module = await initModule(SchedulingPersisterModule);
+		module = await initModule(SchedulingPersisterModule);
 		context.callbackWaitsForEmptyEventLoop = false;
 		const fixtureProcessService = module.get(FixtureProcessService);
 		const readyFixtures = await fixtureProcessService.findReadyFixtures();

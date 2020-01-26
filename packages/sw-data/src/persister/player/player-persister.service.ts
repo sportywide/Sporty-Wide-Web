@@ -8,7 +8,7 @@ import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import Fuse from 'fuse.js';
 import { ScoreboardPlayer } from '@shared/lib/dtos/player/player.dto';
-import { chunk, keyBy, omit } from 'lodash';
+import { chunk, keyBy, omit, uniq } from 'lodash';
 import { PlayerService } from '@schema/player/services/player.service';
 import { WhoscorePlayerRating } from '@shared/lib/dtos/player/player-rating.dto';
 import { TeamService } from '@schema/team/services/team.service';
@@ -16,6 +16,7 @@ import { PlayerBettingService } from '@schema/player/services/player-betting.ser
 import { LeagueResultService } from '@schema/league/services/league-result.service';
 import { ScoreboardTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
 import { calculateChance } from '@shared/lib/logic/player/chance';
+import { FifaImageService } from '@data/persister/fifa/fifa-image.service';
 
 const glob = util.promisify(require('glob'));
 
@@ -26,7 +27,8 @@ export class PlayerPersisterService {
 		private readonly playerService: PlayerService,
 		private readonly teamService: TeamService,
 		private readonly playerBettingService: PlayerBettingService,
-		private readonly leagueResultService: LeagueResultService
+		private readonly leagueResultService: LeagueResultService,
+		private readonly fifaImageService: FifaImageService
 	) {}
 
 	async saveFifaPlayersFromPlayerInfoFiles() {
@@ -188,6 +190,16 @@ export class PlayerPersisterService {
 				})
 			);
 		}
+		await this.fifaImageService.saveFifaImages(
+			'players',
+			players.map(player => player.image)
+		);
+		await this.fifaImageService.saveFifaImages(
+			'nationality',
+			uniq(players.map(player => player.nationality.fifaId)).map(
+				nationalityId => `/static/FIFA20/images/flags/2/${nationalityId}.png`
+			)
+		);
 	}
 
 	async savePlayerRatings(fixtureId, team: { id: number; name: string }, playerRatings: WhoscorePlayerRating[]) {

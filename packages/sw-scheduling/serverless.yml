@@ -86,6 +86,7 @@ custom:
         directory: .s3
 
 resources:
+    - ${file(resources/s3.yml)}
     - ${file(resources/sqs.yml)}
     - ${file(resources/sns.yml)}
     - ${file(resources/dynamodb.yml)}

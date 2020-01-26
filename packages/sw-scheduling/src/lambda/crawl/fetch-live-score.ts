@@ -7,8 +7,8 @@ import { FixtureProcessService } from '@scheduling/lib/fixture/services/fixture-
 import { BrowserService } from '@data/crawler/browser.service';
 import { INestApplicationContext } from '@nestjs/common';
 import { addMinutes, startOfMinute } from 'date-fns';
-import { CloudwatchService } from '@scheduling/lib/aws/cloudwatch/cloudwatch.service';
 import { SCHEDULING_LOGGER } from '@core/logging/logging.constant';
+import { CloudwatchService } from '@core/aws/cloudwatch/cloudwatch.service';
 
 export async function handler(event, context) {
 	let module: INestApplicationContext;

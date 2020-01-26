@@ -1,16 +1,18 @@
 import { error, ok } from '@scheduling/lib/http';
 import { getLogger, initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
 import { SCHEDULING_CONFIG } from '@core/config/config.constants';
-import { S3Service } from '@scheduling/lib/aws/s3/s3.service';
 import { FixtureCrawlerService } from '@data/crawler/fixture-crawler.service';
 import { getSeason } from '@shared/lib/utils/season';
 import { leagues } from '@shared/lib/data/data.constants';
-import { parseBody } from '@scheduling/lib/aws/lambda/body-parser';
+import { parseBody } from '@core/aws/lambda/body-parser';
+import { S3Service } from '@core/aws/s3/s3.service';
+import { INestApplicationContext } from '@nestjs/common';
 
 export async function handler(event) {
+	let module: INestApplicationContext;
 	try {
 		const leagueId = parseInt(parseBody(event), 10);
-		const module = await initModule(SchedulingCrawlerModule);
+		module = await initModule(SchedulingCrawlerModule);
 		const s3Service = module.get(S3Service);
 		const fixtureCrawler = module.get(FixtureCrawlerService);
 		const season = getSeason(new Date());

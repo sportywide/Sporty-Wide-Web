@@ -9,7 +9,7 @@ import {
 	SwPlayerCircleName,
 } from '@web/features/lineup/components/pitch/markers/PlayeCircle.styled';
 import { useEmptyPreviewImage } from '@web/shared/lib/react/hooks';
-import { fifaImage } from '@web/shared/lib/images/links';
+import { playerFifaImage } from '@web/shared/lib/images/links';
 
 interface IProps {
 	rect: any;
@@ -81,7 +81,7 @@ const SwPlayerBoxComponent: React.FC<IProps> = ({
 			}}
 			isDragging={isDragging}
 		>
-			<SwPlayerCircleAvatar avatar src={fifaImage(player.image)} />
+			<SwPlayerCircleAvatar avatar src={playerFifaImage(player.image)} />
 			<SwPlayerCircleName className={'sw-truncate'}>{getShortName(player.name)}</SwPlayerCircleName>
 		</SwPlayerCircle>
 	);
