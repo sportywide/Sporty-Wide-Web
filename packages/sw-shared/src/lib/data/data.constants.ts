@@ -8,6 +8,7 @@ export type League = {
 	whoscoreId: number;
 	apiFootballId: number;
 	scoreboardUrl: string;
+	espnUrl: string;
 };
 
 export const teamAliasMapping = {
@@ -41,6 +42,7 @@ export const leagues: League[] = [
 		whoscoreId: 2,
 		apiFootballId: 2,
 		scoreboardUrl: '/england/epl/',
+		espnUrl: 'https://www.espn.com.au/football/table/_/league/eng.1',
 	},
 	{
 		name: 'la-liga',
@@ -48,6 +50,7 @@ export const leagues: League[] = [
 		whoscoreId: 4,
 		apiFootballId: 30,
 		scoreboardUrl: '/spain/laliga/',
+		espnUrl: 'https://www.espn.com.au/football/table/_/league/esp.1',
 	},
 	{
 		name: 'bundesliga',
@@ -55,6 +58,7 @@ export const leagues: League[] = [
 		whoscoreId: 3,
 		apiFootballId: 8,
 		scoreboardUrl: '/germany/bundesliga/',
+		espnUrl: 'https://www.espn.com.au/football/table/_/league/ger.1',
 	},
 	{
 		name: 'serie-a',
@@ -62,6 +66,7 @@ export const leagues: League[] = [
 		whoscoreId: 5,
 		apiFootballId: 28,
 		scoreboardUrl: '/italy/serie-a/',
+		espnUrl: 'https://www.espn.com.au/football/table/_/league/ita.1',
 	},
 	{
 		name: 'ligue-1',
@@ -69,6 +74,7 @@ export const leagues: League[] = [
 		whoscoreId: 22,
 		apiFootballId: 4,
 		scoreboardUrl: '/france/ligue-1/',
+		espnUrl: 'https://www.espn.com.au/football/table/_/league/fra.1',
 	},
 ];
 

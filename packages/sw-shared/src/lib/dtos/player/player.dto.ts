@@ -33,6 +33,11 @@ export interface ScoreboardPlayer extends Omit<Diff<PlayerStatDto, MongooseDocum
 	url: string;
 }
 
+export interface EspnPlayer extends Omit<Diff<PlayerStatDto, MongooseDocument>, 'playerId'> {
+	jersey: number;
+	name: string;
+}
+
 export function getShortName(playerName) {
 	const parts = playerName.split(/\s+/);
 	let names = [];

@@ -5,6 +5,7 @@ import { FixtureCrawlerService } from '@data/crawler/fixture-crawler.service';
 import { WhoScoreCrawlerService } from '@data/crawler/who-score-crawler.service';
 import { ScoreboardCrawlerService } from '@data/crawler/scoreboard-crawler.service';
 import { BrowserService } from '@data/crawler/browser.service';
+import { EspnCrawlerService } from '@data/crawler/espn-crawler.service';
 
 @Module({
 	imports: [CoreDataModule],
@@ -14,6 +15,7 @@ import { BrowserService } from '@data/crawler/browser.service';
 		WhoScoreCrawlerService,
 		ScoreboardCrawlerService,
 		BrowserService,
+		EspnCrawlerService,
 	],
 	providers: [
 		FifaCrawlerService,
@@ -21,6 +23,7 @@ import { BrowserService } from '@data/crawler/browser.service';
 		WhoScoreCrawlerService,
 		ScoreboardCrawlerService,
 		BrowserService,
+		EspnCrawlerService,
 	],
 })
 export class CrawlerModule {}
