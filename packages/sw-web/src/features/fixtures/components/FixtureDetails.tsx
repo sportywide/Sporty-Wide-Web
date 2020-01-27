@@ -81,7 +81,7 @@ function renderPlayerRatings({
 			<Header as={'h5'}>{team.title}</Header>
 			{!ratingDetails.length && <div className={'sw-mt2'}>No ratings available</div>}
 			{!!ratingDetails.length && (
-				<Table padded stackable>
+				<Table padded unstackable>
 					<Table.Header>
 						<Table.Row>
 							<Table.HeaderCell>Shirt</Table.HeaderCell>

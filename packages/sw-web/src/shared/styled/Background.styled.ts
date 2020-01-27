@@ -45,13 +45,14 @@ export const SwFluidContainer = styled.div`
 export const SwContainer = styled(Container).attrs({ id: 'container' })`
 	&&&&&&& {
 		background-color: ${props => props.theme.colors.white};
-		padding: var(--space-3);
+		padding: var(--space-2);
 		margin-bottom: 0;
 		margin-top: ${props => props.theme.dimen.navBar};
 		@media (max-width: ${size.tablet - 1}px) {
-			width: 100%;
+			width: calc(100% - 2em);
 		}
 		@media ${device.tablet} {
+			padding: var(--space-3);
 			margin: var(--space-3) auto;
 			margin-top: calc(var(--space-3) + ${props => props.theme.dimen.navBar});
 			border-radius: 5px;

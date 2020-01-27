@@ -26,7 +26,7 @@ const SwLeagueStandingsComponent: React.FC<IProps> = ({ league, leagueStandings,
 	}
 	return (
 		<div style={{ maxWidth: '100%', overflowX: 'auto' }}>
-			<Table padded stackable>
+			<Table padded unstackable>
 				<Table.Header>
 					<Table.Row>
 						<Table.HeaderCell>Pos</Table.HeaderCell>
