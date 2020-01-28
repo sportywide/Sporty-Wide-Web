@@ -7,14 +7,14 @@ import { fsPromise } from '@shared/lib/utils/promisify/fs';
 import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import Fuse from 'fuse.js';
-import { ScoreboardPlayer } from '@shared/lib/dtos/player/player.dto';
+import { EspnPlayer } from '@shared/lib/dtos/player/player.dto';
 import { chunk, keyBy, omit, uniq } from 'lodash';
 import { PlayerService } from '@schema/player/services/player.service';
 import { WhoscorePlayerRating } from '@shared/lib/dtos/player/player-rating.dto';
 import { TeamService } from '@schema/team/services/team.service';
 import { PlayerBettingService } from '@schema/player/services/player-betting.service';
 import { LeagueResultService } from '@schema/league/services/league-result.service';
-import { ScoreboardTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
+import { EspnTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
 import { calculateChance } from '@shared/lib/logic/player/chance';
 import { FifaImageService } from '@data/persister/fifa/fifa-image.service';
 
@@ -67,7 +67,7 @@ export class PlayerPersisterService {
 					const content = await fsPromise.readFile(file, 'utf8');
 
 					const playerTeamMap = JSON.parse(content);
-					await this.saveScoreboardPlayer(playerTeamMap);
+					await this.savePlayerStat(playerTeamMap);
 				} catch (e) {
 					this.logger.error(`Failed to read file ${file}`, e);
 				}
@@ -75,12 +75,32 @@ export class PlayerPersisterService {
 		);
 	}
 
-	async saveScoreboardPlayer(playerTeamMap: {
-		players: { [key: string]: ScoreboardPlayer[] };
+	async savePlayersFromEspnInfoFiles() {
+		const files = await glob('espn*.json', {
+			cwd: path.resolve(process.cwd(), 'resources', 'players'),
+			absolute: true,
+		});
+		await Promise.all(
+			files.map(async file => {
+				try {
+					this.logger.info(`Reading from resource ${file}`);
+					const content = await fsPromise.readFile(file, 'utf8');
+
+					const playerTeamMap = JSON.parse(content);
+					await this.savePlayerStat(playerTeamMap);
+				} catch (e) {
+					this.logger.error(`Failed to read file ${file}`, e);
+				}
+			})
+		);
+	}
+
+	async savePlayerStat(playerTeamMap: {
+		players: { [key: string]: EspnPlayer[] };
 		leagueId: number;
 		season: string;
 	}) {
-		const playerMap: { [key: string]: ScoreboardPlayer[] } = playerTeamMap.players;
+		const playerMap: { [key: string]: EspnPlayer[] } = playerTeamMap.players;
 		const leagueId = playerTeamMap.leagueId;
 		const dbTeams = await this.teamService.findByLeague(leagueId);
 		const teamFuse = new Fuse(dbTeams, {
@@ -100,16 +120,15 @@ export class PlayerPersisterService {
 				continue;
 			}
 			this.logger.info(`Match ${foundTeams[0].title} with ${teamName}`);
-			const teamResult: ScoreboardTeam =
+			const teamResult: EspnTeam =
 				leagueResult && leagueResult.table.find(teamResult => teamResult.teamId === foundTeams[0].id);
 			const totalGames = (teamResult && teamResult.played) || 0;
 
-			const transformedPlayers = transformPlayers(players);
 			const dbPlayers = await this.playerService.getPlayersByTeam(foundTeams[0].id);
 			const playerMap = this.fuzzySearchByDbPlayer({
 				teamName,
 				dbPlayers,
-				players: transformedPlayers,
+				players,
 			});
 			await Promise.all(
 				dbPlayers.map(async dbPlayer => {
@@ -234,14 +253,4 @@ export class PlayerPersisterService {
 		);
 		await this.playerBettingService.updateNotPlayedBetting(fixtureId);
 	}
-}
-
-function transformPlayers(players: any[]) {
-	return players.map(player => ({
-		...player,
-		name: player.name
-			.split(/\s+/)
-			.reverse()
-			.join(' '),
-	}));
 }

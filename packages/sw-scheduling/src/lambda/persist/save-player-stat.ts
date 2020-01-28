@@ -21,7 +21,7 @@ export async function handler(event: S3Event, context) {
 		const leagueId = parseInt((objectDetails.Metadata || {}).league, 10);
 		const season = (objectDetails.Metadata || {}).season;
 		const playerPersister = module.get(PlayerPersisterService);
-		await playerPersister.saveScoreboardPlayer({
+		await playerPersister.savePlayerStat({
 			players: playerMap,
 			leagueId,
 			season,

@@ -88,9 +88,25 @@ services:
         networks:
             - sw_net_frontend
             - sw_net_backend
+    minio1:
+        image: minio/minio
+        container_name: sw_minio
+        networks:
+            - sw_net_backend
+        volumes:
+            - minio:/data
+        ports:
+            - "9000:9000"
+        environment:
+            MINIO_ACCESS_KEY: minio
+            MINIO_SECRET_KEY: minio123
+        command: server /data
+
 volumes:
     postgres:
         name: sw_volume_postgres
+    minio:
+        name: sw_volumn_minio
     redis:
         name: sw_volume_redis
     mongo:

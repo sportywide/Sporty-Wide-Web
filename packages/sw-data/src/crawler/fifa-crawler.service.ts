@@ -10,6 +10,7 @@ import { unaccent } from '@shared/lib/utils/string/conversion';
 import { teamAliasMapping, teamMapping } from '@shared/lib/data/data.constants';
 
 const cloudscraper = require('cloudscraper');
+const MAX_ATTEMPTS = 4;
 
 const DEFAULT_PLAYER_PAGES = 5;
 
@@ -139,11 +140,19 @@ export class FifaCrawlerService extends ResultsService {
 		for (const chunk of teamChunks) {
 			await Promise.all(
 				chunk.map(async teamId => {
-					this.logger.info(`Fetching team ${teamId}`);
-					const teamUrl = `/team/${teamId}`;
-					const $ = await this.getParsedResponse(teamUrl);
-					const playersOfTeam = this.parseInfoPlayersOfTeam($, teamId);
-					players.push(...playersOfTeam);
+					for (let i = 0; i < MAX_ATTEMPTS; i++) {
+						try {
+							this.logger.info(`Attempt ${i + 1}: Fetching team ${teamId}`);
+							const teamUrl = `/team/${teamId}`;
+							const $ = await this.getParsedResponse(teamUrl);
+							const playersOfTeam = this.parseInfoPlayersOfTeam($, teamId);
+							players.push(...playersOfTeam);
+							return;
+						} catch (e) {
+							this.logger.info(`Failed to get team ${teamId}`, e);
+							await sleep(1500 * (i + 1));
+						}
+					}
 				})
 			);
 			await sleep(1000);

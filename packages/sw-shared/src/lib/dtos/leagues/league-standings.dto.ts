@@ -11,7 +11,7 @@ export class ScoreboardTeam {
 	scored: number;
 	conceded: number;
 	points: number;
-	forms: Form[];
+	forms?: Form[];
 }
 
 export class EspnTeam {

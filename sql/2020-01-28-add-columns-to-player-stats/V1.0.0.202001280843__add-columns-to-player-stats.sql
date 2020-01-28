@@ -1,0 +1,7 @@
+ALTER TABLE player_stat ADD COLUMN assist INTEGER,
+ADD COLUMN fouls_committed INTEGER,
+ADD COLUMN fouls_suffered INTEGER,
+ADD COLUMN saves INTEGER,
+ADD COLUMN shots INTEGER,
+ADD COLUMN subbed INTEGER,
+ADD COLUMN shots_on_target INTEGER;

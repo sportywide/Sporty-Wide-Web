@@ -9,6 +9,9 @@ import { Provider } from 'nconf';
 import { EspnTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
 import { ResultsService } from '@data/crawler/results.service';
 import { EspnPlayer } from '@shared/lib/dtos/player/player.dto';
+import { sleep } from '@shared/lib/utils/sleep';
+
+const MAX_ATTEMPTS = 4;
 
 @Injectable()
 export class EspnCrawlerService extends ResultsService {
@@ -35,9 +38,16 @@ export class EspnCrawlerService extends ResultsService {
 	}
 
 	async crawlPlayers(teamUrl, season) {
-		this.logger.info(`Getting players for team ${teamUrl} in season ${season}`);
-		const { data } = await this.axios.get(teamUrl);
-		return this.parsePlayers(data, season);
+		for (let i = 0; i < MAX_ATTEMPTS; i++) {
+			try {
+				this.logger.info(`Attempt ${i + 1}: Getting players for team ${teamUrl} in season ${season}`);
+				const { data } = await this.axios.get(teamUrl);
+				return this.parsePlayers(data, season);
+			} catch (e) {
+				this.logger.error('Failed to get players', e);
+				await sleep(1000 * (i + 1));
+			}
+		}
 	}
 
 	private parsePlayers($: CheerioStatic, season: string): EspnPlayer[] {
@@ -167,6 +177,8 @@ export class EspnCrawlerService extends ResultsService {
 				yellow: parseInt(yellowCard, 10),
 				red: parseInt(redCard, 10),
 				played: parseInt(played, 10),
+				shots: 0,
+				shotsOnTarget: 0,
 				subbed: parseInt(subbed, 10),
 				scored: 0,
 				saves: parseInt(saves, 10),
@@ -182,10 +194,10 @@ export class EspnCrawlerService extends ResultsService {
 		const teamUrls = Array.from($('div.standings__table > section > div.flex > table > tbody > tr')).map(node => {
 			const element = $(node);
 			const url = element
-				.find('.dn .AnchorLink')
+				.find('.hide-mobile .AnchorLink')
 				.attr('href')
 				.replace('/football/club', '/football/team/squad');
-			const name = element.find('.dn abbr').text();
+			const name = element.find('.hide-mobile a').text();
 			return { url, name };
 		});
 

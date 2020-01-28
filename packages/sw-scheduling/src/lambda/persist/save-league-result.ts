@@ -21,7 +21,7 @@ export async function handler(event: S3Event, context) {
 		const leagueId = (objectDetails.Metadata || {}).league;
 		const content = JSON.parse(objectDetails.Body!.toString('utf8'));
 		const teamPersister = module.get(TeamPersisterService);
-		await teamPersister.saveScoreboardTeamResult(content);
+		await teamPersister.saveTeamsResult(content);
 		const sqsService = module.get(SqsService);
 		await sqsService.sendMessage({
 			Queue: 'scoreboard-player-queue',

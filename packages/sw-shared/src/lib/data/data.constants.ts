@@ -18,7 +18,7 @@ export const teamAliasMapping = {
 	'Brighton and Hove Albion': ['Brighton'],
 	'Wolverhampton Wanderers': ['Wolves'],
 	'AC Milan': ['Milan'],
-	'Inter Milan': ['Inter'],
+	'Inter Milan': ['Inter', 'Internazionale'],
 	Bordeaux: ['Girondins de Bx'],
 	'Olympic Lyon': ['OL'],
 	'Olympique de Marseille': ['OM'],
@@ -26,6 +26,7 @@ export const teamAliasMapping = {
 	'Stade Rennais': ['Rennes'],
 	'Athletic Bilbao': ['Athletic Club'],
 	'Atletico Madrid': ['Atl. Madrid'],
+	"M'gladbach": ['Borussia Monchengladbach', 'Monchengladbach'],
 };
 export const teamMapping = Object.keys(teamAliasMapping).reduce((currentMapping, team) => {
 	const aliases = teamAliasMapping[team];

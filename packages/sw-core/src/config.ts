@@ -13,9 +13,9 @@ export const config = {
 	},
 	development: {
 		s3: {
-			url: 'http://localhost:6000',
-			accessKeyId: 'S3RVER', // This specific key is required when working offline
-			secretAccessKey: 'S3RVER',
+			url: 'http://192.168.50.10:9000',
+			accessKeyId: 'minio',
+			secretAccessKey: 'minio123',
 		},
 		sqs: {
 			url: 'http://192.168.50.10:9324',

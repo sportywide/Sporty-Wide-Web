@@ -8,7 +8,7 @@ import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import { fsPromise } from '@shared/lib/utils/promisify/fs';
 import { LeagueResultService } from '@schema/league/services/league-result.service';
-import { ScoreboardTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
+import { EspnTeam, ScoreboardTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
 import { TeamService } from '@schema/team/services/team.service';
 import { FifaImageService } from '@data/persister/fifa/fifa-image.service';
 
@@ -55,7 +55,7 @@ export class TeamPersisterService {
 					const content = await fsPromise.readFile(file, 'utf8');
 
 					const leagueTeams = JSON.parse(content);
-					await this.saveScoreboardTeamResult(leagueTeams);
+					await this.saveTeamsResult(leagueTeams);
 				} catch (e) {
 					this.logger.error(`Failed to read file ${file}`, e);
 				}
@@ -63,10 +63,30 @@ export class TeamPersisterService {
 		);
 	}
 
-	async saveScoreboardTeamResult(leagueTeams: { league: League; teams: ScoreboardTeam[]; season: string }) {
+	async saveTeamsFromEspnInfoFiles() {
+		const files = await glob('espn*.json', {
+			cwd: path.resolve(process.cwd(), 'resources', 'teams'),
+			absolute: true,
+		});
+		await Promise.all(
+			files.map(async file => {
+				try {
+					this.logger.info(`Reading from resource ${file}`);
+					const content = await fsPromise.readFile(file, 'utf8');
+
+					const leagueTeams = JSON.parse(content);
+					await this.saveTeamsResult(leagueTeams);
+				} catch (e) {
+					this.logger.error(`Failed to read file ${file}`, e);
+				}
+			})
+		);
+	}
+
+	async saveTeamsResult(leagueTeams: { league: League; teams: EspnTeam[]; season: string }) {
 		const league = leagueTeams.league;
 		const teamsInfo = leagueTeams.teams;
-		const { matchedTeams } = await this.matchScoreboardTeams(leagueTeams);
+		const { matchedTeams } = await this.matchExternalTeamResult(leagueTeams);
 		const teamUrlMap = Array.from(matchedTeams.entries()).reduce((currentObject, [teamInfo, team]) => {
 			return {
 				...currentObject,
@@ -91,10 +111,10 @@ export class TeamPersisterService {
 		});
 	}
 
-	private async matchScoreboardTeams(leagueTeams: {
+	private async matchExternalTeamResult(leagueTeams: {
 		league: League;
-		teams: ScoreboardTeam[];
-	}): Promise<{ matchedTeams: Map<ScoreboardTeam, Team>; unresolvedTeams: ScoreboardTeam[] }> {
+		teams: EspnTeam[];
+	}): Promise<{ matchedTeams: Map<EspnTeam, Team>; unresolvedTeams: EspnTeam[] }> {
 		const league = leagueTeams.league;
 		const teamsInfo = leagueTeams.teams;
 		const dbTeams = await this.teamService.find({
@@ -103,7 +123,7 @@ export class TeamPersisterService {
 			},
 		});
 		const unresolvedTeams: any[] = [];
-		const matchedTeams = new Map<ScoreboardTeam, Team>();
+		const matchedTeams = new Map<EspnTeam, Team>();
 		for (const teamInfo of teamsInfo) {
 			const foundTeam = this.teamService.fuzzySearch(dbTeams, teamInfo.name);
 			if (!foundTeam) {

@@ -82,8 +82,11 @@ custom:
         accountId: ${self:custom.aws.accountId}
 
     s3:
-        port: 6000
-        directory: .s3
+        host: 192.168.50.10
+        port: 9000
+        accessKeyId: minio
+        secretAccessKey: minio123
+        noStart: true
 
 resources:
     - ${file(resources/s3.yml)}

@@ -16,6 +16,27 @@ export class PlayerStat extends TrackTimestamp(BaseEntity) {
 	scored: number;
 
 	@Column()
+	assist: number;
+
+	@Column()
+	saves: number;
+
+	@Column()
+	subbed: number;
+
+	@Column()
+	foulsCommitted: number;
+
+	@Column()
+	foulsSuffered: number;
+
+	@Column()
+	shots: number;
+
+	@Column()
+	shotsOnTarget: number;
+
+	@Column()
 	yellow: number;
 
 	@Column()
