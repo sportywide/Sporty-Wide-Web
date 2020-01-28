@@ -2,10 +2,14 @@ import { error, ok } from '@scheduling/lib/http';
 import { getLogger, initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
 import { SQSEvent } from 'aws-lambda';
 import { INestApplicationContext } from '@nestjs/common';
-import { ScoreboardCrawlerService } from '@data/crawler/scoreboard-crawler.service';
 import { SCHEDULING_CONFIG } from '@core/config/config.constants';
 import { parseBody } from '@core/aws/lambda/body-parser';
 import { S3Service } from '@core/aws/s3/s3.service';
+import { chunk as lodashChunk } from 'lodash';
+import { sleep } from '@shared/lib/utils/sleep';
+import { EspnCrawlerService } from '@data/crawler/espn-crawler.service';
+import { EspnTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
+import { League } from '@shared/lib/data/data.constants';
 
 export async function handler(event: SQSEvent, context) {
 	let module: INestApplicationContext;
@@ -19,17 +23,19 @@ export async function handler(event: SQSEvent, context) {
 			Bucket: config.get('s3:data_bucket_name'),
 			Key: `teams/scoreboard/${leagueId}.json`,
 		});
-		const leagueTeams = JSON.parse(objectDetails.Body!.toString('utf8'));
-		const scoreboardCrawler = module.get(ScoreboardCrawlerService);
-		const { league, teams, season } = leagueTeams;
-		const teamUrlMap = await scoreboardCrawler.crawlPlayers(
-			teams.map(team => team.url),
-			season
+		const leagueTeams: { league: League; teams: EspnTeam[]; season: string } = JSON.parse(
+			objectDetails.Body!.toString('utf8')
 		);
-
+		const crawlerService = module.get(EspnCrawlerService);
+		const { league, teams, season } = leagueTeams;
 		const result = {};
-		for (const team of teams) {
-			result[team.name] = teamUrlMap[team.url];
+		for (const chunk of lodashChunk(teams, 5)) {
+			await Promise.all(
+				chunk.map(async team => {
+					result[team.name] = await crawlerService.crawlPlayers(team.url, season);
+				})
+			);
+			await sleep(2000);
 		}
 		await s3Service.uploadFile({
 			Bucket: config.get('s3:data_bucket_name'),

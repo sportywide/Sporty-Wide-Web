@@ -8,6 +8,7 @@ import { INestApplicationContext } from '@nestjs/common';
 import { BrowserService } from '@data/crawler/browser.service';
 import { parseBody } from '@core/aws/lambda/body-parser';
 import { S3Service } from '@core/aws/s3/s3.service';
+import { EspnCrawlerService } from '@data/crawler/espn-crawler.service';
 
 export async function handler(event: SQSEvent) {
 	let module: INestApplicationContext;
@@ -16,7 +17,7 @@ export async function handler(event: SQSEvent) {
 		const leagueId = parseInt(message[0] && message[0].body, 10);
 		module = await initModule(SchedulingCrawlerModule);
 		const s3Service = module.get(S3Service);
-		const scoreboardCrawler = module.get(ScoreboardCrawlerService);
+		const scoreboardCrawler = module.get(EspnCrawlerService);
 		const league = leagues.find(league => league.id === leagueId);
 		if (!league) {
 			throw new Error('Not a valid league');
