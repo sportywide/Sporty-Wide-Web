@@ -15,8 +15,8 @@
 		"url": "0.11.0"
 	},
 	"devDependencies": {
-		"@types/aws-lambda": "8.10.40",
 		"@nestjs/testing": "6.5.3",
+		"@types/aws-lambda": "8.10.40",
 		"sqlite3": "4.1.1"
 	}
 }

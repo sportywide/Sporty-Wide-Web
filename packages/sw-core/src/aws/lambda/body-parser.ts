@@ -20,8 +20,8 @@ export function parseBody(event: SNSEvent | SQSEvent | S3Event | GenericEvent) {
 	if (eventSource === EventSource.S3) {
 		const s3Event = event as S3Event;
 		return {
-			bucketName: s3Event.Records[0].s3.bucket.name,
-			key: s3Event.Records[0].s3.object.key,
+			bucketName: decodeURIComponent(s3Event.Records[0].s3.bucket.name),
+			key: decodeURIComponent(s3Event.Records[0].s3.object.key),
 		};
 	} else if (eventSource === EventSource.SNS) {
 		const snsEvent = event as SNSEvent;
@@ -52,6 +52,8 @@ export function getEventSource(event): EventSource {
 	if (event.Records && event.Records[0].eventSource === 'aws:dynamodb') return EventSource.DYNAMODB;
 
 	if (event.Records && event.Records[0].eventSource === 'aws:s3') return EventSource.S3;
+
+	if (event.Records && event.Records[0].eventSource === 'minio:s3') return EventSource.S3;
 
 	if (event.Records && event.Records[0].eventSource === 'aws:sqs') return EventSource.SQS;
 }

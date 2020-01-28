@@ -30,9 +30,11 @@ export class SchedulingPersisterModule {}
 export async function cleanup() {
 	try {
 		const connectionManager = getConnectionManager();
-		const defaultConnection = connectionManager.get('default');
-		if (defaultConnection.isConnected) {
-			await defaultConnection.close();
+		if (connectionManager.has('default')) {
+			const defaultConnection = connectionManager.get('default');
+			if (defaultConnection.isConnected) {
+				await defaultConnection.close();
+			}
 		}
 		await mongoose.disconnect();
 	} catch (e) {
