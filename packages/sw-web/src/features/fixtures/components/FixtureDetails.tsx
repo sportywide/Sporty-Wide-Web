@@ -2,9 +2,10 @@ import React from 'react';
 import { FixtureDetailsDto, FixtureDto, FixturePlayerRatingDto } from '@shared/lib/dtos/fixture/fixture.dto';
 import { formatRelative } from 'date-fns';
 import { fifaFlag, teamFifaImage } from '@web/shared/lib/images/links';
-import { Divider, Header, Image, Popup, Table } from 'semantic-ui-react';
+import { Divider, Header, Image, Popup } from 'semantic-ui-react';
 import { IconName, SwIcon } from '@web/shared/lib/icon';
 import { TeamDto } from '@shared/lib/dtos/team/team.dto';
+import { TableRow, StickyTable, TableCell, TableHeader } from '@web/shared/lib/ui/components/table/Table';
 import * as S from './FixtureDetails.styled';
 
 interface IProps {
@@ -81,63 +82,54 @@ function renderPlayerRatings({
 			<Header as={'h5'}>{team.title}</Header>
 			{!ratingDetails.length && <div className={'sw-mt2'}>No ratings available</div>}
 			{!!ratingDetails.length && (
-				<Table padded unstackable>
-					<Table.Header>
-						<Table.Row>
-							<Table.HeaderCell>Shirt</Table.HeaderCell>
-							<Table.HeaderCell>Player</Table.HeaderCell>
-							<Table.HeaderCell>Shots</Table.HeaderCell>
-							<Table.HeaderCell>ShotsOT</Table.HeaderCell>
-							<Table.HeaderCell>KeyPasses</Table.HeaderCell>
-							<Table.HeaderCell>PA%</Table.HeaderCell>
-							<Table.HeaderCell>Aeriels</Table.HeaderCell>
-							<Table.HeaderCell>Touches</Table.HeaderCell>
-							<Table.HeaderCell>Tackles</Table.HeaderCell>
-							<Table.HeaderCell>Ratings</Table.HeaderCell>
-						</Table.Row>
-					</Table.Header>
-					<Table.Body>
-						{ratingDetails
-							.sort((a, b) => a.player.shirt - b.player.shirt)
-							.map(playerRating => (
-								<Table.Row key={playerRating.player.id}>
-									<Table.Cell>{playerRating.player.shirt}</Table.Cell>
-									<Table.Cell>
-										<div className={'sw-flex sw-flex-center'} style={{ width: '160px' }}>
-											<Image
-												src={fifaFlag(playerRating.player.nationalityId)}
-												title={playerRating.player.nationality}
-											/>
-											<Popup
-												trigger={
-													<span
-														className={'sw-ml1 sw-truncate'}
-														data-tooltip={playerRating.player.name}
-													>
-														{playerRating.player.name}
-													</span>
-												}
-												content={playerRating.player.name}
-												inverted
-												position="top center"
-											/>
-										</div>
-										<Header.Subheader className={'sw-mt1 sw-text--grey-dark'}>
-											{playerRating.player.age} - {playerRating.player.positions.join(', ')}
-										</Header.Subheader>
-									</Table.Cell>
-									<Table.Cell>{playerRating.rating.shotsTotal}</Table.Cell>
-									<Table.Cell>{playerRating.rating.shotsOffTarget}</Table.Cell>
-									<Table.Cell>{playerRating.rating.keyPassTotal}</Table.Cell>
-									<Table.Cell>{playerRating.rating.passesAccurate}</Table.Cell>
-									<Table.Cell>{playerRating.rating.duelAerialWon}</Table.Cell>
-									<Table.Cell>{playerRating.rating.touches}</Table.Cell>
-									<Table.Cell>{playerRating.rating.tackleSuccessful}</Table.Cell>
-									<Table.Cell>{playerRating.rating.rating}</Table.Cell>
-								</Table.Row>
-							))}
-					</Table.Body>
-				</Table>
+				<StickyTable>
+					<TableRow>
+						<TableHeader>Player</TableHeader>
+						<TableHeader>Shots</TableHeader>
+						<TableHeader>ShotsOT</TableHeader>
+						<TableHeader>KeyPasses</TableHeader>
+						<TableHeader>PA%</TableHeader>
+						<TableHeader>Aeriels</TableHeader>
+						<TableHeader>Touches</TableHeader>
+						<TableHeader>Tackles</TableHeader>
+						<TableHeader>Ratings</TableHeader>
+					</TableRow>
+					{ratingDetails
+						.sort((a, b) => a.player.shirt - b.player.shirt)
+						.map(playerRating => (
+							<TableRow key={playerRating.player.id}>
+								<TableCell>
+									<div className={'sw-flex sw-flex-center'} style={{ width: '160px' }}>
+										<Image
+											src={fifaFlag(playerRating.player.nationalityId)}
+											title={playerRating.player.nationality}
+										/>
+										<Popup
+											trigger={
+												<span className={'sw-ml1 sw-truncate'}>
+													{playerRating.player.shirt}. {playerRating.player.name}
+												</span>
+											}
+											content={playerRating.player.name}
+											inverted
+											position="top center"
+										/>
+									</div>
+									<Header.Subheader className={'sw-mt1 sw-text--grey-dark'}>
+										{playerRating.player.age} - {playerRating.player.positions.join(', ')}
+									</Header.Subheader>
+								</TableCell>
+								<TableCell>{playerRating.rating.shotsTotal}</TableCell>
+								<TableCell>{playerRating.rating.shotsOffTarget}</TableCell>
+								<TableCell>{playerRating.rating.keyPassTotal}</TableCell>
+								<TableCell>{playerRating.rating.passesAccurate}</TableCell>
+								<TableCell>{playerRating.rating.duelAerialWon}</TableCell>
+								<TableCell>{playerRating.rating.touches}</TableCell>
+								<TableCell>{playerRating.rating.tackleSuccessful}</TableCell>
+								<TableCell>{playerRating.rating.rating}</TableCell>
+							</TableRow>
+						))}
+				</StickyTable>
 			)}
 		</div>
 	);

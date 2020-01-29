@@ -10,7 +10,7 @@ import { fetchMyBetting, syncToken, updateRating, updateToken } from '@web/featu
 import { fetchWeeklyFixturesForTeams } from '@web/features/fixtures/store/actions';
 import { playerBettingReducer } from '@web/features/players/store/reducers';
 import { ContainerContext, getUserIdFromState } from '@web/shared/lib/store';
-import { Button, Message, Table } from 'semantic-ui-react';
+import { Button, Message, Table, TableRow } from 'semantic-ui-react';
 import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
 import { PlayerBettingDto, PlayerBettingInputDto } from '@shared/lib/dtos/player/player-betting.dto';
 import { SwNumberInput } from '@web/shared/lib/ui/components/number/NumberInput';
@@ -23,6 +23,7 @@ import { format } from 'date-fns';
 import { PlayerBettingService } from '@web/features/players/services/player-betting.service';
 import { IUserScoreState, userScoreReducer } from '@web/features/user/store/reducers';
 import { resetMyScore } from '@web/features/user/store/actions';
+import { StickyTable, TableCell, TableHeader } from '@web/shared/lib/ui/components/table/Table';
 
 interface IProps {
 	playerBetting: Record<number, PlayerBettingDto>;
@@ -72,88 +73,84 @@ const SwMyPlayerBettingComponent: React.FC<IProps> = ({
 	return (
 		<div className={'sw-flex sw-flex-column'}>
 			{alreadyBet && <span className={'sw-mt2 sw-mb2'}>Last bet was {getLastBet(playerBetting)}</span>}
-			<Table padded stackable>
-				<Table.Header>
-					<Table.Row>
-						<Table.HeaderCell>Name</Table.HeaderCell>
-						<Table.HeaderCell>Team</Table.HeaderCell>
-						<Table.HeaderCell>Game</Table.HeaderCell>
-						<Table.HeaderCell>Used Tokens</Table.HeaderCell>
-						<Table.HeaderCell>Bet Rating</Table.HeaderCell>
-						<Table.HeaderCell>Real Rating</Table.HeaderCell>
-						<Table.HeaderCell>Earned Tokens</Table.HeaderCell>
-					</Table.Row>
-				</Table.Header>
+			<StickyTable>
+				<TableRow>
+					<TableHeader>Name</TableHeader>
+					<TableHeader>Team</TableHeader>
+					<TableHeader>Game</TableHeader>
+					<TableHeader>Used Tokens</TableHeader>
+					<TableHeader>Bet Rating</TableHeader>
+					<TableHeader>Real Rating</TableHeader>
+					<TableHeader>Earned Tokens</TableHeader>
+				</TableRow>
 
-				<Table.Body>
-					{sortProperty(Object.values(playerBetting), 'player', comparePlayerFunc).map(betting => (
-						<Table.Row key={betting.playerId}>
-							<Table.Cell>
-								{betting.player.name} ({betting.player.positions.join(', ')})
-							</Table.Cell>
-							<Table.Cell>{betting.player.teamName}</Table.Cell>
-							<Table.Cell>
-								<a
-									className={'sw-link'}
-									onClick={async () => {
-										await redirect({
-											refresh: false,
-											route: 'fixture-details',
-											params: { id: betting.fixture.id },
-										});
-									}}
-								>
-									{betting.fixture.home} - {betting.fixture.away}
-								</a>
-							</Table.Cell>
-							<Table.Cell>
-								<SwNumberInput
-									stepAmount={1}
-									disabled={betting.betTokens != undefined}
-									value={betting.newBetTokens || 0}
-									precision={0}
-									maxValue={userScore.current.tokens}
-									onChange={tokens =>
-										updateToken({
-											userId: user.id,
-											leagueId: betting.leagueId,
-											playerId: betting.playerId,
-											tokens,
-										})
-									}
-									onBlur={() =>
-										syncToken({
-											userId: user.id,
-											leagueId: betting.leagueId,
-										})
-									}
-									minValue={0}
-								/>
-							</Table.Cell>
-							<Table.Cell>
-								<SwNumberInput
-									stepAmount={0.1}
-									minValue={0}
-									precision={1}
-									disabled={betting.betRating != undefined}
-									maxValue={10}
-									value={betting.newBetRating || 0}
-									onChange={rating =>
-										updateRating({
-											userId: user.id,
-											leagueId: betting.leagueId,
-											playerId: betting.playerId,
-											rating,
-										})
-									}
-								/>
-							</Table.Cell>
-							<Table.Cell>{betting.realRating}</Table.Cell>
-							<Table.Cell>{betting.earnedTokens}</Table.Cell>
-						</Table.Row>
-					))}
-				</Table.Body>
-			</Table>
+				{sortProperty(Object.values(playerBetting), 'player', comparePlayerFunc).map(betting => (
+					<TableRow key={betting.playerId}>
+						<TableCell>
+							{betting.player.name} ({betting.player.positions.join(', ')})
+						</TableCell>
+						<TableCell>{betting.player.teamName}</TableCell>
+						<TableCell>
+							<a
+								className={'sw-link'}
+								onClick={async () => {
+									await redirect({
+										refresh: false,
+										route: 'fixture-details',
+										params: { id: betting.fixture.id },
+									});
+								}}
+							>
+								{betting.fixture.home} - {betting.fixture.away}
+							</a>
+						</TableCell>
+						<TableCell>
+							<SwNumberInput
+								stepAmount={1}
+								disabled={betting.betTokens != undefined}
+								value={betting.newBetTokens || 0}
+								precision={0}
+								maxValue={userScore.current.tokens}
+								onChange={tokens =>
+									updateToken({
+										userId: user.id,
+										leagueId: betting.leagueId,
+										playerId: betting.playerId,
+										tokens,
+									})
+								}
+								onBlur={() =>
+									syncToken({
+										userId: user.id,
+										leagueId: betting.leagueId,
+									})
+								}
+								minValue={0}
+							/>
+						</TableCell>
+						<TableCell>
+							<SwNumberInput
+								stepAmount={0.1}
+								minValue={0}
+								precision={1}
+								disabled={betting.betRating != undefined}
+								maxValue={10}
+								value={betting.newBetRating || 0}
+								onChange={rating =>
+									updateRating({
+										userId: user.id,
+										leagueId: betting.leagueId,
+										playerId: betting.playerId,
+										rating,
+									})
+								}
+							/>
+						</TableCell>
+						<TableCell>{betting.realRating}</TableCell>
+						<TableCell>{betting.earnedTokens}</TableCell>
+					</TableRow>
+				))}
+			</StickyTable>
 			<div className={'sw-flex sw-flex-center sw-flex-align-self-end'}>
 				{alreadyBet ? (
 					<Message warning>You cannot bet again</Message>
