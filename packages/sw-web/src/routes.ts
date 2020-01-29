@@ -64,6 +64,11 @@ const routeMappings = [
 		pattern: '/standings',
 		page: 'league/standings',
 	},
+	{
+		name: 'livescores',
+		pattern: '/livescores',
+		page: 'fixture/livescore',
+	},
 ];
 
 let routes = new Routes();

@@ -87,6 +87,16 @@ export class FixtureController {
 
 	@UseGuards(JwtAuthGuard)
 	@ActiveUser()
+	@Get('/livescore')
+	public async getLiveScores(): Promise<FixtureDetailsDto> {
+		const fixtures = await this.fixtureService.getLiveScores();
+		return toDto({
+			value: fixtures,
+		});
+	}
+
+	@UseGuards(JwtAuthGuard)
+	@ActiveUser()
 	@Get('/:id')
 	public async getFixture(@Param('id', new ParseIntPipe()) fixtureId: number): Promise<FixtureDetailsDto> {
 		const fixture = await this.fixtureService.getFixtureDetails(fixtureId);

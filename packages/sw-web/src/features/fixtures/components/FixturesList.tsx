@@ -3,7 +3,6 @@ import { ContainerContext } from '@web/shared/lib/store';
 import { FixtureService } from '@web/features/fixtures/services/fixture.service';
 import { groupBy, sortBy } from 'lodash';
 import { FixtureDto } from '@shared/lib/dtos/fixture/fixture.dto';
-import { redirect } from '@web/shared/lib/navigation/helper';
 import { ErrorMessage } from '@web/shared/lib/ui/components/error/Error';
 import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
 import { addWeeks, format, startOfDay } from 'date-fns';
@@ -13,6 +12,7 @@ import { useAsyncCallback } from 'react-async-hook';
 import { useEffectOnce } from '@web/shared/lib/react/hooks';
 import { getSeasonRange } from '@shared/lib/utils/season';
 import { weekStart } from '@shared/lib/utils/date/relative';
+import { FixtureRow } from '@web/features/fixtures/components/FixtureRow';
 import * as S from './FixtureList.styled';
 
 interface IProps {
@@ -106,30 +106,7 @@ const SwFixtureListComponent: React.FC<IProps> = ({ leagueId }) => {
 					<div key={time}>
 						<S.FixtureDateHeadline as={'h4'}>{format(timeGroup, 'EEEE do MMMM')}</S.FixtureDateHeadline>
 						{sortBy(fixtures, 'time').map(fixture => (
-							<S.FixtureLine
-								key={fixture.id}
-								onClick={async () => {
-									await redirect({
-										refresh: false,
-										route: 'fixture-details',
-										params: { id: fixture.id },
-									});
-								}}
-							>
-								<S.FixtureTime>{format(new Date(fixture.time), 'HH:mm')}</S.FixtureTime>
-								<S.FixtureMain>
-									<S.FixtureTeam className={'sw-truncate'} home>
-										{fixture.home}
-									</S.FixtureTeam>
-									<S.FixtureScore>
-										{fixture.status === 'PENDING'
-											? 'VS'
-											: `${fixture.homeScore} - ${fixture.awayScore}`}
-									</S.FixtureScore>
-									<S.FixtureTeam className={'sw-truncate'}>{fixture.away}</S.FixtureTeam>
-								</S.FixtureMain>
-								<S.FixtureStatus>{renderStatus(fixture)}</S.FixtureStatus>
-							</S.FixtureLine>
+							<FixtureRow key={fixture.id} fixture={fixture} />
 						))}
 					</div>
 				);
@@ -137,13 +114,4 @@ const SwFixtureListComponent: React.FC<IProps> = ({ leagueId }) => {
 	}
 };
 
-function renderStatus(fixture: FixtureDto) {
-	if (fixture.status === 'PENDING') {
-		return 'PNDG';
-	} else if (fixture.status === 'ACTIVE') {
-		return `${fixture.current || 0}'`;
-	} else {
-		return fixture.status;
-	}
-}
 export const SwFixturesList = SwFixtureListComponent;

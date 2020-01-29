@@ -104,4 +104,19 @@ export class FixtureService {
 				)
 			);
 	}
+
+	fetchLiveScores() {
+		return this.apiService
+			.api()
+			.get(`/fixtures/livescore`)
+			.pipe(
+				map(({ data: fixtures }) =>
+					fixtures.map(fixture =>
+						plainToClass(FixtureDto, fixture, {
+							useProperties: true,
+						})
+					)
+				)
+			);
+	}
 }

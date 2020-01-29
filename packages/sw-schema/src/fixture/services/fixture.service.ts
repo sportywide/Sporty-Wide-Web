@@ -38,6 +38,12 @@ export class FixtureService extends BaseEntityService<Fixture> {
 		});
 	}
 
+	async getLiveScores() {
+		return this.fixtureRepository.find({
+			where: { time: Between(addHours(new Date(), -7), addHours(new Date(), 7)) },
+		});
+	}
+
 	async getFixtureDetails(fixtureId: any) {
 		const fixture = await this.findById({
 			id: fixtureId,

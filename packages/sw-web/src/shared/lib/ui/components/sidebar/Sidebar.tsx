@@ -64,7 +64,7 @@ export function SwSideBarComponent({ logout, children }) {
 				<SwMenuItem>
 					Soccer
 					<Menu.Menu>
-						<SwMenuItem as="a">
+						<SwMenuItem as="a" route={'livescores'}>
 							<S.MenuIcon name="time" />
 							Live Score
 						</SwMenuItem>
