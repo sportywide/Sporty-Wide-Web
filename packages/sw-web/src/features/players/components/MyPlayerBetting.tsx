@@ -151,7 +151,7 @@ const SwMyPlayerBettingComponent: React.FC<IProps> = ({
 					</TableRow>
 				))}
 			</StickyTable>
-			<div className={'sw-flex sw-flex-center sw-flex-align-self-end'}>
+			<div className={'sw-flex sw-flex-center sw-flex-align-self-end sw-mt3'}>
 				{alreadyBet ? (
 					<Message warning>You cannot bet again</Message>
 				) : (

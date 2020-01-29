@@ -68,6 +68,10 @@ export function SwSideBarComponent({ logout, children }) {
 							<S.MenuIcon name="time" />
 							Live Score
 						</SwMenuItem>
+						<SwMenuItem as="a" route={'league-standings'}>
+							<S.MenuIcon name="time" />
+							Standings
+						</SwMenuItem>
 						<SwMenuItem as="a" route={'user-leagues'}>
 							<S.MenuIcon name="flag outline" />
 							Leagues

@@ -16,14 +16,21 @@ export const SidebarSegment = styled(Segment)`
 `;
 
 export const SidebarPushable = styled(Sidebar.Pushable)`
-	.pushable:not(body) {
-		transform: none;
-	}
+	&&&& {
+		.pushable:not(body) {
+			transform: none;
+		}
 
-	.pushable:not(body) > .ui.sidebar,
-	.pushable:not(body) > .fixed,
-	.pushable:not(body) > .pusher:after {
-		position: fixed;
+		.pushable:not(body) > .ui.sidebar,
+		.pushable:not(body) > .fixed,
+		.pushable:not(body) > .pusher:after {
+			position: fixed;
+		}
+
+		.sidebar {
+			margin-top: 38px !important;
+			padding-top: 10px;
+		}
 	}
 `;
 
