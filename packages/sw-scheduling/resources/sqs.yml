@@ -1,13 +1,13 @@
 Resources:
-    ScoreboardTeamQueue:
+    EspnTeamQueue:
         Type: AWS::SQS::Queue
         Properties:
-            QueueName: scoreboard-team-queue
+            QueueName: espn-team-queue
             VisibilityTimeout: '600'
-    ScoreboardPlayerQueue:
+    EspnPlayerQueue:
         Type: AWS::SQS::Queue
         Properties:
-            QueueName: scoreboard-player-queue
+            QueueName: espn-player-queue
             VisibilityTimeout: '600'
     WhoscoreLeagueQueue:
         Type: AWS::SQS::Queue
@@ -19,7 +19,7 @@ Resources:
         Properties:
             QueueName: rating-queue
             VisibilityTimeout: '600'
-    ScoreboardTeamQueuePolicy:
+    EspnTeamQueuePolicy:
         Type: AWS::SQS::QueuePolicy
         Properties:
             PolicyDocument:
@@ -33,11 +33,11 @@ Resources:
                           - sqs:SendMessage
                       Resource:
                           Fn::GetAtt:
-                              - ScoreboardTeamQueue
+                              - EspnTeamQueue
                               - Arn
                       Condition:
                           ArnEquals:
                               aws:SourceArn:
                                   Ref: FifaTeamTopic
             Queues:
-                - Ref: ScoreboardTeamQueue
+                - Ref: EspnTeamQueue

@@ -17,12 +17,12 @@ export async function handler(event: SQSEvent) {
 		const leagueId = parseInt(message[0] && message[0].body, 10);
 		module = await initModule(SchedulingCrawlerModule);
 		const s3Service = module.get(S3Service);
-		const scoreboardCrawler = module.get(EspnCrawlerService);
+		const espnCrawler = module.get(EspnCrawlerService);
 		const league = leagues.find(league => league.id === leagueId);
 		if (!league) {
 			throw new Error('Not a valid league');
 		}
-		const { teams, season } = await scoreboardCrawler.crawlTeams(league.scoreboardUrl);
+		const { teams, season } = await espnCrawler.crawlTeams(league.espnUrl);
 		const config = module.get(SCHEDULING_CONFIG);
 		await s3Service.uploadFile({
 			Bucket: config.get('s3:data_bucket_name'),

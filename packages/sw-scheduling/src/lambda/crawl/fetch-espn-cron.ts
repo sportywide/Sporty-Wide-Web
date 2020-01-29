@@ -11,7 +11,7 @@ export async function handler() {
 		await Promise.all(
 			leagues.map(async league =>
 				sqsService.sendMessage({
-					Queue: 'scoreboard-team-queue',
+					Queue: 'espn-team-queue',
 					MessageBody: String(league.id),
 				})
 			)

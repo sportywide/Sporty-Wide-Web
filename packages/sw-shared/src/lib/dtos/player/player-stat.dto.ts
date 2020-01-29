@@ -3,7 +3,7 @@ export class PlayerStatDto {
 	yellow: number;
 	red: number;
 	played: number;
-	subbed: number;
+	subbed?: number;
 	assist?: number;
 	playerId: number;
 	leagueId?: number;

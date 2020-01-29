@@ -24,7 +24,7 @@ export async function handler(event: S3Event, context) {
 		await teamPersister.saveTeamsResult(content);
 		const sqsService = module.get(SqsService);
 		await sqsService.sendMessage({
-			Queue: 'scoreboard-player-queue',
+			Queue: 'espn-player-queue',
 			MessageBody: leagueId,
 		});
 		return ok('SUCCESS');

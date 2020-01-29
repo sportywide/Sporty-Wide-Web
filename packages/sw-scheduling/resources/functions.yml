@@ -45,7 +45,7 @@ fetch-league-result:
     events:
         - sqs:
               arn:
-                  Fn::GetAtt: [ScoreboardTeamQueue, Arn]
+                  Fn::GetAtt: [EspnTeamQueue, Arn]
               batchSize: 1
     iamRoleStatements:
         - Effect: 'Allow'
@@ -58,7 +58,7 @@ fetch-player-stat:
     events:
         - sqs:
               arn:
-                  Fn::GetAtt: [ScoreboardPlayerQueue, Arn]
+                  Fn::GetAtt: [EspnPlayerQueue, Arn]
               batchSize: 1
     iamRoleStatements:
         - Effect: 'Allow'
@@ -149,7 +149,7 @@ save-league-result:
         - Effect: 'Allow'
           Action:
               - sqs:*
-          Resource: arn:aws:sqs:ap-southeast-2:${self:custom.aws.accountId}:scoreboard-player-queue
+          Resource: arn:aws:sqs:ap-southeast-2:${self:custom.aws.accountId}:espn-player-queue
 
 save-player-stat:
     handler: src/lambda/persist/save-player-stat.handler
@@ -167,8 +167,8 @@ save-player-stat:
               - s3:getObject
           Resource: arn:aws:s3:::sw-data-bucket/*
 
-fetch-scoreboard:
-    handler: src/lambda/crawl/fetch-scoreboard-cron.handler
+fetch-espn:
+    handler: src/lambda/crawl/fetch-espn-cron.handler
     events:
         - schedule:
               rate: rate(15 minutes)
@@ -176,7 +176,7 @@ fetch-scoreboard:
         - Effect: 'Allow'
           Action:
               - sqs:*
-          Resource: arn:aws:sqs:ap-southeast-2:${self:custom.aws.accountId}:scoreboard-team-queue
+          Resource: arn:aws:sqs:ap-southeast-2:${self:custom.aws.accountId}:espn-team-queue
 
 fetch-live-score:
     handler: src/lambda/crawl/fetch-live-score.handler
