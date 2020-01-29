@@ -10,7 +10,7 @@ import { fetchMyBetting, syncToken, updateRating, updateToken } from '@web/featu
 import { fetchWeeklyFixturesForTeams } from '@web/features/fixtures/store/actions';
 import { playerBettingReducer } from '@web/features/players/store/reducers';
 import { ContainerContext, getUserIdFromState } from '@web/shared/lib/store';
-import { Button, Message, Table, TableRow } from 'semantic-ui-react';
+import { Button, Message } from 'semantic-ui-react';
 import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
 import { PlayerBettingDto, PlayerBettingInputDto } from '@shared/lib/dtos/player/player-betting.dto';
 import { SwNumberInput } from '@web/shared/lib/ui/components/number/NumberInput';
@@ -23,7 +23,7 @@ import { format } from 'date-fns';
 import { PlayerBettingService } from '@web/features/players/services/player-betting.service';
 import { IUserScoreState, userScoreReducer } from '@web/features/user/store/reducers';
 import { resetMyScore } from '@web/features/user/store/actions';
-import { StickyTable, TableCell, TableHeader } from '@web/shared/lib/ui/components/table/Table';
+import { StickyTable, TableCell, TableRow, TableHeader } from '@web/shared/lib/ui/components/table/Table';
 
 interface IProps {
 	playerBetting: Record<number, PlayerBettingDto>;
@@ -71,7 +71,7 @@ const SwMyPlayerBettingComponent: React.FC<IProps> = ({
 	}
 	const alreadyBet = hasPlayerBet(playerBetting);
 	return (
-		<div className={'sw-flex sw-flex-column'}>
+		<div className={'sw-flex sw-flex-column sw-fit'}>
 			{alreadyBet && <span className={'sw-mt2 sw-mb2'}>Last bet was {getLastBet(playerBetting)}</span>}
 			<StickyTable>
 				<TableRow>

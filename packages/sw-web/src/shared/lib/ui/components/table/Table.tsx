@@ -13,6 +13,11 @@ export const StickyTable = styled(ReactStickyTable.StickyTable)`
 		.sticky-table-table {
 			width: 100%;
 		}
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+		-ms-overflow-style: none;
 	}
 `;
 

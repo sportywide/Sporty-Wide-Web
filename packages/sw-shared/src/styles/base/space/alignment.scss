@@ -18,3 +18,10 @@
 .sw-align-bottom {
 	vertical-align: bottom;
 }
+
+.sw-no-scrollbar {
+	&::-webkit-scrollbar {
+		display: none;
+	}
+	-ms-overflow-style: none;
+}
