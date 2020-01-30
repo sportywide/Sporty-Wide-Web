@@ -60,6 +60,7 @@ export class UserScoreService extends BaseEntityService<UserScore> {
 						where
 							player_betting.league_id = user_score.league_id
 							and player_betting.status = 'calculating'
+							and player_betting.user_id = user_score.user_id
 						group by
 							player_betting.user_id
 					), 0

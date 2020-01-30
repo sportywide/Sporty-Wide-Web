@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { Logger } from 'log4js';
-import { Cron, Interval } from '@nestjs/schedule';
+import { Interval } from '@nestjs/schedule';
 import { PlayerBettingService } from '@schema/player/services/player-betting.service';
 import { UserScoreService } from '@schema/user/services/user-score.service';
 import { EMAIL_LOGGER } from '@core/logging/logging.constant';
@@ -16,7 +16,7 @@ export class ScoreService {
 		@Inject(EMAIL_LOGGER) private readonly logger: Logger
 	) {}
 
-	@Interval(1000 * 60 * 10)
+	@Interval(1000 * 6)
 	async updateScore() {
 		this.logger.info('Calculating scores');
 		const updateResult = await this.playerBettingService.progressPendingBetting();
@@ -39,5 +39,6 @@ export class ScoreService {
 			await this.userScoreService.updateUserScore(userIds);
 			await this.playerBettingService.completeBettingForUserIds(userIds);
 		} while (true);
+		this.logger.info(`Done processing betting`);
 	}
 }
