@@ -1,4 +1,4 @@
-import { ArgsType, Field, Int } from '@shared/lib/utils/api/graphql';
+import { ArgsType, Field, Int } from '@shared/lib/utils/api/graphql/index';
 
 @ArgsType()
 export class PaginationArgs {

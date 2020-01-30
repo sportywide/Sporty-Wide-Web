@@ -5,6 +5,16 @@ import { BaseEntityService } from '@schema/core/entity/base-entity.service';
 import { Team } from '@schema/team/models/team.entity';
 import { defaultFuzzyOptions } from '@shared/lib/data/data.constants';
 import Fuse from 'fuse.js';
+import { TeamListFilteredDto } from '@shared/lib/dtos/team/team-list-filtered.dto';
+import { ArgsType, Field } from '@shared/lib/utils/api/graphql';
+import { defaultPagination, PaginationArgs } from '@shared/lib/utils/api/graphql/pagination.args';
+import { FindConditions } from 'typeorm';
+
+@ArgsType()
+export class FilteredList extends PaginationArgs {
+	@Field(() => TeamListFilteredDto, { nullable: true })
+	filter?: TeamListFilteredDto;
+}
 
 @Injectable()
 export class TeamService extends BaseEntityService<Team> {
@@ -18,6 +28,24 @@ export class TeamService extends BaseEntityService<Team> {
 				leagueId,
 			},
 		});
+	}
+
+	async filteredList(filteredList: FilteredList) {
+		filteredList = { ...defaultPagination, ...(filteredList || {}) };
+		const queryBuilder = this.repository.createQueryBuilder();
+		queryBuilder.skip(filteredList.skip);
+		queryBuilder.limit(filteredList.limit);
+		if (filteredList.filter?.leagueId) {
+			queryBuilder.addWhere('league_id = :leagueId', {
+				leagueId: filteredList.filter?.leagueId,
+			});
+		}
+		if (filteredList.filter?.search) {
+			queryBuilder.addWhere('LOWER(title) LIKE :search', {
+				search: `%${filteredList.filter?.search.toLowerCase()}%`,
+			});
+		}
+		return queryBuilder.getMany();
 	}
 
 	fuzzySearch<T>(teams: T[], teamName): T | null {

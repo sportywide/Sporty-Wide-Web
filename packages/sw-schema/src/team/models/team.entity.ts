@@ -28,7 +28,7 @@ export class Team extends BaseEntity {
 	ovr: number;
 
 	@Column()
-	rating: number;
+	rating: string;
 
 	@Column()
 	league: string;

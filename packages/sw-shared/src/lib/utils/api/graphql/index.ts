@@ -4,6 +4,7 @@ import { wrapDecorator } from '@shared/lib/utils/functions';
 export const Int = graphql.Int;
 export const ID = graphql.ID;
 export const ArgsType = graphql.ArgsType;
+export const InputType = graphql.InputType;
 export const ObjectType = wrapDecorator(graphql.ObjectType);
 export const Field = wrapDecorator(graphql.Field);
 export const registerEnumType = wrapDecorator(graphql.registerEnumType);

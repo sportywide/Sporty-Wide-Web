@@ -16,7 +16,7 @@ export class ScoreService {
 		@Inject(EMAIL_LOGGER) private readonly logger: Logger
 	) {}
 
-	@Interval(1000 * 6)
+	@Interval(1000 * 60 * 10)
 	async updateScore() {
 		this.logger.info('Calculating scores');
 		const updateResult = await this.playerBettingService.progressPendingBetting();

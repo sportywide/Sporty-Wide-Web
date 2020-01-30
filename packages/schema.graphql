@@ -24,6 +24,27 @@ scalar DateTime
 type Query {
   users(limit: Int, skip: Int): [UserDto!]!
   user(id: Float!): UserDto!
+  teams(limit: Int, skip: Int, filter: TeamListFilteredDto): [TeamDto!]!
+  team(id: Float!): TeamDto!
+}
+
+type TeamDto {
+  id: Int!
+  name: String!
+  image: String!
+  title: String!
+  leagueId: Int!
+  league: String!
+  att: Int!
+  mid: Int!
+  def: Int!
+  ovr: Int!
+  rating: String!
+}
+
+input TeamListFilteredDto {
+  leagueId: Int
+  search: String
 }
 
 type UserDto {

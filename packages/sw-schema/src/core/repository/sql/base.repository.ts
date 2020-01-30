@@ -16,6 +16,8 @@ import {
 	UpdateQueryBuilder,
 	FindManyOptions,
 	UpdateResult,
+    ObjectLiteral,
+	Brackets,
 } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity';
 import { SwSubscriber } from '@schema/core/subscriber/sql/base.subscriber';
@@ -314,6 +316,17 @@ class SwQueryBaseBuilder<T> {
 		}
 
 		return result;
+	}
+
+	addWhere(where: string | Brackets | ((qb: SelectQueryBuilder<any>) => string), parameters?: ObjectLiteral) {
+		if (!(this.queryBuilder instanceof SelectQueryBuilder)) {
+			return;
+		}
+		if (this.queryBuilder.expressionMap.wheres.length) {
+			this.queryBuilder.andWhere(where, parameters);
+		}  else {
+			this.queryBuilder.where(where, parameters);
+		}
 	}
 }
 

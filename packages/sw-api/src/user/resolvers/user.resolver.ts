@@ -7,7 +7,7 @@ import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { ActiveUser } from '@api/auth/decorators/user-check.decorator';
 import { UserProfileDto } from '@shared/lib/dtos/user/profile/user-profile.dto';
 import { UserProfileService } from '@api/user/services/user-profile.service';
-import { defaultPagination, PaginationArgs } from '@api/core/graphql/pagination.args';
+import { defaultPagination, PaginationArgs } from '@shared/lib/utils/api/graphql/pagination.args';
 
 @Resolver(() => UserDto)
 export class UsersResolver {

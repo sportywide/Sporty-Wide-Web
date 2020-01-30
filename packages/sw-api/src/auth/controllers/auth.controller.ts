@@ -13,6 +13,7 @@ import {
 	Res,
 	UseGuards,
 } from '@nestjs/common';
+import { Request } from 'express';
 import { AuthService, Tokens } from '@api/auth/services/auth.service';
 import { CreateUserDto } from '@shared/lib/dtos/user/create-user.dto';
 import { LocalAuthGuard } from '@api/auth/guards/local.guard';
@@ -82,6 +83,15 @@ export class AuthController {
 	@UseGuards(AuthenticatedGuard, LocalAuthGuard)
 	public login(@CurrentUser() user) {
 		return this.authService.createTokens(user);
+	}
+
+	@Get('tokens')
+	@HttpCode(HttpStatus.OK)
+	@UseGuards(JwtAuthGuard)
+	public tokens(@Req() request: Request) {
+		return {
+			tokens: (request.headers['authorization'] as string).replace('Bearer ', ''),
+		};
 	}
 
 	@ApiOkResponse({ description: 'A new refresh token has been created', type: Tokens })
