@@ -28,6 +28,10 @@ export default class extends Document<IProps> {
 					<meta httpEquiv="Content-Type" content="text/html; charset=UTF-8" />
 					{this.props.styleTags}
 					<link rel="shortcut icon" type="image/x-icon" href="/static/favicon.ico" />
+					<link
+						href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css"
+						rel="stylesheet"
+					/>
 				</Head>
 				<body>
 					<Main />

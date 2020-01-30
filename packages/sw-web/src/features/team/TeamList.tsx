@@ -6,6 +6,7 @@ import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
 import { StickyTable, TableCell, TableHeader, TableRow } from '@web/shared/lib/ui/components/table/Table';
 import { SwPaginationOptions } from '@web/shared/lib/ui/components/filter/PaginationOptions';
 import { SwPagination } from '@web/shared/lib/ui/components/filter/Pagination';
+import { SwStar } from '@web/shared/lib/ui/components/rating/Star';
 
 const SwTeamListComponent: React.FC<any> = () => {
 	const leagues = useLeagues();
@@ -86,10 +87,15 @@ function renderTeams(data: GetTeamsQuery) {
 					<TableCell>{team.att}</TableCell>
 					<TableCell>{team.mid}</TableCell>
 					<TableCell>{team.def}</TableCell>
-					<TableCell>{team.rating}</TableCell>
+					<TableCell>
+						<SwStar value={getStars(team.rating)} readonly={true} />
+					</TableCell>
 				</TableRow>
 			))}
 		</StickyTable>
 	);
+}
+function getStars(rating) {
+	return parseFloat(rating.split('/')[0]);
 }
 export const SwTeamList = SwTeamListComponent;
