@@ -1,0 +1,15 @@
+query getTeams($limit: Int, $skip: Int, $filter: TeamListFilteredDto) {
+	teams(limit: $limit, skip: $skip, filter: $filter) {
+		id
+		name
+		title
+		ovr
+		rating
+		att
+		def
+		mid
+		image
+		league
+		leagueId
+	}
+}

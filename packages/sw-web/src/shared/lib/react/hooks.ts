@@ -6,6 +6,9 @@ import { getEmptyImage } from 'react-dnd-html5-backend-cjs';
 import { formationMap } from '@shared/lib/dtos/formation/formation.dto';
 import { SwApp } from '@web/shared/lib/app';
 import { ContainerContext } from '@web/shared/lib/store';
+import { useAsync } from 'react-async-hook';
+import { FixtureService } from '@web/features/fixtures/services/fixture.service';
+import { LeagueService } from '@web/features/leagues/base/services/league.service';
 
 export function usePrevious<T>(value) {
 	const ref = useRef<T>();
@@ -103,4 +106,23 @@ export function useEmptyPreviewImage(preview) {
 
 export function useEffectOnce(effect: EffectCallback) {
 	useEffect(effect, []);
+}
+
+export function useLeagues() {
+	const container = useContext(ContainerContext);
+
+	const fetchLeagues = useAsync(async () => {
+		const fixtureService = container.get(LeagueService);
+		return fixtureService.fetchLeagues().toPromise();
+	}, []);
+
+	return fetchLeagues.result;
+}
+
+export function useMonitorValue(value) {
+	const [currentValue, setCurrentValue] = useState(value);
+	useEffect(() => {
+		setCurrentValue(value);
+	}, [value]);
+	return [currentValue, setCurrentValue];
 }

@@ -51,7 +51,6 @@ class SwStandingsPage extends React.Component<IProps, IState> {
 								}}
 							/>
 						</span>
-						.
 						<SwLeagueStandings league={this.state.league} />
 					</SwContainer>
 				</SwGreyBackground>

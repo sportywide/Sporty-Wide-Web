@@ -20,12 +20,12 @@
 	}
 }
 
-@each $dimen in (100 200) {
+@each $dimen in (100 150 200 250) {
 	.sw-min-width-#{$dimen} {
-		min-width: #{$dimen}px;
+		min-width: #{$dimen}px !important;
 	}
 
 	.sw-max-width-#{$dimen} {
-		max-width: #{$dimen}px;
+		max-width: #{$dimen}px !important;
 	}
 }

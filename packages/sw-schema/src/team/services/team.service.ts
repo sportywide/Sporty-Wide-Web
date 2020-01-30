@@ -8,7 +8,6 @@ import Fuse from 'fuse.js';
 import { TeamListFilteredDto } from '@shared/lib/dtos/team/team-list-filtered.dto';
 import { ArgsType, Field } from '@shared/lib/utils/api/graphql';
 import { defaultPagination, PaginationArgs } from '@shared/lib/utils/api/graphql/pagination.args';
-import { FindConditions } from 'typeorm';
 
 @ArgsType()
 export class FilteredList extends PaginationArgs {
@@ -35,13 +34,13 @@ export class TeamService extends BaseEntityService<Team> {
 		const queryBuilder = this.repository.createQueryBuilder();
 		queryBuilder.skip(filteredList.skip);
 		queryBuilder.limit(filteredList.limit);
-		if (filteredList.filter?.leagueId) {
-			queryBuilder.addWhere('league_id = :leagueId', {
+		if (filteredList.filter?.leagueId && filteredList.filter?.leagueId.length) {
+			queryBuilder.addWhere('league_id IN (:...leagueId)', {
 				leagueId: filteredList.filter?.leagueId,
 			});
 		}
 		if (filteredList.filter?.search) {
-			queryBuilder.addWhere('LOWER(title) LIKE :search', {
+			queryBuilder.addWhere('(LOWER(title) LIKE :search OR LOWER(league) LIKE :search)', {
 				search: `%${filteredList.filter?.search.toLowerCase()}%`,
 			});
 		}

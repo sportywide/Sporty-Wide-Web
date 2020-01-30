@@ -82,3 +82,7 @@
 @custom-media --breakpoint-sm (min-width: 40em);
 @custom-media --breakpoint-md (min-width: 52em);
 @custom-media --breakpoint-lg (min-width: 64em);
+
+@custom-media --breakpoint-phone (min-width: 320px);
+@custom-media --breakpoint-tablet (min-width: 768px);
+@custom-media --breakpoint-laptop (min-width: 1024px);

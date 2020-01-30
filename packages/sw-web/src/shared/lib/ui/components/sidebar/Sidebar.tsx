@@ -76,7 +76,7 @@ export function SwSideBarComponent({ logout, children }) {
 							<S.MenuIcon name="flag outline" />
 							Leagues
 						</SwMenuItem>
-						<SwMenuItem as="a">
+						<SwMenuItem as="a" route={'team-list'}>
 							<S.MenuIcon name="users" />
 							Teams
 						</SwMenuItem>

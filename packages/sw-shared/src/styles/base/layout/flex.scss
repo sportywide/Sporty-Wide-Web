@@ -18,6 +18,11 @@
 .sw-flex-stretch {
 	align-items: stretch;
 }
+
+.sw-flex-float-right {
+	margin-left: 0;
+}
+
 .sw-flex-start {
 	align-items: flex-start;
 }
@@ -71,20 +76,14 @@
 	align-self: flex-end;
 }
 
-@media (--breakpoint-lg) {
-	.sw-lg-flex {
-		display: flex;
-	}
-}
+@each $size in (sm md lg phone tablet laptop) {
+	@media (--breakpoint-#{$size}) {
+		.sw-#{$size}-flex {
+			display: flex;
+		}
 
-@media (--breakpoint-md) {
-	.sw-md-flex {
-		display: flex;
-	}
-}
-
-@media (--breakpoint-sm) {
-	.sw-sm-flex {
-		display: flex;
+		.sw-#{$size}-flex-float-right {
+			margin-left: auto;
+		}
 	}
 }

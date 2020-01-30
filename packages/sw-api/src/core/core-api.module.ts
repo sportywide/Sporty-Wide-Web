@@ -26,7 +26,7 @@ import { ApiValidationService } from './services/validation/validation.service';
 			config,
 		}),
 		GraphQLModule.forRoot({
-			autoSchemaFile: isDevelopment() ? '../../schema.graphql' : 'schema.graphql',
+			autoSchemaFile: isDevelopment() ? '../../../schema.graphql' : 'schema.graphql',
 			playground: isDevelopment(),
 			debug: isDevelopment(),
 			context: ({ req, res }) => ({ req, res }),
