@@ -10,7 +10,7 @@ import { ArgsType, Field } from '@shared/lib/utils/api/graphql';
 import { defaultPagination, PaginationArgs } from '@shared/lib/utils/api/graphql/pagination.args';
 
 @ArgsType()
-export class FilteredList extends PaginationArgs {
+export class TeamFilteredInput extends PaginationArgs {
 	@Field(() => TeamListFilteredDto, { nullable: true })
 	filter?: TeamListFilteredDto;
 }
@@ -29,11 +29,12 @@ export class TeamService extends BaseEntityService<Team> {
 		});
 	}
 
-	async filteredList(filteredList: FilteredList) {
+	async filteredList(filteredList: TeamFilteredInput) {
 		filteredList = { ...defaultPagination, ...(filteredList || {}) };
 		const queryBuilder = this.repository.createQueryBuilder();
-		queryBuilder.skip(filteredList.skip);
+		queryBuilder.offset(filteredList.skip);
 		queryBuilder.limit(filteredList.limit);
+		queryBuilder.orderBy('id');
 		if (filteredList.filter?.leagueId && filteredList.filter?.leagueId.length) {
 			queryBuilder.addWhere('league_id IN (:...leagueId)', {
 				leagueId: filteredList.filter?.leagueId,
@@ -44,7 +45,11 @@ export class TeamService extends BaseEntityService<Team> {
 				search: `%${filteredList.filter?.search.toLowerCase()}%`,
 			});
 		}
-		return queryBuilder.getMany();
+		const [items, count] = await Promise.all([queryBuilder.getMany(), queryBuilder.getCount()]);
+		return {
+			items,
+			count,
+		};
 	}
 
 	fuzzySearch<T>(teams: T[], teamName): T | null {

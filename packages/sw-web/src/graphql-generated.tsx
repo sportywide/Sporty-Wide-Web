@@ -32,7 +32,7 @@ export type Query = {
    __typename?: 'Query',
   users: Array<UserDto>,
   user: UserDto,
-  teams: Array<TeamDto>,
+  teams: TeamPaginationResult,
   team: TeamDto,
 };
 
@@ -77,6 +77,12 @@ export type TeamDto = {
 export type TeamListFilteredDto = {
   leagueId?: Maybe<Array<Scalars['Int']>>,
   search?: Maybe<Scalars['String']>,
+};
+
+export type TeamPaginationResult = {
+   __typename?: 'TeamPaginationResult',
+  items: Array<TeamDto>,
+  count: Scalars['Int'],
 };
 
 export type UserDto = {
@@ -132,10 +138,14 @@ export type GetTeamsQueryVariables = {
 
 export type GetTeamsQuery = (
   { __typename?: 'Query' }
-  & { teams: Array<(
-    { __typename?: 'TeamDto' }
-    & Pick<TeamDto, 'id' | 'name' | 'title' | 'ovr' | 'rating' | 'att' | 'def' | 'mid' | 'image' | 'league' | 'leagueId'>
-  )> }
+  & { teams: (
+    { __typename?: 'TeamPaginationResult' }
+    & Pick<TeamPaginationResult, 'count'>
+    & { items: Array<(
+      { __typename?: 'TeamDto' }
+      & Pick<TeamDto, 'id' | 'name' | 'title' | 'ovr' | 'rating' | 'att' | 'def' | 'mid' | 'image' | 'league' | 'leagueId'>
+    )> }
+  ) }
 );
 
 export type GetUsersQueryVariables = {
@@ -156,17 +166,20 @@ export type GetUsersQuery = (
 export const GetTeamsDocument = gql`
     query getTeams($limit: Int, $skip: Int, $filter: TeamListFilteredDto) {
   teams(limit: $limit, skip: $skip, filter: $filter) {
-    id
-    name
-    title
-    ovr
-    rating
-    att
-    def
-    mid
-    image
-    league
-    leagueId
+    items {
+      id
+      name
+      title
+      ovr
+      rating
+      att
+      def
+      mid
+      image
+      league
+      leagueId
+    }
+    count
   }
 }
     `;

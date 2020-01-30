@@ -1,16 +1,27 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { FilterOption, SwFilterBar } from '@web/shared/lib/ui/components/filter/FilterBar';
-import { useEffectOnce, useLeagues } from '@web/shared/lib/react/hooks';
+import { useLeagues } from '@web/shared/lib/react/hooks';
 import { GetTeamsQuery, useGetTeamsLazyQuery } from '@web/graphql-generated';
 import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
 import { StickyTable, TableCell, TableHeader, TableRow } from '@web/shared/lib/ui/components/table/Table';
+import { SwPaginationOptions } from '@web/shared/lib/ui/components/filter/PaginationOptions';
+import { SwPagination } from '@web/shared/lib/ui/components/filter/Pagination';
 
 const SwTeamListComponent: React.FC<any> = () => {
 	const leagues = useLeagues();
+	const [pageSize, setCurrentPageSize] = useState(null);
+	const [currentFilter, setCurrentFilter] = useState({});
+	const [activePage, setActivePage] = useState(1);
 	const [fetchTeams, { loading, data }] = useGetTeamsLazyQuery();
-	useEffectOnce(() => {
-		fetchTeams();
-	});
+	useEffect(() => {
+		fetchTeams({
+			variables: {
+				filter: currentFilter,
+				limit: pageSize,
+				skip: pageSize * (activePage - 1),
+			},
+		});
+	}, [pageSize, currentFilter, fetchTeams, activePage]);
 	if (!leagues) {
 		return null;
 	}
@@ -34,15 +45,20 @@ const SwTeamListComponent: React.FC<any> = () => {
 			<SwFilterBar
 				filterOptions={filterOptions}
 				onFilterBarChanged={currentFilter => {
-					fetchTeams({
-						variables: {
-							filter: currentFilter,
-						},
-					});
+					setCurrentFilter(currentFilter);
 				}}
 			/>
+			{data?.teams?.count && (
+				<SwPagination
+					pageSize={pageSize}
+					activePage={activePage}
+					total={data.teams.count}
+					onPageChanged={activePage => setActivePage(activePage)}
+				/>
+			)}
 			{loading && <Spinner portalRoot={'#container'} />}
 			{!loading && renderTeams(data)}
+			<SwPaginationOptions onPageSizeChanged={size => setCurrentPageSize(size)} />
 		</div>
 	);
 };
@@ -62,7 +78,7 @@ function renderTeams(data: GetTeamsQuery) {
 				<TableHeader>Defence</TableHeader>
 				<TableHeader>Rating</TableHeader>
 			</TableRow>
-			{data.teams.map(team => (
+			{data.teams.items.map(team => (
 				<TableRow key={team.id}>
 					<TableCell>{team.title}</TableCell>
 					<TableCell>{team.league}</TableCell>

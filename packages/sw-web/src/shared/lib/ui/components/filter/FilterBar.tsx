@@ -29,7 +29,7 @@ export const SwFilterBar: React.FC<IProps> = ({ filterOptions = [], onFilterBarC
 		<div className={'sw-flex sw-flex-center sw-flex-wrap'}>
 			{filterOptions.map(option => (
 				<span className={`sw-mr2 sw-mb2 ${option.right ? 'sw-tablet-flex-float-right' : ''}`} key={option.name}>
-					{renderOption(option, filterBarValues[option.name] || '', (e, value) => {
+					{renderOption(option, filterBarValues[option.name] || getDefaultValue(option), (e, value) => {
 						const newValues = {
 							...filterBarValues,
 							[option.name]: value,
@@ -42,6 +42,17 @@ export const SwFilterBar: React.FC<IProps> = ({ filterOptions = [], onFilterBarC
 		</div>
 	);
 };
+
+function getDefaultValue(option: FilterOption) {
+	switch (option.type) {
+		case 'select':
+			return null;
+		case 'multi_select':
+			return [];
+		case 'search':
+			return '';
+	}
+}
 
 function getDefaultValues(options: FilterOption[]) {
 	return options.reduce((currentValues, option) => {

@@ -4,7 +4,17 @@ import { UseGuards } from '@nestjs/common';
 import { JwtAuthGuard } from '@api/auth/guards/jwt.guard';
 import { ActiveUser } from '@api/auth/decorators/user-check.decorator';
 import { TeamDto } from '@shared/lib/dtos/team/team.dto';
-import { FilteredList, TeamService } from '@schema/team/services/team.service';
+import { TeamFilteredInput, TeamService } from '@schema/team/services/team.service';
+import { Field, Int, ObjectType } from '@shared/lib/utils/api/graphql';
+
+@ObjectType()
+class TeamPaginationResult {
+	@Field(() => [TeamDto])
+	items: TeamDto[];
+
+	@Field(() => Int)
+	count: number;
+}
 
 @Resolver(() => TeamDto)
 export class TeamsResolver {
@@ -12,15 +22,18 @@ export class TeamsResolver {
 
 	@UseGuards(JwtAuthGuard)
 	@ActiveUser()
-	@Query(() => [TeamDto])
-	async teams(@Args() filtered: FilteredList) {
-		const teams = await this.teamService.filteredList(filtered);
-		return teams.map(team =>
-			toDto({
-				value: team,
-				dtoType: TeamDto,
-			})
-		);
+	@Query(() => TeamPaginationResult)
+	async teams(@Args() filtered: TeamFilteredInput) {
+		const { items: teams, count } = await this.teamService.filteredList(filtered);
+		return {
+			count,
+			items: teams.map(team =>
+				toDto({
+					value: team,
+					dtoType: TeamDto,
+				})
+			),
+		};
 	}
 
 	@Query(() => TeamDto)

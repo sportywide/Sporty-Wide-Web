@@ -17,6 +17,11 @@ const SwSearchInputComponent: React.FC<IProps> = ({ value, filterOption, onChang
 			className={'sw-min-width-200'}
 			placeholder={filterOption.placeholder}
 			onChange={(e, { value }) => setCurrentValue(value)}
+			onKeyDown={e => {
+				if (e.key === 'Enter') {
+					onChange(e, currentValue);
+				}
+			}}
 			onBlur={e => onChange(e, currentValue)}
 		/>
 	);

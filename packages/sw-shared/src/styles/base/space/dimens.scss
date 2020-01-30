@@ -20,7 +20,7 @@
 	}
 }
 
-@each $dimen in (100 150 200 250) {
+@each $dimen in (40 50 100 150 200 250) {
 	.sw-min-width-#{$dimen} {
 		min-width: #{$dimen}px !important;
 	}

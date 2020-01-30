@@ -24,7 +24,7 @@ scalar DateTime
 type Query {
   users(limit: Int, skip: Int): [UserDto!]!
   user(id: Float!): UserDto!
-  teams(limit: Int, skip: Int, filter: TeamListFilteredDto): [TeamDto!]!
+  teams(limit: Int, skip: Int, filter: TeamListFilteredDto): TeamPaginationResult!
   team(id: Float!): TeamDto!
 }
 
@@ -45,6 +45,11 @@ type TeamDto {
 input TeamListFilteredDto {
   leagueId: [Int!]
   search: String
+}
+
+type TeamPaginationResult {
+  items: [TeamDto!]!
+  count: Int!
 }
 
 type UserDto {
