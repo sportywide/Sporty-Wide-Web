@@ -27,7 +27,7 @@ export type FifaTeam = {
 	att: number;
 	mid: number;
 	def: number;
-	rating: number;
+	rating: string;
 	ovr: number;
 };
 
@@ -124,7 +124,7 @@ export class FifaCrawlerService extends ResultsService {
 				[mid.attr('data-title').toLowerCase()]: parseInt(mid.eq(0).text(), 10),
 				[def.attr('data-title').toLowerCase()]: parseInt(def.eq(0).text(), 10),
 				[ovr.attr('data-title').toLowerCase()]: parseInt(ovr.eq(0).text(), 10),
-				rating: parseFloat(rating),
+				rating,
 			} as FifaTeam);
 		});
 

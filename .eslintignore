@@ -19,4 +19,5 @@ cdk.out
 .semaphore/secrets
 .terraform
 .next
+packages/sw-web/src/graphql-generated.tsx
 
