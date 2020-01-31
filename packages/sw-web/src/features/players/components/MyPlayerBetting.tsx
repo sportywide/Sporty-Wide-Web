@@ -23,7 +23,7 @@ import { format } from 'date-fns';
 import { PlayerBettingService } from '@web/features/players/services/player-betting.service';
 import { IUserScoreState, userScoreReducer } from '@web/features/user/store/reducers';
 import { resetMyScore } from '@web/features/user/store/actions';
-import { StickyTable, TableCell, TableRow, TableHeader } from '@web/shared/lib/ui/components/table/Table';
+import { SwStickyTable, SwTableCell, SwTableRow, SwTableHeader } from '@web/shared/lib/ui/components/table/Table';
 
 interface IProps {
 	playerBetting: Record<number, PlayerBettingDto>;
@@ -73,24 +73,24 @@ const SwMyPlayerBettingComponent: React.FC<IProps> = ({
 	return (
 		<div className={'sw-flex sw-flex-column sw-fit'}>
 			{alreadyBet && <span className={'sw-mt2 sw-mb2'}>Last bet was {getLastBet(playerBetting)}</span>}
-			<StickyTable>
-				<TableRow>
-					<TableHeader>Name</TableHeader>
-					<TableHeader>Team</TableHeader>
-					<TableHeader>Game</TableHeader>
-					<TableHeader>Used Tokens</TableHeader>
-					<TableHeader>Bet Rating</TableHeader>
-					<TableHeader>Real Rating</TableHeader>
-					<TableHeader>Earned Tokens</TableHeader>
-				</TableRow>
+			<SwStickyTable>
+				<SwTableRow>
+					<SwTableHeader>Name</SwTableHeader>
+					<SwTableHeader>Team</SwTableHeader>
+					<SwTableHeader>Game</SwTableHeader>
+					<SwTableHeader>Used Tokens</SwTableHeader>
+					<SwTableHeader>Bet Rating</SwTableHeader>
+					<SwTableHeader>Real Rating</SwTableHeader>
+					<SwTableHeader>Earned Tokens</SwTableHeader>
+				</SwTableRow>
 
 				{sortProperty(Object.values(playerBetting), 'player', comparePlayerFunc).map(betting => (
-					<TableRow key={betting.playerId}>
-						<TableCell>
+					<SwTableRow key={betting.playerId}>
+						<SwTableCell>
 							{betting.player.name} ({betting.player.positions.join(', ')})
-						</TableCell>
-						<TableCell>{betting.player.teamName}</TableCell>
-						<TableCell>
+						</SwTableCell>
+						<SwTableCell>{betting.player.teamName}</SwTableCell>
+						<SwTableCell>
 							<a
 								className={'sw-link'}
 								onClick={async () => {
@@ -103,8 +103,8 @@ const SwMyPlayerBettingComponent: React.FC<IProps> = ({
 							>
 								{betting.fixture.home} - {betting.fixture.away}
 							</a>
-						</TableCell>
-						<TableCell>
+						</SwTableCell>
+						<SwTableCell>
 							<SwNumberInput
 								stepAmount={1}
 								disabled={betting.betTokens != undefined}
@@ -127,8 +127,8 @@ const SwMyPlayerBettingComponent: React.FC<IProps> = ({
 								}
 								minValue={0}
 							/>
-						</TableCell>
-						<TableCell>
+						</SwTableCell>
+						<SwTableCell>
 							<SwNumberInput
 								stepAmount={0.1}
 								minValue={0}
@@ -145,12 +145,12 @@ const SwMyPlayerBettingComponent: React.FC<IProps> = ({
 									})
 								}
 							/>
-						</TableCell>
-						<TableCell>{betting.realRating}</TableCell>
-						<TableCell>{betting.earnedTokens}</TableCell>
-					</TableRow>
+						</SwTableCell>
+						<SwTableCell>{betting.realRating}</SwTableCell>
+						<SwTableCell>{betting.earnedTokens}</SwTableCell>
+					</SwTableRow>
 				))}
-			</StickyTable>
+			</SwStickyTable>
 			<div className={'sw-flex sw-flex-center sw-flex-align-self-end sw-mt3'}>
 				{alreadyBet ? (
 					<Message warning>You cannot bet again</Message>

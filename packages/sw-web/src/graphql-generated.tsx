@@ -39,7 +39,9 @@ export type Query = {
 
 export type QueryUsersArgs = {
   limit?: Maybe<Scalars['Int']>,
-  skip?: Maybe<Scalars['Int']>
+  skip?: Maybe<Scalars['Int']>,
+  sort?: Maybe<Scalars['String']>,
+  asc?: Maybe<Scalars['Boolean']>
 };
 
 
@@ -51,6 +53,8 @@ export type QueryUserArgs = {
 export type QueryTeamsArgs = {
   limit?: Maybe<Scalars['Int']>,
   skip?: Maybe<Scalars['Int']>,
+  sort?: Maybe<Scalars['String']>,
+  asc?: Maybe<Scalars['Boolean']>,
   filter?: Maybe<TeamListFilteredDto>
 };
 
@@ -132,7 +136,9 @@ export enum UserStatus {
 export type GetTeamsQueryVariables = {
   limit?: Maybe<Scalars['Int']>,
   skip?: Maybe<Scalars['Int']>,
-  filter?: Maybe<TeamListFilteredDto>
+  filter?: Maybe<TeamListFilteredDto>,
+  sort?: Maybe<Scalars['String']>,
+  asc?: Maybe<Scalars['Boolean']>
 };
 
 
@@ -164,8 +170,8 @@ export type GetUsersQuery = (
 
 
 export const GetTeamsDocument = gql`
-    query getTeams($limit: Int, $skip: Int, $filter: TeamListFilteredDto) {
-  teams(limit: $limit, skip: $skip, filter: $filter) {
+    query getTeams($limit: Int, $skip: Int, $filter: TeamListFilteredDto, $sort: String, $asc: Boolean) {
+  teams(limit: $limit, skip: $skip, filter: $filter, sort: $sort, asc: $asc) {
     items {
       id
       name
@@ -199,6 +205,8 @@ export const GetTeamsDocument = gql`
  *      limit: // value for 'limit'
  *      skip: // value for 'skip'
  *      filter: // value for 'filter'
+ *      sort: // value for 'sort'
+ *      asc: // value for 'asc'
  *   },
  * });
  */

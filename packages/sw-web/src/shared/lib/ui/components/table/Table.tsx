@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import * as ReactStickyTable from 'react-sticky-table';
 
-export const StickyTable = styled(ReactStickyTable.StickyTable)`
+export const SwStickyTable = styled(ReactStickyTable.StickyTable)`
 	&&&& {
 		overflow-x: hidden;
 		overflow-y: hidden;
@@ -21,8 +21,8 @@ export const StickyTable = styled(ReactStickyTable.StickyTable)`
 	}
 `;
 
-export const TableCell = ReactStickyTable.Cell;
-export const TableRow = ReactStickyTable.Row;
-export const TableHeader = styled(ReactStickyTable.Cell)`
+export const SwTableCell = ReactStickyTable.Cell;
+export const SwTableRow = ReactStickyTable.Row;
+export const SwTableHeader = styled(ReactStickyTable.Cell)`
 	font-weight: 700;
 `;

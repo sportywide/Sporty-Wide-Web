@@ -34,7 +34,7 @@ export class TeamService extends BaseEntityService<Team> {
 		const queryBuilder = this.repository.createQueryBuilder();
 		queryBuilder.offset(filteredList.skip);
 		queryBuilder.limit(filteredList.limit);
-		queryBuilder.orderBy('id');
+		queryBuilder.orderBy(filteredList.sort, filteredList.asc ? 'ASC' : 'DESC', 'NULLS LAST');
 		if (filteredList.filter?.leagueId && filteredList.filter?.leagueId.length) {
 			queryBuilder.addWhere('league_id IN (:...leagueId)', {
 				leagueId: filteredList.filter?.leagueId,

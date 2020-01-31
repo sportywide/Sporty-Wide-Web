@@ -1,5 +1,5 @@
-query getTeams($limit: Int, $skip: Int, $filter: TeamListFilteredDto) {
-	teams(limit: $limit, skip: $skip, filter: $filter) {
+query getTeams($limit: Int, $skip: Int, $filter: TeamListFilteredDto, $sort: String, $asc: Boolean) {
+	teams(limit: $limit, skip: $skip, filter: $filter, sort: $sort, asc: $asc) {
 		items {
 			id
 			name

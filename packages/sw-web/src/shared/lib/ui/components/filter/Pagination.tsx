@@ -11,10 +11,10 @@ const SwPaginationComponent: React.FC<IProps> = ({ onPageChanged, pageSize, tota
 	const totalPages = Math.ceil(total / pageSize);
 	return (
 		<div className={'sw-flex sw-flex-center sw-mt1 sw-mb2 sw-flex-wrap'}>
-			<span className={'sw-ml1'}>
+			<span className={'sw-ml1 sw-mb1 sw-mr2'}>
 				{(activePage - 1) * pageSize + 1} - {Math.min(activePage * pageSize, total)} of {total}
 			</span>
-			<div className={'sw-flex-float-right'}>
+			<div className={'sw-tablet-flex-float-right sw-mb1'}>
 				<Pagination
 					activePage={activePage}
 					boundaryRange={1}

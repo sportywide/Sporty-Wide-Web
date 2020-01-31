@@ -9,7 +9,7 @@ import { leagueStandingReducer } from '@web/features/leagues/base/store/reducers
 import { fetchLeagueStandings } from '@web/features/leagues/base/store/actions';
 import { LeagueStandingsDto } from '@shared/lib/dtos/leagues/league-standings.dto';
 import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
-import { TableRow, TableCell, StickyTable, TableHeader } from '@web/shared/lib/ui/components/table/Table';
+import { SwTableRow, SwTableCell, SwStickyTable, SwTableHeader } from '@web/shared/lib/ui/components/table/Table';
 
 interface IProps {
 	league: SelectableLeagueDto;
@@ -26,33 +26,33 @@ const SwLeagueStandingsComponent: React.FC<IProps> = ({ league, leagueStandings,
 	}
 	return (
 		<div style={{ width: '100%' }}>
-			<StickyTable>
-				<TableRow>
-					<TableHeader>Name</TableHeader>
-					<TableHeader>Played</TableHeader>
-					<TableHeader>Wins</TableHeader>
-					<TableHeader>Draws</TableHeader>
-					<TableHeader>Losses</TableHeader>
-					<TableHeader>Scored</TableHeader>
-					<TableHeader>Conceded</TableHeader>
-					<TableHeader>Points</TableHeader>
-				</TableRow>
+			<SwStickyTable>
+				<SwTableRow>
+					<SwTableHeader>Name</SwTableHeader>
+					<SwTableHeader>Played</SwTableHeader>
+					<SwTableHeader>Wins</SwTableHeader>
+					<SwTableHeader>Draws</SwTableHeader>
+					<SwTableHeader>Losses</SwTableHeader>
+					<SwTableHeader>Scored</SwTableHeader>
+					<SwTableHeader>Conceded</SwTableHeader>
+					<SwTableHeader>Points</SwTableHeader>
+				</SwTableRow>
 
 				{leagueStandings.table.map((leagueResult, i) => (
-					<TableRow key={i}>
-						<TableCell>
+					<SwTableRow key={i}>
+						<SwTableCell>
 							{i + 1}. {leagueResult.name}
-						</TableCell>
-						<TableCell>{leagueResult.played}</TableCell>
-						<TableCell>{leagueResult.wins}</TableCell>
-						<TableCell>{leagueResult.draws}</TableCell>
-						<TableCell>{leagueResult.losses}</TableCell>
-						<TableCell>{leagueResult.scored}</TableCell>
-						<TableCell>{leagueResult.conceded}</TableCell>
-						<TableCell>{leagueResult.points}</TableCell>
-					</TableRow>
+						</SwTableCell>
+						<SwTableCell>{leagueResult.played}</SwTableCell>
+						<SwTableCell>{leagueResult.wins}</SwTableCell>
+						<SwTableCell>{leagueResult.draws}</SwTableCell>
+						<SwTableCell>{leagueResult.losses}</SwTableCell>
+						<SwTableCell>{leagueResult.scored}</SwTableCell>
+						<SwTableCell>{leagueResult.conceded}</SwTableCell>
+						<SwTableCell>{leagueResult.points}</SwTableCell>
+					</SwTableRow>
 				))}
-			</StickyTable>
+			</SwStickyTable>
 		</div>
 	);
 };

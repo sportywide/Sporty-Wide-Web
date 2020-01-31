@@ -5,7 +5,7 @@ import { fifaFlag, teamFifaImage } from '@web/shared/lib/images/links';
 import { Divider, Header, Image, Popup } from 'semantic-ui-react';
 import { IconName, SwIcon } from '@web/shared/lib/icon';
 import { TeamDto } from '@shared/lib/dtos/team/team.dto';
-import { TableRow, StickyTable, TableCell, TableHeader } from '@web/shared/lib/ui/components/table/Table';
+import { SwTableRow, SwStickyTable, SwTableCell, SwTableHeader } from '@web/shared/lib/ui/components/table/Table';
 import * as S from './FixtureDetails.styled';
 
 interface IProps {
@@ -82,23 +82,23 @@ function renderPlayerRatings({
 			<Header as={'h5'}>{team.title}</Header>
 			{!ratingDetails.length && <div className={'sw-mt2'}>No ratings available</div>}
 			{!!ratingDetails.length && (
-				<StickyTable>
-					<TableRow>
-						<TableHeader>Player</TableHeader>
-						<TableHeader>Shots</TableHeader>
-						<TableHeader>ShotsOT</TableHeader>
-						<TableHeader>KeyPasses</TableHeader>
-						<TableHeader>PA%</TableHeader>
-						<TableHeader>Aeriels</TableHeader>
-						<TableHeader>Touches</TableHeader>
-						<TableHeader>Tackles</TableHeader>
-						<TableHeader>Ratings</TableHeader>
-					</TableRow>
+				<SwStickyTable>
+					<SwTableRow>
+						<SwTableHeader>Player</SwTableHeader>
+						<SwTableHeader>Shots</SwTableHeader>
+						<SwTableHeader>ShotsOT</SwTableHeader>
+						<SwTableHeader>KeyPasses</SwTableHeader>
+						<SwTableHeader>PA%</SwTableHeader>
+						<SwTableHeader>Aeriels</SwTableHeader>
+						<SwTableHeader>Touches</SwTableHeader>
+						<SwTableHeader>Tackles</SwTableHeader>
+						<SwTableHeader>Ratings</SwTableHeader>
+					</SwTableRow>
 					{ratingDetails
 						.sort((a, b) => a.player.shirt - b.player.shirt)
 						.map(playerRating => (
-							<TableRow key={playerRating.player.id}>
-								<TableCell>
+							<SwTableRow key={playerRating.player.id}>
+								<SwTableCell>
 									<div className={'sw-flex sw-flex-center'} style={{ width: '160px' }}>
 										<Image
 											src={fifaFlag(playerRating.player.nationalityId)}
@@ -118,18 +118,18 @@ function renderPlayerRatings({
 									<Header.Subheader className={'sw-mt1 sw-text--grey-dark'}>
 										{playerRating.player.age} - {playerRating.player.positions.join(', ')}
 									</Header.Subheader>
-								</TableCell>
-								<TableCell>{playerRating.rating.shotsTotal}</TableCell>
-								<TableCell>{playerRating.rating.shotsOffTarget}</TableCell>
-								<TableCell>{playerRating.rating.keyPassTotal}</TableCell>
-								<TableCell>{playerRating.rating.passesAccurate}</TableCell>
-								<TableCell>{playerRating.rating.duelAerialWon}</TableCell>
-								<TableCell>{playerRating.rating.touches}</TableCell>
-								<TableCell>{playerRating.rating.tackleSuccessful}</TableCell>
-								<TableCell>{playerRating.rating.rating}</TableCell>
-							</TableRow>
+								</SwTableCell>
+								<SwTableCell>{playerRating.rating.shotsTotal}</SwTableCell>
+								<SwTableCell>{playerRating.rating.shotsOffTarget}</SwTableCell>
+								<SwTableCell>{playerRating.rating.keyPassTotal}</SwTableCell>
+								<SwTableCell>{playerRating.rating.passesAccurate}</SwTableCell>
+								<SwTableCell>{playerRating.rating.duelAerialWon}</SwTableCell>
+								<SwTableCell>{playerRating.rating.touches}</SwTableCell>
+								<SwTableCell>{playerRating.rating.tackleSuccessful}</SwTableCell>
+								<SwTableCell>{playerRating.rating.rating}</SwTableCell>
+							</SwTableRow>
 						))}
-				</StickyTable>
+				</SwStickyTable>
 			)}
 		</div>
 	);

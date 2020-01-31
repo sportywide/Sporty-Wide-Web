@@ -3,10 +3,11 @@ import { FilterOption, SwFilterBar } from '@web/shared/lib/ui/components/filter/
 import { useLeagues } from '@web/shared/lib/react/hooks';
 import { GetTeamsQuery, useGetTeamsLazyQuery } from '@web/graphql-generated';
 import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
-import { StickyTable, TableCell, TableHeader, TableRow } from '@web/shared/lib/ui/components/table/Table';
+import { SwStickyTable, SwTableCell, SwTableHeader, SwTableRow } from '@web/shared/lib/ui/components/table/Table';
 import { SwPaginationOptions } from '@web/shared/lib/ui/components/filter/PaginationOptions';
 import { SwPagination } from '@web/shared/lib/ui/components/filter/Pagination';
 import { SwStar } from '@web/shared/lib/ui/components/rating/Star';
+import { SwSortableRow } from '@web/shared/lib/ui/components/table/SortableRow';
 
 const SwTeamListComponent: React.FC<any> = () => {
 	const leagues = useLeagues();
@@ -14,15 +15,22 @@ const SwTeamListComponent: React.FC<any> = () => {
 	const [currentFilter, setCurrentFilter] = useState({});
 	const [activePage, setActivePage] = useState(1);
 	const [fetchTeams, { loading, data }] = useGetTeamsLazyQuery();
+	const [sortColumn, setSortColumn] = useState({
+		column: null,
+		asc: null,
+	});
+
 	useEffect(() => {
 		fetchTeams({
 			variables: {
 				filter: currentFilter,
 				limit: pageSize,
 				skip: pageSize * (activePage - 1),
+				sort: sortColumn.column,
+				asc: sortColumn.asc,
 			},
 		});
-	}, [pageSize, currentFilter, fetchTeams, activePage]);
+	}, [pageSize, currentFilter, fetchTeams, activePage, sortColumn]);
 	if (!leagues) {
 		return null;
 	}
@@ -58,41 +66,73 @@ const SwTeamListComponent: React.FC<any> = () => {
 				/>
 			)}
 			{loading && <Spinner portalRoot={'#container'} />}
-			{!loading && renderTeams(data)}
+			{!loading &&
+				renderTeams({
+					data,
+					sortColumn,
+					onChange: ({ column, asc }) => {
+						setSortColumn({
+							column,
+							asc,
+						});
+					},
+				})}
 			<SwPaginationOptions onPageSizeChanged={size => setCurrentPageSize(size)} />
 		</div>
 	);
 };
 
-function renderTeams(data: GetTeamsQuery) {
+function renderTeams({
+	data,
+	sortColumn,
+	onChange,
+}: {
+	data: GetTeamsQuery;
+	sortColumn: { column: string; asc: boolean };
+	onChange: ({ column, asc }: { column: string; asc: boolean }) => void;
+}) {
 	if (!(data && data.teams)) {
 		return null;
 	}
 	return (
-		<StickyTable>
-			<TableRow>
-				<TableHeader>Name</TableHeader>
-				<TableHeader>League</TableHeader>
-				<TableHeader>Overall</TableHeader>
-				<TableHeader>Attack</TableHeader>
-				<TableHeader>Midfield</TableHeader>
-				<TableHeader>Defence</TableHeader>
-				<TableHeader>Rating</TableHeader>
-			</TableRow>
+		<SwStickyTable>
+			<SwSortableRow asc={sortColumn.asc} column={sortColumn.column} onChange={onChange}>
+				<SwTableHeader sortable name={'name'}>
+					Name
+				</SwTableHeader>
+				<SwTableHeader sortable name={'league'}>
+					League
+				</SwTableHeader>
+				<SwTableHeader sortable name={'ovr'}>
+					Overall
+				</SwTableHeader>
+				<SwTableHeader sortable name={'att'}>
+					Attack
+				</SwTableHeader>
+				<SwTableHeader sortable name={'mid'}>
+					Midfield
+				</SwTableHeader>
+				<SwTableHeader sortable name={'def'}>
+					Defence
+				</SwTableHeader>
+				<SwTableHeader sortable name={'rating'}>
+					Rating
+				</SwTableHeader>
+			</SwSortableRow>
 			{data.teams.items.map(team => (
-				<TableRow key={team.id}>
-					<TableCell>{team.title}</TableCell>
-					<TableCell>{team.league}</TableCell>
-					<TableCell>{team.ovr}</TableCell>
-					<TableCell>{team.att}</TableCell>
-					<TableCell>{team.mid}</TableCell>
-					<TableCell>{team.def}</TableCell>
-					<TableCell>
+				<SwTableRow key={team.id}>
+					<SwTableCell>{team.title}</SwTableCell>
+					<SwTableCell>{team.league}</SwTableCell>
+					<SwTableCell>{team.ovr}</SwTableCell>
+					<SwTableCell>{team.att}</SwTableCell>
+					<SwTableCell>{team.mid}</SwTableCell>
+					<SwTableCell>{team.def}</SwTableCell>
+					<SwTableCell>
 						<SwStar value={getStars(team.rating)} readonly={true} />
-					</TableCell>
-				</TableRow>
+					</SwTableCell>
+				</SwTableRow>
 			))}
-		</StickyTable>
+		</SwStickyTable>
 	);
 }
 function getStars(rating) {
