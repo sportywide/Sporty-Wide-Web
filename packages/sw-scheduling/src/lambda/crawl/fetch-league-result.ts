@@ -2,7 +2,6 @@ import { error, ok } from '@scheduling/lib/http';
 import { getLogger, initModule, SchedulingCrawlerModule } from '@scheduling/lib/scheduling.module';
 import { leagues } from '@shared/lib/data/data.constants';
 import { SCHEDULING_CONFIG } from '@core/config/config.constants';
-import { ScoreboardCrawlerService } from '@data/crawler/scoreboard-crawler.service';
 import { SQSEvent } from 'aws-lambda';
 import { INestApplicationContext } from '@nestjs/common';
 import { BrowserService } from '@data/crawler/browser.service';

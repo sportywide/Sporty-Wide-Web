@@ -8,8 +8,8 @@ import { ErrorMessage } from '@web/shared/lib/ui/components/error/Error';
 import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
 import { formatRelative, startOfDay } from 'date-fns';
 import { FixtureRow } from '@web/features/fixtures/components/FixtureRow';
-import * as S from './FixtureList.styled';
 import { ucfirst } from '@shared/lib/utils/string/conversion';
+import * as S from './FixtureList.styled';
 
 const SwLiveScoreComponent: React.FC<any> = () => {
 	const container = useContext(ContainerContext);

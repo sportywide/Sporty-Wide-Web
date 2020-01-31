@@ -9,6 +9,9 @@ interface IProps {
 }
 const SwPaginationComponent: React.FC<IProps> = ({ onPageChanged, pageSize, total, activePage }) => {
 	const totalPages = Math.ceil(total / pageSize);
+	if (!total) {
+		return null;
+	}
 	return (
 		<div className={'sw-flex sw-flex-center sw-mt1 sw-mb2 sw-flex-wrap'}>
 			<span className={'sw-ml1 sw-mb1 sw-mr2'}>

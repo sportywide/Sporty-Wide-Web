@@ -8,7 +8,7 @@ import { DATA_LOGGER } from '@core/logging/logging.constant';
 import { Logger } from 'log4js';
 import { fsPromise } from '@shared/lib/utils/promisify/fs';
 import { LeagueResultService } from '@schema/league/services/league-result.service';
-import { EspnTeam, ScoreboardTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
+import { EspnTeam } from '@shared/lib/dtos/leagues/league-standings.dto';
 import { TeamService } from '@schema/team/services/team.service';
 import { FifaImageService } from '@data/persister/fifa/fifa-image.service';
 

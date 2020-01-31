@@ -7,7 +7,6 @@ import { formationMap } from '@shared/lib/dtos/formation/formation.dto';
 import { SwApp } from '@web/shared/lib/app';
 import { ContainerContext } from '@web/shared/lib/store';
 import { useAsync } from 'react-async-hook';
-import { FixtureService } from '@web/features/fixtures/services/fixture.service';
 import { LeagueService } from '@web/features/leagues/base/services/league.service';
 
 export function usePrevious<T>(value) {

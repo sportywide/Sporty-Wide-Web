@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { Icon } from 'semantic-ui-react';
 import styled from 'styled-components';
+import { SwTableRow } from '@web/shared/lib/ui/components/table/Table';
 
 interface IProps {
 	children: ReactNode;
@@ -22,7 +23,7 @@ const IconContainer = styled.span`
 
 const SwSortableRowComponent: React.FC<IProps> = ({ children, column, asc, onChange }) => {
 	return (
-		<>
+		<SwTableRow>
 			{React.Children.map(children, (child: any) => {
 				return React.cloneElement(child, {
 					children: (
@@ -35,7 +36,7 @@ const SwSortableRowComponent: React.FC<IProps> = ({ children, column, asc, onCha
 					),
 				});
 			})}
-		</>
+		</SwTableRow>
 	);
 };
 

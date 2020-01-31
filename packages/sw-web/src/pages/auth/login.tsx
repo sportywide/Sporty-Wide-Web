@@ -15,7 +15,7 @@ import { login } from '@web/features/auth/store/actions';
 import { SwPrimaryBackGround } from '@web/shared/styled/Background.styled';
 import { Container, Grid, GridColumn } from 'semantic-ui-react';
 import { getUser } from '@web/shared/lib/store';
-import { EqualTab } from '@web/features/tab/components/TabItem.styled';
+import { EqualTab } from '@web/shared/lib/ui/components/tab/TabItem.styled';
 
 interface IProps {
 	login: Function;

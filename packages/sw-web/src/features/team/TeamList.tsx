@@ -1,36 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import { FilterOption, SwFilterBar } from '@web/shared/lib/ui/components/filter/FilterBar';
+import React from 'react';
+import { FilterOption } from '@web/shared/lib/ui/components/filter/FilterBar';
 import { useLeagues } from '@web/shared/lib/react/hooks';
 import { GetTeamsQuery, useGetTeamsLazyQuery } from '@web/graphql-generated';
-import { Spinner } from '@web/shared/lib/ui/components/loading/Spinner';
 import { SwStickyTable, SwTableCell, SwTableHeader, SwTableRow } from '@web/shared/lib/ui/components/table/Table';
-import { SwPaginationOptions } from '@web/shared/lib/ui/components/filter/PaginationOptions';
-import { SwPagination } from '@web/shared/lib/ui/components/filter/Pagination';
 import { SwStar } from '@web/shared/lib/ui/components/rating/Star';
 import { SwSortableRow } from '@web/shared/lib/ui/components/table/SortableRow';
+import { SortColumn, SwFilterList } from '@web/shared/lib/ui/components/filter/FilterList';
 
 const SwTeamListComponent: React.FC<any> = () => {
 	const leagues = useLeagues();
-	const [pageSize, setCurrentPageSize] = useState(null);
-	const [currentFilter, setCurrentFilter] = useState({});
-	const [activePage, setActivePage] = useState(1);
-	const [fetchTeams, { loading, data }] = useGetTeamsLazyQuery();
-	const [sortColumn, setSortColumn] = useState({
-		column: null,
-		asc: null,
-	});
-
-	useEffect(() => {
-		fetchTeams({
-			variables: {
-				filter: currentFilter,
-				limit: pageSize,
-				skip: pageSize * (activePage - 1),
-				sort: sortColumn.column,
-				asc: sortColumn.asc,
-			},
-		});
-	}, [pageSize, currentFilter, fetchTeams, activePage, sortColumn]);
+	const lazyQuery = useGetTeamsLazyQuery();
 	if (!leagues) {
 		return null;
 	}
@@ -50,35 +29,15 @@ const SwTeamListComponent: React.FC<any> = () => {
 	];
 
 	return (
-		<div>
-			<SwFilterBar
-				filterOptions={filterOptions}
-				onFilterBarChanged={currentFilter => {
-					setCurrentFilter(currentFilter);
-				}}
-			/>
-			{data?.teams?.count && (
-				<SwPagination
-					pageSize={pageSize}
-					activePage={activePage}
-					total={data.teams.count}
-					onPageChanged={activePage => setActivePage(activePage)}
-				/>
-			)}
-			{loading && <Spinner portalRoot={'#container'} />}
-			{!loading &&
+		<SwFilterList filterOptions={filterOptions} lazyQuery={lazyQuery}>
+			{({ result, onSortColumnChange, sortColumn }) =>
 				renderTeams({
-					data,
+					data: result,
 					sortColumn,
-					onChange: ({ column, asc }) => {
-						setSortColumn({
-							column,
-							asc,
-						});
-					},
-				})}
-			<SwPaginationOptions onPageSizeChanged={size => setCurrentPageSize(size)} />
-		</div>
+					onChange: onSortColumnChange,
+				})
+			}
+		</SwFilterList>
 	);
 };
 
@@ -88,10 +47,10 @@ function renderTeams({
 	onChange,
 }: {
 	data: GetTeamsQuery;
-	sortColumn: { column: string; asc: boolean };
-	onChange: ({ column, asc }: { column: string; asc: boolean }) => void;
+	sortColumn: SortColumn;
+	onChange: ({ column, asc }: SortColumn) => void;
 }) {
-	if (!(data && data.teams)) {
+	if (!data?.list?.items) {
 		return null;
 	}
 	return (
@@ -119,7 +78,7 @@ function renderTeams({
 					Rating
 				</SwTableHeader>
 			</SwSortableRow>
-			{data.teams.items.map(team => (
+			{data.list.items.map(team => (
 				<SwTableRow key={team.id}>
 					<SwTableCell>{team.title}</SwTableCell>
 					<SwTableCell>{team.league}</SwTableCell>

@@ -12,7 +12,7 @@ import { signupEpic } from '@web/features/auth/store/epics';
 import { authReducer } from '@web/features/auth/store/reducers';
 import { SwPrimaryBackGround } from '@web/shared/styled/Background.styled';
 import { Container, Grid, GridColumn } from 'semantic-ui-react';
-import { EqualTab } from '@web/features/tab/components/TabItem.styled';
+import { EqualTab } from '@web/shared/lib/ui/components/tab/TabItem.styled';
 
 interface IProps {
 	signup: Function;
