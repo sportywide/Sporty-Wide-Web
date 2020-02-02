@@ -83,7 +83,7 @@ custom:
 
     s3:
         host: 192.168.50.10
-        port: 9000
+        port: 9001
         accessKeyId: minio
         secretAccessKey: minio123
         noStart: true

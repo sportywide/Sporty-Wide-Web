@@ -13,7 +13,7 @@ export const config = {
 	},
 	development: {
 		s3: {
-			url: 'http://192.168.50.10:9000',
+			url: 'http://192.168.50.10:9001',
 			accessKeyId: 'minio',
 			secretAccessKey: 'minio123',
 		},
