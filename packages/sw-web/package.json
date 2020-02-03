@@ -38,7 +38,7 @@
 		"react": "16.9.0",
 		"react-async-hook": "3.6.1",
 		"react-dnd-cjs": "9.3.9",
-		"react-dnd-html5-backend-cjs": "9.3.9",
+		"react-dnd-html5-backend-cjs": "9.5.1",
 		"react-dom": "16.9.0",
 		"react-measure": "2.3.0",
 		"react-notification-system": "0.2.17",
