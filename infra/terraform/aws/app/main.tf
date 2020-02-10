@@ -20,7 +20,7 @@ data "terraform_remote_state" "core" {
 }
 
 module "elb" {
-  source = "./elb"
+  source = "elb"
   vpc_id = data.terraform_remote_state.core.outputs.vpc_id
   deployment_bucket_arn = data.terraform_remote_state.core.outputs.deployment_bucket_arn
   private_subnet_ids = data.terraform_remote_state.core.outputs.private_subnet_ids

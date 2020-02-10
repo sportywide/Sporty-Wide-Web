@@ -144,7 +144,7 @@ resource "aws_security_group" "app_security_group" {
 }
 
 module "rds" {
-  source = "./rds"
+  source = "rds"
   tags = var.tags
   db_password = var.db_password
   db_username = var.db_username
@@ -156,7 +156,7 @@ module "rds" {
 }
 
 module "redis" {
-  source = "./redis"
+  source = "redis"
   tags = var.tags
   private_subnet_ids = [aws_subnet.private_subnet_1.id, aws_subnet.private_subnet_2.id]
   vpc_id = aws_vpc.vpc.id
@@ -166,7 +166,7 @@ module "redis" {
 }
 
 module "ec2" {
-  source = "./ec2"
+  source = "ec2"
   public_subnet_id = aws_subnet.public_subnet_1.id
   tags = var.tags
   vpc_id = aws_vpc.vpc.id
@@ -174,14 +174,14 @@ module "ec2" {
 }
 
 module "ssm" {
-  source = "./ssm"
+  source = "ssm"
   db_password = var.db_password
   db_username = var.db_username
   db_endpoint = module.rds.rds_dns
 }
 
 module "scripts" {
-  source = "./scripts"
+  source = "scripts"
   nat_dns = module.ec2.nat_instance_dns
   rds_dns = module.rds.rds_dns
 }

@@ -11,12 +11,12 @@ provider "aws" {
 
 module "s3" {
   tags = local.common_tags
-  source = "./s3"
+  source = "s3"
 }
 
 module "vpc" {
   tags = local.common_tags
-  source = "./vpc"
+  source = "vpc"
   db_password = var.db_password
   db_username = var.db_username
   deployment_bucket_arn = module.s3.deployment_bucket_arn
