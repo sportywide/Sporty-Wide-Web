@@ -4,7 +4,7 @@
 	"description": "Core package that contains common modules for backend services",
 	"license": "ISC",
 	"dependencies": {
-		"aws-lambda": "0.1.2",
+		"aws-lambda": "1.0.5",
 		"aws-sdk": "2.564.0",
 		"bull": "3.10.0",
 		"ioredis": "4.14.1",
