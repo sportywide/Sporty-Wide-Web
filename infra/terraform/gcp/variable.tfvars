@@ -1,0 +1,10 @@
+project_id         = "sportywide-268111"
+region             = "australia-southeast1"
+zones              = ["australia-southeast1-a", "australia-southeast1-b"]
+name               = "sportywide-apps"
+machine_type       = "f1-micro"
+min_count          = 1
+max_count          = 2
+disk_size_gb       = 10
+service_account    = "tf-gke-sportywide-apps-z2oa@sportywide-268111.iam.gserviceaccount.com"
+initial_node_count = 2
