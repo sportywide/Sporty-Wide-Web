@@ -1,127 +1,131 @@
 {
-	"name": "sportywide-parent",
-	"version": "0.0.0",
-	"private": true,
-	"description": "A Social network for Sports",
-	"author": "Sporty Wide",
-	"scripts": {
-		"compile:build": "ts-node -r tsconfig-paths/register -T compiler.ts",
-		"install:dependencies": "ts-node -T bin/install.ts"
-	},
-	"husky": {
-		"hooks": {
-			"pre-commit": "test -e .git/MERGE_HEAD || lint-staged"
-		}
-	},
-	"lint-staged": {
-		"*.{json,html,scss,yml}": [
-			"pretty-quick --staged",
-			"git add"
-		],
-		"*.{ts,js,tsx,jsx}": [
-			"eslint --fix",
-			"pretty-quick --staged",
-			"git add"
-		]
-	},
-	"config": {
-		"commitizen": {
-			"path": "cz-sportywide-changelog"
-		}
-	},
-	"browserslist": [
-		"last 2 versions",
-		"ie >= 9",
-		"safari >= 8"
-	],
-	"dependencies": {
-		"link-parent-bin": "1.0.2",
-		"reflect-metadata": "0.1.13",
-		"yargs": "14.0.0"
-	},
-	"devDependencies": {
-		"@babel/core": "7.5.5",
-		"@babel/plugin-proposal-class-properties": "7.5.5",
-		"@babel/plugin-proposal-decorators": "7.4.4",
-		"@babel/plugin-proposal-nullish-coalescing-operator": "7.7.4",
-		"@babel/plugin-proposal-optional-chaining": "7.7.5",
-		"@babel/preset-env": "7.5.5",
-		"@babel/preset-typescript": "7.3.3",
-		"@babel/runtime-corejs2": "7.7.4",
-		"@testing-library/jest-dom": "4.1.0",
-		"@testing-library/react": "9.1.3",
-		"@types/bull": "3.10.2",
-		"@types/express": "4.17.1",
-		"@types/googlemaps": "3.37.6",
-		"@types/jest": "24.0.18",
-		"@types/next": "8.0.6",
-		"@types/node": "12.7.2",
-		"@types/nodemailer": "6.2.1",
-		"@types/react": "16.9.2",
-		"@types/styled-jsx": "2.2.8",
-		"@types/yup": "0.26.23",
-		"@webpack-blocks/babel": "2.0.1",
-		"@webpack-blocks/webpack": "2.0.1",
-		"@zeit/next-bundle-analyzer": "0.1.2",
-		"@zeit/next-source-maps": "0.0.3",
-		"autoprefixer": "9.6.1",
-		"babel-loader": "8.0.6",
-		"babel-plugin-styled-components": "1.10.6",
-		"babel-plugin-transform-typescript-metadata": "0.2.2",
-		"copy-webpack-plugin": "^5.1.1",
-		"cross-env": "6.0.3",
-		"cross-spawn": "7.0.1",
-		"css-loader": "3.2.0",
-		"cssnano": "4.1.10",
-		"eslint-plugin-react-hooks": "2.3.0",
-		"extracted-loader": "1.0.7",
-		"file-loader": "4.2.0",
-		"find-up": "4.1.0",
-		"gulp": "4.0.2",
-		"gulp-cli": "2.2.0",
-		"gulp-shell": "0.7.1",
-		"gulpclass": "0.2.0",
-		"ignore-loader": "0.1.2",
-		"lerna": "3.16.4",
-		"mini-css-extract-plugin": "0.8.0",
-		"next-compose-plugins": "2.2.0",
-		"next-plugin-custom-babel-config": "1.0.2",
-		"node-sass": "^4.13.1",
-		"nodemon": "1.19.1",
-		"null-loader": "3.0.0",
-		"postcss-css-variables": "0.14.0",
-		"postcss-loader": "3.0.0",
-		"postcss-preset-env": "6.7.0",
-		"sass-loader": "8.0.0",
-		"sort-package-json": "1.22.1",
-		"style-loader": "1.0.0",
-		"ts-jest": "24.0.2",
-		"ts-node": "7.0.1",
-		"tsconfig-paths": "3.8.0",
-		"typescript": "3.7.4",
-		"url-loader": "2.1.0",
-		"wait-on": "3.3.0",
-		"webpack": "4.39.2",
-		"webpack-cli": "3.3.7",
-		"webpack-fix-style-only-entries": "0.3.1",
-		"webpack-node-externals": "1.7.2"
-	},
-	"optionalDependencies": {
-		"@types/newman": "3.11.0",
-		"@typescript-eslint/eslint-plugin": "2.14.0",
-		"@typescript-eslint/parser": "2.14.0",
-		"commitizen": "4.0.3",
-		"cz-sportywide-changelog": "1.0.0",
-		"eslint": "6.2.1",
-		"eslint-config-prettier": "6.1.0",
-		"eslint-plugin-import": "2.18.2",
-		"eslint-plugin-prettier": "3.1.0",
-		"eslint-plugin-react": "7.14.3",
-		"husky": "3.0.4",
-		"lint-staged": "9.2.3",
-		"newman": "4.5.4",
-		"newman-reporter-html": "1.0.3",
-		"prettier": "1.19.1",
-		"pretty-quick": "1.11.1"
-	}
+  "name": "sportywide-parent",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A Social network for Sports",
+  "author": "Sporty Wide",
+  "scripts": {
+    "compile:build": "ts-node -r tsconfig-paths/register -T compiler.ts",
+    "install:dependencies": "ts-node -T bin/install.ts",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "test -e .git/MERGE_HEAD || lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{json,html,scss,yml}": [
+      "pretty-quick --staged",
+      "git add"
+    ],
+    "*.{ts,js,tsx,jsx}": [
+      "eslint --fix",
+      "pretty-quick --staged",
+      "git add"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-sportywide-changelog"
+    }
+  },
+  "browserslist": [
+    "last 2 versions",
+    "ie >= 9",
+    "safari >= 8"
+  ],
+  "dependencies": {
+    "link-parent-bin": "1.0.2",
+    "reflect-metadata": "0.1.13",
+    "yargs": "14.0.0",
+    "snyk": "^1.319.2"
+  },
+  "devDependencies": {
+    "@babel/core": "7.5.5",
+    "@babel/plugin-proposal-class-properties": "7.5.5",
+    "@babel/plugin-proposal-decorators": "7.4.4",
+    "@babel/plugin-proposal-nullish-coalescing-operator": "7.7.4",
+    "@babel/plugin-proposal-optional-chaining": "7.7.5",
+    "@babel/preset-env": "7.5.5",
+    "@babel/preset-typescript": "7.3.3",
+    "@babel/runtime-corejs2": "7.7.4",
+    "@testing-library/jest-dom": "4.1.0",
+    "@testing-library/react": "9.1.3",
+    "@types/bull": "3.10.2",
+    "@types/express": "4.17.1",
+    "@types/googlemaps": "3.37.6",
+    "@types/jest": "24.0.18",
+    "@types/next": "8.0.6",
+    "@types/node": "12.7.2",
+    "@types/nodemailer": "6.2.1",
+    "@types/react": "16.9.2",
+    "@types/styled-jsx": "2.2.8",
+    "@types/yup": "0.26.23",
+    "@webpack-blocks/babel": "2.0.1",
+    "@webpack-blocks/webpack": "2.0.1",
+    "@zeit/next-bundle-analyzer": "0.1.2",
+    "@zeit/next-source-maps": "0.0.3",
+    "autoprefixer": "9.6.1",
+    "babel-loader": "8.0.6",
+    "babel-plugin-styled-components": "1.10.6",
+    "babel-plugin-transform-typescript-metadata": "0.2.2",
+    "copy-webpack-plugin": "^5.1.1",
+    "cross-env": "6.0.3",
+    "cross-spawn": "7.0.1",
+    "css-loader": "3.2.0",
+    "cssnano": "4.1.10",
+    "eslint-plugin-react-hooks": "2.3.0",
+    "extracted-loader": "1.0.7",
+    "file-loader": "4.2.0",
+    "find-up": "4.1.0",
+    "gulp": "4.0.2",
+    "gulp-cli": "2.2.0",
+    "gulp-shell": "0.7.1",
+    "gulpclass": "0.2.0",
+    "ignore-loader": "0.1.2",
+    "lerna": "3.16.4",
+    "mini-css-extract-plugin": "0.8.0",
+    "next-compose-plugins": "2.2.0",
+    "next-plugin-custom-babel-config": "1.0.2",
+    "node-sass": "^4.13.1",
+    "nodemon": "1.19.1",
+    "null-loader": "3.0.0",
+    "postcss-css-variables": "0.14.0",
+    "postcss-loader": "3.0.0",
+    "postcss-preset-env": "6.7.0",
+    "sass-loader": "8.0.0",
+    "sort-package-json": "1.22.1",
+    "style-loader": "1.0.0",
+    "ts-jest": "24.0.2",
+    "ts-node": "7.0.1",
+    "tsconfig-paths": "3.8.0",
+    "typescript": "3.7.4",
+    "url-loader": "2.1.0",
+    "wait-on": "3.3.0",
+    "webpack": "4.39.2",
+    "webpack-cli": "3.3.7",
+    "webpack-fix-style-only-entries": "0.3.1",
+    "webpack-node-externals": "1.7.2"
+  },
+  "optionalDependencies": {
+    "@types/newman": "3.11.0",
+    "@typescript-eslint/eslint-plugin": "2.14.0",
+    "@typescript-eslint/parser": "2.14.0",
+    "commitizen": "4.0.3",
+    "cz-sportywide-changelog": "1.0.0",
+    "eslint": "6.2.1",
+    "eslint-config-prettier": "6.1.0",
+    "eslint-plugin-import": "2.18.2",
+    "eslint-plugin-prettier": "3.1.0",
+    "eslint-plugin-react": "7.14.3",
+    "husky": "3.0.4",
+    "lint-staged": "9.2.3",
+    "newman": "4.5.4",
+    "newman-reporter-html": "1.0.3",
+    "prettier": "1.19.1",
+    "pretty-quick": "1.11.1"
+  },
+  "snyk": true
 }
