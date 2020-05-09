@@ -1,0 +1,158 @@
+# Snyk (https://snyk.io) policy file, patches or ignores known vulnerabilities.
+version: v1.14.1
+ignore: {}
+# patches apply the minimum changes required to fix a vulnerability
+patch:
+  SNYK-JS-LODASH-567746:
+    - formik > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - http-proxy-middleware > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - semantic-ui-react > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - semantic-ui-react-calendar > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/cli > graphql-import > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/cli > graphql-toolkit > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/cli > babel-types > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/cli > graphql-config > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - styled-components > @babel/traverse > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/cli > inquirer > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - next > @babel/core > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - next > autodll-webpack-plugin > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - next > babel-plugin-transform-define > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - styled-components > babel-plugin-styled-components > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/cli > graphql-toolkit > graphql-import > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/cli > graphql-config > graphql-import > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/cli > @graphql-codegen/core > graphql-toolkit > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - styled-components > @babel/traverse > @babel/generator > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/cli > graphql-tag-pluck > @babel/traverse > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - next > @babel/preset-env > @babel/plugin-transform-block-scoping > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - react-sticky-table > styled-components > @babel/traverse > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - react-svg-loader > react-svg-core > @babel/core > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - next > autodll-webpack-plugin > webpack-merge > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - next > styled-jsx > babel-types > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - react-sticky-table > styled-components > babel-plugin-styled-components > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/cli > @graphql-codegen/core > graphql-toolkit > graphql-import > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - styled-components > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - next > @babel/preset-env > @babel/plugin-transform-sticky-regex > @babel/helper-regex > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/cli > graphql-tag-pluck > @babel/traverse > @babel/generator > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - react-sticky-table > styled-components > @babel/traverse > @babel/generator > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - styled-components > babel-plugin-styled-components > @babel/helper-annotate-as-pure > @babel/types > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - react-svg-loader > react-svg-core > @babel/core > @babel/helper-module-transforms > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-react-apollo > @graphql-codegen/visitor-plugin-common > relay-compiler > @babel/core > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/cli > graphql-tag-pluck > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - next > @babel/preset-env > @babel/plugin-transform-unicode-regex > @babel/helper-create-regexp-features-plugin > @babel/helper-regex > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - react-sticky-table > styled-components > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - react-svg-loader > react-svg-core > @babel/core > @babel/helpers > @babel/traverse > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-react-apollo > @graphql-codegen/visitor-plugin-common > relay-compiler > @babel/core > @babel/helper-module-transforms > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - styled-components > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - react-sticky-table > styled-components > babel-plugin-styled-components > @babel/helper-annotate-as-pure > @babel/types > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-operations > @graphql-codegen/typescript > @graphql-codegen/visitor-plugin-common > relay-compiler > @babel/core > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-react-apollo > @graphql-codegen/visitor-plugin-common > relay-compiler > babel-preset-fbjs > @babel/plugin-transform-block-scoping > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - next > @babel/preset-env > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - react-svg-loader > react-svg-core > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-react-apollo > @graphql-codegen/visitor-plugin-common > relay-compiler > @babel/core > @babel/helpers > @babel/traverse > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-operations > @graphql-codegen/typescript > @graphql-codegen/visitor-plugin-common > relay-compiler > @babel/core > @babel/helper-module-transforms > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/cli > graphql-tag-pluck > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - react-sticky-table > styled-components > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-react-apollo > @graphql-codegen/visitor-plugin-common > relay-compiler > babel-preset-fbjs > @babel/plugin-transform-classes > @babel/helper-define-map > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-operations > @graphql-codegen/typescript > @graphql-codegen/visitor-plugin-common > relay-compiler > babel-preset-fbjs > @babel/plugin-transform-block-scoping > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - next > @babel/preset-env > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/generator > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - react-svg-loader > react-svg-core > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/generator > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-react-apollo > @graphql-codegen/visitor-plugin-common > relay-compiler > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-operations > @graphql-codegen/typescript > @graphql-codegen/visitor-plugin-common > relay-compiler > @babel/core > @babel/helpers > @babel/traverse > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-react-apollo > @graphql-codegen/visitor-plugin-common > relay-compiler > babel-preset-fbjs > @babel/plugin-transform-object-super > @babel/helper-replace-supers > @babel/traverse > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-operations > @graphql-codegen/typescript > @graphql-codegen/visitor-plugin-common > relay-compiler > babel-preset-fbjs > @babel/plugin-transform-classes > @babel/helper-define-map > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - react-svg-loader > react-svg-core > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - next > @babel/preset-env > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-react-apollo > @graphql-codegen/visitor-plugin-common > relay-compiler > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/generator > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-operations > @graphql-codegen/typescript > @graphql-codegen/visitor-plugin-common > relay-compiler > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-react-apollo > @graphql-codegen/visitor-plugin-common > relay-compiler > babel-preset-fbjs > @babel/plugin-proposal-class-properties > @babel/helper-create-class-features-plugin > @babel/helper-replace-supers > @babel/traverse > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-operations > @graphql-codegen/typescript > @graphql-codegen/visitor-plugin-common > relay-compiler > babel-preset-fbjs > @babel/plugin-transform-object-super > @babel/helper-replace-supers > @babel/traverse > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-react-apollo > @graphql-codegen/visitor-plugin-common > relay-compiler > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-react-apollo > @graphql-codegen/visitor-plugin-common > relay-compiler > babel-preset-fbjs > @babel/plugin-proposal-class-properties > @babel/helper-create-class-features-plugin > @babel/helper-replace-supers > @babel/traverse > @babel/generator > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-operations > @graphql-codegen/typescript > @graphql-codegen/visitor-plugin-common > relay-compiler > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/generator > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - react-svg-loader > react-svg-core > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - next > @babel/preset-env > @babel/plugin-transform-exponentiation-operator > @babel/helper-builder-binary-assignment-operator-visitor > @babel/helper-explode-assignable-expression > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash:
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-operations > @graphql-codegen/typescript > @graphql-codegen/visitor-plugin-common > relay-compiler > babel-preset-fbjs > @babel/plugin-proposal-class-properties > @babel/helper-create-class-features-plugin > @babel/helper-replace-supers > @babel/traverse > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-operations > @graphql-codegen/typescript > @graphql-codegen/visitor-plugin-common > relay-compiler > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-react-apollo > @graphql-codegen/visitor-plugin-common > relay-compiler > babel-preset-fbjs > @babel/plugin-proposal-class-properties > @babel/helper-create-class-features-plugin > @babel/helper-replace-supers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-operations > @graphql-codegen/typescript > @graphql-codegen/visitor-plugin-common > relay-compiler > babel-preset-fbjs > @babel/plugin-proposal-class-properties > @babel/helper-create-class-features-plugin > @babel/helper-replace-supers > @babel/traverse > @babel/generator > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-react-apollo > @graphql-codegen/visitor-plugin-common > relay-compiler > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-operations > @graphql-codegen/typescript > @graphql-codegen/visitor-plugin-common > relay-compiler > babel-preset-fbjs > @babel/plugin-proposal-class-properties > @babel/helper-create-class-features-plugin > @babel/helper-replace-supers > @babel/traverse > @babel/helper-split-export-declaration > @babel/types > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-operations > @graphql-codegen/typescript > @graphql-codegen/visitor-plugin-common > relay-compiler > @babel/core > @babel/helper-module-transforms > @babel/helper-replace-supers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-react-apollo > @graphql-codegen/visitor-plugin-common > relay-compiler > babel-preset-fbjs > @babel/plugin-proposal-class-properties > @babel/helper-create-class-features-plugin > @babel/helper-replace-supers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
+    - '@graphql-codegen/typescript-operations > @graphql-codegen/typescript > @graphql-codegen/visitor-plugin-common > relay-compiler > babel-preset-fbjs > @babel/plugin-proposal-class-properties > @babel/helper-create-class-features-plugin > @babel/helper-replace-supers > @babel/traverse > @babel/helper-function-name > @babel/template > @babel/types > lodash':
+        patched: '2020-05-09T08:05:11.098Z'
