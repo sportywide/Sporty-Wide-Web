@@ -6,7 +6,7 @@
         "typeorm": "0.2.20",
         "mongoose": "5.7.5",
         "nconf": "0.10.0",
-        "lodash": "4.17.15",
+        "lodash": "4.17.16",
         "@nestjs/mongoose": "6.1.2",
         "date-fns": "2.0.1",
         "log4js": "5.0.0",
