@@ -32,7 +32,7 @@
 		"source-map-support": "0.5.13",
 		"type-graphql": "0.17.6",
 		"uuid": "3.3.3",
-		"yup": "0.27.0",
+		"yup": "0.28.2",
 		"yup-decorator": "2.1.0"
 	},
 	"devDependencies": {
