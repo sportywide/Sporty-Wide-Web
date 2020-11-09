@@ -10,7 +10,7 @@
 	},
 	"dependencies": {
 		"@nestjs/schedule": "0.1.1",
-		"html-to-text": "5.1.1",
+		"html-to-text": "6.0.0",
 		"nodemailer": "6.3.0",
 		"sportywide-core": "0.0.0",
 		"sportywide-schema": "0.0.0",
