@@ -37,7 +37,7 @@
 	"dependencies": {
 		"link-parent-bin": "1.0.2",
 		"reflect-metadata": "0.1.13",
-		"yargs": "14.0.0"
+		"yargs": "16.0.0"
 	},
 	"devDependencies": {
 		"@babel/core": "7.5.5",
