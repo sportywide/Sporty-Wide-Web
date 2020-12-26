@@ -13,7 +13,7 @@
 		"@apollo/react-hooks": "3.1.2",
 		"@bugsnag/plugin-express": "6.5.0",
 		"@bugsnag/plugin-react": "6.5.0",
-		"@graphql-codegen/cli": "1.8.0",
+		"@graphql-codegen/cli": "1.13.3",
 		"@graphql-codegen/typescript": "1.8.0",
 		"@graphql-codegen/typescript-operations": "1.8.0",
 		"@graphql-codegen/typescript-react-apollo": "1.8.0",
