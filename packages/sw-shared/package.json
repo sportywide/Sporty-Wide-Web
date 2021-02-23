@@ -22,7 +22,7 @@
 		"graphql": "14.5.8",
 		"json5": "2.1.1",
 		"juice": "5.2.0",
-		"lodash": "4.17.15",
+		"lodash": "4.17.21",
 		"log4js": "5.0.0",
 		"logzio-nodejs": "1.0.7",
 		"nconf": "0.10.0",
