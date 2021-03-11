@@ -28,7 +28,7 @@
         "logzio-nodejs": "1.0.7",
         "type-graphql": "0.17.6",
         "yup-decorator": "2.1.0",
-        "@nestjs/swagger": "3.1.0",
+        "@nestjs/swagger": "4.7.16",
         "pg": "7.12.1",
         "source-map-support": "0.5.13",
         "rxjs": "6.5.3",
