@@ -11,7 +11,7 @@
 	},
 	"dependencies": {
 		"@bugsnag/plugin-express": "6.5.0",
-		"@nestjs/graphql": "6.5.3",
+		"@nestjs/graphql": "7.10.0",
 		"@nestjs/jwt": "6.1.1",
 		"@nestjs/passport": "6.1.0",
 		"@nestjs/platform-express": "6.5.3",
