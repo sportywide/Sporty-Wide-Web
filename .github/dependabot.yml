@@ -1,0 +1,24 @@
+version: 2
+updates:
+- package-ecosystem: npm
+  directory: "/"
+  schedule:
+    interval: weekly
+  open-pull-requests-limit: 10
+  target-branch: master
+  ignore:
+  - dependency-name: "@testing-library/react"
+    versions:
+    - 10.4.9
+  - dependency-name: elliptic
+    versions:
+    - 6.5.3
+  - dependency-name: "@nestjs/typeorm"
+    versions:
+    - 7.1.4
+  - dependency-name: lodash
+    versions:
+    - 4.17.20
+  - dependency-name: "@nestjs/core"
+    versions:
+    - 6.11.5
