@@ -9,7 +9,7 @@
 		"bull": "3.10.0",
 		"ioredis": "4.14.1",
 		"nest-bull": "0.8.3",
-		"pug": "2.0.4",
+		"pug": "3.0.0",
 		"redis": "2.8.0",
 		"sportywide-shared": "0.0.0",
 		"url": "0.11.0"
