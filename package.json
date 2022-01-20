@@ -35,7 +35,7 @@
 		"safari >= 8"
 	],
 	"dependencies": {
-		"link-parent-bin": "1.0.2",
+		"link-parent-bin": "2.0.0",
 		"reflect-metadata": "0.1.13",
 		"yargs": "14.0.0"
 	},
