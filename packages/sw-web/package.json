@@ -30,7 +30,7 @@
 		"http-proxy-middleware": "0.19.1",
 		"immer": "5.2.1",
 		"mobile-detect": "1.4.4",
-		"next": "9.1.7",
+		"next": "9.3.2",
 		"next-cookies": "1.1.2",
 		"next-routes-handler": "1.4.2",
 		"next-store-wrapper": "3.0.0-alpha.5",
