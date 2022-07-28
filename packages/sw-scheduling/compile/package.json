@@ -4,7 +4,7 @@
         "@nestjs/common": "6.10.14",
         "@nestjs/core": "6.10.14",
         "typeorm": "0.2.20",
-        "mongoose": "5.7.5",
+        "mongoose": "6.4.6",
         "nconf": "0.10.0",
         "lodash": "4.17.15",
         "@nestjs/mongoose": "6.1.2",
