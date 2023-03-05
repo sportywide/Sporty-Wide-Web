@@ -2,7 +2,7 @@
     "name": "generated-package",
     "dependencies": {
         "@nestjs/common": "6.10.14",
-        "@nestjs/core": "6.10.14",
+        "@nestjs/core": "9.0.5",
         "typeorm": "0.2.20",
         "mongoose": "5.7.5",
         "nconf": "0.10.0",
