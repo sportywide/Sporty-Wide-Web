@@ -10,7 +10,7 @@
 		"dataloader": "1.4.0",
 		"fuse.js": "3.4.5",
 		"mongoose": "5.7.5",
-		"pg": "7.12.1",
+		"pg": "8.4.0",
 		"sportywide-core": "0.0.0",
 		"sportywide-shared": "0.0.0",
 		"typeorm": "0.2.20"
