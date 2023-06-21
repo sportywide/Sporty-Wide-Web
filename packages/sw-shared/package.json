@@ -21,7 +21,7 @@
 		"glob": "7.1.4",
 		"graphql": "14.5.8",
 		"json5": "2.1.1",
-		"juice": "5.2.0",
+		"juice": "7.0.0",
 		"lodash": "4.17.15",
 		"log4js": "5.0.0",
 		"logzio-nodejs": "1.0.7",
@@ -30,7 +30,7 @@
 		"path-to-regexp": "6.1.0",
 		"rxjs": "6.5.3",
 		"source-map-support": "0.5.13",
-		"type-graphql": "0.17.6",
+		"type-graphql": "1.0.0",
 		"uuid": "3.3.3",
 		"yup": "0.27.0",
 		"yup-decorator": "2.1.0"
