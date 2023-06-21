@@ -6,7 +6,7 @@
 	"dependencies": {
 		"aws-lambda": "0.1.2",
 		"aws-sdk": "2.564.0",
-		"bull": "3.10.0",
+		"bull": "3.17.0",
 		"ioredis": "4.14.1",
 		"nest-bull": "0.8.3",
 		"pug": "2.0.4",
