@@ -3,7 +3,7 @@
     "dependencies": {
         "@nestjs/common": "6.10.14",
         "@nestjs/core": "6.10.14",
-        "typeorm": "0.2.20",
+        "typeorm": "0.2.39",
         "mongoose": "5.7.5",
         "nconf": "0.10.0",
         "lodash": "4.17.15",
@@ -25,7 +25,7 @@
         "class-transformer-imp": "0.2.7",
         "dynamoose-improved": "1.10.2",
         "ioredis": "4.14.1",
-        "logzio-nodejs": "1.0.7",
+        "logzio-nodejs": "2.1.4",
         "type-graphql": "0.17.6",
         "yup-decorator": "2.1.0",
         "@nestjs/swagger": "3.1.0",
