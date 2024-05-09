@@ -30,6 +30,6 @@
 		"sportywide-core": "0.0.0",
 		"sportywide-schema": "0.0.0",
 		"sportywide-shared": "0.0.0",
-		"swagger-ui-express": "4.0.7"
+		"swagger-ui-express": "4.3.0"
 	}
 }
