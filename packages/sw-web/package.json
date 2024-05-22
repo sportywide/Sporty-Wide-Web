@@ -27,7 +27,7 @@
 		"express-cookie-flash": "1.0.0",
 		"formik": "1.5.8",
 		"hoist-non-react-statics": "3.3.0",
-		"http-proxy-middleware": "0.19.1",
+		"http-proxy-middleware": "0.20.0",
 		"immer": "5.2.1",
 		"mobile-detect": "1.4.4",
 		"next": "9.1.7",
