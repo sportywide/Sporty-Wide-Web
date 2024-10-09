@@ -16,7 +16,7 @@
 		"@nestjs/passport": "6.1.0",
 		"@nestjs/platform-express": "6.5.3",
 		"apollo-server-express": "2.9.4",
-		"cookie-parser": "1.4.4",
+		"cookie-parser": "1.4.7",
 		"cors": "2.8.5",
 		"express-rate-limit": "5.0.0",
 		"graphql-tools": "4.0.5",
